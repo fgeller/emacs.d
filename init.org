@@ -1278,6 +1278,10 @@ for files recursively by default.
 
 Lots of information at [9].
 
+#+begin_src emacs-lisp
+(setq eshell-directory-name "~/.emacs.d/.eshell/")
+#+end_src
+
 Helper that is used for key-bindings to call eshell with a prefix to
 create a new one.
 
