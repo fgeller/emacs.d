@@ -1428,47 +1428,53 @@ Load extensions to dired from dired+.
 Loads of  configuration settings that need to be split up.
 
 #+begin_src emacs-lisp
-	(setq
-	 org-log-done t
-	 org-completion-use-ido t
-	 org-edit-timestamp-down-means-later t
-	 org-agenda-start-on-weekday nil
-	 org-agenda-ndays 14
-	 org-agenda-include-diary t
-	 org-agenda-window-setup 'current-window
-	 org-agenda-files `(,org-directory)
-	 org-fast-tag-selection-single-key 'expert
-	 org-tags-column 80
-	 org-default-notes-file (concat org-directory "/Notes.org")
-	 org-footnote-auto-label (quote plain)
-	 org-hide-emphasis-markers t
-	 org-hide-leading-stars t
-	 org-refile-targets '((org-agenda-files :maxlevel . 5))
-	 org-src-fontify-natively t
-	 org-agenda-remove-tags t
-	 calendar-week-start-day 1
-	 org-refile-use-outline-path 'file
-	 org-refile-targets  '((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5))
-	 org-outline-path-complete-in-steps nil
-	 org-todo-keywords '(
-					 (sequence "TODO(t)" "STARTED(s)" "|" "DONE(d!/!)")
-					 (sequence "WAITING(w@/!)" "SOMEDAY(S)" "PROJECT(P@)" "|" "CANCELLED(c@/!)"))
-	 org-clock-persistence-insinuate t
-	 org-clock-persist t
-	 org-clock-in-resume t
-	 org-clock-in-switch-to-state "STARTED"
-	 org-clock-into-drawer t
-	 org-clock-out-remove-zero-time-clocks t
-	 org-modules '(org-habit org-notmuch org-checklist org-eshell org-crypt org-info org-irc org-contacts)
-	 org-habit-preceding-days 14
-	 org-habit-show-habits-only-for-today t
-	 org-habit-completed-glyph ?.
-	 org-habit-today-glyph ?o
-	 org-special-ctrl-k t
-	 org-special-ctrl-a t
-	 org-irc-link-to-logs t
-	)
-	(add-hook 'org-mode-hook 'turn-on-auto-fill)
+  (setq
+   c/org-directory "~/Dropbox/org"
+   org-directory c/org-directory
+   c/work-org-directory "~/Dropbox/work"
+   c/org-task-file (concat c/org-directory "/Tasks.org")
+   c/work-org-task-file (concat c/work-org-directory "/work.org")
+   c/work-org-agenda-files `(,c/work-org-directory)
+   org-log-done t
+   org-completion-use-ido t
+   org-edit-timestamp-down-means-later t
+   org-agenda-start-on-weekday nil
+   org-agenda-ndays 14
+   org-agenda-include-diary t
+   org-agenda-window-setup 'current-window
+   org-agenda-files `(,org-directory)
+   org-fast-tag-selection-single-key 'expert
+   org-tags-column 80
+   org-default-notes-file (concat org-directory "/Notes.org")
+   org-footnote-auto-label (quote plain)
+   org-hide-emphasis-markers t
+   org-hide-leading-stars t
+   org-refile-targets '((org-agenda-files :maxlevel . 5))
+   org-src-fontify-natively t
+   org-agenda-remove-tags t
+   calendar-week-start-day 1
+   org-refile-use-outline-path 'file
+   org-refile-targets  '((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5))
+   org-outline-path-complete-in-steps nil
+   org-todo-keywords '(
+				   (sequence "TODO(t)" "STARTED(s)" "|" "DONE(d!/!)")
+				   (sequence "WAITING(w@/!)" "SOMEDAY(S)" "PROJECT(P@)" "|" "CANCELLED(c@/!)"))
+   org-clock-persistence-insinuate t
+   org-clock-persist t
+   org-clock-in-resume t
+   org-clock-in-switch-to-state "STARTED"
+   org-clock-into-drawer t
+   org-clock-out-remove-zero-time-clocks t
+   org-modules '(org-habit org-notmuch org-checklist org-eshell org-crypt org-info org-irc org-contacts)
+   org-habit-preceding-days 14
+   org-habit-show-habits-only-for-today t
+   org-habit-completed-glyph ?.
+   org-habit-today-glyph ?o
+   org-special-ctrl-k t
+   org-special-ctrl-a t
+   org-irc-link-to-logs t
+  )
+  (add-hook 'org-mode-hook 'turn-on-auto-fill)
 #+end_src
 
 Load and configure org-contacts.
