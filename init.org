@@ -207,6 +207,7 @@ Growl notifications.
 
 #+begin_src emacs-lisp
 (autoload 'jumper-mode "jumper" t nil)
+(autoload 'jumper-update-defs-from-current-buffer "jumper-update" t nil)
 #+end_src
 
 * Text editing
@@ -601,15 +602,15 @@ Special configuration for flymake
 Configuration per-buffer.
 
 #+begin_src emacs-lisp
-	(defun c/python-mode-initialization ()
-					(subword-mode 1)
-					(jumper-mode 1)
-					(pretty-symbols-mode 1)
-					(when buffer-file-name (flymake-mode 1))
-					(add-hook 'before-save-hook 'whitespace-cleanup nil 'local)
-	;  (add-hook 'before-save-hook 'jumper-read-defs-in-buffer nil 'local)
-	)
-	(add-hook 'python-mode-hook 'c/python-mode-initialization)
+  (defun c/python-mode-initialization ()
+				  (subword-mode 1)
+				  (jumper-mode 1)
+				  (pretty-symbols-mode 1)
+				  (when buffer-file-name (flymake-mode 1))
+				  (add-hook 'before-save-hook 'whitespace-cleanup nil 'local)
+				  (add-hook 'before-save-hook 'jumper-update-defs-from-current-buffer nil 'local)
+  )
+  (add-hook 'python-mode-hook 'c/python-mode-initialization)
 #+end_src
 
 *** Helper
