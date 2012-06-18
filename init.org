@@ -2,6 +2,14 @@
 #+STARTUP: hideblocks
 * Notes
 
+Don't forget to =git submodules init= and =git submodules update=.
+
+Load this file with the following incantation (e.g., in =~/.emacs=):
+
+#+begin_src emacs-lisp :tangle no
+(org-babel-load-file (expand-file-name "~/.emacs.d/init.org"))
+#+end_src
+
 Main sources are @purcell's emacs.d [11] and the Emacswiki [12].
 
 * Environment
