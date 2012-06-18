@@ -1,0 +1,6 @@
+# -*- coding: utf-8; mode: snippet -*-
+# name: Ext.Array.indexOf
+# key: iof
+# contributor: Felix Geller <fgeller@gmail.com>
+# --
+Ext.Array.indexOf($1, $2);

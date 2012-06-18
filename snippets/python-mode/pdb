@@ -1,0 +1,6 @@
+# -*- mode:snippet; coding: utf-8; tab-width:2 -*-
+# key: pdb
+# contributor : matt harrison 
+# pdb : import pdb; pdb.set_trace()
+# --
+import pdb; pdb.set_trace()

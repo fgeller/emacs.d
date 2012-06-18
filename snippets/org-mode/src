@@ -1,0 +1,7 @@
+# -*- mode:snippet; coding: utf-8 -*-
+# name: Source Code Block
+# key: src
+# --
+#+begin_src $1
+$0
+#+end_src

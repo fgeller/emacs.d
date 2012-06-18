@@ -1,0 +1,10 @@
+# -*- mode:snippet; coding: utf-8; tab-width:2 -*-
+# key: try.exceptelse
+# This was cloned from a TextMate bundle for yasnippet.
+# --
+try:
+	${1:pass}
+except ${2:Exception}, ${3:e}:
+	${4:raise $3}
+else:
+	${5:pass}

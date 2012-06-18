@@ -1,0 +1,6 @@
+# -*- mode:snippet; coding: utf-8; tab-width:2 -*-
+# key: from
+# name : from ... import ...
+# --
+from $1 import $2
+$0

@@ -1,0 +1,6 @@
+# -*- mode:snippet; coding: utf-8; tab-width:2 -*-
+# key: pprint
+#name : pprint as p
+# --
+from pprint import pprint as p
+p($0)

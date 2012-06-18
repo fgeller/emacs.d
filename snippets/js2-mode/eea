@@ -1,0 +1,11 @@
+# -*- coding: utf-8; tab-width:2; mode: snippet -*-
+# name: Ext.each
+# key: eea
+# contributor: Felix Geller <fgeller@gmail.com>
+# --
+Ext.each(
+	$1,
+	function ($2) {
+		$0
+	}
+);

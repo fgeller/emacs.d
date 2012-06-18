@@ -1,0 +1,5 @@
+# -*- mode:snippet; coding:utf-8 -*-
+# name: reference ticket
+# key: reft
+# --
+[#$1] $0

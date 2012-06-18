@@ -1,0 +1,8 @@
+# -*- mode:snippet; coding: utf-8; tab-width:2 -*-
+# key: doc
+# name: doc
+# contributor: Gabriele Lanaro <gabriele.lanaro@gmail.com>
+# expand-env ((yas/indent-line 'fixed)
+# --
+"""$0
+"""

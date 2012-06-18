@@ -1,0 +1,6 @@
+# -*- mode:snippet; coding: utf-8 -*-
+# name: log
+# key: log
+# contributor: Felix Geller
+# --
+log.debug($1)$0

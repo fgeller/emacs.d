@@ -1,0 +1,10 @@
+# -*- coding: utf-8; mode: snippet; tab-width:2; -*-
+# name: attfun
+# key: attfun
+# contributor: Felix Geller <fgeller@gmail.com>
+# --
+$1: function ($2) {
+		var me = this;
+
+    $0
+},

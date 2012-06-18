@@ -1,0 +1,6 @@
+# -*- mode:snippet; coding: utf-8; tab-width:2 -*-
+# key: ifmain
+# name : if __name__ == '__main__': ...
+# --
+if __name__ == '__main__':
+	$0

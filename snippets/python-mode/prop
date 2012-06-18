@@ -1,0 +1,13 @@
+# -*- mode:snippet; coding: utf-8; tab-width:2 -*-
+# key: prop
+#contributor : Julio Carlos Menendez <godinblack@gmail.com>
+#name : decorator: @property def x: ... @x.setter
+# expand-env: ((yas/indent-line 'fixed) (yas/wrap-around-region 'nil))
+# --
+@property
+def ${1:prop}(self):
+    ${0:pass}
+
+@$1.setter
+def $1(self, value):
+    pass

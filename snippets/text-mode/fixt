@@ -1,0 +1,5 @@
+# -*- mode:snippet; coding:utf-8 -*-
+# name: fix ticket
+# key: fixt
+# --
+[#$1 state:resolved] $0

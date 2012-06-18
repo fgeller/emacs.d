@@ -1,0 +1,5 @@
+# -*- mode:snippet; coding: utf-8; tab-width:2 -*-
+# key: ipdb
+# contributor: Fidel Ramos
+# --
+import ipdb; ipdb.set_trace()

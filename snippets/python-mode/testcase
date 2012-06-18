@@ -1,0 +1,7 @@
+# -*- mode:snippet; coding: utf-8; tab-width:2 -*-
+# key: testcase
+# name: unittest.TestCase normal
+# contributor: Gabriele Lanaro
+# --
+class ${1:TestCase}(${2:unittest.TestCase}):
+	$0

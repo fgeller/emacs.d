@@ -1,0 +1,13 @@
+# -*- coding: utf-8; tab-width: 2; mode: snippet -*-
+# name: Ext.define
+# key: edef
+# contributor: Felix Geller <fgeller@gmail.com>
+# --
+Ext.define('$1', {
+	extend: '$2',
+	initComponent: function () {
+		var me = this;
+		$0
+		me.callParent(arguments);
+	}
+});

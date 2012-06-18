@@ -1,0 +1,33 @@
+# -*- mode:snippet; coding: utf-8; tab-width:2 -*-
+# name: defm
+# key: defm
+# contributor: Yasser Gonz¨¢lez Fern¨¢ndez <yglez@uh.cu>
+# --
+def ${1:name}(self, $2):
+	"""$3
+	${2:$
+	(let* ((indent
+			(concat "\n" (make-string (current-column) 32)))
+			 (args
+			(mapconcat
+			 '(lambda (x)
+				(if (not (string= (nth 0 x) ""))
+					(concat ":param " (nth 0 x) ":")))
+			 (mapcar
+				'(lambda (x)
+				 (mapcar
+					'(lambda (x)
+					 (replace-regexp-in-string "[[:blank:]]*$" ""
+						(replace-regexp-in-string "^[[:blank:]]*" "" x)))
+					x))
+				(mapcar '(lambda (x) (split-string x "="))
+						(split-string text ",")))
+			 indent)))
+		(if (string= args "")
+			(make-string 3 34)
+		(mapconcat
+		 'identity
+		 (list "" args (make-string 3 34))
+		 indent)))
+	}
+	${4:pass}$0

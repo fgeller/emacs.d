@@ -1,0 +1,6 @@
+# -*- mode:snippet; coding: utf-8 -*-
+# name: eq
+# key: eq
+# contributor: Felix Geller
+# --
+self.assertEquals($1, $2)$0
