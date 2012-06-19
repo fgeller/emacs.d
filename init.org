@@ -295,20 +295,23 @@ Global whitespace settings. Override them in =.dir-local.el= or file
 variables.
 
 #+begin_src emacs-lisp
-(setq whitespace-style
-			'(face
-	tabs
-	spaces
-	trailing
-	lines
-	space-before-tab
-	newline
-	indentation
-	empty              ; remove all empty lines at beginning/end of buffer
-	space-after-tab
-	space-mark
-	tab-mark
-	newline-mark))
+  (setq
+   whitespace-style
+			  '(
+				  face
+				  tabs
+				  spaces
+				  trailing
+				  lines
+				  space-before-tab
+				  newline
+				  indentation::space
+				  empty ; remove all empty lines at beginning/end of buffer
+				  space-after-tab
+				  space-mark
+				  tab-mark
+				  newline-mark
+				  ))
 #+end_src
 
 Don't disable narrowing.
