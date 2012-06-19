@@ -680,11 +680,12 @@ and so on."
 	 custom bindings. Should be easy to access, therefore we use uh
 	 (both on home row on Dvorak layout)
 #+begin_src emacs-lisp
-(defvar c/map (make-keymap)
-	"Keymap for custom local bindings and functions")
-(key-chord-define-global "uh" 'c/map-prefix)
-(fset 'c/map-prefix c/map)
+	(defvar c/map (make-keymap)
+		"Keymap for custom local bindings and functions")
+	(key-chord-define-global ",." 'c/map-prefix)
+	(fset 'c/map-prefix c/map)
 #+end_src
+
 *** Various tools
 #+begin_src emacs-lisp
 (define-key c/map "g" 'c/rgrep-from-project-root)
