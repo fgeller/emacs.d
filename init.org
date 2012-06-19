@@ -264,7 +264,7 @@ the character typed."
 Don't use tabs by default. Override this in =.dir-locals.el=.
 
 #+begin_src emacs-lisp
-(setq indent-tabs-mode nil)
+(setq-default indent-tabs-mode nil)
 #+end_src
 
 Allow repeated popping of mark.
