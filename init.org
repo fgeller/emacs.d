@@ -1601,24 +1601,25 @@ Add custom notification.
 Settings
 
 #+begin_src emacs-lisp
-	(setq
-	 notmuch-fcc-dirs nil
-	 notmuch-mua-user-agent-function 'notmuch-mua-user-agent-emacs
-	 notmuch-search-oldest-first nil
-	 notmuch-show-logo nil
-	 notmuch-crypto-process-mime t
-	 notmuch-search-line-faces nil
-	notmuch-show-all-multipart/alternative-parts nil
-	 notmuch-show-insert-text/plain-hook '(
-					 notmuch-wash-tidy-citations
-					 notmuch-wash-elide-blank-lines
-					 notmuch-wash-excerpt-citations
-					 notmuch-wash-convert-inline-patch-to-part
-					 )
-	)
-	(eval-after-load 'notmuch-search
-			'(progn
-	 (add-hook 'notmuch-search-hook 'notmuch-hl-line-mode)))
+  (setq
+   notmuch-fcc-dirs nil
+   notmuch-mua-user-agent-function 'notmuch-mua-user-agent-emacs
+   notmuch-search-oldest-first nil
+   notmuch-show-logo nil
+   notmuch-crypto-process-mime t
+   notmuch-search-line-faces nil
+  notmuch-show-all-multipart/alternative-parts nil
+   notmuch-show-insert-text/plain-hook '(
+				   notmuch-wash-tidy-citations
+				   notmuch-wash-elide-blank-lines
+				   notmuch-wash-excerpt-citations
+				   notmuch-wash-convert-inline-patch-to-part
+				   )
+  )
+  (eval-after-load 'notmuch
+    '(progn
+       (add-hook 'notmuch-show-hook 'notmuch-show-turn-on-visual-line-mode)
+       (add-hook 'notmuch-search-hook 'notmuch-hl-line-mode)))
 #+end_src
 
 Saved searches.
