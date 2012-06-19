@@ -15,7 +15,7 @@ Main sources are @purcell's emacs.d [11] and the Emacswiki [12].
 * Environment
 ** Editor
 
-   Set default editor in (e)shell to emacsclient.
+	 Set default editor in (e)shell to emacsclient.
 #+begin_src emacs-lisp
 (setenv "EDITOR" "emacsclient")
 #+end_src
@@ -606,13 +606,13 @@ Configuration per-buffer.
 
 #+begin_src emacs-lisp
   (defun c/python-mode-initialization ()
-				  (subword-mode 1)
-				  (jumper-mode 1)
-				  (pretty-symbols-mode 1)
-				  (when buffer-file-name (flymake-mode 1))
-				  (add-hook 'before-save-hook 'whitespace-cleanup nil 'local)
-				  (add-hook 'before-save-hook 'jumper-update-defs-from-current-buffer nil 'local)
-  )
+    (subword-mode 1)
+    (jumper-mode 1)
+    (pretty-symbols-mode 1)
+    (when buffer-file-name (flymake-mode 1))
+    (add-hook 'before-save-hook 'whitespace-cleanup nil 'local)
+    (add-hook 'before-save-hook 'jumper-update-defs-from-current-buffer nil 'local)
+    )
   (add-hook 'python-mode-hook 'c/python-mode-initialization)
 #+end_src
 
@@ -675,9 +675,10 @@ and so on."
 	(intern (concat (symbol-name cmd) "-repeat")))
 #+end_src
 ** Custom prefix map
-Define custom map that can be used to accumulate any number of custom
-bindings. Should be easy to access, therefore we use uh (both on home
-row on Dvorak layout)
+
+	 Define custom map that can be used to accumulate any number of
+	 custom bindings. Should be easy to access, therefore we use uh
+	 (both on home row on Dvorak layout)
 #+begin_src emacs-lisp
 (defvar c/map (make-keymap)
 	"Keymap for custom local bindings and functions")
@@ -1431,53 +1432,53 @@ Load extensions to dired from dired+.
 Loads of  configuration settings that need to be split up.
 
 #+begin_src emacs-lisp
-  (setq
-   c/org-directory "~/Dropbox/org"
-   org-directory c/org-directory
-   c/work-org-directory "~/Dropbox/work"
-   c/org-task-file (concat c/org-directory "/Tasks.org")
-   c/work-org-task-file (concat c/work-org-directory "/work.org")
-   c/work-org-agenda-files `(,c/work-org-directory)
-   org-log-done t
-   org-completion-use-ido t
-   org-edit-timestamp-down-means-later t
-   org-agenda-start-on-weekday nil
-   org-agenda-ndays 14
-   org-agenda-include-diary t
-   org-agenda-window-setup 'current-window
-   org-agenda-files `(,org-directory)
-   org-fast-tag-selection-single-key 'expert
-   org-tags-column 80
-   org-default-notes-file (concat org-directory "/Notes.org")
-   org-footnote-auto-label (quote plain)
-   org-hide-emphasis-markers t
-   org-hide-leading-stars t
-   org-refile-targets '((org-agenda-files :maxlevel . 5))
-   org-src-fontify-natively t
-   org-agenda-remove-tags t
-   calendar-week-start-day 1
-   org-refile-use-outline-path 'file
-   org-refile-targets  '((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5))
-   org-outline-path-complete-in-steps nil
-   org-todo-keywords '(
-				   (sequence "TODO(t)" "STARTED(s)" "|" "DONE(d!/!)")
-				   (sequence "WAITING(w@/!)" "SOMEDAY(S)" "PROJECT(P@)" "|" "CANCELLED(c@/!)"))
-   org-clock-persistence-insinuate t
-   org-clock-persist t
-   org-clock-in-resume t
-   org-clock-in-switch-to-state "STARTED"
-   org-clock-into-drawer t
-   org-clock-out-remove-zero-time-clocks t
-   org-modules '(org-habit org-notmuch org-checklist org-eshell org-crypt org-info org-irc org-contacts)
-   org-habit-preceding-days 14
-   org-habit-show-habits-only-for-today t
-   org-habit-completed-glyph ?.
-   org-habit-today-glyph ?o
-   org-special-ctrl-k t
-   org-special-ctrl-a t
-   org-irc-link-to-logs t
-  )
-  (add-hook 'org-mode-hook 'turn-on-auto-fill)
+	(setq
+	 c/org-directory "~/Dropbox/org"
+	 org-directory c/org-directory
+	 c/work-org-directory "~/Dropbox/work"
+	 c/org-task-file (concat c/org-directory "/Tasks.org")
+	 c/work-org-task-file (concat c/work-org-directory "/work.org")
+	 c/work-org-agenda-files `(,c/work-org-directory)
+	 org-log-done t
+	 org-completion-use-ido t
+	 org-edit-timestamp-down-means-later t
+	 org-agenda-start-on-weekday nil
+	 org-agenda-ndays 14
+	 org-agenda-include-diary t
+	 org-agenda-window-setup 'current-window
+	 org-agenda-files `(,org-directory)
+	 org-fast-tag-selection-single-key 'expert
+	 org-tags-column 80
+	 org-default-notes-file (concat org-directory "/Notes.org")
+	 org-footnote-auto-label (quote plain)
+	 org-hide-emphasis-markers t
+	 org-hide-leading-stars t
+	 org-refile-targets '((org-agenda-files :maxlevel . 5))
+	 org-src-fontify-natively t
+	 org-agenda-remove-tags t
+	 calendar-week-start-day 1
+	 org-refile-use-outline-path 'file
+	 org-refile-targets  '((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5))
+	 org-outline-path-complete-in-steps nil
+	 org-todo-keywords '(
+					 (sequence "TODO(t)" "STARTED(s)" "|" "DONE(d!/!)")
+					 (sequence "WAITING(w@/!)" "SOMEDAY(S)" "PROJECT(P@)" "|" "CANCELLED(c@/!)"))
+	 org-clock-persistence-insinuate t
+	 org-clock-persist t
+	 org-clock-in-resume t
+	 org-clock-in-switch-to-state "STARTED"
+	 org-clock-into-drawer t
+	 org-clock-out-remove-zero-time-clocks t
+	 org-modules '(org-habit org-notmuch org-checklist org-eshell org-crypt org-info org-irc org-contacts)
+	 org-habit-preceding-days 14
+	 org-habit-show-habits-only-for-today t
+	 org-habit-completed-glyph ?.
+	 org-habit-today-glyph ?o
+	 org-special-ctrl-k t
+	 org-special-ctrl-a t
+	 org-irc-link-to-logs t
+	)
+	(add-hook 'org-mode-hook 'turn-on-auto-fill)
 #+end_src
 
 Load and configure org-contacts.
@@ -1587,7 +1588,7 @@ Add custom notification.
 
 ** Notmuch
 
-   Helper
+	 Helper
 
 #+begin_src emacs-lisp
 (defun c/notmuch-archive-all-and-quit ()
@@ -1604,37 +1605,37 @@ Add custom notification.
 Settings
 
 #+begin_src emacs-lisp
-  (setq
-   notmuch-fcc-dirs nil
-   notmuch-mua-user-agent-function 'notmuch-mua-user-agent-emacs
-   notmuch-search-oldest-first nil
-   notmuch-show-logo nil
-   notmuch-crypto-process-mime t
-   notmuch-search-line-faces nil
-  notmuch-show-all-multipart/alternative-parts nil
-   notmuch-show-insert-text/plain-hook '(
-				   notmuch-wash-tidy-citations
-				   notmuch-wash-elide-blank-lines
-				   notmuch-wash-excerpt-citations
-				   notmuch-wash-convert-inline-patch-to-part
-				   )
-  )
-  (eval-after-load 'notmuch
-    '(progn
-       (add-hook 'notmuch-show-hook 'notmuch-show-turn-on-visual-line-mode)
-       (add-hook 'notmuch-search-hook 'notmuch-hl-line-mode)))
+	(setq
+	 notmuch-fcc-dirs nil
+	 notmuch-mua-user-agent-function 'notmuch-mua-user-agent-emacs
+	 notmuch-search-oldest-first nil
+	 notmuch-show-logo nil
+	 notmuch-crypto-process-mime t
+	 notmuch-search-line-faces nil
+	notmuch-show-all-multipart/alternative-parts nil
+	 notmuch-show-insert-text/plain-hook '(
+					 notmuch-wash-tidy-citations
+					 notmuch-wash-elide-blank-lines
+					 notmuch-wash-excerpt-citations
+					 notmuch-wash-convert-inline-patch-to-part
+					 )
+	)
+	(eval-after-load 'notmuch
+		'(progn
+			 (add-hook 'notmuch-show-hook 'notmuch-show-turn-on-visual-line-mode)
+			 (add-hook 'notmuch-search-hook 'notmuch-hl-line-mode)))
 #+end_src
 
 Saved searches.
 
 #+begin_src emacs-lisp
-  (setq notmuch-saved-searches
+	(setq notmuch-saved-searches
 	'(("i/commits" . "tag:unread  and tag:i/commits and not \"via pb\"")
-	  ("ml/emacs*" . "tag:unread and (tag:ml/emacs-help or tag:ml/emacs-devel)")
-	  ("ml/org" . "tag:unread and (tag:ml/org)")
-	  ("ml/cedet" . "tag:unread and (tag:ml/cedet-devel)")
-	  ("ml/notmuch" . "tag:unread and (tag:ml/notmuch)")
-	  ))
+		("ml/emacs*" . "tag:unread and (tag:ml/emacs-help or tag:ml/emacs-devel)")
+		("ml/org" . "tag:unread and (tag:ml/org)")
+		("ml/cedet" . "tag:unread and (tag:ml/cedet-devel)")
+		("ml/notmuch" . "tag:unread and (tag:ml/notmuch)")
+		))
 #+end_src
 
 ** Message
