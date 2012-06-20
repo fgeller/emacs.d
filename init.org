@@ -1604,9 +1604,10 @@
 
    #+begin_src emacs-lisp
      (defun c/notify-finished-compilation (buf msg)
-       (todochiku-message (format "Compilation in %s:" buf)
-                          msg
-                          (todochiku-icon 'emacs)))
+       (todochiku-message
+        (format "Compilation in %s:" buf)
+        msg
+        (if (string-match "finished[[:space:]]*" msg) (todochiku-icon 'check) (todochiku-icon 'alert))))
      (add-hook 'compilation-finish-functions 'c/notify-finished-compilation)
    #+end_src
 
@@ -1744,7 +1745,7 @@
                    (not (erc-is-message-ctcp-and-not-action-p msg)))
           (todochiku-message (format "ERC message from: %s" nick)
                              msg
-                             (todochiku-icon 'emacs)
+                             (todochiku-icon 'irc)
                              nil)))
       nil)
     (setq erc-server-PRIVMSG-functions '(c/notify-privmsg erc-server-PRIVMSG))
@@ -1754,11 +1755,13 @@
 
   #+begin_src emacs-lisp
     (defun c/notify-nick-mentioned (match-type nick msg)
-      (when (eq match-type 'current-nick)
-        (todochiku-message (format "%s mentioned your nick." (car (split-string nick "!")))
-                           msg
-                           (todochiku-icon 'social)
-                           t)))
+      (let ((short-nick (car (split-string nick "!"))))
+        (when (and
+               (eq match-type 'current-nick)
+               (not (string= short-nick "localhost"))
+               (not (string= short-nick erc-nick)))
+          (todochiku-message
+           (format "%s mentioned your nick." short-nick) msg (todochiku-icon 'irc) t))))
     (add-hook 'erc-text-matched-hook 'c/notify-nick-mentioned)
   #+end_src
 
