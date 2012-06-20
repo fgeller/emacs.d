@@ -27,9 +27,9 @@
 
    #+begin_src emacs-lisp
      (dolist (addition '("~/.emacs.d/site-lisp"))
-             (add-to-list 'load-path addition)
-             (let ((default-directory addition))
-                     (normal-top-level-add-subdirs-to-load-path)))
+       (add-to-list 'load-path addition)
+       (let ((default-directory addition))
+         (normal-top-level-add-subdirs-to-load-path)))
    #+end_src
 
 ** Exec path
@@ -39,10 +39,10 @@
 
    #+begin_src emacs-lisp
      (defun c/set-exec-path-from-shell-PATH ()
-             (let ((path-from-shell
+       (let ((path-from-shell
               (replace-regexp-in-string "[ \t\n]*$" "" (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
-                     (setenv "PATH" path-from-shell)
-                     (setq exec-path (split-string path-from-shell path-separator))))
+         (setenv "PATH" path-from-shell)
+         (setq exec-path (split-string path-from-shell path-separator))))
      (c/set-exec-path-from-shell-PATH)
    #+end_src
 
@@ -52,32 +52,32 @@
 
   #+begin_src emacs-lisp
     (defvar c/project-root-file-patterns
-            '(".project\\'" ".xcodeproj\\'" ".sln\\'" "\\`Project.ede\\'"
-                    "\\`.git\\'" "\\`.bzr\\'" "\\`_darcs\\'" "\\`.hg\\'"))
+      '(".project\\'" ".xcodeproj\\'" ".sln\\'" "\\`Project.ede\\'"
+        "\\`.git\\'" "\\`.bzr\\'" "\\`_darcs\\'" "\\`.hg\\'"))
 
     (defun c/guess-project-root ()
-            (interactive)
-            (catch 'root
-                    (let ((dir (expand-file-name (if buffer-file-name
-                                                     (file-name-directory buffer-file-name)
-                                             default-directory)))
-                    (prev-dir nil)
-                    (pattern (mapconcat 'identity c/project-root-file-patterns "\\|")))
-                            (while (not (equal dir prev-dir))
+      (interactive)
+      (catch 'root
+        (let ((dir (expand-file-name (if buffer-file-name
+                                         (file-name-directory buffer-file-name)
+                                       default-directory)))
+              (prev-dir nil)
+              (pattern (mapconcat 'identity c/project-root-file-patterns "\\|")))
+          (while (not (equal dir prev-dir))
             (when (directory-files dir nil pattern t)
-                    (throw 'root dir))
+              (throw 'root dir))
             (setq prev-dir dir
-                                    dir (file-name-directory (directory-file-name dir)))))))
+                  dir (file-name-directory (directory-file-name dir)))))))
   #+end_src
 
   Look backward for a regex  and return group 1.
 
   #+begin_src emacs-lisp
     (defun c/find-backward (re-pattern)
-            "Look backward for a regex  and return group 1."
-            (save-excursion
-                    (re-search-backward re-pattern)
-                    (match-string 1)))
+      "Look backward for a regex  and return group 1."
+      (save-excursion
+        (re-search-backward re-pattern)
+        (match-string 1)))
   #+end_src
 
 * Loading libraries
@@ -100,12 +100,12 @@
 
    #+begin_src emacs-lisp
      (defun c/require-package (package &optional min-version no-refresh)
-             "Ask elpa to install given PACKAGE."
-             (if (package-installed-p package min-version)
-                             t
-                     (if (or (assoc package package-archive-contents) no-refresh)
+       "Ask elpa to install given PACKAGE."
+       (if (package-installed-p package min-version)
+           t
+         (if (or (assoc package package-archive-contents) no-refresh)
              (package-install package)
-                             (progn
+           (progn
              (package-refresh-contents)
              (require-package package min-version t)))))
    #+end_src
@@ -123,29 +123,29 @@
 
    #+begin_src emacs-lisp
      (setq c/elpa-packages '(
-             pretty-symbols-mode
-             session
-             dired+
-             dired-details
-             dired-details+
-             helm
-             flymake-cursor
-             expand-region
-             mark-multiple
-             yasnippet
-             magit
-             js2-mode
-             python    ;; @fgallina's python's flying circus support for Emacs.
-             org
-             pointback
-             move-text
-             mic-paren
-             wgrep
-             todochiku
-             gtags
-     ))
+                             pretty-symbols-mode
+                             session
+                             dired+
+                             dired-details
+                             dired-details+
+                             helm
+                             flymake-cursor
+                             expand-region
+                             mark-multiple
+                             yasnippet
+                             magit
+                             js2-mode
+                             python    ;; @fgallina's python's flying circus support for Emacs.
+                             org
+                             pointback
+                             move-text
+                             mic-paren
+                             wgrep
+                             todochiku
+                             gtags
+                             ))
      (dolist (package c/elpa-packages)
-                     (c/require-package package))
+       (c/require-package package))
    #+end_src
 
 ** Globally desirable external libraries
@@ -196,8 +196,8 @@
    #+begin_src emacs-lisp
      (autoload 'notmuch "notmuch" t nil)
      (eval-after-load 'notmuch
-             '(progn
-                      (require 'org-notmuch)))
+       '(progn
+          (require 'org-notmuch)))
    #+end_src
 
    Growl notifications.
@@ -222,44 +222,44 @@
 
    #+begin_src emacs-lisp
      (defun c/duplicate-line ()
-             (interactive)
-             (save-excursion
-                     (let ((line-text (buffer-substring-no-properties
-                                             (line-beginning-position)
-                                             (line-end-position))))
-                             (move-end-of-line 1)
-                             (newline)
-                             (insert line-text))))
+       (interactive)
+       (save-excursion
+         (let ((line-text (buffer-substring-no-properties
+                           (line-beginning-position)
+                           (line-end-position))))
+           (move-end-of-line 1)
+           (newline)
+           (insert line-text))))
    #+end_src
 
    Change the number at point incrementally.
 
    #+begin_src emacs-lisp
      (defun c/change-num-at-point (fn)
-             (let* ((num (string-to-number (thing-at-point 'word)))
+       (let* ((num (string-to-number (thing-at-point 'word)))
               (bounds (bounds-of-thing-at-point 'word)))
-                     (save-excursion
-                             (goto-char (car bounds))
-                             (kill-word 1)
-                             (insert (number-to-string (funcall fn num 1))))))
+         (save-excursion
+           (goto-char (car bounds))
+           (kill-word 1)
+           (insert (number-to-string (funcall fn num 1))))))
 
      (defun c/inc-num-at-point ()
-             (interactive)
-             (c/change-num-at-point '+))
+       (interactive)
+       (c/change-num-at-point '+))
 
      (defun c/dec-num-at-point ()
-             (interactive)
-             (c/change-num-at-point '-))
+       (interactive)
+       (c/change-num-at-point '-))
    #+end_src
 
    Goto the matching paren of when point is looking at one.
 
    #+begin_src emacs-lisp
      (defun c/goto-match-paren (arg)
-             "Go to the matching parenthesis if on parenthesis, otherwise insert
+       "Go to the matching parenthesis if on parenthesis, otherwise insert
      the character typed."
-             (interactive "p")
-             (cond ((looking-at "\\s\(") (forward-list 1) (backward-char 1))
+       (interactive "p")
+       (cond ((looking-at "\\s\(") (forward-list 1) (backward-char 1))
              ((looking-at "\\s\)") (forward-char 1) (backward-list 1))
              (t                    (self-insert-command (or arg 1))) ))
    #+end_src
@@ -302,21 +302,21 @@
    #+begin_src emacs-lisp
      (setq
       whitespace-style
-                             '(
-                                     face
-                                     tabs
-                                     spaces
-                                     trailing
-                                     lines
-                                     space-before-tab
-                                     newline
-                                     indentation::space
-                                     empty ; remove all empty lines at beginning/end of buffer
-                                     space-after-tab
-                                     space-mark
-                                     tab-mark
-                                     newline-mark
-                                     ))
+      '(
+        face
+        tabs
+        spaces
+        trailing
+        lines
+        space-before-tab
+        newline
+        indentation::space
+        empty ; remove all empty lines at beginning/end of buffer
+        space-after-tab
+        space-mark
+        tab-mark
+        newline-mark
+        ))
    #+end_src
 
    Don't disable narrowing.
@@ -360,7 +360,7 @@
 
    #+begin_src emacs-lisp
      (defun zap-to-isearch (rbeg rend)
-             "Kill the region between the mark and the closest portion of
+       "Kill the region between the mark and the closest portion of
      the isearch match string. The behaviour is meant to be analogous
      to zap-to-char; let's call it zap-to-isearch. The deleted region
      does not include the isearch word. This is meant to be bound only
@@ -371,20 +371,20 @@
      it is much more efficient than using the arrows), it happens a
      lot that you could just delete the active region between the mark
      and the point, not include the isearch word."
-             (interactive "r")
-             (when (not mark-active)
-                     (error "Mark is not active"))
-             (let* ((isearch-bounds (list isearch-other-end (point)))
+       (interactive "r")
+       (when (not mark-active)
+         (error "Mark is not active"))
+       (let* ((isearch-bounds (list isearch-other-end (point)))
               (ismin (apply 'min isearch-bounds))
               (ismax (apply 'max isearch-bounds))
               )
-                     (if (< (mark) ismin)
+         (if (< (mark) ismin)
              (kill-region (mark) ismin)
-                             (if (> (mark) ismax)
-                     (kill-region ismax (mark))
+           (if (> (mark) ismax)
+               (kill-region ismax (mark))
              (error "Internal error in isearch kill function.")))
-                     (isearch-exit)
-                     ))
+         (isearch-exit)
+         ))
    #+end_src
 
    Exit isearch, but at the other end of the match [5]. For example:
@@ -400,32 +400,32 @@
 
    #+begin_src emacs-lisp
      (defun isearch-exit-other-end (rbeg rend)
-             "Exit isearch, but at the other end of the search string.
+       "Exit isearch, but at the other end of the search string.
      This is useful when followed by an immediate kill."
-             (interactive "r")
-             (isearch-exit)
-             (goto-char isearch-other-end))
+       (interactive "r")
+       (isearch-exit)
+       (goto-char isearch-other-end))
    #+end_src
 
    Yank current symbol as regex, rather than word (=C-w=) [6].
 
    #+begin_src emacs-lisp
      (defun isearch-yank-regexp (regexp)
-             "Pull REGEXP into search regexp."
-             (let ((isearch-regexp nil)) ;; Dynamic binding of global.
-                     (isearch-yank-string regexp))
-             (if (not isearch-regexp)
-                             (isearch-toggle-regexp))
-             (isearch-search-and-update))
+       "Pull REGEXP into search regexp."
+       (let ((isearch-regexp nil)) ;; Dynamic binding of global.
+         (isearch-yank-string regexp))
+       (if (not isearch-regexp)
+           (isearch-toggle-regexp))
+       (isearch-search-and-update))
      (defun isearch-yank-symbol ()
-             "Put symbol at current point into search string."
-             (interactive)
-             (let ((sym (find-tag-default)))
-                     (message "sym: %s" sym)
-                     (if (null sym)
+       "Put symbol at current point into search string."
+       (interactive)
+       (let ((sym (find-tag-default)))
+         (message "sym: %s" sym)
+         (if (null sym)
              (message "No symbol at point")
-                             (isearch-yank-regexp
-                              (concat "\\_<" (regexp-quote sym) "\\_>")))))
+           (isearch-yank-regexp
+            (concat "\\_<" (regexp-quote sym) "\\_>")))))
    #+end_src
 
 ** grep
@@ -448,9 +448,9 @@
 
    #+begin_src emacs-lisp
      (defun c/rgrep-from-project-root ()
-             (interactive)
-             (let ((default-directory (c/guess-project-root)))
-                     (call-interactively 'rgrep)))
+       (interactive)
+       (let ((default-directory (c/guess-project-root)))
+         (call-interactively 'rgrep)))
    #+end_src
 
    Appearance of the results buffer.
@@ -459,7 +459,7 @@
      (setq
       grep-highlight-matches t
       grep-scroll-output t
-     )
+      )
    #+end_src
 
 ** ispell
@@ -468,7 +468,7 @@
 
    #+begin_src emacs-lisp
      (when (executable-find "aspell")
-             (setq ispell-program-name "aspell"
+       (setq ispell-program-name "aspell"
              ispell-extra-args '("--sug-mode=ultra")))
    #+end_src
 
@@ -502,21 +502,21 @@
      (setq
       compilation-scroll-output t
       compilation-message-face nil  ;; don't underline
-     )
+      )
    #+end_src
 
 ** Flymake
 
    #+begin_src emacs-lisp
      (eval-after-load 'flymake
-             '(progn
-                      (require 'flymake-cursor)
-                      ;; don't want this on Mac OS X -- http://koansys.com/tech/emacs-hangs-on-flymake-under-os-x
-                      (setq flymake-gui-warnings-enabled nil)
-                      (setq flymake-start-syntax-check-on-newline t)
-                      (setq flymake-compilation-prevents-syntax-check nil)
-                      (setq flymake-run-in-place nil)  ;; I want my copies in the system temp dir.
-     ))
+       '(progn
+          (require 'flymake-cursor)
+          ;; don't want this on Mac OS X -- http://koansys.com/tech/emacs-hangs-on-flymake-under-os-x
+          (setq flymake-gui-warnings-enabled nil)
+          (setq flymake-start-syntax-check-on-newline t)
+          (setq flymake-compilation-prevents-syntax-check nil)
+          (setq flymake-run-in-place nil)  ;; I want my copies in the system temp dir.
+          ))
    #+end_src
 
 ** Javascript
@@ -570,8 +570,8 @@
 
    #+begin_src emacs-lisp
      (defun c/emacs-lisp-mode-initialization ()
-             (pretty-symbols-mode 1)
-             (add-hook 'before-save-hook 'whitespace-cleanup nil 'local))
+       (pretty-symbols-mode 1)
+       (add-hook 'before-save-hook 'whitespace-cleanup nil 'local))
      (add-hook 'emacs-lisp-mode-hook 'c/emacs-lisp-mode-initialization)
    #+end_src
 
@@ -582,34 +582,34 @@
 
    #+begin_src emacs-lisp
      (eval-after-load "python"
-             '(progn
-                      (setq python-shell-interpreter "ipython"
-                      python-shell-interpreter-args ""
-                      python-shell-prompt-regexp "In \\[[0-9]+\\]: "
-                      python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
-                      python-shell-completion-setup-code
-                      "from IPython.core.completerlib import module_completion"
-                      python-shell-completion-module-string-code
-                      "';'.join(module_completion('''%s'''))\n"
-                      python-shell-completion-string-code
-                      "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
-             ))
+       '(progn
+          (setq python-shell-interpreter "ipython"
+                python-shell-interpreter-args ""
+                python-shell-prompt-regexp "In \\[[0-9]+\\]: "
+                python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
+                python-shell-completion-setup-code
+                "from IPython.core.completerlib import module_completion"
+                python-shell-completion-module-string-code
+                "';'.join(module_completion('''%s'''))\n"
+                python-shell-completion-string-code
+                "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
+          ))
    #+end_src
 
    Special configuration for flymake
 
    #+begin_src emacs-lisp
      (defun c/flymake-python-init ()
-             (let* ((temp-file (flymake-init-create-temp-buffer-copy
-                                      'flymake-create-temp-intemp))
+       (let* ((temp-file (flymake-init-create-temp-buffer-copy
+                          'flymake-create-temp-intemp))
               (local-file (file-relative-name
-                     temp-file
-                     (file-name-directory buffer-file-name))))
-                     (list "pycheckers"  (list local-file))))
+                           temp-file
+                           (file-name-directory buffer-file-name))))
+         (list "pycheckers"  (list local-file))))
      (eval-after-load 'flymake
-             '(progn
-                      (add-to-list 'flymake-allowed-file-name-masks
-                     (list "\\.py\\'" 'c/flymake-python-init))))
+       '(progn
+          (add-to-list 'flymake-allowed-file-name-masks
+                       (list "\\.py\\'" 'c/flymake-python-init))))
    #+end_src
 
    Configuration per-buffer.
@@ -634,19 +634,19 @@
 
     #+begin_src emacs-lisp
       (defun c/run-python-test ()
-       (interactive)
-       (let* ((file-name buffer-file-name)
-              (project-root (c/guess-project-root))
-              (class-name (c/find-backward "class \\(.+\\)("))
-              (fun-name (c/find-backward "def \\(test.+\\)("))
-              (cmd (format
-              "cd %s && TESTSEL=%s:%s.%s make tests"
-              project-root
-              file-name
-              class-name
-              fun-name)))
-               (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
-                      (compile cmd t))))
+        (interactive)
+        (let* ((file-name buffer-file-name)
+               (project-root (c/guess-project-root))
+               (class-name (c/find-backward "class \\(.+\\)("))
+               (fun-name (c/find-backward "def \\(test.+\\)("))
+               (cmd (format
+                     "cd %s && TESTSEL=%s:%s.%s make tests"
+                     project-root
+                     file-name
+                     class-name
+                     fun-name)))
+          (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
+            (compile cmd t))))
     #+end_src
 
 ** SQL
@@ -655,7 +655,7 @@
 
    #+begin_src emacs-lisp
      (eval-after-load 'sql
-             '(setq sql-send-terminator t))
+       '(setq sql-send-terminator t))
    #+end_src
 
 * Key Bindings
@@ -663,7 +663,7 @@
    Helper [3] to make any command repeatable analogously to =C-x e e e=
    #+begin_src emacs-lisp
      (defun make-repeatable-command (cmd)
-             "Returns a new command that is a repeatable version of CMD.
+       "Returns a new command that is a repeatable version of CMD.
      The new command is named CMD-repeat.  CMD should be a quoted
      command.
 
@@ -675,14 +675,14 @@
      will create a new command called foo-repeat.  Typing C-c a will
      just invoke foo.  Typing C-c a a a will invoke foo three times,
      and so on."
-             (fset (intern (concat (symbol-name cmd) "-repeat"))
+       (fset (intern (concat (symbol-name cmd) "-repeat"))
              `(lambda ,(help-function-arglist cmd) ;; arg list
-                      ,(format "A repeatable version of `%s'." (symbol-name cmd)) ;; doc string
-                      ,(interactive-form cmd) ;; interactive form
-                      ;; see also repeat-message-function
-                      (setq last-repeatable-command ',cmd)
-                      (repeat nil)))
-             (intern (concat (symbol-name cmd) "-repeat")))
+                ,(format "A repeatable version of `%s'." (symbol-name cmd)) ;; doc string
+                ,(interactive-form cmd) ;; interactive form
+                ;; see also repeat-message-function
+                (setq last-repeatable-command ',cmd)
+                (repeat nil)))
+       (intern (concat (symbol-name cmd) "-repeat")))
    #+end_src
 ** Custom prefix map
 
@@ -691,7 +691,7 @@
    (both on home row on Dvorak layout)
    #+begin_src emacs-lisp
      (defvar c/map (make-keymap)
-             "Keymap for custom local bindings and functions")
+       "Keymap for custom local bindings and functions")
      (key-chord-define-global ",." 'c/map-prefix)
      (fset 'c/map-prefix c/map)
    #+end_src
@@ -754,7 +754,7 @@
      (setq default-input-method "MacOSX")
      (global-set-key (kbd "S-`") 'ns-next-frame)
      (global-set-key (kbd "S-h") 'ns-do-hide-others)
-     ;(setq mouse-wheel-scroll-amount '(0.0001))
+                                             ;(setq mouse-wheel-scroll-amount '(0.0001))
    #+end_src
 ** Dired
 
@@ -768,19 +768,19 @@
 
    #+begin_src emacs-lisp
      (eval-after-load 'magit
-             '(define-key magit-status-mode-map (kbd "C-!") 'c/magit-full-push))
+       '(define-key magit-status-mode-map (kbd "C-!") 'c/magit-full-push))
    #+end_src
 
 ** Email
    #+begin_src emacs-lisp
      (eval-after-load 'message
-     '(define-key message-mode-map (kbd "C-c C-b") 'c/goto-message-body))
+       '(define-key message-mode-map (kbd "C-c C-b") 'c/goto-message-body))
      (eval-after-load 'notmuch
-     '(progn
-     (define-key notmuch-search-mode-map (kbd "Q") 'c/notmuch-archive-all-and-quit)
-     (define-key notmuch-search-mode-map (kbd "a") 'c/notmuch-archive)
-     (define-key notmuch-search-mode-map (kbd "g") 'notmuch-search-refresh-view)
-     (define-key notmuch-hello-mode-map "g" 'notmuch-hello-update)))
+       '(progn
+          (define-key notmuch-search-mode-map (kbd "Q") 'c/notmuch-archive-all-and-quit)
+          (define-key notmuch-search-mode-map (kbd "a") 'c/notmuch-archive)
+          (define-key notmuch-search-mode-map (kbd "g") 'notmuch-search-refresh-view)
+          (define-key notmuch-hello-mode-map "g" 'notmuch-hello-update)))
    #+end_src
 ** Helm
    Add help specific bindings, the =a= is a residue from helm's previous
@@ -829,7 +829,7 @@
    #+begin_src emacs-lisp
      (defvar c/scroll-half-window-was-up nil "Was the last half-scrolling going up?")
      (defun c/scroll-half-window ()
-                     "By default, attention go forward by half a window as follows:
+       "By default, attention go forward by half a window as follows:
                      If point is in upper half of window, then point jumps to lower half.
                      (current line will change)
                      If point is in lower half, the scroll up to make point in upper half.
@@ -842,31 +842,31 @@
 
                      The actual destinations of the point are controlled by `upper-precent' and
                      `lower-percent'."
-                     (interactive)
-                     (let* ( ;;manually set these personal preferences
-                      (upper-percent 0.15)
-                      (lower-percent 0.85)
-                      (up-command-list '(previous-line
-                                                     scroll-down
-                                                     pager-page-up))
-                      ;; number of lines shown in selected window, one less due to mode line
-                      (winlines (1- (window-height (selected-window))))
-                      ;; number of lines above and below point
-                      (above (+ (count-lines (window-start) (point))
-                                      -1 (if (= (current-column) 0) 1 0)))
-                      (below (- winlines above 1)))
-                             ;; compute if we should go up or not
-                             (let ((should-up (or (and c/scroll-half-window-was-up
-                                     (eq last-command 'c/scroll-half-window))
-                                      (memq last-command up-command-list))))
-             ;; dispatch depending on whether point is in upper half or lower half
-             (if (< above below)
-                     (apply (if should-up 'scroll-down 'forward-line) ;upper
+       (interactive)
+       (let* ( ;;manually set these personal preferences
+              (upper-percent 0.15)
+              (lower-percent 0.85)
+              (up-command-list '(previous-line
+                                 scroll-down
+                                 pager-page-up))
+              ;; number of lines shown in selected window, one less due to mode line
+              (winlines (1- (window-height (selected-window))))
+              ;; number of lines above and below point
+              (above (+ (count-lines (window-start) (point))
+                        -1 (if (= (current-column) 0) 1 0)))
+              (below (- winlines above 1)))
+         ;; compute if we should go up or not
+         (let ((should-up (or (and c/scroll-half-window-was-up
+                                   (eq last-command 'c/scroll-half-window))
+                              (memq last-command up-command-list))))
+           ;; dispatch depending on whether point is in upper half or lower half
+           (if (< above below)
+               (apply (if should-up 'scroll-down 'forward-line) ;upper
                       (list (- (floor (* winlines lower-percent)) above)))
-                     (apply (if should-up 'forward-line 'scroll-down) ;lower
-                      (list (- (floor (* winlines upper-percent)) above))))
-             ;; done, remember last direction before exit
-             (setq c/scroll-half-window-was-up should-up))))
+             (apply (if should-up 'forward-line 'scroll-down) ;lower
+                    (list (- (floor (* winlines upper-percent)) above))))
+           ;; done, remember last direction before exit
+           (setq c/scroll-half-window-was-up should-up))))
    #+end_src
 
    Bind the scrolling for easy access
@@ -927,9 +927,9 @@
      (define-key global-map (kbd "C-c a") 'org-agenda)
      (define-key global-map (kbd "C-c c") 'org-capture)
      (eval-after-load 'org-agenda
-             '(define-key org-agenda-mode-map (kbd "C-c t") 'org-agenda-todo))
+       '(define-key org-agenda-mode-map (kbd "C-c t") 'org-agenda-todo))
      (eval-after-load 'org
-             '(define-key org-mode-map (kbd "C-c t") 'org-todo))
+       '(define-key org-mode-map (kbd "C-c t") 'org-todo))
    #+end_src
 ** Version control
    #+begin_src emacs-lisp
@@ -948,23 +948,23 @@
 
     #+begin_src emacs-lisp
       (eval-after-load 'js2-mode
-              '(progn
-                       (define-key js2-mode-map (kbd "C-c !") (make-repeatable-command 'js2-next-error))
-                       ))
+        '(progn
+           (define-key js2-mode-map (kbd "C-c !") (make-repeatable-command 'js2-next-error))
+           ))
     #+end_src
 
 *** Python mode
 
     #+begin_src emacs-lisp
       (eval-after-load 'python
-              '(progn
-                       (define-key python-mode-map (kbd "C-c t") 'c/run-python-test)
-                       (define-key python-mode-map (kbd "C-c b") 'python-insert-breakpoint)
-                       (define-key python-mode-map (kbd "RET") 'newline-and-indent)
-                       (eval-after-load 'flymake
-       '(progn
-                      (define-key python-mode-map (kbd "C-c !") (make-repeatable-command 'flymake-goto-next-error))))
-                       ))
+        '(progn
+           (define-key python-mode-map (kbd "C-c t") 'c/run-python-test)
+           (define-key python-mode-map (kbd "C-c b") 'python-insert-breakpoint)
+           (define-key python-mode-map (kbd "RET") 'newline-and-indent)
+           (eval-after-load 'flymake
+             '(progn
+                (define-key python-mode-map (kbd "C-c !") (make-repeatable-command 'flymake-goto-next-error))))
+           ))
     #+end_src
 
 * Appearance
@@ -974,21 +974,21 @@
      (setq
       blink-cursor-delay 0
       blink-cursor-interval 0.5
-             use-file-dialog nil
-             use-dialog-box nil
-             inhibit-startup-screen t
-             inhibit-startup-echo-area-message t
-             truncate-lines t
-             truncate-partial-width-windows nil
-             visible-bell nil
-             transient-mark-mode t   ;; highlight the active region when mark is active
-             show-trailing-whitespace nil ;; don't show trailing whitespace globally
-             blink-matching-paren t
-             ;;line-spacing 0.2
-             ;;column-number-mode t
-             ;;size-indication-mode t
-             ;;mouse-yank-at-point t
-     )
+      use-file-dialog nil
+      use-dialog-box nil
+      inhibit-startup-screen t
+      inhibit-startup-echo-area-message t
+      truncate-lines t
+      truncate-partial-width-windows nil
+      visible-bell nil
+      transient-mark-mode t   ;; highlight the active region when mark is active
+      show-trailing-whitespace nil ;; don't show trailing whitespace globally
+      blink-matching-paren t
+      ;;line-spacing 0.2
+      ;;column-number-mode t
+      ;;size-indication-mode t
+      ;;mouse-yank-at-point t
+      )
      (tool-bar-mode -1)
      (set-scroll-bar-mode nil)
      (setq default-frame-alist '((left-fringe . 0) (right-fringe . 0)))
@@ -1017,7 +1017,7 @@
      (setq c/mono-space-font-family "Consolas")
      (setq c/mono-space-font-height 170)
      (set-face-attribute 'default nil
-             :family c/variable-width-font-family :height c/variable-width-font-height :weight 'normal)
+                         :family c/variable-width-font-family :height c/variable-width-font-height :weight 'normal)
    #+end_src
 
    Define some helpers to switch between variable-width and mono-spaced
@@ -1025,16 +1025,16 @@
 
    #+begin_src emacs-lisp
      (defun c/set-variable-width-font ()
-             (interactive)
-             (variable-pitch-mode t)
-             (set-face-attribute 'variable-pitch nil
-                                             :family c/variable-width-font-family :height c/variable-width-font-height :weight 'normal))
+       (interactive)
+       (variable-pitch-mode t)
+       (set-face-attribute 'variable-pitch nil
+                           :family c/variable-width-font-family :height c/variable-width-font-height :weight 'normal))
 
      (defun c/set-mono-space-font ()
-             (interactive)
-             (variable-pitch-mode t)
-             (set-face-attribute 'variable-pitch nil
-                                             :family c/mono-space-font-family :height c/mono-space-font-height :weight 'normal))
+       (interactive)
+       (variable-pitch-mode t)
+       (set-face-attribute 'variable-pitch nil
+                           :family c/mono-space-font-family :height c/mono-space-font-height :weight 'normal))
    #+end_src
 
    Use monospace for some modes.
@@ -1057,64 +1057,64 @@
    Less noise in the mode-line. Based on several sources [2]
    #+begin_src emacs-lisp
      (defun c/mode-line-js2-errors ()
-     (interactive)
-             (when (string= "JavaScript-IDE" mode-name)
-                     (let* (
-                              (errs (copy-sequence (js2-ast-root-errors js2-mode-ast)))
-                              (warns (copy-sequence (js2-ast-root-warnings js2-mode-ast)))
-                              (errs-length (safe-length errs))
-                              (warns-length (safe-length warns)))
-             (when (or (< 0 errs-length) (< 0 warns-length))
-                     (concat
-                      " τ:"
-                      (propertize (number-to-string errs-length) 'face 'flymake-errline)
-                      ","
-                      (propertize (number-to-string warns-length) 'face 'flymake-warnline))))))
+       (interactive)
+       (when (string= "JavaScript-IDE" mode-name)
+         (let* (
+                (errs (copy-sequence (js2-ast-root-errors js2-mode-ast)))
+                (warns (copy-sequence (js2-ast-root-warnings js2-mode-ast)))
+                (errs-length (safe-length errs))
+                (warns-length (safe-length warns)))
+           (when (or (< 0 errs-length) (< 0 warns-length))
+             (concat
+              " τ:"
+              (propertize (number-to-string errs-length) 'face 'flymake-errline)
+              ","
+              (propertize (number-to-string warns-length) 'face 'flymake-warnline))))))
      (defun c/mode-line-flymake ()
-             (when (and
-                      (boundp 'flymake-mode-line-e-w)
-                      flymake-mode-line-e-w
-                      (not (string= "" flymake-mode-line-e-w))
-                      (not (string= "0/0" flymake-mode-line-e-w)))
-                     (progn
-             (string-match "\\([0-9]+\\)/\\([0-9]+\\)" flymake-mode-line-e-w)
-             (let ((error-str (match-string 1 flymake-mode-line-e-w))
-             (warn-str (match-string 2 flymake-mode-line-e-w)))
-                     (concat " τ:" (propertize error-str 'face 'flymake-errline) "," (propertize warn-str 'face 'flymake-warnline))))))
+       (when (and
+              (boundp 'flymake-mode-line-e-w)
+              flymake-mode-line-e-w
+              (not (string= "" flymake-mode-line-e-w))
+              (not (string= "0/0" flymake-mode-line-e-w)))
+         (progn
+           (string-match "\\([0-9]+\\)/\\([0-9]+\\)" flymake-mode-line-e-w)
+           (let ((error-str (match-string 1 flymake-mode-line-e-w))
+                 (warn-str (match-string 2 flymake-mode-line-e-w)))
+             (concat " τ:" (propertize error-str 'face 'flymake-errline) "," (propertize warn-str 'face 'flymake-warnline))))))
      (defun c/mode-line-compilation ()
-             (cond
-              ((string= ":exit [2]" mode-line-process) (propertize " x" 'face 'error))
-              ((string= ":exit [0]" mode-line-process) " ✓")
-              (t mode-line-process)))
+       (cond
+        ((string= ":exit [2]" mode-line-process) (propertize " x" 'face 'error))
+        ((string= ":exit [0]" mode-line-process) " ✓")
+        (t mode-line-process)))
      (setq-default
       mode-line-format
       (list
-             " "
-             mode-line-mule-info ;; Info about the active input method and coding-system
-             mode-line-remote ;; Small indicator for tramp'ed files
-             '(:eval (propertize "%b" 'face 'mode-line-buffer-id)) ;; buffer name
-             '(:eval (when buffer-read-only (propertize "%" 'face 'mode-line)))
-             '(:eval (when (buffer-modified-p) (propertize "*" 'face 'mode-line-highlight)))
-             (propertize " %l:%c %p/%I " 'face 'mode-line) ;; line
-     ;  mode-name
-             (list
-              (propertize "%[" 'help-echo "Recursive edit, type C-M-c to get out")
-              `(:propertize ("" mode-name)
+       " "
+       mode-line-mule-info ;; Info about the active input method and coding-system
+       mode-line-remote ;; Small indicator for tramp'ed files
+       '(:eval (propertize "%b" 'face 'mode-line-buffer-id)) ;; buffer name
+       '(:eval (when buffer-read-only (propertize "%" 'face 'mode-line)))
+       '(:eval (when (buffer-modified-p) (propertize "*" 'face 'mode-line-highlight)))
+       (propertize " %l:%c %p/%I " 'face 'mode-line) ;; line
+                                             ;  mode-name
+       (list
+        (propertize "%[" 'help-echo "Recursive edit, type C-M-c to get out")
+        `(:propertize ("" mode-name)
                       mouse-face mode-line-highlight
                       local-map ,mode-line-major-mode-keymap)
-              (propertize "%n" 'help-echo "mouse-2: Remove narrowing from the current buffer"
-              'mouse-face 'mode-line-highlight
-              'local-map (make-mode-line-mouse-map
-                                      'mouse-2 #'mode-line-widen))
-              (propertize "%]" 'help-echo "Recursive edit, type C-M-c to get out")
-              )
-             '(:eval (c/mode-line-compilation))
-             '(vc-mode vc-mode)
-             '(:eval (c/mode-line-flymake))
-             '(:eval (c/mode-line-js2-errors))
-             ""
-             mode-line-client
-             )
+        (propertize "%n" 'help-echo "mouse-2: Remove narrowing from the current buffer"
+                    'mouse-face 'mode-line-highlight
+                    'local-map (make-mode-line-mouse-map
+                                'mouse-2 #'mode-line-widen))
+        (propertize "%]" 'help-echo "Recursive edit, type C-M-c to get out")
+        )
+       '(:eval (c/mode-line-compilation))
+       '(vc-mode vc-mode)
+       '(:eval (c/mode-line-flymake))
+       '(:eval (c/mode-line-js2-errors))
+       ""
+       mode-line-client
+       )
       )
    #+end_src
 ** Buffer
@@ -1133,7 +1133,7 @@
      (setq
       recentf-max-saved-items 300
       recentf-exclude '("/tmp/" "/ssh:" "/sudo:")
-     )
+      )
    #+end_src
 
    Don't ask when reverting buffer to buffer-file's contents.
@@ -1168,9 +1168,9 @@
 
     #+begin_src emacs-lisp
       (setq backup-directory-alist
-      `((".*" . ,c/saved-directory)))
+            `((".*" . ,c/saved-directory)))
       (setq auto-save-file-name-transforms
-      `((".*" ,c/saved-directory t)))
+            `((".*" ,c/saved-directory t)))
     #+end_src
 
     Do not delete old versions silently.
@@ -1193,11 +1193,11 @@
 
     #+begin_src emacs-lisp
       (defvar c/persistent-scratch-filename
-              (expand-file-name (concat c/saved-directory "emacs-persistent-scratch"))
-              "Location of *scratch* file contents for persistent-scratch.")
+        (expand-file-name (concat c/saved-directory "emacs-persistent-scratch"))
+        "Location of *scratch* file contents for persistent-scratch.")
       (defvar c/persistent-scratch-backup-directory
-              (expand-file-name (concat c/saved-directory "emacs-persistent-scratch-backups/"))
-              "Location of backups of the *scratch* buffer contents for
+        (expand-file-name (concat c/saved-directory "emacs-persistent-scratch-backups/"))
+        "Location of backups of the *scratch* buffer contents for
                       persistent-scratch.")
       (make-directory c/persistent-scratch-backup-directory t)
     #+end_src
@@ -1206,28 +1206,28 @@
 
     #+begin_src emacs-lisp
       (defun c/make-persistent-scratch-backup-name ()
-              "Create a filename to backup the current scratch file by
+        "Create a filename to backup the current scratch file by
               concatenating C/PERSISTENT-SCRATCH-BACKUP-DIRECTORY with the
               current date and time."
-              (concat
-               c/persistent-scratch-backup-directory
-               (replace-regexp-in-string
-                      (regexp-quote " ") "-" (format-time-string "%d%m%y_%H%M%S"))))
+        (concat
+         c/persistent-scratch-backup-directory
+         (replace-regexp-in-string
+          (regexp-quote " ") "-" (format-time-string "%d%m%y_%H%M%S"))))
     #+end_src
 
     Helper to save the contents of the scratch buffer to a file.
 
     #+begin_src emacs-lisp
       (defun c/save-persistent-scratch ()
-              "Write the contents of *scratch* to the file name
+        "Write the contents of *scratch* to the file name
               C/PERSISTENT-SCRATCH-FILENAME, making a backup copy in
               C/PERSISTENT-SCRATCH-BACKUP-DIRECTORY."
-              (with-current-buffer (get-buffer "*scratch*")
-                      (if (file-exists-p c/persistent-scratch-filename)
+        (with-current-buffer (get-buffer "*scratch*")
+          (if (file-exists-p c/persistent-scratch-filename)
               (copy-file c/persistent-scratch-filename
-                               (c/make-persistent-scratch-backup-name)))
-                      (write-region (point-min) (point-max)
-                              c/persistent-scratch-filename)))
+                         (c/make-persistent-scratch-backup-name)))
+          (write-region (point-min) (point-max)
+                        c/persistent-scratch-filename)))
 
     #+end_src
 
@@ -1235,10 +1235,10 @@
 
     #+begin_src emacs-lisp
       (defun c/load-persistent-scratch ()
-              "Load the contents of C/PERSISTENT-SCRATCH-FILENAME into the
+        "Load the contents of C/PERSISTENT-SCRATCH-FILENAME into the
               scratch buffer, clearing its contents first."
-              (if (file-exists-p c/persistent-scratch-filename)
-                              (with-current-buffer (get-buffer "*scratch*")
+        (if (file-exists-p c/persistent-scratch-filename)
+            (with-current-buffer (get-buffer "*scratch*")
               (delete-region (point-min) (point-max))
               (insert-file-contents c/persistent-scratch-filename))))
     #+end_src
@@ -1271,20 +1271,20 @@
 
    #+begin_src emacs-lisp
      (defvar c/helm-c-source-project-file-search
-             `((name . "Project File Search")
-                     (init . (lambda ()
-                                     (setq
-                                      helm-default-directory default-directory
-                                      project-root-folder (c/guess-project-root))))
-                     (candidates . (lambda ()
-                                     (start-process-shell-command "file-search-process" nil
+       `((name . "Project File Search")
+         (init . (lambda ()
+                   (setq
+                    helm-default-directory default-directory
+                    project-root-folder (c/guess-project-root))))
+         (candidates . (lambda ()
+                         (start-process-shell-command "file-search-process" nil
                                                       "gfind" (format "%s -iname '*%s*' -print" project-root-folder helm-pattern))))
-                     (keymap . ,helm-generic-files-map)
-                     (mode-line . helm-generic-file-mode-line-string)
-                     (match helm-c-match-on-basename)
-                     (type . file)
-                     (requires-pattern . 4))
-             "Source for searching files in current project recursively.")
+         (keymap . ,helm-generic-files-map)
+         (mode-line . helm-generic-file-mode-line-string)
+         (match helm-c-match-on-basename)
+         (type . file)
+         (requires-pattern . 4))
+       "Source for searching files in current project recursively.")
    #+end_src
 
 ** Accessors to sources
@@ -1293,16 +1293,16 @@
 
    #+begin_src emacs-lisp
      (defun c/helm-jump ()
-             (interactive)
-             (helm-other-buffer
-              '(
-                      helm-c-source-buffers-list
-                      helm-c-source-ctags
-                      helm-c-source-recentf
-                      c/helm-c-source-project-file-search
-                      helm-c-source-buffer-not-found
-                      )
-              "*c/helm-jump*"))
+       (interactive)
+       (helm-other-buffer
+        '(
+          helm-c-source-buffers-list
+          helm-c-source-ctags
+          helm-c-source-recentf
+          c/helm-c-source-project-file-search
+          helm-c-source-buffer-not-found
+          )
+        "*c/helm-jump*"))
    #+end_src
 
    Wrapper to =helm-do-grep= that sends the prefix argument so we search
@@ -1310,9 +1310,9 @@
 
    #+begin_src emacs-lisp
      (defun c/helm-do-rgrep ()
-             (interactive)
-             (let ((current-prefix-arg '(4)))
-                     (call-interactively 'helm-do-grep)))
+       (interactive)
+       (let ((current-prefix-arg '(4)))
+         (call-interactively 'helm-do-grep)))
    #+end_src
 
 * Eshell
@@ -1328,9 +1328,9 @@
 
   #+begin_src emacs-lisp
     (defun c/eshell-with-prefix ()
-            (interactive)
-            (setq current-prefix-arg '(4))
-            (call-interactively 'eshell))
+      (interactive)
+      (setq current-prefix-arg '(4))
+      (call-interactively 'eshell))
   #+end_src
 
 ** Prompt
@@ -1340,7 +1340,7 @@
 
     #+begin_src emacs-lisp
       (defun c/eshell-prompt-function ()
-              (concat (c/eshell-git-info) (c/eshell-replace-prompt-prefixes) "/ "))
+        (concat (c/eshell-git-info) (c/eshell-replace-prompt-prefixes) "/ "))
       (setq eshell-prompt-function #'c/eshell-prompt-function)
     #+end_src
 
@@ -1355,13 +1355,13 @@
 
     #+begin_src emacs-lisp
       (defun c/eshell-replace-prompt-prefixes ()
-              (let ((absolute-path (eshell/pwd)))
-                      (cond ((string-match (getenv "HOME") absolute-path)
-                       (replace-match "~" nil nil absolute-path))
-                      ((string-match "/ssh:\\(.+\\):" absolute-path)
-                       (replace-match (concat "@" (match-string 1 absolute-path) " ")  nil nil absolute-path))
-                      (t
-                       absolute-path))))
+        (let ((absolute-path (eshell/pwd)))
+          (cond ((string-match (getenv "HOME") absolute-path)
+                 (replace-match "~" nil nil absolute-path))
+                ((string-match "/ssh:\\(.+\\):" absolute-path)
+                 (replace-match (concat "@" (match-string 1 absolute-path) " ")  nil nil absolute-path))
+                (t
+                 absolute-path))))
     #+end_src
 
     Returns the current branch name with a leading space, when in a
@@ -1369,12 +1369,12 @@
 
     #+begin_src emacs-lisp
       (eval-after-load 'eshell
-              '(progn (require 'vc-git)))
+        '(progn (require 'vc-git)))
       (defun c/eshell-git-info ()
-              "Returns the current branch name with a leading space, when in a
+        "Returns the current branch name with a leading space, when in a
       git-versioned directory."
-              (let* ((branch (vc-git-working-revision (eshell/pwd))))
-                      (if (not (string-equal "" branch)) (concat branch " ") "")))
+        (let* ((branch (vc-git-working-revision (eshell/pwd))))
+          (if (not (string-equal "" branch)) (concat branch " ") "")))
     #+end_src
 
 * Version Control
@@ -1385,7 +1385,7 @@
     (setq vc-annotate-background "#fcf4dc")
     (setq vc-annotate-very-old-color "#042028")
     (setq vc-annotate-color-map
-                            '((20 . "#a57705")
+          '((20 . "#a57705")
             (40 . "#bd3612")
             (50 . "#c60007")
             (60 . "#c61b6e")
@@ -1399,10 +1399,10 @@
 
   #+begin_src emacs-lisp
     (setq vc-ignore-dir-regexp
-                            (format "\\(%s\\)\\|\\(%s\\)"
-                                    vc-ignore-dir-regexp
-                                    tramp-file-name-regexp
-                                    ))
+          (format "\\(%s\\)\\|\\(%s\\)"
+                  vc-ignore-dir-regexp
+                  tramp-file-name-regexp
+                  ))
   #+end_src
 
 ** Magit
@@ -1439,9 +1439,9 @@
 
    #+begin_src emacs-lisp
      (defun c/dired-open-mac ()
-             (interactive)
-             (let ((file-name (dired-get-file-for-visit)))
-                     (if (file-exists-p file-name)
+       (interactive)
+       (let ((file-name (dired-get-file-for-visit)))
+         (if (file-exists-p file-name)
              (call-process "/usr/bin/open" nil 0 nil file-name))))
    #+end_src
 
@@ -1457,11 +1457,11 @@
 
    #+begin_src emacs-lisp
      (eval-after-load 'dired
-             '(progn
-                      (require 'dired+)
-                      (require 'dired-details)
-                      (require 'dired-details+)
-                      (setq dired-details-hidden-string "")))
+       '(progn
+          (require 'dired+)
+          (require 'dired-details)
+          (require 'dired-details+)
+          (setq dired-details-hidden-string "")))
    #+end_src
 
 * Org
@@ -1498,8 +1498,8 @@
      org-refile-targets  '((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5))
      org-outline-path-complete-in-steps nil
      org-todo-keywords '(
-                                     (sequence "TODO(t)" "STARTED(s)" "|" "DONE(d!/!)")
-                                     (sequence "WAITING(w@/!)" "SOMEDAY(S)" "PROJECT(P@)" "|" "CANCELLED(c@/!)"))
+                         (sequence "TODO(t)" "STARTED(s)" "|" "DONE(d!/!)")
+                         (sequence "WAITING(w@/!)" "SOMEDAY(S)" "PROJECT(P@)" "|" "CANCELLED(c@/!)"))
      org-clock-persistence-insinuate t
      org-clock-persist t
      org-clock-in-resume t
@@ -1514,7 +1514,7 @@
      org-special-ctrl-k t
      org-special-ctrl-a t
      org-irc-link-to-logs t
-    )
+     )
     (add-hook 'org-mode-hook 'turn-on-auto-fill)
   #+end_src
 
@@ -1524,29 +1524,29 @@
     (setq org-contacts-files (list (format "%s/contacts.org" org-directory)))
 
     (eval-after-load 'message
-            '(progn
-                     (require 'org-contacts)))
+      '(progn
+         (require 'org-contacts)))
   #+end_src
 
   Make org-mode and yasnippet cooperate. more.
 
   #+begin_src emacs-lisp
     (defun yas/org-very-safe-expand ()
-            (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
+      (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
 
     (add-hook 'org-mode-hook
-             (lambda ()
-                     (make-variable-buffer-local 'yas/trigger-key)
-                     (setq yas/trigger-key [tab])
-                     (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
-                     (define-key yas/keymap [tab] 'yas/next-field)))
+              (lambda ()
+                (make-variable-buffer-local 'yas/trigger-key)
+                (setq yas/trigger-key [tab])
+                (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
+                (define-key yas/keymap [tab] 'yas/next-field)))
   #+end_src
 
   Cleanup whitespace in org-mode buffers.
 
   #+begin_src emacs-lisp
     (defun c/org-mode-per-buffer-customization ()
-                    (add-hook 'before-save-hook 'whitespace-cleanup nil 'local))
+      (add-hook 'before-save-hook 'whitespace-cleanup nil 'local))
 
     (add-hook 'org-mode-hook 'c/org-mode-per-buffer-customization)
   #+end_src
@@ -1555,7 +1555,7 @@
 
   #+begin_src emacs-lisp
     (setq org-capture-templates
-                            `(("t" "Task"
+          `(("t" "Task"
              entry (file+headline ,c/org-task-file "Tasks")
              "* TODO %?\n  SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"\"))\n\n  %a\n  %i\n")
             ("w" "Work task"
@@ -1573,7 +1573,7 @@
   #+begin_src emacs-lisp
     ;; agenda
     (setq org-agenda-custom-commands
-                            `(("d" . "Completed / archived items")
+          `(("d" . "Completed / archived items")
             ("dt" "[t]oday"
              tags "ARCHIVE_TIME>=\"<today>\""
              ((org-agenda-archives-mode t)))
@@ -1585,8 +1585,8 @@
              ((org-agenda-archives-mode t)))
             ("I" "Import diary from iCal" agenda ""
              ((org-agenda-mode-hook
-                     (lambda ()
-                             (org-mac-iCal)))))
+               (lambda ()
+                 (org-mac-iCal)))))
             ("w" "Show work related tasks only" agenda ""
              ((org-agenda-files ',c/work-org-agenda-files)))))
   #+end_src
@@ -1604,9 +1604,9 @@
 
    #+begin_src emacs-lisp
      (defun c/notify-finished-compilation (buf msg)
-             (todochiku-message (format "Compilation in %s:" buf)
-                                      msg
-                                      (todochiku-icon 'emacs)))
+       (todochiku-message (format "Compilation in %s:" buf)
+                          msg
+                          (todochiku-icon 'emacs)))
      (add-hook 'compilation-finish-functions 'c/notify-finished-compilation)
    #+end_src
 
@@ -1629,14 +1629,14 @@
 
    #+begin_src emacs-lisp
      (defun c/notmuch-archive-all-and-quit ()
-             (interactive)
-             (notmuch-search-tag-all '(("-unread" "-inbox" "-i/inbox")))
-             (notmuch-search-quit))
+       (interactive)
+       (notmuch-search-tag-all '(("-unread" "-inbox" "-i/inbox")))
+       (notmuch-search-quit))
 
      (defun c/notmuch-archive ()
-             (interactive)
-             (notmuch-search-tag '("-unread" "-inbox" "-i/inbox"))
-             (notmuch-search-refresh-view))
+       (interactive)
+       (notmuch-search-tag '("-unread" "-inbox" "-i/inbox"))
+       (notmuch-search-refresh-view))
    #+end_src
 
    Settings
@@ -1649,25 +1649,25 @@
       notmuch-show-logo nil
       notmuch-crypto-process-mime t
       notmuch-search-line-faces nil
-     notmuch-show-all-multipart/alternative-parts nil
+      notmuch-show-all-multipart/alternative-parts nil
       notmuch-show-insert-text/plain-hook '(
-                                      notmuch-wash-tidy-citations
-                                      notmuch-wash-elide-blank-lines
-                                      notmuch-wash-excerpt-citations
-                                      notmuch-wash-convert-inline-patch-to-part
-                                      )
-     )
+                                            notmuch-wash-tidy-citations
+                                            notmuch-wash-elide-blank-lines
+                                            notmuch-wash-excerpt-citations
+                                            notmuch-wash-convert-inline-patch-to-part
+                                            )
+      )
      (eval-after-load 'notmuch
-             '(progn
-                      (add-hook 'notmuch-show-hook 'notmuch-show-turn-on-visual-line-mode)
-                      (add-hook 'notmuch-search-hook 'notmuch-hl-line-mode)))
+       '(progn
+          (add-hook 'notmuch-show-hook 'notmuch-show-turn-on-visual-line-mode)
+          (add-hook 'notmuch-search-hook 'notmuch-hl-line-mode)))
    #+end_src
 
    Saved searches.
 
    #+begin_src emacs-lisp
      (setq notmuch-saved-searches
-     '(("i/commits" . "tag:unread  and tag:i/commits and not \"via pb\"")
+           '(("i/commits" . "tag:unread  and tag:i/commits and not \"via pb\"")
              ("ml/emacs*" . "tag:unread and (tag:ml/emacs-help or tag:ml/emacs-devel)")
              ("ml/org" . "tag:unread and (tag:ml/org)")
              ("ml/cedet" . "tag:unread and (tag:ml/cedet-devel)")
@@ -1681,43 +1681,43 @@
 
    #+begin_src emacs-lisp
      (defun c/insert-message-sign-pgpmime ()
-             (interactive)
-             (save-excursion
-                     (beginning-of-buffer)
-                     (re-search-forward "--text follows this line--" (point-max) t)
-                     (end-of-line)
-                     (newline)
-              (insert "<#secure method=pgpmime mode=sign>")
-              (newline)))
+       (interactive)
+       (save-excursion
+         (beginning-of-buffer)
+         (re-search-forward "--text follows this line--" (point-max) t)
+         (end-of-line)
+         (newline)
+         (insert "<#secure method=pgpmime mode=sign>")
+         (newline)))
 
      (defun c/goto-message-body ()
-             (interactive)
-             (message-goto-body)
-             (if (re-search-forward "sign>" (point-max) t)
-                             (newline)))
+       (interactive)
+       (message-goto-body)
+       (if (re-search-forward "sign>" (point-max) t)
+           (newline)))
    #+end_src
 
 
    #+begin_src emacs-lisp
      (eval-after-load 'message
-             '(progn
-                      (setq
-     message-kill-buffer-on-exit t
-     message-send-mail-partially-limit nil
-     send-mail-function 'sendmail-send-it
-     mail-from-style 'angles
-     ;; http://notmuchmail.org/emacstips/#index12h2
-     mail-specify-envelope-from t
-     message-sendmail-envelope-from 'header
-     mail-envelope-from 'header
-     gnus-inhibit-images t
-     user-full-name "Felix Geller"
-     user-mail-address "fgeller@gmail.com"
-     message-signature "Felix Geller"
-     )
-                      (add-hook 'message-setup-hook 'c/insert-message-sign-pgpmime)
-                      (add-hook 'message-mode-hook 'turn-on-auto-fill)
-                      ))
+       '(progn
+          (setq
+           message-kill-buffer-on-exit t
+           message-send-mail-partially-limit nil
+           send-mail-function 'sendmail-send-it
+           mail-from-style 'angles
+           ;; http://notmuchmail.org/emacstips/#index12h2
+           mail-specify-envelope-from t
+           message-sendmail-envelope-from 'header
+           mail-envelope-from 'header
+           gnus-inhibit-images t
+           user-full-name "Felix Geller"
+           user-mail-address "fgeller@gmail.com"
+           message-signature "Felix Geller"
+           )
+          (add-hook 'message-setup-hook 'c/insert-message-sign-pgpmime)
+          (add-hook 'message-mode-hook 'turn-on-auto-fill)
+          ))
    #+end_src
 * IRC
 
@@ -1737,16 +1737,16 @@
 
   #+begin_src emacs-lisp
     (defun c/notify-privmsg (proc parsed)
-            (let ((nick (car (erc-parse-user (erc-response.sender parsed))))
+      (let ((nick (car (erc-parse-user (erc-response.sender parsed))))
             (target (car (erc-response.command-args parsed)))
             (msg (erc-response.contents parsed)))
-                    (when (and (erc-current-nick-p target)
-                                     (not (erc-is-message-ctcp-and-not-action-p msg)))
-                            (todochiku-message (format "ERC message from: %s" nick)
+        (when (and (erc-current-nick-p target)
+                   (not (erc-is-message-ctcp-and-not-action-p msg)))
+          (todochiku-message (format "ERC message from: %s" nick)
                              msg
                              (todochiku-icon 'emacs)
                              nil)))
-            nil)
+      nil)
     (setq erc-server-PRIVMSG-functions '(c/notify-privmsg erc-server-PRIVMSG))
   #+end_src
 
@@ -1754,11 +1754,11 @@
 
   #+begin_src emacs-lisp
     (defun c/notify-nick-mentioned (match-type nick msg)
-            (when (eq match-type 'current-nick)
-                    (todochiku-message (format "%s mentioned your nick." (car (split-string nick "!")))
-                                             msg
-                                             (todochiku-icon 'social)
-                                             t)))
+      (when (eq match-type 'current-nick)
+        (todochiku-message (format "%s mentioned your nick." (car (split-string nick "!")))
+                           msg
+                           (todochiku-icon 'social)
+                           t)))
     (add-hook 'erc-text-matched-hook 'c/notify-nick-mentioned)
   #+end_src
 
@@ -1770,7 +1770,7 @@
   #+begin_src emacs-lisp
     (require 'server)
     (unless (server-running-p)
-            (server-start))
+      (server-start))
   #+end_src
 
 * I18n
