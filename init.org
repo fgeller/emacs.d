@@ -724,13 +724,20 @@ Swap =C-t= and =C-x=, so it's easier to type on Dvorak layout
        (scroll-up 1))
    #+end_src
 
+   Bind them to =C-x ↑= and =C-x ↓=.
+
+   #+begin_src emacs-lisp
+     (define-key ctl-x-map (kbd "<up>") (make-repeatable-command 'c/scroll-up))
+     (define-key ctl-x-map (kbd "<down>") (make-repeatable-command 'c/scroll-down))
+   #+end_src
+
+   Make several window related commands repeatable.
+
    #+begin_src emacs-lisp
      (define-key ctl-x-map "^" (make-repeatable-command 'enlarge-window))
      (define-key ctl-x-map "}" (make-repeatable-command 'enlarge-window-horizontally))
      (define-key ctl-x-map "{" (make-repeatable-command 'shrink-window-horizontally))
      (define-key ctl-x-map "o" (make-repeatable-command 'other-window))
-     (define-key ctl-x-map (kbd "<up>") (make-repeatable-command 'c/scroll-up))
-     (define-key ctl-x-map (kbd "<down>") (make-repeatable-command 'c/scroll-down))
    #+end_src
 
 ** Mac OS
