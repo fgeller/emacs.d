@@ -207,6 +207,7 @@ Growl notifications.
 
 #+begin_src emacs-lisp
 (autoload 'jumper-mode "jumper" t nil)
+(autoload 'jumper-line-mode "jumper" t nil)
 (autoload 'jumper-update-defs-from-current-buffer "jumper-update" t nil)
 #+end_src
 
@@ -700,6 +701,7 @@ and so on."
 #+begin_src emacs-lisp
 (define-key c/map "mr" 'auto-revert-mode)
 (define-key c/map "mw" 'whitespace-mode)
+(define-key c/map "mj" 'jumper-line-mode)
 #+end_src
 
 ** Dvorak
