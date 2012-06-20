@@ -711,12 +711,28 @@ Swap =C-t= and =C-x=, so it's easier to type on Dvorak layout
 (keyboard-translate ?\C-x ?\C-t)
 #+end_src
 ** C-x Map
-#+begin_src emacs-lisp
-(define-key ctl-x-map "^" (make-repeatable-command 'enlarge-window))
-(define-key ctl-x-map "}" (make-repeatable-command 'enlarge-window-horizontally))
-(define-key ctl-x-map "{" (make-repeatable-command 'shrink-window-horizontally))
-(define-key ctl-x-map "o" (make-repeatable-command 'other-window))
-#+end_src
+
+   Helpers for scrolling - move one line at a time, and scroll similar
+   to touch screens by adding and hiding one line at the same time.
+
+   #+begin_src emacs-lisp
+     (defun c/scroll-up ()
+       (interactive)
+       (scroll-down 1))
+     (defun c/scroll-down ()
+       (interactive)
+       (scroll-up 1))
+   #+end_src
+
+   #+begin_src emacs-lisp
+     (define-key ctl-x-map "^" (make-repeatable-command 'enlarge-window))
+     (define-key ctl-x-map "}" (make-repeatable-command 'enlarge-window-horizontally))
+     (define-key ctl-x-map "{" (make-repeatable-command 'shrink-window-horizontally))
+     (define-key ctl-x-map "o" (make-repeatable-command 'other-window))
+     (define-key ctl-x-map (kbd "<up>") (make-repeatable-command 'c/scroll-up))
+     (define-key ctl-x-map (kbd "<down>") (make-repeatable-command 'c/scroll-down))
+   #+end_src
+
 ** Mac OS
 #+begin_src emacs-lisp
 (setq mac-command-modifier 'super)
