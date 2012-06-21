@@ -1759,6 +1759,7 @@
         (when (and
                (eq match-type 'current-nick)
                (not (string= short-nick "localhost"))
+               (not (string-match "Server:.+" short-nick))
                (not (string= short-nick erc-nick)))
           (todochiku-message
            (format "%s mentioned your nick." short-nick) msg (todochiku-icon 'irc) t))))
