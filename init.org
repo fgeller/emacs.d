@@ -783,8 +783,10 @@
           (define-key notmuch-hello-mode-map "g" 'notmuch-hello-update)))
    #+end_src
 ** Helm
+
    Add help specific bindings, the =a= is a residue from helm's previous
    name "anything".
+
    #+begin_src emacs-lisp
      (define-key c/map "aa"               'c/helm-jump)
      (define-key c/map "ab"               'helm-browse-code)
@@ -798,6 +800,7 @@
      (define-key c/map "ay"               'helm-show-kill-ring)
      (define-key c/map "ax"               'helm-M-x)
    #+end_src
+
 ** Evaluation
    #+begin_src emacs-lisp
      (define-key c/map "xx"               'execute-extended-command)
@@ -1054,7 +1057,9 @@
    #+end_src
 
 ** Mode-line
+
    Less noise in the mode-line. Based on several sources [2]
+
    #+begin_src emacs-lisp
      (defun c/mode-line-js2-errors ()
        (interactive)
@@ -1117,6 +1122,7 @@
        )
       )
    #+end_src
+
 ** Buffer
 
    #+begin_src emacs-lisp
