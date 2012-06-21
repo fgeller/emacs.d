@@ -532,6 +532,7 @@
    #+begin_src emacs-lisp
      (defun c/js2-mode-initialization ()
        (subword-mode 1)
+       (hl-line-mode 1)
        (add-hook 'before-save-hook 'whitespace-cleanup nil 'local)
        (setq js2-use-font-lock-faces t)
        (setq js2-mode-must-byte-compile nil)
@@ -618,6 +619,7 @@
        (subword-mode 1)
        (jumper-mode 1)
        (pretty-symbols-mode 1)
+       (hl-line-mode 1)
        (when buffer-file-name (flymake-mode 1))
        (add-hook 'before-save-hook 'whitespace-cleanup nil 'local)
        (add-hook 'before-save-hook 'jumper-update-defs-from-current-buffer nil 'local)
