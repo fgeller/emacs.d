@@ -156,7 +156,7 @@
    #+begin_src emacs-lisp
      (require 'key-chord)
      (key-chord-mode 1)
-     (setq key-chord-two-keys-delay 0.15)
+     (setq key-chord-two-keys-delay 0.5)
    #+end_src
 
    Helm is used for most completion and especially file/buffer
