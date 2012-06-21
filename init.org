@@ -1294,6 +1294,61 @@
        "Source for searching files in current project recursively.")
    #+end_src
 
+   Source for contents of a jumper file.
+
+   #+begin_src emacs-lisp
+     (require 'jumper)
+     (defvar *c/helm-jumper-def-line* "\\([^[:blank:]]+\\)[[:blank:]]+\\([^[:blank:]]+\\)[[:blank:]]+\\([^[:blank:]]+\\)")
+     (defvar *c/helm-jumper-candidate-line-format* "%s in %s %s at line %s")
+
+     (defun c/helm-jumper-defs-init ()
+       "Load defs from JUMPER file into helm candidate buffer."
+       (ignore-errors
+         (let ((jumper-file (jumper-find-jumper-file)))
+           (let ((defs (with-current-buffer
+                           (find-file-noselect jumper-file)
+                         (buffer-substring (point-min) (point-max)))))
+             (with-current-buffer (helm-candidate-buffer 'global)
+               (insert defs))))))
+
+     (defun c/helm-jumper-def-components (def-line)
+       "Decompose the components of a JUMPER def line into (DEF FILE LINE)"
+       (string-match *c/helm-jumper-def-line* def-line)
+       (let (
+             (def (match-string 1 def-line))
+             (file (match-string 2 def-line))
+             (line (match-string 3 def-line)))
+         (list def file (string-to-number line))))
+
+     (defun c/helm-jumper-def-transformer (candidates sources)
+       "Add highlighting of candidate components."
+       (loop for candidate in candidates
+             collect
+             (cons
+              (destructuring-bind (def file line) (c/helm-jumper-def-components candidate)
+                (format *c/helm-jumper-candidate-line-format*
+                        (propertize def 'face 'font-lock-keyword-face)
+                        (propertize (file-name-nondirectory file) 'face 'font-lock-builtin-face)
+                        (file-name-directory file)
+                        (propertize (number-to-string line) 'face 'shadow)))
+              candidate)))
+
+     (defun c/helm-jumper-jump-to-def (def-line)
+       "Jump to a selected definition."
+       (destructuring-bind (def file line) (c/helm-jumper-def-components def-line)
+         (jumper-jump-to file line def)))
+
+     (defvar c/helm-c-source-jumper-defs
+       '((name . "Jump to JUMPER defs")
+         (init . c/helm-jumper-defs-init)
+         (candidates-in-buffer)
+         (persistent-help . "Jump to this def")
+         (action . c/helm-jumper-jump-to-def)
+         (candidate-number-limit . 10)
+         (filtered-candidate-transformer c/helm-jumper-def-transformer))
+       "Source for jumping to JUMPER defs.")
+   #+end_src
+
 ** Accessors to sources
 
    Collection of sources that we want fast access to.
@@ -1304,6 +1359,7 @@
        (helm-other-buffer
         '(
           helm-c-source-buffers-list
+          c/helm-c-source-jumper-defs
           helm-c-source-ctags
           helm-c-source-recentf
           c/helm-c-source-project-file-search
