@@ -1299,7 +1299,7 @@
    #+begin_src emacs-lisp
      (require 'jumper)
      (defvar *c/helm-jumper-def-line* "\\([^[:blank:]]+\\)[[:blank:]]+\\([^[:blank:]]+\\)[[:blank:]]+\\([^[:blank:]]+\\)")
-     (defvar *c/helm-jumper-candidate-line-format* "%s in %s %s at line %s")
+     (defvar *c/helm-jumper-candidate-line-format* "%s in %s%s at line %s")
 
      (defun c/helm-jumper-defs-init ()
        "Load defs from JUMPER file into helm candidate buffer."
@@ -1328,8 +1328,8 @@
               (destructuring-bind (def file line) (c/helm-jumper-def-components candidate)
                 (format *c/helm-jumper-candidate-line-format*
                         (propertize def 'face 'font-lock-keyword-face)
-                        (propertize (file-name-nondirectory file) 'face 'font-lock-builtin-face)
                         (file-name-directory file)
+                        (propertize (file-name-nondirectory file) 'face 'font-lock-builtin-face)
                         (propertize (number-to-string line) 'face 'shadow)))
               candidate)))
 
