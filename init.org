@@ -421,7 +421,6 @@
        "Put symbol at current point into search string."
        (interactive)
        (let ((sym (find-tag-default)))
-         (message "sym: %s" sym)
          (if (null sym)
              (message "No symbol at point")
            (isearch-yank-regexp
