@@ -160,7 +160,7 @@
    #+end_src
 
    Helm is used for most completion and especially file/buffer
-   navigation. Need in on form the start.
+   navigation. Needed from the start.
 
    #+begin_src emacs-lisp
      (require 'helm-config)
