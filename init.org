@@ -141,6 +141,7 @@
                              move-text
                              mic-paren
                              wgrep
+                             scratch
                              todochiku
                              gtags
                              ))
