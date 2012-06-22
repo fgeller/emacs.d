@@ -755,7 +755,6 @@
      (setq default-input-method "MacOSX")
      (global-set-key (kbd "S-`") 'ns-next-frame)
      (global-set-key (kbd "S-h") 'ns-do-hide-others)
-                                             ;(setq mouse-wheel-scroll-amount '(0.0001))
    #+end_src
 ** Dired
 
@@ -988,7 +987,6 @@
       transient-mark-mode t   ;; highlight the active region when mark is active
       show-trailing-whitespace nil ;; don't show trailing whitespace globally
       blink-matching-paren t
-      ;;line-spacing 0.2
       ;;column-number-mode t
       ;;size-indication-mode t
       ;;mouse-yank-at-point t
