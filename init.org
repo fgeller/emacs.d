@@ -13,6 +13,15 @@
   Main sources are @purcell's emacs.d [11] and the Emacswiki [12].
 
 * Environment
+** System name
+
+   Don't use the FQDN
+
+   #+begin_src emacs-lisp
+     (when (eq system-type 'darwin)
+       (setq system-name (car (split-string system-name "\\."))))
+   #+end_src
+
 ** Editor
 
    Set default editor in (e)shell to emacsclient.
