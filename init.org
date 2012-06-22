@@ -143,7 +143,6 @@
                              wgrep
                              scratch
                              todochiku
-                             gtags
                              ))
      (dolist (package c/elpa-packages)
        (c/require-package package))
