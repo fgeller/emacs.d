@@ -659,6 +659,16 @@
             (compile cmd t))))
     #+end_src
 
+    Insert statements to trigger a breakpoint in ipdb.
+
+    #+begin_src emacs-lisp
+      (defun c/python-insert-ipdb-breakpoint ()
+        (interactive)
+        (beginning-of-line)
+        (insert "import ipdb; ipdb.set_trace()")
+        (newline-and-indent))
+    #+end_src
+
 ** SQL
 
    Send the terminator automatically
@@ -971,7 +981,7 @@
       (eval-after-load 'python
         '(progn
            (define-key python-mode-map (kbd "C-c t") 'c/run-python-test)
-           (define-key python-mode-map (kbd "C-c b") 'python-insert-breakpoint)
+           (define-key python-mode-map (kbd "C-c b") 'c/python-insert-ipdb-breakpoint)
            (define-key python-mode-map (kbd "RET") 'newline-and-indent)
            (eval-after-load 'flymake
              '(progn
