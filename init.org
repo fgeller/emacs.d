@@ -992,8 +992,11 @@
 * Appearance
 ** General GUI Settings
    Less noisy Emacs startup and less noise on screen per default.
+
    #+begin_src emacs-lisp
-     (setq
+     (set-scroll-bar-mode nil)
+     (tool-bar-mode -1)
+     (setq-default
       blink-cursor-delay 0
       blink-cursor-interval 0.5
       use-file-dialog nil
@@ -1006,13 +1009,14 @@
       transient-mark-mode t   ;; highlight the active region when mark is active
       show-trailing-whitespace nil ;; don't show trailing whitespace globally
       blink-matching-paren t
+      default-frame-alist '((left-fringe . 0) (right-fringe . 0) (scroll-bar-width . nil))
+      scroll-bar-width 0
+      default-frame-scroll-bars nil
       ;;column-number-mode t
       ;;size-indication-mode t
       ;;mouse-yank-at-point t
       )
-     (tool-bar-mode -1)
-     (set-scroll-bar-mode nil)
-     (setq default-frame-alist '((left-fringe . 0) (right-fringe . 0)))
+
    #+end_src
 
    Highlight URLs and email addresses.
