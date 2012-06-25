@@ -1084,7 +1084,7 @@
 
 ** Mode-line
 
-   Less noise in the mode-line. Based on several sources [2]
+   Propertized mode-line string that shows errors and warnings in js2-mode.
 
    #+begin_src emacs-lisp
      (defun c/mode-line-js2-errors ()
@@ -1101,6 +1101,12 @@
               (propertize (number-to-string errs-length) 'face 'flymake-errline)
               ","
               (propertize (number-to-string warns-length) 'face 'flymake-warnline))))))
+   #+end_src
+
+   Propertized mode-line string that shows errors and warnings when
+   flymake is running.
+
+   #+begin_src emacs-lisp
      (defun c/mode-line-flymake ()
        (when (and
               (boundp 'flymake-mode-line-e-w)
@@ -1112,11 +1118,22 @@
            (let ((error-str (match-string 1 flymake-mode-line-e-w))
                  (warn-str (match-string 2 flymake-mode-line-e-w)))
              (concat " τ:" (propertize error-str 'face 'flymake-errline) "," (propertize warn-str 'face 'flymake-warnline))))))
+   #+end_src
+
+   Propertized mode-line string that shows special symbols to
+   highlight compilation results.
+
+   #+begin_src emacs-lisp
      (defun c/mode-line-compilation ()
        (cond
         ((string= ":exit [2]" mode-line-process) (propertize " x" 'face 'error))
         ((string= ":exit [0]" mode-line-process) " ✓")
         (t mode-line-process)))
+   #+end_src
+
+   Less noise in the mode-line. Based on several sources [2]
+
+   #+begin_src emacs-lisp
      (setq-default
       mode-line-format
       (list
