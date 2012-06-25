@@ -680,7 +680,9 @@
 
 * Key Bindings
 ** Helpers
+
    Helper [3] to make any command repeatable analogously to =C-x e e e=
+
    #+begin_src emacs-lisp
      (defun make-repeatable-command (cmd)
        "Returns a new command that is a repeatable version of CMD.
