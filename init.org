@@ -1145,6 +1145,8 @@
        '(:eval (c/mode-line-js2-errors))
        ""
        mode-line-client
+       " ⌚ "
+       '(:eval (when (boundp 'org-mode-line-string) org-mode-line-string))
        )
       )
    #+end_src
