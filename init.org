@@ -1572,142 +1572,255 @@
 
 * Org
 
-  Manually load org modules that should always be loaded with org.
+*** General settings
 
-  #+begin_src emacs-lisp
-    (eval-after-load 'org
-      (dolist (org-mod '(org-crypt org-info org-habit org-irc org-checklist org-eshell org-notmuch org-contacts))
-              (require org-mod)))
-  #+end_src
+    Log a timestamp when finishing a task.
 
-  Loads of  configuration settings that need to be split up.
+    #+begin_src emacs-lisp
+      (setq org-log-done 'time)
+    #+end_src
 
-  #+begin_src emacs-lisp
-    (setq
-     c/org-directory "~/Dropbox/org"
-     org-directory c/org-directory
-     c/work-org-directory "~/Dropbox/work"
-     c/org-task-file (concat c/org-directory "/Tasks.org")
-     c/work-org-task-file (concat c/work-org-directory "/work.org")
-     c/work-org-agenda-files `(,c/work-org-directory)
-     org-log-done t
-     org-completion-use-ido t
-     org-edit-timestamp-down-means-later t
-     org-agenda-start-on-weekday nil
-     org-agenda-ndays 14
-     org-agenda-include-diary t
-     org-agenda-window-setup 'current-window
-     org-agenda-files `(,org-directory)
-     org-fast-tag-selection-single-key 'expert
-     org-tags-column 80
-     org-default-notes-file (concat org-directory "/Notes.org")
-     org-footnote-auto-label (quote plain)
-     org-hide-emphasis-markers t
-     org-hide-leading-stars t
-     org-refile-targets '((org-agenda-files :maxlevel . 5))
-     org-src-fontify-natively t
-     org-agenda-remove-tags t
-     calendar-week-start-day 1
-     org-refile-use-outline-path 'file
-     org-refile-targets  '((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5))
-     org-outline-path-complete-in-steps nil
-     org-todo-keywords '(
-                         (sequence "TODO(t)" "STARTED(s)" "|" "DONE(d!/!)")
-                         (sequence "WAITING(w@/!)" "SOMEDAY(S)" "PROJECT(P@)" "|" "CANCELLED(c@/!)"))
-     org-clock-in-resume t
-     org-clock-in-switch-to-state "STARTED"
-     org-clock-into-drawer t
-     org-clock-out-remove-zero-time-clocks t
-     org-habit-preceding-days 14
-     org-habit-show-habits-only-for-today t
-     org-habit-completed-glyph ?.
-     org-habit-today-glyph ?o
-     org-special-ctrl-k t
-     org-special-ctrl-a t
-     org-irc-link-to-logs t
-     )
-    (add-hook 'org-mode-hook 'turn-on-auto-fill)
-  #+end_src
+    Use the special / structure-aware =C-a= and =C-k=.
 
-  Enable persisting the history and clock values across emacs sessions.
+    #+begin_src emacs-lisp
+      (setq
+       org-special-ctrl-k t
+       org-special-ctrl-a t
+       )
+    #+end_src
 
-  #+begin_src emacs-lisp
-    (setq org-clock-persist t)
-    (org-clock-persistence-insinuate)
-  #+end_src
+    For date selection, please start on Mondays.
 
-  Load and configure org-contacts.
+    #+begin_src emacs-lisp
+      (setq calendar-week-start-day 1)
+    #+end_src
 
-  #+begin_src emacs-lisp
-    (setq org-contacts-files (list (format "%s/contacts.org" org-directory)))
+    Hide emphasis markers and leading *'s to reduce noise.
 
-    (eval-after-load 'message
-      '(progn
-         (require 'org-contacts)))
-  #+end_src
+    #+begin_src emacs-lisp
+      (setq
+       org-hide-emphasis-markers t
+       org-hide-leading-stars t
+      )
+    #+end_src
 
-  Make org-mode and yasnippet cooperate. more.
+    Use =S-↑= and =S-↓= to modify timestamps.
 
-  #+begin_src emacs-lisp
-    (defun yas/org-very-safe-expand ()
-      (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
+    #+begin_src emacs-lisp
+      (setq org-edit-timestamp-down-means-later t)
+    #+end_src
 
-    (add-hook 'org-mode-hook
-              (lambda ()
-                (make-variable-buffer-local 'yas/trigger-key)
-                (setq yas/trigger-key [tab])
-                (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
-                (define-key yas/keymap [tab] 'yas/next-field)))
-  #+end_src
+    Use simple numbered footnote format. Less confusing in emails.
 
-  Cleanup whitespace in org-mode buffers.
+    #+begin_src emacs-lisp
+      (setq org-footnote-auto-label 'plain)
+    #+end_src
 
-  #+begin_src emacs-lisp
-    (defun c/org-mode-per-buffer-customization ()
-      (add-hook 'before-save-hook 'whitespace-cleanup nil 'local))
+    Per-buffer configuration.
 
-    (add-hook 'org-mode-hook 'c/org-mode-per-buffer-customization)
-  #+end_src
+    #+begin_src emacs-lisp
+        (defun c/org-mode-per-buffer-customization ()
+          (add-hook 'before-save-hook 'whitespace-cleanup nil 'local)
+          (turn-on-auto-fill))
 
-  Define additional capture templates.
+        (add-hook 'org-mode-hook 'c/org-mode-per-buffer-customization)
+    #+end_src
 
-  #+begin_src emacs-lisp
-    (setq org-capture-templates
-          `(("t" "Task"
-             entry (file+headline ,c/org-task-file "Tasks")
-             "* TODO %?\n  SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"\"))\n\n  %a\n  %i\n")
-            ("w" "Work task"
-             entry (file+headline ,c/work-org-task-file "Tasks")
-             "* TODO %?\n  SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"\"))\n\n  %a\n  %i\n")
-            ("c" "Contacts" entry (file "~/Org/contacts.org")
-             "* %(org-contacts-template-name)
-                            :PROPERTIES:
-                            :EMAIL:    %(org-contacts-template-email)
-                            :END:      ")))
-  #+end_src
+*** Folders and files
 
-  Define additional commands for agenda views.
+    Where to find org-files.
 
-  #+begin_src emacs-lisp
-    ;; agenda
-    (setq org-agenda-custom-commands
-          `(("d" . "Completed / archived items")
-            ("dt" "[t]oday"
-             tags "ARCHIVE_TIME>=\"<today>\""
-             ((org-agenda-archives-mode t)))
-            ("dy" "[y]esterday"
-             tags "ARCHIVE_TIME>=\"<-1d>\"&ARCHIVE_TIME<\"<today>\""
-             ((org-agenda-archives-mode t)))
-            ("dw" "[w]eek"
-             tags "ARCHIVE_TIME>=\"<-1w>\""
-             ((org-agenda-archives-mode t)))
-            ("I" "Import diary from iCal" agenda ""
-             ((org-agenda-mode-hook
-               (lambda ()
-                 (org-mac-iCal)))))
-            ("w" "Show work related tasks only" agenda ""
-             ((org-agenda-files ',c/work-org-agenda-files)))))
-  #+end_src
+    #+begin_src emacs-lisp
+      (setq
+       org-directory "~/Dropbox/org"
+       org-default-notes-file (concat org-directory "/Tasks.org")
+       org-agenda-files `(,org-directory)
+       org-contacts-files (list (format "%s/contacts.org" org-directory))
+       ;; work specific files and folders
+       c/work-org-directory "~/Dropbox/work"
+       c/work-org-agenda-files `(,c/work-org-directory)
+       c/work-org-default-notes-file (concat c/work-org-directory "/Tasks.org")
+       )
+    #+end_src
+
+*** Modules
+
+    Manually load org modules that should always be loaded with org.
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'org
+        (dolist (org-mod '(org-crypt org-info org-habit org-irc org-checklist org-eshell org-notmuch org-contacts))
+                (require org-mod)))
+    #+end_src
+
+*** Keywords
+
+    Define the list of keywords to use for identifying the state of a
+    task.
+
+    #+begin_src emacs-lisp
+      (setq org-todo-keywords '(
+                          (sequence "TODO(t)" "STARTED(s)" "|" "DONE(d!/!)")
+                          (sequence "WAITING(w@/!)" "SOMEDAY(S)" "|" "CANCELLED(c@/!)")))
+    #+end_src
+
+*** Agenda
+
+    The agenda should include the diary.
+
+    #+begin_src emacs-lisp
+      (setq org-agenda-include-diary t)
+    #+end_src
+
+    2-week agenda.
+
+    #+begin_src emacs-lisp
+      (setq org-agenda-ndays 14)
+    #+end_src
+
+    Don't show tags in the agenda.
+
+    #+begin_src emacs-lisp
+      (setq org-agenda-remove-tags t)
+    #+end_src
+
+    Start the week on a weekday (aka Monday).
+
+    #+begin_src emacs-lisp
+      (setq org-agenda-start-on-weekday nil)
+    #+end_src
+
+    Use the current window for showing the agenda.
+
+    #+begin_src emacs-lisp
+      (setq org-agenda-window-setup 'current-window)
+    #+end_src
+
+    Define additional commands for agenda views.
+
+    #+begin_src emacs-lisp
+      (setq org-agenda-custom-commands
+            `(("d" . "Completed / archived items")
+              ("dt" "[t]oday"
+               tags "ARCHIVE_TIME>=\"<today>\""
+               ((org-agenda-archives-mode t)))
+              ("dy" "[y]esterday"
+               tags "ARCHIVE_TIME>=\"<-1d>\"&ARCHIVE_TIME<\"<today>\""
+               ((org-agenda-archives-mode t)))
+              ("dw" "[w]eek"
+               tags "ARCHIVE_TIME>=\"<-1w>\""
+               ((org-agenda-archives-mode t)))
+              ("I" "Import diary from iCal" agenda ""
+               ((org-agenda-mode-hook
+                 (lambda ()
+                   (org-mac-iCal)))))
+              ("w" "Show work related tasks only" agenda ""
+               ((org-agenda-files ',c/work-org-agenda-files)))))
+    #+end_src
+
+*** Clock
+
+    Enable persisting the history and clock values across emacs sessions.
+
+    #+begin_src emacs-lisp
+      (setq org-clock-persist t)
+      (org-clock-persistence-insinuate)
+    #+end_src
+
+    Enable the resuming of tasks when clocking in.
+
+    #+begin_src emacs-lisp
+      (setq org-clock-in-resume t)
+    #+end_src
+
+    When clocking into a task, set to started state.
+
+    #+begin_src emacs-lisp
+      (setq org-clock-in-switch-to-state "STARTED")
+    #+end_src
+
+    Always maintain a logbook.
+
+    #+begin_src emacs-lisp
+      (setq org-clock-into-drawer t)
+    #+end_src
+
+    Cleanup empty clocking times.
+
+    #+begin_src emacs-lisp
+      (setq org-clock-out-remove-zero-time-clocks t)
+    #+end_src
+
+*** Capture
+
+    Define additional capture templates for personal and work tasks.
+
+    #+begin_src emacs-lisp
+      (setq org-capture-templates
+            `(("t" "Task"
+               entry (file+headline ,org-default-notes-file "Tasks")
+               "* TODO %?\n  SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"\"))\n\n  %a\n  %i\n")
+              ("w" "Work task"
+               entry (file+headline ,c/work-org-default-notes-file "Tasks")
+               "* TODO %?\n  SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"\"))\n\n  %a\n  %i\n")
+              ))
+    #+end_src
+
+*** Refile
+
+    Start refiling at file-level and set max nesting to 5 and go step-by-step.
+
+    #+begin_src emacs-lisp
+      (setq
+       org-outline-path-complete-in-steps nil
+       org-refile-use-outline-path 'file
+       org-refile-targets  '((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5))
+       )
+    #+end_src
+
+*** Babel
+
+    Fontify source code in "native" block.
+
+    #+begin_src emacs-lisp
+      (setq org-src-fontify-natively t)
+    #+end_src
+
+*** Contacts
+
+    Load and configure org-contacts.
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'message
+        '(progn
+           (require 'org-contacts)))
+    #+end_src
+*** Habits
+
+    Low noise settings for habits.
+
+    #+begin_src emacs-lisp
+      (setq org-habit-preceding-days 7)
+      (setq org-habit-show-habits-only-for-today t)
+      (setq org-habit-completed-glyph ?.)
+      (setq org-habit-today-glyph ?o)
+    #+end_src
+
+*** Yasnippet
+
+    Make org-mode and yasnippet cooperate. more.
+
+    #+begin_src emacs-lisp
+      (defun yas/org-very-safe-expand ()
+        (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
+
+      (add-hook 'org-mode-hook
+                (lambda ()
+                  (make-variable-buffer-local 'yas/trigger-key)
+                  (setq yas/trigger-key [tab])
+                  (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
+                  (define-key yas/keymap [tab] 'yas/next-field)))
+    #+end_src
 
 * Notifications
 ** growl
