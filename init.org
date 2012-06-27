@@ -1442,7 +1442,9 @@
 
 * Eshell
 
-  Lots of information at [9].
+  Lots of information at [9] and the emacs-starter-kit [14].
+
+  Keep control files below =.emacs.d=.
 
   #+begin_src emacs-lisp
     (setq eshell-directory-name "~/.emacs.d/.eshell/")
@@ -1458,49 +1460,112 @@
       (call-interactively 'eshell))
   #+end_src
 
+** Visual commands
+
+   Specify commands that should be handled by a term.
+
+   #+begin_src emacs-lisp
+     (eval-after-load 'em-term
+       '(progn
+          (add-to-list 'eshell-visual-commands "ssh")
+          (add-to-list 'eshell-visual-commands "redis-cli")
+          (add-to-list 'eshell-visual-commands "tail")))
+   #+end_src
+
 ** Prompt
-*** Helpers
 
-    Custom prompt function.
+   Custom prompt function.
 
-    #+begin_src emacs-lisp
-      (defun c/eshell-prompt-function ()
-        (concat (c/eshell-git-info) (c/eshell-replace-prompt-prefixes) "/ "))
-      (setq eshell-prompt-function #'c/eshell-prompt-function)
+   #+begin_src emacs-lisp
+     (defun c/eshell-prompt-function ()
+       (concat (c/eshell-git-info) (c/eshell-replace-prompt-prefixes) "/ "))
+     (setq eshell-prompt-function #'c/eshell-prompt-function)
+   #+end_src
+
+   Tell eshell what the prompt looks like after we change it.
+
+   #+begin_src emacs-lisp
+     (setq eshell-prompt-regexp "^[^\n]*/ ")
+   #+end_src
+
+   Returns the current eshell/pwd with common prefixes (TRAMP, home
+   directory) replaced.
+
+   #+begin_src emacs-lisp
+     (defun c/eshell-replace-prompt-prefixes ()
+       (let ((absolute-path (eshell/pwd)))
+         (cond ((string-match (getenv "HOME") absolute-path)
+                (replace-match "~" nil nil absolute-path))
+               ((string-match "/ssh:\\(.+\\):" absolute-path)
+                (replace-match (concat "@" (match-string 1 absolute-path) " ")  nil nil absolute-path))
+               (t
+                absolute-path))))
+   #+end_src
+
+   Returns the current branch name with a leading space, when in a
+   git-versioned directory.
+
+   #+begin_src emacs-lisp
+     (eval-after-load 'eshell
+       '(progn (require 'vc-git)))
+     (defun c/eshell-git-info ()
+       "Returns the current branch name with a leading space, when in a
+     git-versioned directory."
+       (let* ((branch (vc-git-working-revision (eshell/pwd))))
+         (if (not (string-equal "" branch)) (concat branch " ") "")))
     #+end_src
 
-    Tell eshell what the prompt looks like after we change it.
+   Colorize the prompt to indicate non-zero exit codes.
 
-    #+begin_src emacs-lisp
-      (setq eshell-prompt-regexp "^[^\n]*/ ")
-    #+end_src
+   #+begin_src emacs-lisp
+     (defun c/eshell-exit-code-prompt-face ()
+       (when (and eshell-last-command-status
+                  (not (zerop eshell-last-command-status)))
+         (let ((inhibit-read-only t))
+           (add-text-properties
+            (save-excursion (beginning-of-line) (point)) (point-max)
+            '(face warning)))))
 
-    Returns the current eshell/pwd with common prefixes (TRAMP, home
-    directory) replaced.
+     (add-hook 'eshell-after-prompt-hook 'c/eshell-exit-code-prompt-face)
+   #+end_src
 
-    #+begin_src emacs-lisp
-      (defun c/eshell-replace-prompt-prefixes ()
-        (let ((absolute-path (eshell/pwd)))
-          (cond ((string-match (getenv "HOME") absolute-path)
-                 (replace-match "~" nil nil absolute-path))
-                ((string-match "/ssh:\\(.+\\):" absolute-path)
-                 (replace-match (concat "@" (match-string 1 absolute-path) " ")  nil nil absolute-path))
-                (t
-                 absolute-path))))
-    #+end_src
+** Commands
 
-    Returns the current branch name with a leading space, when in a
-    git-versioned directory.
+   Add shortcut to go up to directory containing a =.git= or =.hg= folder.
 
-    #+begin_src emacs-lisp
-      (eval-after-load 'eshell
-        '(progn (require 'vc-git)))
-      (defun c/eshell-git-info ()
-        "Returns the current branch name with a leading space, when in a
-      git-versioned directory."
-        (let* ((branch (vc-git-working-revision (eshell/pwd))))
-          (if (not (string-equal "" branch)) (concat branch " ") "")))
-    #+end_src
+   #+begin_src emacs-lisp
+     ;;;###autoload
+     (defun eshell/cdg ()
+       "Change directory to the project's root."
+       (eshell/cd (locate-dominating-file default-directory ".git")))
+
+     ;;;###autoload
+     (defun eshell/cdh ()
+       "Change directory to the project's root."
+       (eshell/cd (locate-dominating-file default-directory ".hg")))
+   #+end_src
+
+   Extract all kinds of archives.
+
+   #+begin_src emacs-lisp
+     ;;;###autoload
+     (defun eshell/extract (file)
+       (let ((command (some (lambda (x)
+                              (if (string-match-p (car x) file)
+                                  (cadr x)))
+                            '((".*\.tar.bz2" "tar xjf")
+                              (".*\.tar.gz" "tar xzf")
+                              (".*\.bz2" "bunzip2")
+                              (".*\.rar" "unrar x")
+                              (".*\.gz" "gunzip")
+                              (".*\.tar" "tar xf")
+                              (".*\.tbz2" "tar xjf")
+                              (".*\.tgz" "tar xzf")
+                              (".*\.zip" "unzip")
+                              (".*\.Z" "uncompress")
+                              (".*" "echo 'Could not extract the file:'")))))
+         (eshell-command-result (concat command " " file))))
+   #+end_src
 
 * Version Control
 
@@ -2070,3 +2135,5 @@
 [12] http://www.emacswiki.org/
 
 [13] http://www.emacswiki.org/emacs/HalfScrolling#toc2
+
+  [14] https://github.com/technomancy/emacs-starter-kit/
