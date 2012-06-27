@@ -1182,7 +1182,7 @@
        ""
        mode-line-client
        " ⌚ "
-       '(:eval (when (boundp 'org-mode-line-string) org-mode-line-string))
+       '(:eval (when (and (boundp 'org-mode-line-string) (org-clocking-p)) org-mode-line-string))
        )
       )
    #+end_src
