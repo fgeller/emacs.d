@@ -965,6 +965,8 @@
      (define-key global-map (kbd "C-c c") 'org-capture)
      (eval-after-load 'org-agenda
        '(define-key org-agenda-mode-map (kbd "C-c t") 'org-agenda-todo))
+     (eval-after-load 'org-clock
+       '(define-key global-map (kbd "C-c C-x C-j") 'org-clock-jump-to-current-clock))
      (eval-after-load 'org
        '(define-key org-mode-map (kbd "C-c t") 'org-todo))
    #+end_src
