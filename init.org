@@ -822,6 +822,8 @@
    name "anything".
 
    #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-.") 'c/helm-jump)
+     (define-key global-map (kbd "C-,") 'helm-find-files)
      (define-key c/map "aa"               'c/helm-jump)
      (define-key c/map "ab"               'helm-browse-code)
      (define-key c/map "ac"               'c/helm-contact)
@@ -968,8 +970,11 @@
      (eval-after-load 'org-clock
        '(define-key global-map (kbd "C-c C-x C-j") 'org-clock-jump-to-current-clock))
      (eval-after-load 'org
-       '(define-key org-mode-map (kbd "C-c t") 'org-todo))
+       '(progn
+          (define-key org-mode-map (kbd "C-c t") 'org-todo)
+          (define-key org-mode-map (kbd "C-,") 'helm-find-files)))
    #+end_src
+
 ** Version control
    #+begin_src emacs-lisp
      (define-key c/map "v="               'vc-diff)
