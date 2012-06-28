@@ -950,6 +950,8 @@
      (define-key c/map "+" (make-repeatable-command 'c/inc-num-at-point))
      (define-key c/map "-" (make-repeatable-command 'c/dec-num-at-point))
      (define-key c/map "ld" (make-repeatable-command 'c/duplicate-line))
+     (define-key c/map "lf" 'flush-lines)
+     (define-key c/map "lk" 'keep-lines)
      (define-key c/map "ll" 'goto-line)
      (define-key c/map "q" 'query-replace)
      (define-key c/map "Q" 'query-replace-regexp)
