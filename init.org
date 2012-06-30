@@ -163,6 +163,7 @@
                              scratch
                              todochiku
                              elisp-slime-nav
+                             autopair
                              ))
      (dolist (package c/elpa-packages)
        (c/require-package package))
@@ -310,10 +311,17 @@
      (electric-indent-mode 1)
    #+end_src
 
-   Enabling electric pairing.
+   Disable electric pairing.
 
    #+begin_src emacs-lisp
-     (electric-pair-mode 1)
+     (electric-pair-mode -1)
+   #+end_src
+
+   Enable autopair.
+
+   #+begin_src emacs-lisp
+     (require 'autopair)
+     (autopair-global-mode)
    #+end_src
 
    Use the system's default browser.
