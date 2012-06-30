@@ -25,8 +25,18 @@
 ** Editor
 
    Set default editor in (e)shell to emacsclient.
+
    #+begin_src emacs-lisp
      (setenv "EDITOR" "emacsclient")
+   #+end_src
+
+** Sources path
+
+   Where to find Emacs' sources.
+
+   #+begin_src emacs-lisp
+     (setq find-function-C-source-directory
+           (expand-file-name "~/.emacs.d/emacs-sources"))
    #+end_src
 
 ** Load path
