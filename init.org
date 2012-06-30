@@ -1104,6 +1104,7 @@
 ** Theme
 
    Load the solarized theme implementation by @purcell.
+
    #+begin_src emacs-lisp
      (require 'color-theme-sanityinc-solarized)
    #+end_src
@@ -1194,7 +1195,7 @@
       )
    #+end_src
 
-** Buffer
+** Buffer Name
 
    #+begin_src emacs-lisp
      (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
