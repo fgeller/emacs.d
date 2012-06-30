@@ -1493,7 +1493,8 @@
                   (not (zerop eshell-last-command-status)))
          (let ((inhibit-read-only t))
            (add-text-properties
-            (save-excursion (beginning-of-line) (point)) (point-max)
+            (point-at-bol)
+            (point-max)
             '(face warning)))))
 
      (add-hook 'eshell-after-prompt-hook 'c/eshell-exit-code-prompt-face)
