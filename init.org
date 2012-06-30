@@ -1768,6 +1768,7 @@
                ((org-agenda-mode-hook
                  (lambda ()
                    (org-mac-iCal)))))
+              ("n" "Find a TAGged note" tags "" ((org-agenda-archives-mode t)))
               ("w" "Show work related tasks only" agenda ""
                ((org-agenda-files ',c/work-org-agenda-files)))))
     #+end_src
