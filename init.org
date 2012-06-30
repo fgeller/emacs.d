@@ -160,7 +160,6 @@
                              move-text
                              mic-paren
                              wgrep
-                             scratch
                              todochiku
                              elisp-slime-nav
                              autopair
@@ -1255,6 +1254,7 @@
 
 ** Automatic saving and backing up
 *** File-visiting buffers
+
     Turn on automatic saving.
 
     #+begin_src emacs-lisp
@@ -1288,71 +1288,6 @@
 
     #+begin_src emacs-lisp
       (setq make-backup-files nil)
-    #+end_src
-
-*** scratch buffer
-
-    Based on blog post at [10].
-
-    Where to store the files for persistence across sessions.
-
-    #+begin_src emacs-lisp
-      (defvar c/persistent-scratch-filename
-        (expand-file-name (concat c/saved-directory "emacs-persistent-scratch"))
-        "Location of *scratch* file contents for persistent-scratch.")
-      (defvar c/persistent-scratch-backup-directory
-        (expand-file-name (concat c/saved-directory "emacs-persistent-scratch-backups/"))
-        "Location of backups of the *scratch* buffer contents for
-                      persistent-scratch.")
-      (make-directory c/persistent-scratch-backup-directory t)
-    #+end_src
-
-    Helper to create a file name to store the scratch buffer.
-
-    #+begin_src emacs-lisp
-      (defun c/make-persistent-scratch-backup-name ()
-        "Create a filename to backup the current scratch file by
-              concatenating C/PERSISTENT-SCRATCH-BACKUP-DIRECTORY with the
-              current date and time."
-        (concat
-         c/persistent-scratch-backup-directory
-         (replace-regexp-in-string
-          (regexp-quote " ") "-" (format-time-string "%d%m%y_%H%M%S"))))
-    #+end_src
-
-    Helper to save the contents of the scratch buffer to a file.
-
-    #+begin_src emacs-lisp
-      (defun c/save-persistent-scratch ()
-        "Write the contents of *scratch* to the file name
-              C/PERSISTENT-SCRATCH-FILENAME, making a backup copy in
-              C/PERSISTENT-SCRATCH-BACKUP-DIRECTORY."
-        (with-current-buffer (get-buffer "*scratch*")
-          (if (file-exists-p c/persistent-scratch-filename)
-              (copy-file c/persistent-scratch-filename
-                         (c/make-persistent-scratch-backup-name)))
-          (write-region (point-min) (point-max)
-                        c/persistent-scratch-filename)))
-
-    #+end_src
-
-    Helper to load the last saved contents of the scratch buffer on startup.
-
-    #+begin_src emacs-lisp
-      (defun c/load-persistent-scratch ()
-        "Load the contents of C/PERSISTENT-SCRATCH-FILENAME into the
-              scratch buffer, clearing its contents first."
-        (if (file-exists-p c/persistent-scratch-filename)
-            (with-current-buffer (get-buffer "*scratch*")
-              (delete-region (point-min) (point-max))
-              (insert-file-contents c/persistent-scratch-filename))))
-    #+end_src
-
-    Hook everything in: Load on startup and save on kill-emacs
-
-    #+begin_src emacs-lisp
-      (c/load-persistent-scratch)
-      (push #'c/save-persistent-scratch kill-emacs-hook)
     #+end_src
 
 * Helm
@@ -2165,6 +2100,26 @@
     (set-terminal-coding-system 'utf-8)
     (set-selection-coding-system 'utf-8)
     (prefer-coding-system 'utf-8)
+  #+end_src
+
+* Start buffer
+
+  Load an org-file, rather than the =*scratch*= buffer, as most doodles
+  are useful at some point in the future.
+
+  #+begin_src emacs-lisp
+    (find-file (expand-file-name (concat org-directory "/scratch.org")))
+  #+end_src
+
+  Automatically save it before killing Emacs. Even when I don't want
+  to.
+
+  #+begin_src emacs-lisp
+    (add-hook
+     'kill-emacs-hook
+     (lambda ()
+       (with-current-buffer "scratch.org"
+         (save-buffer))))
   #+end_src
 
 * Footnotes
