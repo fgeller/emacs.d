@@ -805,7 +805,8 @@
        '(define-key magit-status-mode-map (kbd "C-!") 'c/magit-full-push))
    #+end_src
 
-** Email
+** Email / Notmuch
+
    #+begin_src emacs-lisp
      (eval-after-load 'message
        '(define-key message-mode-map (kbd "C-c C-b") 'c/goto-message-body))
@@ -814,8 +815,12 @@
           (define-key notmuch-search-mode-map (kbd "Q") 'c/notmuch-archive-all-and-quit)
           (define-key notmuch-search-mode-map (kbd "a") 'c/notmuch-archive)
           (define-key notmuch-search-mode-map (kbd "g") 'notmuch-search-refresh-view)
-          (define-key notmuch-hello-mode-map "g" 'notmuch-hello-update)))
+          (define-key notmuch-hello-mode-map "b" 'c/notmuch-jump-back-to-saved-searches)
+          (define-key notmuch-hello-mode-map "g" 'c/notmuch-hello-update-and-jump-back-to-saved-searches)
+          (define-key notmuch-hello-mode-map "G" 'c/notmuch-hello-offlineimap-update-and-jump-back-to-saved-searches)
+          ))
    #+end_src
+
 ** Helm
 
    Add help specific bindings, the =a= is a residue from helm's previous
@@ -1949,12 +1954,27 @@
      (defun c/notmuch-archive-all-and-quit ()
        (interactive)
        (notmuch-search-tag-all '(("-unread" "-inbox" "-i/inbox")))
-       (notmuch-search-quit))
+       (notmuch-search-quit)
+       (c/notmuch-jump-back-to-saved-searches))
 
      (defun c/notmuch-archive ()
        (interactive)
        (notmuch-search-tag '("-unread" "-inbox" "-i/inbox"))
        (notmuch-search-refresh-view))
+
+     (defun c/notmuch-jump-back-to-saved-searches ()
+       (interactive)
+       (goto-line 4))
+
+     (defun c/notmuch-hello-update-and-jump-back-to-saved-searches ()
+       (interactive)
+       (notmuch-hello-update)
+       (c/notmuch-jump-back-to-saved-searches))
+
+     (defun c/notmuch-hello-offlineimap-update-and-jump-back-to-saved-searches ()
+       (interactive)
+       (notmuch-hello-update)
+       (c/notmuch-jump-back-to-saved-searches))
    #+end_src
 
    Settings
