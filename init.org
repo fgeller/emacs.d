@@ -152,6 +152,7 @@
                              wgrep
                              scratch
                              todochiku
+                             elisp-slime-nav
                              ))
      (dolist (package c/elpa-packages)
        (c/require-package package))
@@ -222,6 +223,12 @@
      (autoload 'jumper-mode "jumper" t nil)
      (autoload 'jumper-line-mode "jumper" t nil)
      (autoload 'jumper-update-defs-from-current-buffer "jumper-update" t nil)
+   #+end_src
+
+   Slime / tag like navigation for Emacs Lisp.
+
+   #+begin_src emacs-lisp
+     (autoload 'elisp-slime-nav-mode "elisp-slime-nav" nil t)
    #+end_src
 
 * Text editing
@@ -574,6 +581,7 @@
    #+end_src
 
 ** Lisp
+*** Emacs Lisp
 
    Configuration per-buffer.
 
@@ -582,6 +590,7 @@
        (pretty-symbols-mode 1)
        (eldoc-mode 1)
        (hl-line-mode 1)
+       (elisp-slime-nav-mode 1)
        (add-hook 'before-save-hook 'whitespace-cleanup nil 'local))
      (add-hook 'emacs-lisp-mode-hook 'c/emacs-lisp-mode-initialization)
    #+end_src
