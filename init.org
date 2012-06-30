@@ -1829,6 +1829,12 @@
                ((org-agenda-files ',c/work-org-agenda-files)))))
     #+end_src
 
+    Define the sorting order
+
+    #+begin_src emacs-lisp
+      (setq org-agenda-sorting-strategy '((agenda habit-down time-up todo-state-down)))
+    #+end_src
+
 *** Clock
 
     Enable persisting the history and clock values across emacs sessions.
