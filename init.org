@@ -507,6 +507,21 @@
              ispell-extra-args '("--sug-mode=ultra")))
    #+end_src
 
+   Wrapper to turn on flyspell.
+
+   #+begin_src emacs-lisp
+     (defun c/enable-flyspell ()
+       (flyspell-mode 1))
+   #+end_src
+
+   Spell-check emails and plain text files.
+
+   #+begin_src emacs-lisp
+     (add-hook 'text-mode-hook 'c/enable-flyspell)
+     (add-hook 'message-mode-hook 'c/enable-flyspell)
+     (add-hook 'magit-log-edit-mode-hook 'c/enable-flyspell)
+   #+end_src
+
 ** ediff
 
    Split the diff windows horizontally, rather than vertically.
