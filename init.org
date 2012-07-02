@@ -67,30 +67,23 @@
 
 * Global helpers
 
-  Helper to guess the project root based on code in =full-ack.el=
+  Helper to guess the project root based on files and folders that
+  indicate the root of a project. Exclude tramp'd files.
 
   #+begin_src emacs-lisp
-    (defvar c/project-root-file-patterns
-      '(".project\\'" ".xcodeproj\\'" ".sln\\'" "\\`Project.ede\\'"
-        "\\`.git\\'" "\\`.bzr\\'" "\\`_darcs\\'" "\\`.hg\\'"))
-
     (defun c/guess-project-root ()
+      "Guess the project root based on files and folders that
+    indicate the root of a project. Exclude tramp'd files."
       (interactive)
-      (when (and
-             buffer-file-name
-             (loop for exclude in '("/ssh:" "/sudo:") never
-                   (string-match exclude buffer-file-name)))
-        (catch 'root
-          (let ((dir (expand-file-name (if buffer-file-name
-                                           (file-name-directory buffer-file-name)
-                                         default-directory)))
-                (prev-dir nil)
-                (pattern (mapconcat 'identity c/project-root-file-patterns "\\|")))
-            (while (not (equal dir prev-dir))
-              (when (directory-files dir nil pattern t)
-                (throw 'root dir))
-              (setq prev-dir dir
-                    dir (file-name-directory (directory-file-name dir))))))))
+      (let (
+            (excludes '("/ssh:" "/sudo:"))
+            (root-indicators '(".git" ".hg" ".svn")))
+        (when (and
+               buffer-file-name
+               (loop for exclude in excludes never (string-match exclude buffer-file-name)))
+          (loop
+           for root-indicator in root-indicators
+           thereis (locate-dominating-file (or buffer-file-name default-directory) root-indicator)))))
   #+end_src
 
   Look backward for a regex  and return group 1.
