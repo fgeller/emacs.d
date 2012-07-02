@@ -1066,7 +1066,7 @@
         '(progn
            (define-key python-mode-map (kbd "C-c t") 'c/run-python-test)
            (define-key python-mode-map (kbd "C-c b") 'c/python-insert-ipdb-breakpoint)
-           (define-key python-mode-map (kbd "RET") 'newline-and-indent)
+           (define-key python-mode-map (kbd "C-RET") 'newline-and-indent)
            (eval-after-load 'flymake
              '(progn
                 (define-key python-mode-map (kbd "C-c !") (make-repeatable-command 'flymake-goto-next-error))))
