@@ -76,17 +76,21 @@
 
     (defun c/guess-project-root ()
       (interactive)
-      (catch 'root
-        (let ((dir (expand-file-name (if buffer-file-name
-                                         (file-name-directory buffer-file-name)
-                                       default-directory)))
-              (prev-dir nil)
-              (pattern (mapconcat 'identity c/project-root-file-patterns "\\|")))
-          (while (not (equal dir prev-dir))
-            (when (directory-files dir nil pattern t)
-              (throw 'root dir))
-            (setq prev-dir dir
-                  dir (file-name-directory (directory-file-name dir)))))))
+      (when (and
+             buffer-file-name
+             (loop for exclude in '("/ssh:" "/sudo:") never
+                   (string-match exclude buffer-file-name)))
+        (catch 'root
+          (let ((dir (expand-file-name (if buffer-file-name
+                                           (file-name-directory buffer-file-name)
+                                         default-directory)))
+                (prev-dir nil)
+                (pattern (mapconcat 'identity c/project-root-file-patterns "\\|")))
+            (while (not (equal dir prev-dir))
+              (when (directory-files dir nil pattern t)
+                (throw 'root dir))
+              (setq prev-dir dir
+                    dir (file-name-directory (directory-file-name dir))))))))
   #+end_src
 
   Look backward for a regex  and return group 1.
