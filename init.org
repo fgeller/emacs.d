@@ -1013,6 +1013,8 @@
        '(define-key org-agenda-mode-map (kbd "C-c t") 'org-agenda-todo))
      (eval-after-load 'org-clock
        '(define-key global-map (kbd "C-c C-x C-j") 'org-clock-jump-to-current-clock))
+     (eval-after-load 'org-capture
+       '(define-key org-capture-mode-map (kbd "C-c C-x C-u") 'c/org-get-chrome-link))
      (eval-after-load 'org
        '(progn
           (define-key org-mode-map (kbd "C-c t") 'org-todo)
@@ -1842,6 +1844,28 @@
                entry (file+headline ,org-default-notes-file "Notes")
                "* %?\n\n  %a\n  %i\n")
               ))
+    #+end_src
+
+    Helper based on @jwiegley's dot-emacs to get the URL of the
+    currently active Google Chrome tab/window.
+
+    #+begin_src emacs-lisp
+      (defun c/org-get-chrome-link ()
+        (interactive)
+        (let ((subject (do-applescript
+                        (string-to-multibyte "tell application \"Google Chrome\"
+              title of active tab of front window
+      end tell")))
+              (url (do-applescript
+                    (string-to-multibyte "tell application \"Google Chrome\"
+              URL of active tab of front window
+      end tell"))))
+          (insert (org-make-link-string (substring url 1 -1) (substring subject 1 -1)))
+          (do-applescript
+           (string-to-multibyte "tell application \"Google Chrome\"
+              close active tab of front window
+      end tell"))
+          ))
     #+end_src
 
 *** Refile
