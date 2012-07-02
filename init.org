@@ -809,6 +809,7 @@
    #+end_src
 
 ** Mac OS
+
    #+begin_src emacs-lisp
      (setq mac-command-modifier 'super)
      (setq mac-option-modifier 'meta)
@@ -816,6 +817,7 @@
      (global-set-key (kbd "S-`") 'ns-next-frame)
      (global-set-key (kbd "S-h") 'ns-do-hide-others)
    #+end_src
+
 ** Dired
 
    Use Mac OS' open to view files outside of Emacs.
@@ -967,6 +969,7 @@
    #+end_src
 
 ** Source code editing
+
    #+begin_src emacs-lisp
      (define-key c/map "caa"              'align)
      (define-key c/map "car"              'align-regexp)
@@ -976,7 +979,9 @@
      (global-set-key (kbd "C->") 'mark-next-like-this)
      (global-set-key (kbd "C-c w") (make-repeatable-command 'er/expand-region))
    #+end_src
+
 ** General text editing
+
    #+begin_src emacs-lisp
      (define-key c/map "+" (make-repeatable-command 'c/inc-num-at-point))
      (define-key c/map "-" (make-repeatable-command 'c/dec-num-at-point))
@@ -992,6 +997,7 @@
      (define-key isearch-mode-map (kbd "C-o") 'isearch-occur)
      (define-key isearch-mode-map (kbd "M-z") 'zap-to-isearch)
    #+end_src
+
 ** Org mode
 
    #+begin_src emacs-lisp
@@ -1010,6 +1016,7 @@
    #+end_src
 
 ** Version control
+
    #+begin_src emacs-lisp
      (define-key c/map "v="               'vc-diff)
      (define-key c/map "vd"               'vc-dir)
@@ -1021,6 +1028,7 @@
      (define-key c/map "vv"               'vc-next-action)
      (define-key c/map "vm"               'magit-status)
    #+end_src
+
 ** Programming modes
 *** JS2 mode
 
@@ -1231,6 +1239,7 @@
 
 * Buffers and sessions
 ** Settings
+
    Don't remember temporary and tramp'ed files.
 
    #+begin_src emacs-lisp
