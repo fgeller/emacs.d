@@ -245,6 +245,12 @@
      (autoload 'elisp-slime-nav-mode "elisp-slime-nav" nil t)
    #+end_src
 
+   Light-weight session management.
+
+   #+begin_src emacs-lisp
+     (autoload 'session "session" nil t)
+   #+end_src
+
 * Text editing
 ** Helper
 
@@ -1268,6 +1274,16 @@
    #+end_src
 
 ** Automatic saving and backing up
+
+*** Session management
+
+    Initialize session management, that is storing of positions and
+    several input variables [15].
+
+    #+begin_src emacs-lisp
+      (add-hook 'after-init-hook 'session-initialize)
+    #+end_src
+
 *** File-visiting buffers
 
     Turn on automatic saving.
@@ -2190,3 +2206,5 @@
 [13] http://www.emacswiki.org/emacs/HalfScrolling#toc2
 
   [14] https://github.com/technomancy/emacs-starter-kit/
+
+  [15] http://www.emacswiki.org/emacs/EmacsSession
