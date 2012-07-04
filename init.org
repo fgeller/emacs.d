@@ -1011,6 +1011,15 @@
      (define-key isearch-mode-map (kbd "M-z") 'zap-to-isearch)
    #+end_src
 
+** Flyspell
+
+   #+begin_src emacs-lisp
+     (eval-after-load 'flyspell
+       '(progn
+          (define-key flyspell-mode-map (kbd "C-.") nil)
+          (define-key flyspell-mode-map (kbd "C-,") nil)))
+   #+end_src
+
 ** Org mode
 
    #+begin_src emacs-lisp
