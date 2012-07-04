@@ -782,11 +782,14 @@
     #+end_src
 
 ** Dvorak
+
    Swap =C-t= and =C-x=, so it's easier to type on Dvorak layout
+
    #+begin_src emacs-lisp
      (keyboard-translate ?\C-t ?\C-x)
      (keyboard-translate ?\C-x ?\C-t)
    #+end_src
+
 ** C-x Map
 
    Helpers for scrolling - move one line at a time, and scroll similar
