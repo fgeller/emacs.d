@@ -1115,7 +1115,7 @@
    #+begin_src emacs-lisp
      (setq c/variable-width-font-family "Calibri")
      (setq c/variable-width-font-height 180)
-     (setq c/mono-space-font-family "Consolas")
+     (setq c/mono-space-font-family "Menlo")
      (setq c/mono-space-font-height 170)
      (set-face-attribute 'default nil
                          :family c/variable-width-font-family :height c/variable-width-font-height :weight 'normal)
