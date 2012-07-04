@@ -159,7 +159,6 @@
                              wgrep
                              todochiku
                              elisp-slime-nav
-                             autopair
                              ))
      (dolist (package c/elpa-packages)
        (c/require-package package))
@@ -317,13 +316,6 @@
 
    #+begin_src emacs-lisp
      (electric-pair-mode -1)
-   #+end_src
-
-   Enable autopair.
-
-   #+begin_src emacs-lisp
-     (require 'autopair)
-     (autopair-global-mode)
    #+end_src
 
    Use the system's default browser.
