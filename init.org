@@ -901,10 +901,13 @@
      (global-set-key (kbd "C-h t") 'describe-face)
    #+end_src
 ** Buffers
+
    #+begin_src emacs-lisp
      (define-key c/map "br" 'rename-buffer)
      (define-key c/map "bR" 'revert-buffer)
+     (define-key c/map "bT" 'c/tramp-cleanup)
    #+end_src
+
 ** Motion
    Source [13]
 
@@ -1622,6 +1625,16 @@
 
   #+begin_src emacs-lisp
     (setq tramp-auto-save-directory "~/.emacs.d/saved/")
+  #+end_src
+
+  Helper to cleanup TRAMP residues.
+
+  #+begin_src emacs-lisp
+    (defun c/tramp-cleanup ()
+      (interactive)
+      (tramp-cleanup-all-connections)
+      (tramp-cleanup-all-buffers)
+      (message "Cleaned up TRAMP connections and buffers."))
   #+end_src
 
 * Dired
