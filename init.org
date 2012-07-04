@@ -166,15 +166,6 @@
 
 ** Globally desirable external libraries
 
-   We use key-chord to have homerow access to the most common used
-   bindings via a custom map.
-
-   #+begin_src emacs-lisp
-     (require 'key-chord)
-     (key-chord-mode 1)
-     (setq key-chord-two-keys-delay 0.5)
-   #+end_src
-
    Helm is used for most completion and especially file/buffer
    navigation. Needed from the start.
 
@@ -771,7 +762,7 @@
    #+begin_src emacs-lisp
      (defvar c/map (make-keymap)
        "Keymap for custom local bindings and functions")
-     (key-chord-define-global ",." 'c/map-prefix)
+     (global-set-key (kbd "C-.") 'c/map-prefix)
      (fset 'c/map-prefix c/map)
    #+end_src
 
@@ -873,9 +864,7 @@
    name "anything".
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-.") 'c/helm-jump)
-     (define-key global-map (kbd "C-,") 'helm-find-files)
-     (define-key c/map "aa"               'c/helm-jump)
+     (define-key c/map "."               'c/helm-jump)
      (define-key c/map "ab"               'helm-browse-code)
      (define-key c/map "ac"               'c/helm-contact)
      (define-key c/map "ad"               'helm-c-apropos)
