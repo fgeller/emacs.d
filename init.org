@@ -504,6 +504,8 @@
    #+begin_src emacs-lisp
      (defun c/enable-flyspell ()
        (flyspell-mode 1))
+     (defun c/enable-flyspell-prog ()
+       (flyspell-prog-mode))
    #+end_src
 
    Spell-check emails and plain text files.
@@ -534,6 +536,12 @@
 
   #+begin_src emacs-lisp
     (add-hook 'prog-mode-hook (lambda () (setq show-trailing-whitespace t)))
+  #+end_src
+
+  Spell check comments.
+
+  #+begin_src emacs-lisp
+    (add-hook 'prog-mode-hook 'c/enable-flyspell-prog)
   #+end_src
 
 ** Compiling
