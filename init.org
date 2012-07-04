@@ -621,6 +621,18 @@
      (add-hook 'emacs-lisp-mode-hook 'c/emacs-lisp-mode-initialization)
    #+end_src
 
+*** Common Lisp
+
+    Basic slime setup.
+
+    #+begin_src emacs-lisp
+      (setq inferior-lisp-program "/usr/local/bin/sbcl")
+      (setq slime-lisp-implementations
+            '((sbcl ("sbcl" "--core" "sbcl.core-for-slime"))))
+      (require 'slime-autoloads)
+      (slime-setup '(slime-fancy))
+    #+end_src
+
 ** Makefile
 
    Configuration per buffer.
