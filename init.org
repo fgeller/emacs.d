@@ -850,13 +850,6 @@
      (define-key dired-mode-map "o" 'c/dired-open-mac)
    #+end_src
 
-** Magit
-
-   #+begin_src emacs-lisp
-     (eval-after-load 'magit
-       '(define-key magit-status-mode-map (kbd "C-!") 'c/magit-full-push))
-   #+end_src
-
 ** Email / Notmuch
 
    #+begin_src emacs-lisp
