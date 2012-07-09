@@ -910,6 +910,7 @@
    #+begin_src emacs-lisp
      (define-key c/map "br" 'rename-buffer)
      (define-key c/map "bR" 'revert-buffer)
+     (define-key c/map "bs" 'c/switch-to-scratch-buffer)
      (define-key c/map "bT" 'c/tramp-cleanup)
    #+end_src
 
@@ -2202,6 +2203,14 @@
      (lambda ()
        (with-current-buffer "scratch.org"
          (save-buffer))))
+  #+end_src
+
+  Helper to quickly switch to the scratch buffer.
+
+  #+begin_src emacs-lisp
+    (defun c/switch-to-scratch-buffer ()
+      (interactive)
+      (switch-to-buffer "scratch.org"))
   #+end_src
 
 * Footnotes
