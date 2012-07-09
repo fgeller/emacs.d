@@ -1045,20 +1045,6 @@
           (define-key org-mode-map (kbd "C-,") 'helm-find-files)))
    #+end_src
 
-** Version control
-
-   #+begin_src emacs-lisp
-     (define-key c/map "v="               'vc-diff)
-     (define-key c/map "vd"               'vc-dir)
-     (define-key c/map "vD"               'vc-delete-file)
-     (define-key c/map "vF"               'vc-pull)
-     (define-key c/map "vg"               'vc-annotate)
-     (define-key c/map "vl"               'vc-print-log)
-     (define-key c/map "vu"               'vc-revert)
-     (define-key c/map "vv"               'vc-next-action)
-     (define-key c/map "vm"               'magit-status)
-   #+end_src
-
 ** Programming modes
 *** JS2 mode
 
