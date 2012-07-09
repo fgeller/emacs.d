@@ -2028,6 +2028,7 @@
 
      (defun c/notmuch-hello-offlineimap-update-and-jump-back-to-saved-searches ()
        (interactive)
+       (shell-command "offlineimap")
        (notmuch-hello-update)
        (c/notmuch-jump-back-to-saved-searches))
    #+end_src
