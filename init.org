@@ -1039,6 +1039,7 @@
 
 * Appearance
 ** General GUI Settings
+
    Less noisy Emacs startup and less noise on screen per default.
 
    #+begin_src emacs-lisp
