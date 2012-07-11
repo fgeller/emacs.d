@@ -1002,11 +1002,10 @@
        '(define-key org-agenda-mode-map (kbd "C-c t") 'org-agenda-todo))
      (eval-after-load 'org-clock
        '(define-key global-map (kbd "C-c C-x C-j") 'org-clock-jump-to-current-clock))
-     (eval-after-load 'org-capture
-       '(define-key org-capture-mode-map (kbd "C-c C-x C-u") 'c/org-get-chrome-link))
      (eval-after-load 'org
        '(progn
           (define-key org-mode-map (kbd "C-c t") 'org-todo)
+          (define-key org-mode-map (kbd "C-c C-x C-u") 'c/org-get-chrome-link)))
    #+end_src
 
 ** Programming modes
