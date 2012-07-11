@@ -957,8 +957,6 @@
 ** Source code editing
 
    #+begin_src emacs-lisp
-     (define-key c/map "caa"              'align)
-     (define-key c/map "car"              'align-regexp)
      (define-key c/map "cr"               'recompile)
      (define-key c/map "cc"               'compile)
      (global-set-key (kbd "C-<") 'mark-previous-like-this)
@@ -974,7 +972,6 @@
      (define-key c/map "ld" (make-repeatable-command 'c/duplicate-line))
      (define-key c/map "lf" 'flush-lines)
      (define-key c/map "lk" 'keep-lines)
-     (define-key c/map "ll" 'goto-line)
      (define-key c/map "q" 'query-replace)
      (define-key c/map "Q" 'query-replace-regexp)
      (define-key c/map "^" (make-repeatable-command 'join-line))
@@ -1010,7 +1007,6 @@
      (eval-after-load 'org
        '(progn
           (define-key org-mode-map (kbd "C-c t") 'org-todo)
-          (define-key org-mode-map (kbd "C-,") 'helm-find-files)))
    #+end_src
 
 ** Programming modes
