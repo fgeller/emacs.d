@@ -159,6 +159,7 @@
                              wgrep
                              todochiku
                              elisp-slime-nav
+                             auto-complete
                              ))
      (dolist (package c/elpa-packages)
        (c/require-package package))
@@ -232,6 +233,12 @@
 
    #+begin_src emacs-lisp
      (autoload 'session "session" nil t)
+   #+end_src
+
+   Simple auto-completion.
+
+   #+begin_src emacs-lisp
+     (autoload 'auto-complete-mode "auto-complete" nil t)
    #+end_src
 
 * Text editing
