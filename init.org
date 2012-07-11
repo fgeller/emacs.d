@@ -2036,6 +2036,7 @@
       notmuch-mua-user-agent-function 'notmuch-mua-user-agent-emacs
       notmuch-search-oldest-first nil
       notmuch-show-logo nil
+      notmuch-show-indent-messages-width 0
       notmuch-crypto-process-mime t
       notmuch-search-line-faces nil
       notmuch-show-all-multipart/alternative-parts nil
