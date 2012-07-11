@@ -957,8 +957,8 @@
 ** Source code editing
 
    #+begin_src emacs-lisp
-     (define-key c/map "cr"               'recompile)
-     (define-key c/map "cc"               'compile)
+     (define-key c/map "cr" 'recompile)
+     (define-key c/map "cc" 'compile)
      (global-set-key (kbd "C-<") 'mark-previous-like-this)
      (global-set-key (kbd "C->") 'mark-next-like-this)
      (global-set-key (kbd "C-c w") (make-repeatable-command 'er/expand-region))
