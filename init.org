@@ -2194,6 +2194,6 @@
 
 [12] http://www.emacswiki.org/
 
-  [14] https://github.com/technomancy/emacs-starter-kit/
+[14] https://github.com/technomancy/emacs-starter-kit/
 
-  [15] http://www.emacswiki.org/emacs/EmacsSession
+[15] http://www.emacswiki.org/emacs/EmacsSession
