@@ -1077,7 +1077,7 @@
 
 ** Fonts
 
-   Set default fonts across frames to Calibri.
+   Set default fonts across frames.
 
    #+begin_src emacs-lisp
      (setq c/variable-width-font-family "Calibri")
@@ -1085,7 +1085,7 @@
      (setq c/mono-space-font-family "Menlo")
      (setq c/mono-space-font-height 150)
      (set-face-attribute 'default nil
-                         :family c/variable-width-font-family :height c/variable-width-font-height :weight 'normal)
+                         :family c/mono-space-font-family :height c/mono-space-font-height :weight 'normal)
    #+end_src
 
    Define some helpers to switch between variable-width and mono-spaced
@@ -1107,7 +1107,7 @@
 
    Use monospace for some modes.
 
-   #+begin_src emacs-lisp
+   #+begin_src emacs-lisp :tangle no
      (add-hook 'calendar-mode-hook 'c/set-mono-space-font)
      (add-hook 'notmuch-hello-mode-hook 'c/set-mono-space-font)
      (add-hook 'notmuch-search-hook 'c/set-mono-space-font)
