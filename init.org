@@ -326,23 +326,8 @@
    variables.
 
    #+begin_src emacs-lisp
-     (setq
-      whitespace-style
-      '(
-        face
-        tabs
-        spaces
-        trailing
-        lines
-        space-before-tab
-        newline
-        indentation::space
-        empty ; remove all empty lines at beginning/end of buffer
-        space-after-tab
-        space-mark
-        tab-mark
-        newline-mark
-        ))
+     (setq c/whitespace-style '(face tabs spaces trailing lines space-before-tab newline indentation::space empty space-after-tab space-mark tab-mark newline-mark))
+     (setq whitespace-style c/whitespace-style)
    #+end_src
 
    Don't disable narrowing.
