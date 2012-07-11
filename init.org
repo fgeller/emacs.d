@@ -1081,6 +1081,12 @@
      (defalias 'yes-or-no-p 'y-or-n-p)
    #+end_src
 
+   Four spaces for a tab.
+
+   #+begin_src emacs-lisp
+     (setq-default tab-width 4)
+   #+end_src
+
 ** Fonts
 
    Set default fonts across frames.
