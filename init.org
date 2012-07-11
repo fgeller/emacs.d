@@ -789,8 +789,6 @@
     #+begin_src emacs-lisp
       (define-key c/map "g" 'c/rgrep-from-project-root)
       (define-key c/map "n" 'notmuch)
-      (define-key c/map "ss" 'eshell)
-      (define-key c/map "sn" 'c/eshell-with-prefix)
       (define-key c/map "U" 'browse-url-default-macosx-browser)
     #+end_src
 *** Enable / disable modes
@@ -800,6 +798,15 @@
       (define-key c/map "mr" 'auto-revert-mode)
       (define-key c/map "mw" 'whitespace-mode)
       (define-key c/map "mj" 'jumper-line-mode)
+    #+end_src
+
+
+*** Start different kinds of shells
+
+    #+begin_src emacs-lisp
+      (define-key c/map "se" 'eshell)
+      (define-key c/map "sl" 'slime)
+      (define-key c/map "sp" 'python-shell-switch-to-shell)
     #+end_src
 
 ** Dvorak
