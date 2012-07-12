@@ -794,6 +794,7 @@
     #+end_src
 
 *** Enable / disable modes
+
     #+begin_src emacs-lisp
       (define-key c/map "mc" 'company-mode)
       (define-key c/map "mm" 'magit-status)
@@ -801,7 +802,6 @@
       (define-key c/map "mw" 'whitespace-mode)
       (define-key c/map "mj" 'jumper-line-mode)
     #+end_src
-
 
 *** Start different kinds of shells
 
