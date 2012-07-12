@@ -159,7 +159,6 @@
                              wgrep
                              todochiku
                              elisp-slime-nav
-                             auto-complete
                              ))
      (dolist (package c/elpa-packages)
        (c/require-package package))
@@ -238,7 +237,9 @@
    Simple auto-completion.
 
    #+begin_src emacs-lisp
-     (autoload 'auto-complete-mode "auto-complete" nil t)
+     (autoload 'company-mode "company" nil t)
+     (setq company-idle-delay t)
+     (setq company-minimum-prefix-length 2)
    #+end_src
 
 * Text editing
@@ -793,7 +794,7 @@
     #+end_src
 *** Enable / disable modes
     #+begin_src emacs-lisp
-      (define-key c/map "ma" 'auto-complete-mode)
+      (define-key c/map "mc" 'company-mode)
       (define-key c/map "mm" 'magit-status)
       (define-key c/map "mr" 'auto-revert-mode)
       (define-key c/map "mw" 'whitespace-mode)
