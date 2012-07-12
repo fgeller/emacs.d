@@ -787,11 +787,12 @@
    #+end_src
 
 *** Various tools
+
     #+begin_src emacs-lisp
       (define-key c/map "g" 'c/rgrep-from-project-root)
       (define-key c/map "n" 'notmuch)
-      (define-key c/map "U" 'browse-url-default-macosx-browser)
     #+end_src
+
 *** Enable / disable modes
     #+begin_src emacs-lisp
       (define-key c/map "mc" 'company-mode)
@@ -847,6 +848,27 @@
      (define-key ctl-x-map "}" (make-repeatable-command 'enlarge-window-horizontally))
      (define-key ctl-x-map "{" (make-repeatable-command 'shrink-window-horizontally))
      (define-key ctl-x-map "o" (make-repeatable-command 'other-window))
+   #+end_src
+
+** goto Map (M-g)
+
+   Alternatives to default =M->= and =M-<= to be consistent.
+
+   #+begin_src emacs-lisp
+     (define-key goto-map "<" 'beginning-of-buffer)
+     (define-key goto-map ">" 'end-of-buffer)
+   #+end_src
+
+   Quickly jump between matching parens.
+
+   #+begin_src emacs-lisp
+     (define-key goto-map "%" (make-repeatable-command 'c/goto-match-paren))
+   #+end_src
+
+   Jump to URL.
+
+   #+begin_src emacs-lisp
+     (define-key goto-map "u" 'browse-url-default-macosx-browser)
    #+end_src
 
 ** Mac OS
@@ -936,20 +958,7 @@
      (define-key c/map "bT" 'c/tramp-cleanup)
    #+end_src
 
-** Motion
-
-   Fast jumping to matching paren.
-
-   #+begin_src emacs-lisp
-     (define-key c/map "%" (make-repeatable-command 'c/goto-match-paren))
-   #+end_src
-
-   No =Meta= for jumping to the beginning/end of the buffer.
-
-   #+begin_src emacs-lisp
-     (define-key c/map "<" 'beginning-of-buffer)
-     (define-key c/map ">" 'end-of-buffer)
-   #+end_src
+** isearch
 
    isearch-specific bindings to use symbol at point and exit search on
    the "other end" of the match.
