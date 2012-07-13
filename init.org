@@ -238,8 +238,6 @@
 
    #+begin_src emacs-lisp
      (autoload 'company-mode "company" nil t)
-     (setq company-idle-delay t)
-     (setq company-minimum-prefix-length 2)
    #+end_src
 
 * Text editing
@@ -527,6 +525,34 @@
    #+begin_src emacs-lisp
      (setq ediff-window-setup-function 'ediff-setup-windows-plain)
    #+end_src
+
+** Company mode (auto-completion)
+*** Configuration
+
+    Start completion after a minimum of two characters.
+
+    #+begin_src emacs-lisp
+     (setq company-minimum-prefix-length 2)
+    #+end_src
+
+    Don't delay completion, offer candidates as soon as possible.
+
+    #+begin_src emacs-lisp
+     (setq company-idle-delay t)
+    #+end_src
+
+    Explicitly set the desired backends.
+
+    #+begin_src emacs-lisp
+     (setq company-backends '(company-elisp c/company-jumper))
+     (setq company-begin-commands '(self-insert-command))
+    #+end_src
+
+    Don't start completion after moving around, only after typing.
+
+    #+begin_src emacs-lisp
+     (setq company-begin-commands '(self-insert-command))
+    #+end_src
 
 ** Language helpers
 
