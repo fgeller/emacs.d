@@ -2163,9 +2163,20 @@
            message-signature "Felix Geller"
            )
           (add-hook 'message-setup-hook 'c/insert-message-sign-pgpmime)
-          (add-hook 'message-mode-hook 'turn-on-auto-fill)
           ))
    #+end_src
+
+   Buffer-specific customization.
+
+   #+begin_src emacs-lisp
+     (defun c/message-mode-customization ()
+       (turn-on-auto-fill)
+       (make-local-variable 'company-backends)
+       (setq company-backends '(company-ispell))
+       (company-mode 1))
+     (add-hook 'message-mode-hook 'c/message-mode-customization)
+   #+end_src
+
 * IRC
 
   Who will I be?
