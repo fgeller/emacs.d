@@ -554,6 +554,32 @@
      (setq company-begin-commands '(self-insert-command))
     #+end_src
 
+*** Backends
+
+    Company backend for Jumper definitions.
+
+    #+begin_src emacs-lisp
+      (require 'jumper)
+      (defun c/company-jumper (command &optional prefix &rest ignored)
+        (case command
+          ('prefix (company-grab-symbol))
+          ('candidates
+           (let* ((jumper-file (jumper-find-jumper-file)))
+             (when jumper-file
+               (let ((jumper-file-buffer (find-file-noselect jumper-file)))
+                 (with-temp-buffer
+                   (insert-buffer-substring jumper-file-buffer)
+                   (goto-char (point-min))
+                   (keep-lines (concat "^" prefix ".*[[:digit:]]+$"))
+                   (goto-char (point-min))
+                   (while (not (eobp))
+                     (re-search-forward "^\\([^\t]+\\).+$")
+                     (replace-match "\\1" nil nil)
+                     (forward-line 1))
+                   (split-string (buffer-string))
+                   )))))))
+    #+end_src
+
 ** Language helpers
 
    Fast switch to German postfix input method.
