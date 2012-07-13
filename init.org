@@ -704,6 +704,7 @@
         (eldoc-mode 1)
         (hl-line-mode 1)
         (elisp-slime-nav-mode 1)
+        (company-mode 1)
         (add-hook 'before-save-hook 'whitespace-cleanup nil 'local))
       (add-hook 'emacs-lisp-mode-hook 'c/emacs-lisp-mode-initialization)
     #+end_src
@@ -776,6 +777,7 @@
        (jumper-mode 1)
        (pretty-symbols-mode 1)
        (hl-line-mode 1)
+       (company-mode 1)
        (when buffer-file-name (flymake-mode 1))
        (add-hook 'before-save-hook 'whitespace-cleanup nil 'local)
        (add-hook 'before-save-hook 'jumper-update-defs-from-current-buffer nil 'local)
