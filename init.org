@@ -528,6 +528,34 @@
      (setq ediff-window-setup-function 'ediff-setup-windows-plain)
    #+end_src
 
+** Language helpers
+
+   Fast switch to German postfix input method.
+
+   #+begin_src emacs-lisp
+     (defun c/set-german-postfix-input-method ()
+       (interactive)
+       (set-input-method 'german-postfix))
+   #+end_src
+
+
+   Fast switch to German dictionary for spell-checking.
+
+   #+begin_src emacs-lisp
+     (defun c/set-german-dictionary ()
+       (interactive)
+       (ispell-change-dictionary "german"))
+   #+end_src
+
+   Set the environment for editing a buffer with German text.
+
+   #+begin_src emacs-lisp
+     (defun c/set-german-environment ()
+       (interactive)
+       (c/set-german-postfix-input-method)
+       (c/set-german-dictionary))
+   #+end_src
+
 * Programming
 
   Show trailing whitespace when editing source code.
@@ -936,13 +964,12 @@
      (define-key c/map "xe"               'eval-last-sexp)
      (define-key c/map "xr"               'eval-region)
    #+end_src
-** Input method
+** Input Environment
 
-   Fast switch to German postfix input method.
+   Fast switch to a German environment.
 
    #+begin_src emacs-lisp
-     (defun c/set-german-postfix-input-method () (interactive) (set-input-method 'german-postfix))
-     (define-key c/map "id" 'c/set-german-postfix-input-method)
+     (define-key c/map "id" 'c/set-german-environment)
    #+end_src
 
 ** Info
