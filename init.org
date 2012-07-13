@@ -696,17 +696,17 @@
 ** Lisp
 *** Emacs Lisp
 
-   Configuration per-buffer.
+    Configuration per-buffer.
 
-   #+begin_src emacs-lisp
-     (defun c/emacs-lisp-mode-initialization ()
-       (pretty-symbols-mode 1)
-       (eldoc-mode 1)
-       (hl-line-mode 1)
-       (elisp-slime-nav-mode 1)
-       (add-hook 'before-save-hook 'whitespace-cleanup nil 'local))
-     (add-hook 'emacs-lisp-mode-hook 'c/emacs-lisp-mode-initialization)
-   #+end_src
+    #+begin_src emacs-lisp
+      (defun c/emacs-lisp-mode-initialization ()
+        (pretty-symbols-mode 1)
+        (eldoc-mode 1)
+        (hl-line-mode 1)
+        (elisp-slime-nav-mode 1)
+        (add-hook 'before-save-hook 'whitespace-cleanup nil 'local))
+      (add-hook 'emacs-lisp-mode-hook 'c/emacs-lisp-mode-initialization)
+    #+end_src
 
 *** Common Lisp
 
