@@ -2115,11 +2115,32 @@
           (add-hook 'notmuch-search-hook 'notmuch-hl-line-mode)))
    #+end_src
 
+   Define what sections should be shown in the 'hello' overview.
+   Don't show search fields and the footer.
+
+   #+begin_src emacs-lisp
+     (setq notmuch-hello-sections
+           '(
+             notmuch-hello-insert-header
+             notmuch-hello-insert-saved-searches
+             notmuch-hello-insert-alltags
+             ))
+   #+end_src
+
+   Show all tags in the 'hello' overview.
+
+   #+begin_src emacs-lisp
+     (setq notmuch-show-all-tags-list t)
+   #+end_src
+
    Saved searches.
 
    #+begin_src emacs-lisp
      (setq notmuch-saved-searches
-           '(("i/commits" . "tag:unread  and tag:i/commits and not \"via pb\"")
+           '(
+             ("inbox" . "tag:inbox")
+             ("i/inbox" . "tag:i/inbox")
+             ("i/commits" . "tag:unread  and tag:i/commits and not \"via pb\"")
              ("ml/emacs*" . "tag:unread and (tag:ml/emacs-help or tag:ml/emacs-devel)")
              ("ml/org" . "tag:unread and (tag:ml/org)")
              ("ml/cedet" . "tag:unread and (tag:ml/cedet-devel)")
