@@ -855,6 +855,7 @@
                 (repeat nil)))
        (intern (concat (symbol-name cmd) "-repeat")))
    #+end_src
+
 ** Custom prefix map
 
    Define custom map that can be used to accumulate any number of
