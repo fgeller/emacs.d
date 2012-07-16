@@ -987,6 +987,10 @@
           (define-key notmuch-search-mode-map (kbd "t") 'notmuch-search-previous-thread)
           (define-key notmuch-search-mode-map (kbd "n") 'notmuch-search-next-thread)
           (define-key notmuch-show-mode-map (kbd "s") 'notmuch-kill-this-buffer)
+          (define-key notmuch-hello-mode-map "h" 'widget-button-press)
+          (define-key notmuch-hello-mode-map "t" 'widget-backward)
+          (define-key notmuch-hello-mode-map "n" 'widget-forward)
+
           (define-key notmuch-hello-mode-map "b" 'c/notmuch-jump-back-to-saved-searches)
           (define-key notmuch-hello-mode-map "g" 'c/notmuch-hello-update-and-jump-back-to-saved-searches)
           (define-key notmuch-hello-mode-map "G" 'c/notmuch-hello-offlineimap-update-and-jump-back-to-saved-searches)
