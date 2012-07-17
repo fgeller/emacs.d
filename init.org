@@ -2214,7 +2214,7 @@
   Reduce the noise by ignoring status information.
 
   #+begin_src emacs-lisp
-    (setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
+    (setq erc-hide-list '("NICK"))
   #+end_src
 
   Get growl notifications when receiving private messages.
