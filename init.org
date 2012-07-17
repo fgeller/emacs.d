@@ -865,6 +865,21 @@
      (keyboard-translate ?\C-x ?\C-t)
    #+end_src
 
+** Jumping
+
+   Use helm sources for fast jumping to buffers or files.
+
+   #+begin_src emacs-lisp
+   (define-key global-map (kbd "C-.") 'c/helm-jump)
+   #+end_src
+
+   Jump to previous marks to go backwards.
+
+   #+begin_src emacs-lisp
+     (defun c/pop-local-mark () (interactive) (set-mark-command 1))
+     (define-key global-map (kbd "C-,") 'c/pop-local-mark)
+   #+end_src
+
 ** C-c Map
 
    Start different kinds of shells
@@ -1001,10 +1016,6 @@
      (define-key global-map (kbd "C-c hx") 'helm-M-x)
    #+end_src
 
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-.") 'c/helm-jump)
-   #+end_src
-
 ** Evaluation
 
    #+begin_src emacs-lisp
@@ -1084,6 +1095,8 @@
        '(define-key global-map (kbd "C-c C-x C-j") 'org-clock-jump-to-current-clock))
      (eval-after-load 'org
        '(progn
+          (define-key org-mode-map (kbd "C-.") nil)
+          (define-key org-mode-map (kbd "C-,") nil)
           (define-key org-mode-map (kbd "C-c t") 'org-todo)
           (define-key org-mode-map (kbd "C-c C-x C-u") 'c/org-get-chrome-link)))
    #+end_src
