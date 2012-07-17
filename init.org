@@ -856,44 +856,6 @@
        (intern (concat (symbol-name cmd) "-repeat")))
    #+end_src
 
-** Custom prefix map
-
-   Define custom map that can be used to accumulate any number of
-   custom bindings. Should be easy to access, therefore we use uh
-   (both on home row on Dvorak layout)
-
-   #+begin_src emacs-lisp
-     (defvar c/map (make-keymap)
-       "Keymap for custom local bindings and functions")
-     (global-set-key (kbd "C-.") 'c/map-prefix)
-     (fset 'c/map-prefix c/map)
-   #+end_src
-
-*** Various tools
-
-    #+begin_src emacs-lisp
-      (define-key c/map "g" 'c/rgrep-from-project-root)
-      (define-key c/map "n" 'notmuch)
-    #+end_src
-
-*** Enable / disable modes
-
-    #+begin_src emacs-lisp
-      (define-key c/map "mc" 'company-mode)
-      (define-key c/map "mm" 'magit-status)
-      (define-key c/map "mr" 'auto-revert-mode)
-      (define-key c/map "mw" 'whitespace-mode)
-      (define-key c/map "mj" 'jumper-line-mode)
-    #+end_src
-
-*** Start different kinds of shells
-
-    #+begin_src emacs-lisp
-      (define-key c/map "se" 'eshell)
-      (define-key c/map "sl" 'slime)
-      (define-key c/map "sp" 'python-shell-switch-to-shell)
-    #+end_src
-
 ** Dvorak
 
    Swap =C-t= and =C-x=, so it's easier to type on Dvorak layout
@@ -901,6 +863,35 @@
    #+begin_src emacs-lisp
      (keyboard-translate ?\C-t ?\C-x)
      (keyboard-translate ?\C-x ?\C-t)
+   #+end_src
+
+** C-c Map
+
+   Start different kinds of shells
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-c se") 'eshell)
+     (define-key global-map (kbd "C-c sl") 'slime)
+     (define-key global-map (kbd "C-c sp") 'python-shell-switch-to-shell)
+   #+end_src
+
+   Enable / disable modes
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-c mc") 'company-mode)
+     (define-key global-map (kbd "C-c mg") 'c/rgrep-from-project-root)
+     (define-key global-map (kbd "C-c mm") 'magit-status)
+     (define-key global-map (kbd "C-c mn") 'notmuch)
+     (define-key global-map (kbd "C-c mr") 'auto-revert-mode)
+     (define-key global-map (kbd "C-c mw") 'whitespace-mode)
+     (define-key global-map (kbd "C-c mj") 'jumper-line-mode)
+   #+end_src
+
+   Toggle functions
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-c M-t d") (make-repeatable-command 'toggle-debug-on-error))
+     (define-key global-map (kbd "C-c M-t l") (make-repeatable-command 'toggle-truncate-lines))
    #+end_src
 
 ** C-x Map
@@ -960,8 +951,8 @@
      (setq mac-command-modifier 'super)
      (setq mac-option-modifier 'meta)
      (setq default-input-method "MacOSX")
-     (global-set-key (kbd "S-`") 'ns-next-frame)
-     (global-set-key (kbd "S-h") 'ns-do-hide-others)
+     (define-key global-map (kbd "S-`") 'ns-next-frame)
+     (define-key global-map (kbd "S-h") 'ns-do-hide-others)
    #+end_src
 
 ** Dired
@@ -1003,45 +994,40 @@
    name "anything".
 
    #+begin_src emacs-lisp
-     (define-key c/map "."               'c/helm-jump)
-     (define-key c/map "ab"               'helm-browse-code)
-     (define-key c/map "ac"               'c/helm-contact)
-     (define-key c/map "ad"               'helm-c-apropos)
-     (define-key c/map "af"               'helm-find-files)
-     (define-key c/map "ag"               'c/helm-do-rgrep)
-     (define-key c/map "al"               'helm-locate)
-     (define-key c/map "ar"               'helm-regexp)
-     (define-key c/map "au"               'helm-ucs)
-     (define-key c/map "ay"               'helm-show-kill-ring)
-     (define-key c/map "ax"               'helm-M-x)
+     (define-key global-map (kbd "C-c hc") 'c/helm-contact)
+     (define-key global-map (kbd "C-c hg") 'c/helm-do-rgrep)
+     (define-key global-map (kbd "C-c hr") 'helm-regexp)
+     (define-key global-map (kbd "C-c hu") 'helm-ucs)
+     (define-key global-map (kbd "C-c hx") 'helm-M-x)
+   #+end_src
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-.") 'c/helm-jump)
    #+end_src
 
 ** Evaluation
+
    #+begin_src emacs-lisp
-     (define-key c/map "xx"               'execute-extended-command)
-     (define-key c/map "xb"               'eval-buffer)
-     (define-key c/map "xe"               'eval-last-sexp)
-     (define-key c/map "xr"               'eval-region)
+     (define-key global-map (kbd "C-c eb") 'eval-buffer)
+     (define-key global-map (kbd "C-c ee") 'eval-last-sexp)
+     (define-key global-map (kbd "C-c er") 'eval-region)
    #+end_src
+
 ** Input Environment
 
    Fast switch to a German environment.
 
    #+begin_src emacs-lisp
-     (define-key c/map "id" 'c/set-german-environment)
+     (define-key global-map (kbd "C-c ii") 'c/set-german-environment)
    #+end_src
 
-** Info
-   #+begin_src emacs-lisp
-     (global-set-key (kbd "C-h t") 'describe-face)
-   #+end_src
 ** Buffers
 
    #+begin_src emacs-lisp
-     (define-key c/map "br" 'rename-buffer)
-     (define-key c/map "bR" 'revert-buffer)
-     (define-key c/map "bs" 'c/switch-to-scratch-buffer)
-     (define-key c/map "bT" 'c/tramp-cleanup)
+     (define-key global-map (kbd "C-c br") 'rename-buffer)
+     (define-key global-map (kbd "C-c bR") 'revert-buffer)
+     (define-key global-map (kbd "C-c bs") 'c/switch-to-scratch-buffer)
+     (define-key global-map (kbd "C-c bT") 'c/tramp-cleanup)
    #+end_src
 
 ** isearch
@@ -1052,33 +1038,27 @@
    #+begin_src emacs-lisp
      (define-key isearch-mode-map (kbd "M-w") 'isearch-yank-symbol)
      (define-key isearch-mode-map [(control return)] 'isearch-exit-other-end)
+     (define-key isearch-mode-map (kbd "C-o") 'isearch-occur)
+     (define-key isearch-mode-map (kbd "M-z") 'zap-to-isearch)
    #+end_src
 
 ** Source code editing
 
    #+begin_src emacs-lisp
-     (define-key c/map "cr" 'recompile)
-     (define-key c/map "cc" 'compile)
-     (global-set-key (kbd "C-<") 'mark-previous-like-this)
-     (global-set-key (kbd "C->") 'mark-next-like-this)
-     (global-set-key (kbd "C-c w") (make-repeatable-command 'er/expand-region))
+     (define-key global-map (kbd "C-<") 'mark-previous-like-this)
+     (define-key global-map (kbd "C->") 'mark-next-like-this)
+     (define-key global-map (kbd "C-c w") (make-repeatable-command 'er/expand-region))
    #+end_src
 
 ** General text editing
 
    #+begin_src emacs-lisp
-     (define-key c/map "+" (make-repeatable-command 'c/inc-num-at-point))
-     (define-key c/map "-" (make-repeatable-command 'c/dec-num-at-point))
-     (define-key c/map "ld" (make-repeatable-command 'c/duplicate-line))
-     (define-key c/map "lf" 'flush-lines)
-     (define-key c/map "lk" 'keep-lines)
-     (define-key c/map "q" 'query-replace)
-     (define-key c/map "Q" 'query-replace-regexp)
-     (define-key c/map "^" (make-repeatable-command 'join-line))
-     (global-set-key (kbd "C-x r t") 'inline-string-rectangle)
-     (global-set-key (kbd "M-y") 'helm-show-kill-ring)
-     (define-key isearch-mode-map (kbd "C-o") 'isearch-occur)
-     (define-key isearch-mode-map (kbd "M-z") 'zap-to-isearch)
+     (define-key global-map (kbd "C-c \"") (make-repeatable-command 'c/duplicate-line))
+     (define-key global-map (kbd "C-c q") 'query-replace)
+     (define-key global-map (kbd "C-c Q") 'query-replace-regexp)
+     (define-key global-map (kbd "C-c ^") (make-repeatable-command 'join-line))
+     (define-key global-map (kbd "C-x r t") 'inline-string-rectangle)
+     (define-key global-map (kbd "M-y") 'helm-show-kill-ring)
    #+end_src
 
 ** Flyspell
@@ -1093,7 +1073,7 @@
 ** Org mode
 
    #+begin_src emacs-lisp
-     (define-key c/map "of" 'org-footnote-action)
+     (define-key global-map (kbd "C-c of") 'org-footnote-action)
      (define-key global-map (kbd "C-c l") 'org-store-link)
      (define-key global-map (kbd "C-c a") 'org-agenda)
      (define-key global-map (kbd "C-c c") 'org-capture)
