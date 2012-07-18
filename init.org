@@ -1064,7 +1064,7 @@
 ** General text editing
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c \"") (make-repeatable-command 'c/duplicate-line))
+     (define-key global-map (kbd "C-c *") (make-repeatable-command 'c/duplicate-line))
      (define-key global-map (kbd "C-c q") 'query-replace)
      (define-key global-map (kbd "C-c Q") 'query-replace-regexp)
      (define-key global-map (kbd "C-c ^") (make-repeatable-command 'join-line))
@@ -1097,6 +1097,7 @@
        '(progn
           (define-key org-mode-map (kbd "C-.") nil)
           (define-key org-mode-map (kbd "C-,") nil)
+          (define-key org-mode-map (kbd "C-c *") nil)
           (define-key org-mode-map (kbd "C-c t") 'org-todo)
           (define-key org-mode-map (kbd "C-c C-x C-u") 'c/org-get-chrome-link)))
    #+end_src
