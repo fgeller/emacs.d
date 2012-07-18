@@ -244,6 +244,16 @@
       (autoload 'company-mode "company" nil t)
     #+end_src
 
+    Miscellaneous functionality.
+
+    #+begin_src emacs-lisp
+      (autoload 'zap-up-to-char "misc"
+        "Kill up to, but t including ARGth occurrence of CHAR.
+
+      \(fn arg char)"
+        'interactive)
+    #+end_src
+
 * Text editing
 ** Helper
 
@@ -1074,6 +1084,13 @@
      (define-key global-map (kbd "C-c ^") (make-repeatable-command 'join-line))
      (define-key global-map (kbd "C-x r t") 'inline-string-rectangle)
      (define-key global-map (kbd "M-y") 'helm-show-kill-ring)
+   #+end_src
+
+   Default to zapping up to char, not including the target. [13]
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "M-z") 'zap-up-to-char)
+     (define-key global-map (kbd "M-Z") 'zap-to-char)
    #+end_src
 
 ** Flyspell
@@ -2331,3 +2348,5 @@
 [14] https://github.com/technomancy/emacs-starter-kit/
 
 [15] http://www.emacswiki.org/emacs/EmacsSession
+
+  [13] http://www.emacswiki.org/emacs/ZapUpToChar
