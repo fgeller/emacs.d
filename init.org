@@ -166,80 +166,83 @@
    #+end_src
 
 ** Globally desirable external libraries
+*** require'd
 
-   Helm is used for most completion and especially file/buffer
-   navigation. Needed from the start.
+    Helm is used for most completion and especially file/buffer
+    navigation. Needed from the start.
 
-   #+begin_src emacs-lisp
+    #+begin_src emacs-lisp
      (require 'helm-config)
      (helm-mode 1)
    #+end_src
 
-   Allows for selecting in semantic units. Interesting mostly for
-   =prog-modes=, but needs to be =required=, so function definition is
-   available for make-repeatable-command
+    Allows for selecting in semantic units. Interesting mostly for
+    =prog-modes=, but needs to be =required=, so function definition is
+    available for make-repeatable-command
 
-   #+begin_src emacs-lisp
+    #+begin_src emacs-lisp
      (require 'expand-region)
    #+end_src
 
-   Move lines up and down with =meta= and cursor keys.
+    Move lines up and down with =meta= and cursor keys.
 
-   #+begin_src emacs-lisp
+    #+begin_src emacs-lisp
      (require 'move-text)
      (move-text-default-bindings)
    #+end_src
 
-   Helpers to do rectangle insert inline and mark multiple occurences of
-   active region.
+*** autoload'ed
 
-   #+begin_src emacs-lisp
-     (autoload 'inline-string-rectangle "inline-string-rectangle" t nil)
-     (autoload 'mark-previous-like-this "mark-more-like-this" t nil)
-     (autoload 'mark-next-like-this "mark-more-like-this" t nil)
-   #+end_src
+    Helpers to do rectangle insert inline and mark multiple occurences of
+    active region.
 
-   Email. With tags. Org-mode support for direct mail links. Yay.
+    #+begin_src emacs-lisp
+      (autoload 'inline-string-rectangle "inline-string-rectangle" t nil)
+      (autoload 'mark-previous-like-this "mark-more-like-this" t nil)
+      (autoload 'mark-next-like-this "mark-more-like-this" t nil)
+    #+end_src
 
-   #+begin_src emacs-lisp
-     (autoload 'notmuch "notmuch" t nil)
-     (eval-after-load 'notmuch
-       '(progn
-          (require 'org-notmuch)))
-   #+end_src
+    Email. With tags. Org-mode support for direct mail links. Yay.
 
-   Growl notifications.
+    #+begin_src emacs-lisp
+      (autoload 'notmuch "notmuch" t nil)
+      (eval-after-load 'notmuch
+        '(progn
+           (require 'org-notmuch)))
+    #+end_src
 
-   #+begin_src emacs-lisp
-     (setq todochiku-icons-directory (expand-file-name "~/.emacs.d/src/todochiku-icons/"))
-     (autoload 'todochiku-message "todochiku" t nil)
-   #+end_src
+    Growl notifications.
 
-   @gigamonkey's jumper mode.
+    #+begin_src emacs-lisp
+      (setq todochiku-icons-directory (expand-file-name "~/.emacs.d/src/todochiku-icons/"))
+      (autoload 'todochiku-message "todochiku" t nil)
+    #+end_src
 
-   #+begin_src emacs-lisp
-     (autoload 'jumper-mode "jumper" t nil)
-     (autoload 'jumper-line-mode "jumper" t nil)
-     (autoload 'jumper-update-defs-from-current-buffer "jumper-update" t nil)
-   #+end_src
+    @gigamonkey's jumper mode.
 
-   Slime / tag like navigation for Emacs Lisp.
+    #+begin_src emacs-lisp
+      (autoload 'jumper-mode "jumper" t nil)
+      (autoload 'jumper-line-mode "jumper" t nil)
+      (autoload 'jumper-update-defs-from-current-buffer "jumper-update" t nil)
+    #+end_src
 
-   #+begin_src emacs-lisp
-     (autoload 'elisp-slime-nav-mode "elisp-slime-nav" nil t)
-   #+end_src
+    Slime / tag like navigation for Emacs Lisp.
 
-   Light-weight session management.
+    #+begin_src emacs-lisp
+      (autoload 'elisp-slime-nav-mode "elisp-slime-nav" nil t)
+    #+end_src
 
-   #+begin_src emacs-lisp
-     (autoload 'session "session" nil t)
-   #+end_src
+    Light-weight session management.
 
-   Simple auto-completion.
+    #+begin_src emacs-lisp
+      (autoload 'session "session" nil t)
+    #+end_src
 
-   #+begin_src emacs-lisp
-     (autoload 'company-mode "company" nil t)
-   #+end_src
+    Simple auto-completion.
+
+    #+begin_src emacs-lisp
+      (autoload 'company-mode "company" nil t)
+    #+end_src
 
 * Text editing
 ** Helper
