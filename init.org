@@ -139,26 +139,26 @@
 
    #+begin_src emacs-lisp
      (setq c/elpa-packages '(
-                             pretty-symbols-mode
-                             session
                              dired+
                              dired-details
                              dired-details+
-                             helm
-                             flymake-cursor
+                             elisp-slime-nav
                              expand-region
-                             mark-multiple
-                             yasnippet
-                             magit
+                             flymake-cursor
+                             helm
                              js2-mode
-                             python    ;; @fgallina's python's flying circus support for Emacs.
+                             magit
+                             mark-multiple
+                             mic-paren
+                             move-text
                              org
                              pointback
-                             move-text
-                             mic-paren
-                             wgrep
+                             pretty-symbols-mode
+                             python    ;; @fgallina's python's flying circus support for Emacs.
+                             session
                              todochiku
-                             elisp-slime-nav
+                             wgrep
+                             yasnippet
                              ))
      (dolist (package c/elpa-packages)
        (c/require-package package))
