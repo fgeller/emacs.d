@@ -252,6 +252,11 @@
 
       \(fn arg char)"
         'interactive)
+      (autoload 'copy-from-above-command "misc"
+        "Copy characters from previous nonblank line, starting just above point.
+
+      \(fn arg)"
+        'interactive)
     #+end_src
 
 * Text editing
@@ -262,13 +267,9 @@
    #+begin_src emacs-lisp
      (defun c/duplicate-line ()
        (interactive)
-       (save-excursion
-         (let ((line-text (buffer-substring-no-properties
-                           (line-beginning-position)
-                           (line-end-position))))
-           (move-end-of-line 1)
-           (newline)
-           (insert line-text))))
+       (forward-line 1)
+       (open-line 1)
+       (copy-from-above-command))
    #+end_src
 
    Change the number at point incrementally.
