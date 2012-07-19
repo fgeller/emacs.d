@@ -1958,11 +1958,11 @@
     #+begin_src emacs-lisp
       (setq org-capture-templates
             `(("t" "Task"
-               entry (file+headline ,org-default-notes-file "Tasks")
-               "* TODO %?\n  SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"\"))\n\n  %a\n  %i\n")
+               entry (file+olp ,org-default-notes-file "Tasks" "Inbox")
+               "* TODO %?\n\n  %a\n  %i\n")
               ("w" "Work task"
-               entry (file+headline ,c/work-org-default-notes-file "Tasks")
-               "* TODO %?\n  SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"\"))\n\n  %a\n  %i\n")
+               entry (file+olp ,c/work-org-default-notes-file "Tasks" "Inbox")
+               "* TODO %?\n\n  %a\n  %i\n")
               ("n" "Note"
                entry (file+headline ,org-default-notes-file "Notes")
                "* %?\n\n  %a\n  %i\n")
