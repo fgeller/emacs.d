@@ -1427,6 +1427,12 @@
      (setq helm-ff-transformer-show-only-basename nil)
    #+end_src
 
+   Longer names are ok.
+
+   #+begin_src emacs-lisp
+     (setq helm-buffer-max-length 50)
+   #+end_src
+
 ** Sources
 
    Source that searches for files  in current project [8].
