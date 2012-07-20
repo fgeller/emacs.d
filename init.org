@@ -1868,13 +1868,13 @@
     2-week agenda.
 
     #+begin_src emacs-lisp
-      (setq org-agenda-ndays 14)
+      (setq org-agenda-ndays 7)
     #+end_src
 
-    Don't show tags in the agenda.
+    Do show tags in the agenda.
 
     #+begin_src emacs-lisp
-      (setq org-agenda-remove-tags t)
+      (setq org-agenda-remove-tags nil)
     #+end_src
 
     Start the week on a weekday (aka Monday).
@@ -1903,10 +1903,9 @@
               ("dw" "[w]eek"
                tags "ARCHIVE_TIME>=\"<-1w>\""
                ((org-agenda-archives-mode t)))
-              ("I" "Import diary from iCal" agenda ""
-               ((org-agenda-mode-hook
-                 (lambda ()
-                   (org-mac-iCal)))))
+              ("ii" "[i]nbox tagged tasks" tags "inbox")
+              ("iw" "inbox tagged [w]ork tasks" tags "inbox"
+               ((org-agenda-files ',c/work-org-agenda-files)))
               ("n" "Find a TAGged note" tags "" ((org-agenda-archives-mode t)))
               ("w" "Show work related tasks only" agenda ""
                ((org-agenda-files ',c/work-org-agenda-files)))))
