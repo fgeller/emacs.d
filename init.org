@@ -850,7 +850,7 @@
 ** Python
 
    Basic system-wide configuration for @fgallina's flying circus. Taken
-   right from the libraries documentation header.
+   right from the library's documentation header.
 
    #+begin_src emacs-lisp
      (eval-after-load "python"
