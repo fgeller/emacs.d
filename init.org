@@ -1312,10 +1312,13 @@
    #+begin_src emacs-lisp
      (setq c/variable-width-font-family "Calibri")
      (setq c/variable-width-font-height 180)
-     (setq c/mono-space-font-family "Menlo")
-     (setq c/mono-space-font-height 150)
+     (setq c/mono-space-font-family "Consolas")
+     (setq c/mono-space-font-height 170)
      (set-face-attribute 'default nil
-                         :family c/mono-space-font-family :height c/mono-space-font-height :weight 'normal)
+                         :family c/mono-space-font-family
+                         :height c/mono-space-font-height
+                         :weight 'normal
+                         )
    #+end_src
 
    Define some helpers to switch between variable-width and mono-spaced
