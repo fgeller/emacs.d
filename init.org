@@ -1772,6 +1772,16 @@
           (setq dired-details-hidden-string "")))
    #+end_src
 
+   Per buffer customization
+
+   #+begin_src emacs-lisp
+     (defun c/dired-buffer-customization ()
+       (interactive)
+       (hl-line-mode))
+
+     (add-hook 'dired-mode-hook 'c/dired-buffer-customization)
+   #+end_src
+
 * Org
 
 *** General settings
