@@ -243,6 +243,8 @@
 
     #+begin_src emacs-lisp
       (autoload 'company-mode "company" nil t)
+      (autoload 'auto-complete "auto-complete" nil t)
+      (autoload 'auto-complete-mode "auto-complete" nil t)
     #+end_src
 
     Highlight indentation and current indentation depth.
@@ -386,6 +388,142 @@
      (add-to-list 'yas/snippet-dirs (expand-file-name "~/.emacs.d/snippets"))
      (yas/global-mode 1)
    #+end_src
+
+** Auto-completion
+*** auto-complete
+**** Configuration
+
+    Load the addition config helpers.
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'auto-complete
+        '(require 'auto-complete-config))
+    #+end_src
+
+    Global sources for candidates
+
+    #+begin_src emacs-lisp
+      (setq-default ac-sources '(
+                                 ac-source-yasnippet
+                                 ac-source-filename
+                                 ac-source-words-in-buffer
+                                 ))
+    #+end_src
+
+    Show candidates right away
+
+    #+begin_src emacs-lisp
+      (setq ac-delay 0)
+      (setq ac-auto-show-menu 0.0)
+      (setq ac-show-menu-immediately-on-auto-complete t)
+      (setq ac-quick-help-delay 0.0)
+    #+end_src
+
+    Don't use fuzzy matching
+
+    #+begin_src emacs-lisp
+      (setq ac-use-fuzzy nil)
+    #+end_src
+
+    Don't use dictionaries
+
+    #+begin_src emacs-lisp
+      (setq ac-dictionary-files nil)
+    #+end_src
+
+    Limit menu height
+
+    #+begin_src emacs-lisp
+      (setq ac-menu-height 5)
+    #+end_src
+
+    Start completion after x characters have been inserted
+
+    #+begin_src emacs-lisp
+      (setq ac-auto-start 2)
+    #+end_src
+
+    Need a work around for flyspell (some timer issues cause
+    auto-complete to be delayed significantly.
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'flyspell
+        '(eval-after-load 'auto-complete
+           '(ac-flyspell-workaround)))
+    #+end_src
+
+**** Candidates
+
+     Helper to collect possible candidates from Jumper definitions
+     based on a given prefix.
+
+     #+begin_src emacs-lisp
+       (defun c/jumper-candidates (prefix)
+         (let* ((jumper-file (jumper-find-jumper-file)))
+           (when jumper-file
+             (let ((jumper-file-buffer (find-file-noselect jumper-file)))
+               (with-temp-buffer
+                 (insert-buffer-substring jumper-file-buffer)
+                 (goto-char (point-min))
+                 (keep-lines (concat "^" prefix ".*[[:digit:]]+$"))
+                 (goto-char (point-min))
+                 (while (not (eobp))
+                   (re-search-forward "^\\([^\t]+\\).+$")
+                   (replace-match "\\1" nil nil)
+                   (forward-line 1))
+                 (split-string (buffer-string)))))))
+     #+end_src
+
+     Define a source for auto-complete based on Jumper definitions.
+
+     #+begin_src emacs-lisp
+       (eval-after-load 'auto-complete
+          '(progn
+             (ac-define-source jumper
+                               '((depends jumper)
+                                 (candidates . (c/jumper-candidates ac-prefix))
+                                 (symbol . "s")
+                                 (cache)))))
+     #+end_src
+
+*** Company mode
+**** Configuration
+
+     Start completion after a minimum of two characters.
+
+     #+begin_src emacs-lisp
+      (setq company-minimum-prefix-length 2)
+     #+end_src
+
+     Don't delay completion, offer candidates as soon as possible.
+
+     #+begin_src emacs-lisp
+      (setq company-idle-delay t)
+     #+end_src
+
+     Explicitly set the desired backends.
+
+     #+begin_src emacs-lisp
+       (setq company-backends '(company-elisp c/company-jumper))
+       (setq company-begin-commands '(self-insert-command))
+     #+end_src
+
+     Don't start completion after moving around, only after typing.
+
+     #+begin_src emacs-lisp
+      (setq company-begin-commands '(self-insert-command))
+     #+end_src
+
+**** Backends
+
+     Company backend for Jumper definitions.
+
+     #+begin_src emacs-lisp
+       (defun c/company-jumper (command &optional prefix &rest ignored)
+         (case command
+           ('prefix (company-grab-symbol))
+           ('candidates (c/jumper-candidates prefix))))
+     #+end_src
 
 ** isearch
 
@@ -549,60 +687,6 @@
      (setq ediff-window-setup-function 'ediff-setup-windows-plain)
    #+end_src
 
-** Company mode (auto-completion)
-*** Configuration
-
-    Start completion after a minimum of two characters.
-
-    #+begin_src emacs-lisp
-     (setq company-minimum-prefix-length 2)
-    #+end_src
-
-    Don't delay completion, offer candidates as soon as possible.
-
-    #+begin_src emacs-lisp
-     (setq company-idle-delay t)
-    #+end_src
-
-    Explicitly set the desired backends.
-
-    #+begin_src emacs-lisp
-     (setq company-backends '(company-elisp c/company-jumper))
-     (setq company-begin-commands '(self-insert-command))
-    #+end_src
-
-    Don't start completion after moving around, only after typing.
-
-    #+begin_src emacs-lisp
-     (setq company-begin-commands '(self-insert-command))
-    #+end_src
-
-*** Backends
-
-    Company backend for Jumper definitions.
-
-    #+begin_src emacs-lisp
-      (require 'jumper)
-      (defun c/company-jumper (command &optional prefix &rest ignored)
-        (case command
-          ('prefix (company-grab-symbol))
-          ('candidates
-           (let* ((jumper-file (jumper-find-jumper-file)))
-             (when jumper-file
-               (let ((jumper-file-buffer (find-file-noselect jumper-file)))
-                 (with-temp-buffer
-                   (insert-buffer-substring jumper-file-buffer)
-                   (goto-char (point-min))
-                   (keep-lines (concat "^" prefix ".*[[:digit:]]+$"))
-                   (goto-char (point-min))
-                   (while (not (eobp))
-                     (re-search-forward "^\\([^\t]+\\).+$")
-                     (replace-match "\\1" nil nil)
-                     (forward-line 1))
-                   (split-string (buffer-string))
-                   )))))))
-    #+end_src
-
 ** Language helpers
 
    Fast switch to German postfix input method.
@@ -727,8 +811,16 @@
         (eldoc-mode 1)
         (hl-line-mode 1)
         (elisp-slime-nav-mode 1)
-        (company-mode 1)
+        (auto-complete-mode 1)
+        (setq ac-sources (append '(
+                                   ac-source-features
+                                   ac-source-functions
+                                   ac-source-variables
+                                   ac-source-symbols
+                                   )
+                                 ac-sources))
         (add-hook 'before-save-hook 'whitespace-cleanup nil 'local))
+
       (add-hook 'emacs-lisp-mode-hook 'c/emacs-lisp-mode-initialization)
     #+end_src
 
@@ -800,7 +892,8 @@
        (jumper-mode 1)
        (pretty-symbols-mode 1)
        (hl-line-mode 1)
-       (company-mode 1)
+       (auto-complete-mode 1)
+       (setq ac-sources (cons 'ac-source-jumper ac-sources))
        (when buffer-file-name (flymake-mode 1))
        (add-hook 'before-save-hook 'whitespace-cleanup nil 'local)
        (add-hook 'before-save-hook 'jumper-update-defs-from-current-buffer nil 'local)
@@ -916,6 +1009,7 @@
    Enable / disable modes
 
    #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-c ma") 'auto-complete-mode)
      (define-key global-map (kbd "C-c mc") 'company-mode)
      (define-key global-map (kbd "C-c mg") 'c/rgrep-from-project-root)
      (define-key global-map (kbd "C-c mi") 'highlight-indentation-mode)
@@ -2239,10 +2333,7 @@
 
    #+begin_src emacs-lisp
      (defun c/message-mode-customization ()
-       (turn-on-auto-fill)
-       (make-local-variable 'company-backends)
-       (setq company-backends '(company-ispell))
-       (company-mode 1))
+       (turn-on-auto-fill))
      (add-hook 'message-mode-hook 'c/message-mode-customization)
    #+end_src
 
