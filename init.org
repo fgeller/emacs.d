@@ -1127,6 +1127,7 @@
    name "anything".
 
    #+begin_src emacs-lisp
+     (setq helm-command-prefix-key "C-c h")
      (define-key global-map (kbd "C-c ha") 'helm-c-apropos)
      (define-key global-map (kbd "C-c hc") 'c/helm-contact)
      (define-key global-map (kbd "C-c hg") 'c/helm-do-rgrep)
