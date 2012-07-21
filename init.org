@@ -1226,6 +1226,7 @@
           (define-key org-mode-map (kbd "C-.") nil)
           (define-key org-mode-map (kbd "C-,") nil)
           (define-key org-mode-map (kbd "C-c *") nil)
+          (define-key org-mode-map (kbd "C-c ^") nil)
           (define-key org-mode-map (kbd "C-c t") 'org-todo)
           (define-key org-mode-map (kbd "C-c C-x C-u") 'c/org-get-chrome-link)))
    #+end_src
