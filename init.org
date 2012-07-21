@@ -1134,6 +1134,7 @@
      (define-key global-map (kbd "C-c hr") 'helm-regexp)
      (define-key global-map (kbd "C-c hu") 'helm-ucs)
      (define-key global-map (kbd "C-c hx") 'helm-M-x)
+     (define-key global-map (kbd "C-c hz") 'helm-resume)
      (define-key global-map (kbd "M-x") 'helm-M-x)
      (define-key global-map (kbd "C-h a") 'helm-c-apropos)
    #+end_src
