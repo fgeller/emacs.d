@@ -139,6 +139,7 @@
 
    #+begin_src emacs-lisp
      (setq c/elpa-packages '(
+                             auto-complete
                              dired+
                              dired-details
                              dired-details+
