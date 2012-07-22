@@ -157,6 +157,7 @@
                              pointback
                              pretty-symbols-mode
                              python    ;; @fgallina's python's flying circus support for Emacs.
+                             slime
                              session
                              todochiku
                              wgrep
