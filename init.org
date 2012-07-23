@@ -1310,6 +1310,12 @@
      (setq-default tab-width 4)
    #+end_src
 
+   Show the key strokes while typing them.
+
+   #+begin_src emacs-lisp
+     (setq echo-keystrokes 0.01)
+   #+end_src
+
 ** Fonts
 
    Set default fonts across frames.
