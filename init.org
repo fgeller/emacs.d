@@ -1316,6 +1316,12 @@
      (setq echo-keystrokes 0.01)
    #+end_src
 
+   Set the fill column to 80 characters globally.
+
+   #+begin_src emacs-lisp
+     (setq-default fill-column 80)
+   #+end_src
+
 ** Fonts
 
    Set default fonts across frames.
