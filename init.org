@@ -897,6 +897,7 @@
        (auto-complete-mode 1)
        (setq ac-sources (cons 'ac-source-jumper ac-sources))
        (when buffer-file-name (flymake-mode 1))
+       (set-fill-column 79)
        (add-hook 'before-save-hook 'whitespace-cleanup nil 'local)
        (add-hook 'before-save-hook 'jumper-update-defs-from-current-buffer nil 'local)
        )
