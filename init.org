@@ -1666,8 +1666,8 @@
        (interactive)
        (helm-other-buffer
         '(
-          c/helm-c-source-jumper-defs
           helm-c-source-buffers-list
+          c/helm-c-source-jumper-defs
           helm-c-source-recentf
           c/helm-c-source-project-file-search
           helm-c-source-buffer-not-found
