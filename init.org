@@ -161,6 +161,7 @@
                              slime
                              session
                              todochiku
+                             undo-tree
                              wgrep
                              yasnippet
                              ))
