@@ -419,7 +419,7 @@
       (setq ac-delay 0)
       (setq ac-auto-show-menu 0.0)
       (setq ac-show-menu-immediately-on-auto-complete t)
-      (setq ac-quick-help-delay 0.0)
+      (setq ac-quick-help-delay 2.0)
     #+end_src
 
     Don't use fuzzy matching
