@@ -887,6 +887,24 @@
                        (list "\\.py\\'" 'c/flymake-python-init))))
    #+end_src
 
+   Helper to split arguments across lines.
+
+   #+begin_src emacs-lisp
+     (defun c/split-python-args-across-lines ()
+       (interactive)
+       (save-excursion
+         (beginning-of-line)
+         (re-search-forward "(" (point-at-eol) t)
+         (newline)
+         (while (re-search-forward "," (point-at-eol) t)
+           (newline))
+         (re-search-forward ")" (point-at-eol) t)
+         (goto-char (1- (point)))
+         (insert ",")
+         (newline)
+         ))
+   #+end_src
+
    Configuration per-buffer.
 
    #+begin_src emacs-lisp
@@ -1253,6 +1271,7 @@
     #+begin_src emacs-lisp
       (eval-after-load 'python
         '(progn
+           (define-key python-mode-map (kbd "C-c fs") 'c/split-python-args-across-lines)
            (define-key python-mode-map (kbd "C-c t") 'c/run-python-test)
            (define-key python-mode-map (kbd "C-c b") 'c/python-insert-ipdb-breakpoint)
            (define-key python-mode-map (kbd "C-RET") 'newline-and-indent)
