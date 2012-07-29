@@ -1582,7 +1582,7 @@
 
 ** Sources
 
-   Source that searches for files  in current project [8].
+   Source that searches for files in current project [8].
 
    #+begin_src emacs-lisp
      (defvar c/helm-c-source-project-file-search
