@@ -1033,7 +1033,7 @@
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c ma") 'auto-complete-mode)
      (define-key global-map (kbd "C-c mc") 'company-mode)
-     (define-key global-map (kbd "C-c mg") 'c/rgrep-from-project-root)
+     (define-key global-map (kbd "C-c mg") 'rgrep)
      (define-key global-map (kbd "C-c mi") 'highlight-indentation-mode)
      (define-key global-map (kbd "C-c mm") 'magit-status)
      (define-key global-map (kbd "C-c mn") 'notmuch)
