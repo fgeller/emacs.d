@@ -354,7 +354,7 @@
 
    #+begin_src emacs-lisp
      (setq c/whitespace-style '(face tabs spaces trailing lines space-before-tab newline indentation::space empty space-after-tab space-mark tab-mark newline-mark))
-     (setq whitespace-style c/whitespace-style)
+     (setq-default whitespace-style c/whitespace-style)
    #+end_src
 
    Don't disable narrowing.
