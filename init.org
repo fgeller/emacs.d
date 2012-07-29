@@ -2244,13 +2244,13 @@
    #+begin_src emacs-lisp
      (defun c/notmuch-archive-all-and-quit ()
        (interactive)
-       (notmuch-search-tag-all '(("-unread" "-inbox" "-i/inbox")))
+       (notmuch-search-tag-all '(("-unread" "-inbox" "-w/inbox")))
        (notmuch-search-quit)
        (c/notmuch-jump-back-to-saved-searches))
 
      (defun c/notmuch-archive ()
        (interactive)
-       (notmuch-search-tag '("-unread" "-inbox" "-i/inbox"))
+       (notmuch-search-tag '("-unread" "-inbox" "-w/inbox"))
        (notmuch-search-refresh-view))
 
      (defun c/notmuch-jump-back-to-saved-searches ()
@@ -2318,8 +2318,8 @@
      (setq notmuch-saved-searches
            '(
              ("inbox" . "tag:inbox")
-             ("i/inbox" . "tag:i/inbox")
-             ("i/commits" . "tag:unread  and tag:i/commits and not \"via pb\"")
+             ("w/inbox" . "tag:w/inbox")
+             ("w/commits" . "tag:unread  and tag:w/commits and not \"via pb\"")
              ("ml/emacs*" . "tag:unread and (tag:ml/emacs-help or tag:ml/emacs-devel)")
              ("ml/org" . "tag:unread and (tag:ml/org)")
              ("ml/cedet" . "tag:unread and (tag:ml/cedet-devel)")
