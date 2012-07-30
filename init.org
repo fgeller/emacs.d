@@ -2532,8 +2532,8 @@
 
 [15] http://www.emacswiki.org/emacs/EmacsSession
 
-  [13] http://www.emacswiki.org/emacs/ZapUpToChar
+[13] http://www.emacswiki.org/emacs/ZapUpToChar
 
-  [16] https://github.com/purcell/emacs.d/pull/42#issuecomment-7355387
+[16] https://github.com/purcell/emacs.d/pull/42#issuecomment-7355387
 
-  [17] https://github.com/alloy/terminal-notifier
+[17] https://github.com/alloy/terminal-notifier
