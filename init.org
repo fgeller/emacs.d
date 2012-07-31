@@ -2348,7 +2348,7 @@
            '(
              ("inbox" . "tag:inbox")
              ("w/inbox" . "tag:w/inbox")
-             ("w/commits" . "tag:unread  and tag:w/commits and not \"via pb\"")
+             ("w/commits" . "tag:unread  and tag:w/commit and not \"via pb\"")
              ("ml/emacs*" . "tag:unread and tag:ml/emacs")
              ("ml/org" . "tag:unread and (tag:ml/org)")
              ("ml/cedet" . "tag:unread and (tag:ml/cedet-devel)")
