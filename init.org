@@ -1511,6 +1511,13 @@
      (setq enable-recursive-minibuffers t)
    #+end_src
 
+   Always revert buffers automatically when the corresponding file is changed.
+
+   #+begin_src emacs-lisp
+     (global-auto-revert-mode 1)
+     (setq global-auto-revert-non-file-buffers t)
+   #+end_src
+
 ** Automatic saving and backing up
 
 *** Session management
