@@ -1927,6 +1927,14 @@
      (add-hook 'dired-mode-hook 'c/dired-buffer-customization)
    #+end_src
 
+   Make sure dired can read weird filenames. Requires coreutils to be installed
+   via homebrew.
+
+   #+begin_src emacs-lisp
+     (setq ls-lisp-use-insert-directory-program t)
+     (setq insert-directory-program "gls")
+   #+end_src
+
 * Org
 
 *** General settings
