@@ -2394,9 +2394,11 @@
                                             notmuch-wash-convert-inline-patch-to-part
                                             )
       )
+     (defun c/truncate-long-lines () (toggle-truncate-lines -1))
      (eval-after-load 'notmuch
        '(progn
           (add-hook 'notmuch-show-hook 'notmuch-show-turn-on-visual-line-mode)
+          (add-hook 'notmuch-show-hook 'c/truncate-long-lines)
           (add-hook 'notmuch-search-hook 'notmuch-hl-line-mode)))
    #+end_src
 
