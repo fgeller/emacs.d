@@ -1580,7 +1580,6 @@
    #+end_src
 
 ** Automatic saving and backing up
-
 *** Session management
 
     Initialize session management, that is storing of positions and
