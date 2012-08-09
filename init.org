@@ -924,6 +924,9 @@
     surrounding class name.
 
     #+begin_src emacs-lisp
+      (defvar *c/last-python-test-compile-command* nil
+        "Is set by C/RUN-PYTHON-TEST so that C/RERUN-PYTHON-TEST knows
+        what to do.")
       (defun c/run-python-test ()
         (interactive)
         (let* ((file-name buffer-file-name)
@@ -936,8 +939,34 @@
                      file-name
                      class-name
                      fun-name)))
+          (setq *c/last-python-test-compile-command* cmd)
           (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
             (compile cmd t))))
+      (defun c/run-python-test-class ()
+        (interactive)
+        (let* ((file-name buffer-file-name)
+               (project-root (c/guess-project-root))
+               (class-name (c/find-backward "class \\(.+\\)("))
+               (cmd (format
+                     "cd %s && TESTSEL=%s:%s make tests"
+                     project-root
+                     file-name
+                     class-name)))
+          (setq *c/last-python-test-compile-command* cmd)
+          (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
+            (compile cmd t))))
+      (defun c/run-python-tests-in-project ()
+        (interactive)
+        (let* ((project-root (c/guess-project-root))
+               (cmd (format "cd %s && make tests" project-root)))
+          (setq *c/last-python-test-compile-command* cmd)
+          (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
+            (compile cmd t))))
+      (defun c/rerun-python-test ()
+        (interactive)
+        (if *c/last-python-test-compile-command*
+            (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
+              (compile *c/last-python-test-compile-command* t))))
     #+end_src
 
     Insert statements to trigger a breakpoint in ipdb.
@@ -1267,8 +1296,11 @@
       (eval-after-load 'python
         '(progn
            (define-key python-mode-map (kbd "C-c fs") 'c/split-python-args-across-lines)
-           (define-key python-mode-map (kbd "C-c t") 'c/run-python-test)
-           (define-key python-mode-map (kbd "C-c b") 'c/python-insert-ipdb-breakpoint)
+           (define-key python-mode-map (kbd "C-c tt") 'c/run-python-test)
+           (define-key python-mode-map (kbd "C-c tc") 'c/run-python-test-class)
+           (define-key python-mode-map (kbd "C-c tp") 'c/run-python-tests-in-project)
+           (define-key python-mode-map (kbd "C-c tr") 'c/rerun-python-test)
+           (define-key python-mode-map (kbd "C-c db") 'c/python-insert-ipdb-breakpoint)
            (define-key python-mode-map (kbd "C-RET") 'newline-and-indent)
            (eval-after-load 'flymake
              '(progn
