@@ -1095,7 +1095,7 @@
      (define-key ctl-x-map (kbd "<down>") (make-repeatable-command 'c/scroll-down))
    #+end_src
 
-   Make several window related commands repeatable.
+   Make several built-in window related commands repeatable.
 
    #+begin_src emacs-lisp
      (define-key ctl-x-map "^" (make-repeatable-command 'enlarge-window))
