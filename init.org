@@ -1305,6 +1305,7 @@
        '(define-key global-map (kbd "C-c C-x C-j") 'org-clock-jump-to-current-clock))
      (eval-after-load 'org
        '(progn
+          (define-key org-mode-map (kbd "C-'") nil)
           (define-key org-mode-map (kbd "C-.") nil)
           (define-key org-mode-map (kbd "C-,") nil)
           (define-key org-mode-map (kbd "C-c *") nil)
