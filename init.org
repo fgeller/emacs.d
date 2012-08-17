@@ -778,6 +778,8 @@
        (rainbow-mode 1)
        (flymake-mode 1)
        (add-hook 'before-save-hook 'whitespace-cleanup nil 'local)
+       (jumper-mode 1)
+       (add-hook 'before-save-hook 'jumper-update-defs-from-current-buffer nil 'local)
        (setq js2-use-font-lock-faces t)
        (setq js2-mode-must-byte-compile nil)
        (setq js2-basic-offset 4)
@@ -793,9 +795,7 @@
        (setq js2-mode-escape-quotes t) ; t disables
        (setq js2-mode-squeeze-spaces t)
        (setq js2-pretty-multiline-decl-indentation-p t)
-       (setq js2-consistent-level-indent-inner-bracket-p t)
-       (jumper-mode 1)
-       (add-hook 'before-save-hook 'jumper-update-defs-from-current-buffer nil 'local))
+       (setq js2-consistent-level-indent-inner-bracket-p t))
 
      (eval-after-load 'js2-mode
        '(progn
