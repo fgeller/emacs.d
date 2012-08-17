@@ -1325,7 +1325,7 @@
     #+begin_src emacs-lisp
       (eval-after-load 'js2-mode
         '(progn
-           (define-key js2-mode-map (kbd "C-c !") (make-repeatable-command 'js2-next-error))
+           (define-key js2-mode-map (kbd "C-c !") (make-repeatable-command 'flymake-goto-next-error))
            ))
     #+end_src
 
@@ -1461,25 +1461,6 @@
 
 ** Mode-line
 
-   Propertized mode-line string that shows errors and warnings in js2-mode.
-
-   #+begin_src emacs-lisp
-     (defun c/mode-line-js2-errors ()
-       (interactive)
-       (when (string= "JavaScript-IDE" mode-name)
-         (let* (
-                (errs (copy-sequence (js2-ast-root-errors js2-mode-ast)))
-                (warns (copy-sequence (js2-ast-root-warnings js2-mode-ast)))
-                (errs-length (safe-length errs))
-                (warns-length (safe-length warns)))
-           (when (or (< 0 errs-length) (< 0 warns-length))
-             (concat
-              " τ:"
-              (propertize (number-to-string errs-length) 'face 'flymake-errline)
-              ","
-              (propertize (number-to-string warns-length) 'face 'flymake-warnline))))))
-   #+end_src
-
    Propertized mode-line string that shows errors and warnings when
    flymake is running.
 
@@ -1536,7 +1517,6 @@
        '(:eval (c/mode-line-compilation))
        '(vc-mode vc-mode)
        '(:eval (c/mode-line-flymake))
-       '(:eval (c/mode-line-js2-errors))
        ""
        mode-line-client
        " ⌚ "
