@@ -1543,7 +1543,7 @@
    #+begin_src emacs-lisp
      (setq
       recentf-max-saved-items 300
-      recentf-exclude '("/tmp/" "/ssh:" "/sudo:")
+      recentf-exclude '("/tmp/")
       )
    #+end_src
 
