@@ -2257,22 +2257,6 @@
       (setq org-habit-graph-column 60)
     #+end_src
 
-*** Yasnippet
-
-    Make org-mode and yasnippet cooperate. more.
-
-    #+begin_src emacs-lisp
-      (defun yas/org-very-safe-expand ()
-        (let ((yas/fallback-behavior 'return-nil)) (yas/expand)))
-
-      (add-hook 'org-mode-hook
-                (lambda ()
-                  (make-variable-buffer-local 'yas/trigger-key)
-                  (setq yas/trigger-key [tab])
-                  (add-to-list 'org-tab-first-hook 'yas/org-very-safe-expand)
-                  (define-key yas/keymap [tab] 'yas/next-field)))
-    #+end_src
-
 * Notifications
 ** todochiku
 
