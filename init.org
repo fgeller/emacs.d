@@ -155,6 +155,7 @@
                              mark-multiple
                              mic-paren
                              move-text
+                             multiple-cursors
                              org
                              pointback
                              pretty-symbols-mode
