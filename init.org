@@ -1325,8 +1325,10 @@
     #+begin_src emacs-lisp
       (eval-after-load 'js2-mode
         '(progn
-           (define-key js2-mode-map (kbd "C-c !") (make-repeatable-command 'flymake-goto-next-error))
-           ))
+           (eval-after-load 'flymake
+             '(progn
+                (define-key js2-mode-map (kbd "C-c !") (make-repeatable-command 'flymake-goto-next-error))
+                ))))
     #+end_src
 
 *** Python mode
