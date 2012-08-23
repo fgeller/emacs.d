@@ -205,8 +205,7 @@
 
     #+begin_src emacs-lisp
       (autoload 'inline-string-rectangle "inline-string-rectangle" t nil)
-      (autoload 'mark-previous-like-this "mark-more-like-this" t nil)
-      (autoload 'mark-next-like-this "mark-more-like-this" t nil)
+      (require 'multiple-cursors-autoloads)
     #+end_src
 
     Email. With tags. Org-mode support for direct mail links. Yay.
@@ -1262,21 +1261,15 @@
      (define-key isearch-mode-map (kbd "M-z") 'zap-to-isearch)
    #+end_src
 
-** Source code editing
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-<") 'mark-previous-like-this)
-     (define-key global-map (kbd "C->") 'mark-next-like-this)
-     (define-key global-map (kbd "C-c w") (make-repeatable-command 'er/expand-region))
-   #+end_src
-
-** General text editing
+** Text editing
 
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c *") (make-repeatable-command 'c/duplicate-line))
+     (define-key global-map (kbd "C-c ^") (make-repeatable-command 'join-line))
+     (define-key global-map (kbd "C-c >") 'mc/mark-more-like-this-extended)
      (define-key global-map (kbd "C-c q") 'query-replace)
      (define-key global-map (kbd "C-c Q") 'query-replace-regexp)
-     (define-key global-map (kbd "C-c ^") (make-repeatable-command 'join-line))
+     (define-key global-map (kbd "C-c w") (make-repeatable-command 'er/expand-region))
      (define-key global-map (kbd "C-x r t") 'inline-string-rectangle)
      (define-key global-map (kbd "M-y") 'helm-show-kill-ring)
    #+end_src
