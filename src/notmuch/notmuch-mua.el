@@ -49,7 +49,7 @@ window/frame that will be destroyed when the buffer is killed.
 You may want to customize `message-kill-buffer-on-exit'
 accordingly."
    (when (< emacs-major-version 24)
-	   " Due to a known bug in Emacs 23, you should not set
+           " Due to a known bug in Emacs 23, you should not set
 this to `new-window' if `message-kill-buffer-on-exit' is
 disabled: this would result in an incorrect behavior."))
   :group 'notmuch-send

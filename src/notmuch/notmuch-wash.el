@@ -87,16 +87,24 @@ If there is one more line than the sum of
 `notmuch-wash-citation-lines-suffix', show that, otherwise
 collapse the remaining lines into a button.")
 
+(defvar notmuch-wash-wrap-lines-length nil
+  "Wrap line after at most this many characters.
+
+If this is nil, lines in messages will be wrapped to fit in the
+current window. If this is a number, lines will be wrapped after
+this many characters or at the window width (whichever one is
+lower).")
+
 (defun notmuch-wash-toggle-invisible-action (cite-button)
   (let ((invis-spec (button-get cite-button 'invisibility-spec)))
     (if (invisible-p invis-spec)
-        (remove-from-invisibility-spec invis-spec)
+	(remove-from-invisibility-spec invis-spec)
       (add-to-invisibility-spec invis-spec)))
   (let* ((new-start (button-start cite-button))
-         (overlay (button-get cite-button 'overlay))
-         (button-label (notmuch-wash-button-label overlay))
-         (old-point (point))
-         (inhibit-read-only t))
+	 (overlay (button-get cite-button 'overlay))
+	 (button-label (notmuch-wash-button-label overlay))
+	 (old-point (point))
+	 (inhibit-read-only t))
     (goto-char new-start)
     (insert button-label)
     (let ((old-end (button-end cite-button)))
@@ -129,11 +137,11 @@ collapse the remaining lines into a button.")
 
 (defun notmuch-wash-button-label (overlay)
   (let* ((type (overlay-get overlay 'type))
-         (invis-spec (overlay-get overlay 'invisible))
-         (state (if (invisible-p invis-spec) "hidden" "visible"))
-         (label-format (symbol-value (intern-soft (concat "notmuch-wash-button-"
-                                                          type "-" state "-format"))))
-         (lines-count (count-lines (overlay-start overlay) (overlay-end overlay))))
+	 (invis-spec (overlay-get overlay 'invisible))
+	 (state (if (invisible-p invis-spec) "hidden" "visible"))
+	 (label-format (symbol-value (intern-soft (concat "notmuch-wash-button-"
+							  type "-" state "-format"))))
+	 (lines-count (count-lines (overlay-start overlay) (overlay-end overlay))))
     (format label-format lines-count)))
 
 (defun notmuch-wash-region-to-button (msg beg end type &optional prefix)
@@ -150,10 +158,10 @@ that PREFIX should not include a newline."
   ;; since the newly created symbol has no plist.
 
   (let ((overlay (make-overlay beg end))
-        (message-invis-spec (plist-get msg :message-invis-spec))
-        (invis-spec (make-symbol (concat "notmuch-" type "-region")))
-        (button-type (intern-soft (concat "notmuch-wash-button-"
-                                          type "-toggle-type"))))
+	(message-invis-spec (plist-get msg :message-invis-spec))
+	(invis-spec (make-symbol (concat "notmuch-" type "-region")))
+	(button-type (intern-soft (concat "notmuch-wash-button-"
+					  type "-toggle-type"))))
     (add-to-invisibility-spec invis-spec)
     (overlay-put overlay 'invisible (list invis-spec message-invis-spec))
     (overlay-put overlay 'isearch-open-invisible #'notmuch-wash-region-isearch-show)
@@ -163,56 +171,56 @@ that PREFIX should not include a newline."
     (save-excursion
       (goto-char beg)
       (if prefix
-          (insert-before-markers prefix))
+	  (insert-before-markers prefix))
       (let ((button-beg (point)))
-        (insert-before-markers (notmuch-wash-button-label overlay) "\n")
-        (make-button button-beg (1- (point))
-                     'invisibility-spec invis-spec
-                     'overlay overlay
-                     :type button-type)))))
+	(insert-before-markers (notmuch-wash-button-label overlay) "\n")
+	(make-button button-beg (1- (point))
+		     'invisibility-spec invis-spec
+		     'overlay overlay
+		     :type button-type)))))
 
 (defun notmuch-wash-excerpt-citations (msg depth)
   "Excerpt citations and up to one signature."
   (goto-char (point-min))
   (beginning-of-line)
   (if (and (< (point) (point-max))
-           (re-search-forward notmuch-wash-original-regexp nil t))
+	   (re-search-forward notmuch-wash-original-regexp nil t))
       (let* ((msg-start (match-beginning 0))
-             (msg-end (point-max))
-             (msg-lines (count-lines msg-start msg-end)))
-        (notmuch-wash-region-to-button
-         msg msg-start msg-end "original")))
+	     (msg-end (point-max))
+	     (msg-lines (count-lines msg-start msg-end)))
+	(notmuch-wash-region-to-button
+	 msg msg-start msg-end "original")))
   (while (and (< (point) (point-max))
-              (re-search-forward notmuch-wash-citation-regexp nil t))
+	      (re-search-forward notmuch-wash-citation-regexp nil t))
     (let* ((cite-start (match-beginning 0))
-           (cite-end (match-end 0))
-           (cite-lines (count-lines cite-start cite-end)))
+	   (cite-end (match-end 0))
+	   (cite-lines (count-lines cite-start cite-end)))
       (overlay-put (make-overlay cite-start cite-end) 'face 'message-cited-text)
       (when (> cite-lines (+ notmuch-wash-citation-lines-prefix
-                             notmuch-wash-citation-lines-suffix
-                             1))
-        (goto-char cite-start)
-        (forward-line notmuch-wash-citation-lines-prefix)
-        (let ((hidden-start (point-marker)))
-          (goto-char cite-end)
-          (forward-line (- notmuch-wash-citation-lines-suffix))
-          (notmuch-wash-region-to-button
-           msg hidden-start (point-marker)
-           "citation")))))
+			     notmuch-wash-citation-lines-suffix
+			     1))
+	(goto-char cite-start)
+	(forward-line notmuch-wash-citation-lines-prefix)
+	(let ((hidden-start (point-marker)))
+	  (goto-char cite-end)
+	  (forward-line (- notmuch-wash-citation-lines-suffix))
+	  (notmuch-wash-region-to-button
+	   msg hidden-start (point-marker)
+	   "citation")))))
   (if (and (not (eobp))
-           (re-search-forward notmuch-wash-signature-regexp nil t))
+	   (re-search-forward notmuch-wash-signature-regexp nil t))
       (let* ((sig-start (match-beginning 0))
-             (sig-end (match-end 0))
-             (sig-lines (count-lines sig-start (point-max))))
-        (if (<= sig-lines notmuch-wash-signature-lines-max)
-            (let ((sig-start-marker (make-marker))
-                  (sig-end-marker (make-marker)))
-              (set-marker sig-start-marker sig-start)
-              (set-marker sig-end-marker (point-max))
-              (overlay-put (make-overlay sig-start-marker sig-end-marker) 'face 'message-cited-text)
-              (notmuch-wash-region-to-button
-               msg sig-start-marker sig-end-marker
-               "signature"))))))
+	     (sig-end (match-end 0))
+	     (sig-lines (count-lines sig-start (point-max))))
+	(if (<= sig-lines notmuch-wash-signature-lines-max)
+	    (let ((sig-start-marker (make-marker))
+		  (sig-end-marker (make-marker)))
+	      (set-marker sig-start-marker sig-start)
+	      (set-marker sig-end-marker (point-max))
+	      (overlay-put (make-overlay sig-start-marker sig-end-marker) 'face 'message-cited-text)
+	      (notmuch-wash-region-to-button
+	       msg sig-start-marker sig-end-marker
+	       "signature"))))))
 
 ;;
 
@@ -276,16 +284,24 @@ Perform several transformations on the message body:
 ;;
 
 (defun notmuch-wash-wrap-long-lines (msg depth)
-  "Wrap any long lines in the message to the width of the window.
+  "Wrap long lines in the message.
 
-When doing so, maintaining citation leaders in the wrapped text."
+If `notmuch-wash-wrap-lines-length' is a number, this will wrap
+the message lines to the minimum of the width of the window or
+its value. Otherwise, this function will wrap long lines in the
+message at the window width. When doing so, citation leaders in
+the wrapped text are maintained."
 
-  (let ((coolj-wrap-follows-window-size nil)
-        (fill-column (- (window-width)
-                        depth
-                        ;; 2 to avoid poor interaction with
-                        ;; `word-wrap'.
-                        2)))
+  (let* ((coolj-wrap-follows-window-size nil)
+	 (limit (if (numberp notmuch-wash-wrap-lines-length)
+		    (min notmuch-wash-wrap-lines-length
+			 (window-width))
+		  (window-width)))
+	 (fill-column (- limit
+			 depth
+			 ;; 2 to avoid poor interaction with
+			 ;; `word-wrap'.
+			 2)))
     (coolj-wrap-region (point-min) (point-max))))
 
 ;;
@@ -305,10 +321,10 @@ style strings are removed prior to conversion.
 Optional argument MAXLEN is the maximum length of the resulting
 filename, before trimming any trailing . and - characters."
   (let* ((s (replace-regexp-in-string "^ *\\(\\[[^]]*\\] *\\)*" "" subject))
-         (s (replace-regexp-in-string "[^A-Za-z0-9._]+" "-" s))
-         (s (replace-regexp-in-string "\\.+" "." s))
-         (s (if maxlen (substring s 0 (min (length s) maxlen)) s))
-         (s (replace-regexp-in-string "[.-]*$" "" s)))
+	 (s (replace-regexp-in-string "[^A-Za-z0-9._]+" "-" s))
+	 (s (replace-regexp-in-string "\\.+" "." s))
+	 (s (if maxlen (substring s 0 (min (length s) maxlen)) s))
+	 (s (replace-regexp-in-string "[.-]*$" "" s)))
     s))
 
 (defun notmuch-wash-subject-to-patch-sequence-number (subject)
@@ -317,8 +333,8 @@ filename, before trimming any trailing . and - characters."
 Return the patch sequence number N from the last \"[PATCH N/M]\"
 style prefix in SUBJECT, or nil if such a prefix can't be found."
   (when (string-match
-         "^ *\\(\\[[^]]*\\] *\\)*\\[[^]]*?\\([0-9]+\\)/[0-9]+[^]]*\\].*"
-         subject)
+	 "^ *\\(\\[[^]]*\\] *\\)*\\[[^]]*?\\([0-9]+\\)/[0-9]+[^]]*\\].*"
+	 subject)
       (string-to-number (substring subject (match-beginning 2) (match-end 2)))))
 
 (defun notmuch-wash-subject-to-patch-filename (subject)
@@ -329,8 +345,8 @@ format-patch\". If the patch mail was generated and sent using
 \"git format-patch/send-email\", this should re-create the
 original filename the sender had."
   (format "%04d-%s.patch"
-          (or (notmuch-wash-subject-to-patch-sequence-number subject) 1)
-          (notmuch-wash-subject-to-filename subject 52)))
+	  (or (notmuch-wash-subject-to-patch-sequence-number subject) 1)
+	  (notmuch-wash-subject-to-filename subject 52)))
 
 (defun notmuch-wash-convert-inline-patch-to-part (msg depth)
   "Convert an inline patch into a fake 'text/x-diff' attachment.
@@ -343,26 +359,26 @@ for error."
   (when (re-search-forward diff-file-header-re nil t)
     (beginning-of-line -1)
     (let ((patch-start (point))
-          (patch-end (point-max))
-          part)
+	  (patch-end (point-max))
+	  part)
       (goto-char patch-start)
       (if (or
-           ;; Patch ends with signature.
-           (re-search-forward notmuch-wash-signature-regexp nil t)
-           ;; Patch ends with bugtraq comment.
-           (re-search-forward "^\\*\\*\\* " nil t))
-          (setq patch-end (match-beginning 0)))
+	   ;; Patch ends with signature.
+	   (re-search-forward notmuch-wash-signature-regexp nil t)
+	   ;; Patch ends with bugtraq comment.
+	   (re-search-forward "^\\*\\*\\* " nil t))
+	  (setq patch-end (match-beginning 0)))
       (save-restriction
-        (narrow-to-region patch-start patch-end)
-        (setq part (plist-put part :content-type "inline-patch-fake-part"))
-        (setq part (plist-put part :content (buffer-string)))
-        (setq part (plist-put part :id -1))
-        (setq part (plist-put part :filename
-                              (notmuch-wash-subject-to-patch-filename
-                               (plist-get
-                                (plist-get msg :headers) :Subject))))
-        (delete-region (point-min) (point-max))
-        (notmuch-show-insert-bodypart nil part depth)))))
+	(narrow-to-region patch-start patch-end)
+	(setq part (plist-put part :content-type "inline-patch-fake-part"))
+	(setq part (plist-put part :content (buffer-string)))
+	(setq part (plist-put part :id -1))
+	(setq part (plist-put part :filename
+			      (notmuch-wash-subject-to-patch-filename
+			       (plist-get
+				(plist-get msg :headers) :Subject))))
+	(delete-region (point-min) (point-max))
+	(notmuch-show-insert-bodypart nil part depth)))))
 
 ;;
 
@@ -376,53 +392,53 @@ for error."
     (save-excursion
       (goto-char beg)
       (let (;; can-be-opened keeps track if we can open some overlays.
-            (can-be-opened (eq search-invisible 'open))
-            ;; the list of overlays that could be opened
-            (crt-overlays nil))
-        (when (and can-be-opened isearch-hide-immediately)
-          (isearch-close-unnecessary-overlays beg end))
-        ;; If the following character is currently invisible,
-        ;; skip all characters with that same `invisible' property value.
-        ;; Do that over and over.
-        (while (and (< (point) end) (invisible-p (point)))
-          (if (invisible-p (get-text-property (point) 'invisible))
-              (progn
-                (goto-char (next-single-property-change (point) 'invisible
-                                                        nil end))
-                ;; if text is hidden by an `invisible' text property
-                ;; we cannot open it at all.
-                (setq can-be-opened nil))
-            (when can-be-opened
-              (let ((overlays (overlays-at (point)))
-                    ov-list
-                    o
-                    invis-prop)
-                (while overlays
-                  (setq o (car overlays)
-                        invis-prop (overlay-get o 'invisible))
-                  (if (invisible-p invis-prop)
-                      (if (overlay-get o 'isearch-open-invisible)
-                          (setq ov-list (cons o ov-list))
-                        ;; We found one overlay that cannot be
-                        ;; opened, that means the whole chunk
-                        ;; cannot be opened.
-                        (setq can-be-opened nil)))
-                  (setq overlays (cdr overlays)))
-                (if can-be-opened
-                    ;; It makes sense to append to the open
-                    ;; overlays list only if we know that this is
-                    ;; t.
-                    (setq crt-overlays (append ov-list crt-overlays)))))
-            (goto-char (next-overlay-change (point)))))
-        ;; See if invisibility reaches up thru END.
-        (if (>= (point) end)
-            (if (and can-be-opened (consp crt-overlays))
-                (progn
-                  (setq isearch-opened-overlays
-                        (append isearch-opened-overlays crt-overlays))
-                  (mapc 'isearch-open-overlay-temporary crt-overlays)
-                  nil)
-              (setq isearch-hidden t)))))))
+	    (can-be-opened (eq search-invisible 'open))
+	    ;; the list of overlays that could be opened
+	    (crt-overlays nil))
+	(when (and can-be-opened isearch-hide-immediately)
+	  (isearch-close-unnecessary-overlays beg end))
+	;; If the following character is currently invisible,
+	;; skip all characters with that same `invisible' property value.
+	;; Do that over and over.
+	(while (and (< (point) end) (invisible-p (point)))
+	  (if (invisible-p (get-text-property (point) 'invisible))
+	      (progn
+		(goto-char (next-single-property-change (point) 'invisible
+							nil end))
+		;; if text is hidden by an `invisible' text property
+		;; we cannot open it at all.
+		(setq can-be-opened nil))
+	    (when can-be-opened
+	      (let ((overlays (overlays-at (point)))
+		    ov-list
+		    o
+		    invis-prop)
+		(while overlays
+		  (setq o (car overlays)
+			invis-prop (overlay-get o 'invisible))
+		  (if (invisible-p invis-prop)
+		      (if (overlay-get o 'isearch-open-invisible)
+			  (setq ov-list (cons o ov-list))
+			;; We found one overlay that cannot be
+			;; opened, that means the whole chunk
+			;; cannot be opened.
+			(setq can-be-opened nil)))
+		  (setq overlays (cdr overlays)))
+		(if can-be-opened
+		    ;; It makes sense to append to the open
+		    ;; overlays list only if we know that this is
+		    ;; t.
+		    (setq crt-overlays (append ov-list crt-overlays)))))
+	    (goto-char (next-overlay-change (point)))))
+	;; See if invisibility reaches up thru END.
+	(if (>= (point) end)
+	    (if (and can-be-opened (consp crt-overlays))
+		(progn
+		  (setq isearch-opened-overlays
+			(append isearch-opened-overlays crt-overlays))
+		  (mapc 'isearch-open-overlay-temporary crt-overlays)
+		  nil)
+	      (setq isearch-hidden t)))))))
 
 (defadvice isearch-range-invisible (around notmuch-isearch-range-invisible-advice activate)
   "Call `notmuch-isearch-range-invisible' instead of the original

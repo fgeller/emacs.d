@@ -453,6 +453,7 @@ message at DEPTH in the current thread."
     (define-key map "s" 'notmuch-show-part-button-save)
     (define-key map "v" 'notmuch-show-part-button-view)
     (define-key map "o" 'notmuch-show-part-button-interactively-view)
+    (define-key map "|" 'notmuch-show-part-button-pipe)
     map)
   "Submap for button commands")
 (fset 'notmuch-show-part-button-map notmuch-show-part-button-map)
@@ -523,6 +524,11 @@ message at DEPTH in the current thread."
   (notmuch-with-temp-part-buffer message-id nth
     (let ((handle (mm-make-handle (current-buffer) (list content-type))))
       (mm-interactively-view-part handle))))
+
+(defun notmuch-show-pipe-part (message-id nth &optional filename content-type)
+  (notmuch-with-temp-part-buffer message-id nth
+    (let ((handle (mm-make-handle (current-buffer) (list content-type))))
+      (mm-pipe-part handle))))
 
 (defun notmuch-show-multipart/*-to-list (part)
   (mapcar (lambda (inner-part) (plist-get inner-part :content-type))
@@ -819,7 +825,7 @@ message at DEPTH in the current thread."
   (make-symbol (concat "notmuch-show-" type)))
 
 (defun notmuch-show-strip-re (string)
-  (replace-regexp-in-string "\\([Rr]e: *\\)+" "" string))
+  (replace-regexp-in-string "^\\([Rr]e: *\\)+" "" string))
 
 (defvar notmuch-show-previous-subject "")
 (make-variable-buffer-local 'notmuch-show-previous-subject)
@@ -958,9 +964,9 @@ message at DEPTH in the current thread."
   "Insert the message tree TREE at depth DEPTH in the current thread."
   (let ((msg (car tree))
 	(replies (cadr tree)))
-    (if (or (not notmuch-show-elide-non-matching-messages)
-	    (plist-get msg :match))
-	(notmuch-show-insert-msg msg depth))
+    ;; We test whether there is a message or just some replies.
+    (when msg
+      (notmuch-show-insert-msg msg depth))
     (notmuch-show-insert-thread replies (1+ depth))))
 
 (defun notmuch-show-insert-thread (thread depth)
@@ -1041,16 +1047,18 @@ function is used."
 	     (args (if notmuch-show-query-context
 		       (append (list "\'") basic-args
 			       (list "and (" notmuch-show-query-context ")\'"))
-		     (append (list "\'") basic-args (list "\'")))))
-	(notmuch-show-insert-forest (notmuch-query-get-threads
-				     (cons "--exclude=false" args)))
+		     (append (list "\'") basic-args (list "\'"))))
+	     (cli-args (cons "--exclude=false"
+			     (when notmuch-show-elide-non-matching-messages
+			       (list "--entire-thread=false")))))
+
+	(notmuch-show-insert-forest (notmuch-query-get-threads (append cli-args args)))
 	;; If the query context reduced the results to nothing, run
 	;; the basic query.
 	(when (and (eq (buffer-size) 0)
 		   notmuch-show-query-context)
 	  (notmuch-show-insert-forest
-	   (notmuch-query-get-threads
-	    (cons "--exclude=false" basic-args)))))
+	   (notmuch-query-get-threads (append cli-args basic-args)))))
 
       (jit-lock-register #'notmuch-show-buttonise-links)
 
@@ -1517,9 +1525,11 @@ thread, navigate to the next thread in the parent search buffer."
       (goto-char (point-max)))))
 
 (defun notmuch-show-previous-message ()
-  "Show the previous message."
+  "Show the previous message or the start of the current message."
   (interactive)
-  (notmuch-show-goto-message-previous)
+  (if (= (point) (notmuch-show-message-top))
+      (notmuch-show-goto-message-previous)
+    (notmuch-show-move-to-message-top))
   (notmuch-show-mark-read)
   (notmuch-show-message-adjust))
 
@@ -1579,7 +1589,9 @@ to show, nil otherwise."
 (defun notmuch-show-previous-open-message ()
   "Show the previous open message."
   (interactive)
-  (while (and (notmuch-show-goto-message-previous)
+  (while (and (if (= (point) (notmuch-show-message-top))
+		  (notmuch-show-goto-message-previous)
+		(notmuch-show-move-to-message-top))
 	      (not (notmuch-show-message-visible-p))))
   (notmuch-show-mark-read)
   (notmuch-show-message-adjust))
@@ -1609,7 +1621,7 @@ than only the current message."
   (let (shell-command)
     (if entire-thread
 	(setq shell-command
-	      (concat notmuch-command " show --format=mbox "
+	      (concat notmuch-command " show --format=mbox --exclude=false "
 		      (shell-quote-argument
 		       (mapconcat 'identity (notmuch-show-get-message-ids-for-open-messages) " OR "))
 		      " | " command))
@@ -1873,6 +1885,10 @@ the user (see `notmuch-show-stash-mlarchive-link-alist')."
 (defun notmuch-show-part-button-interactively-view (&optional button)
   (interactive)
   (notmuch-show-part-button-internal button #'notmuch-show-interactively-view-part))
+
+(defun notmuch-show-part-button-pipe (&optional button)
+  (interactive)
+  (notmuch-show-part-button-internal button #'notmuch-show-pipe-part))
 
 (defun notmuch-show-part-button-internal (button handler)
   (let ((button (or button (button-at (point)))))
