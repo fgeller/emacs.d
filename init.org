@@ -274,6 +274,14 @@
         'interactive)
     #+end_src
 
+    Version control / Magit
+
+    #+begin_src emacs-lisp
+     (autoload 'git-blame-mode "git-blame" "Minor mode for incremental blame for Git." t)
+     (autoload 'magit-status "magit")
+     (autoload 'rebase-mode "rebase-mode")
+    #+end_src
+
 * Text editing
 ** Helper
 
@@ -1313,6 +1321,15 @@
           (define-key org-mode-map (kbd "C-c C-x C-u") 'c/org-get-chrome-link)))
    #+end_src
 
+** Magit
+
+   #+begin_src emacs-lisp
+     (eval-after-load 'magit
+       '(progn
+          (define-key magit-status-mode-map (kbd "^") 'c/magit-full-push-repository)
+          ))
+   #+end_src
+
 ** Programming modes
 *** JS2 mode
 
@@ -1900,13 +1917,34 @@
 
 ** Magit
 
+   Hook up rebase-mode.
+
    #+begin_src emacs-lisp
-     (autoload 'git-blame-mode "git-blame" "Minor mode for incremental blame for Git." t)
-     (autoload 'magit-status "magit")
-     (autoload 'rebase-mode "rebase-mode")
      (add-to-list 'auto-mode-alist '("git-rebase-todo" . rebase-mode))
+   #+end_src
+
+   Enable auto-fill in commit message buffers.
+
+   #+begin_src emacs-lisp
      (defun c/magit-log-edit-initialization () (auto-fill-mode 1))
      (add-hook 'magit-log-edit-mode-hook 'c/magit-log-edit-initialization)
+   #+end_src
+
+   Helper to push (via hg-git) from a status buffer.
+
+   #+begin_src emacs-lisp
+     (defun c/magit-full-push-repository ()
+       (interactive)
+       (let* ((repo-path (magit-get-top-dir default-directory))
+              (repo-name (file-name-nondirectory (directory-file-name repo-path))))
+         (message "Starting full-push of %s" repo-name)
+         (let ((sentinel (lambda (process event)
+                           (todochiku-message (format "%s %s" process event)
+                                              (format "Process %s received event %s." process event)
+                                              (todochiku-icon 'alert))))
+               (proc (start-process (format "full-push" repo-name) "*full-push*"
+                                    "bash" (expand-file-name "~/bin/full-push") repo-name)))
+           (set-process-sentinel proc sentinel))))
    #+end_src
 
 * TRAMP
