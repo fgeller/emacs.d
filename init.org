@@ -200,7 +200,7 @@
 
 *** autoload'ed
 
-    Helpers to do rectangle insert inline and mark multiple occurences of
+    Helpers to do rectangle insert inline and mark multiple occurrences of
     active region.
 
     #+begin_src emacs-lisp
