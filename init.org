@@ -198,6 +198,12 @@
      (move-text-default-bindings)
    #+end_src
 
+    Activate winner-mode.
+
+    #+begin_src emacs-lisp
+      (winner-mode 1)
+    #+end_src
+
 *** autoload'ed
 
     Helpers to do rectangle insert inline and mark multiple occurrences of
