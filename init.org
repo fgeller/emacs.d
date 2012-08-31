@@ -198,12 +198,6 @@
      (move-text-default-bindings)
    #+end_src
 
-    Activate winner-mode.
-
-    #+begin_src emacs-lisp
-      (winner-mode 1)
-    #+end_src
-
 *** autoload'ed
 
     Helpers to do rectangle insert inline and mark multiple occurrences of
@@ -1093,15 +1087,6 @@
      (define-key global-map (kbd "C-c M-t l") (make-repeatable-command 'toggle-truncate-lines))
    #+end_src
 
-   Repeatable winner commands.
-
-   #+begin_src emacs-lisp
-     (define-key
-       winner-mode-map
-       (kbd "C-c <left>")
-       (make-repeatable-command 'winner-undo))
-   #+end_src
-
 ** C-x Map
 
    Helpers for scrolling - move one line at a time, and scroll similar
@@ -1962,6 +1947,26 @@
            (set-process-sentinel proc sentinel))))
    #+end_src
 
+   @magnars helpers to toggle whitespace handling in a magit-status buffer [19].
+
+   #+begin_src emacs-lisp
+     (defun c/magit-toggle-whitespace ()
+       (interactive)
+       (if (member "-w" magit-diff-options)
+           (c/magit-dont-ignore-whitespace)
+         (c/magit-ignore-whitespace)))
+
+     (defun c/magit-ignore-whitespace ()
+       (interactive)
+       (add-to-list 'magit-diff-options "-w")
+       (magit-refresh))
+
+     (defun c/magit-dont-ignore-whitespace ()
+       (interactive)
+       (setq magit-diff-options (remove "-w" magit-diff-options))
+       (magit-refresh))
+   #+end_src
+
 * TRAMP
 
   I usually stay in Emacs to edit remote files, therefore it is unlikely
@@ -2103,7 +2108,6 @@
        org-directory "~/Dropbox/org"
        org-default-notes-file (concat org-directory "/Tasks.org")
        org-agenda-files `(,org-directory)
-       org-contacts-files (list (format "%s/contacts.org" org-directory))
        ;; work specific files and folders
        c/work-org-directory "~/Dropbox/work"
        c/work-org-agenda-files `(,c/work-org-directory)
@@ -2117,8 +2121,16 @@
 
     #+begin_src emacs-lisp
       (eval-after-load 'org
-        (dolist (org-mod '(org-crypt org-info org-habit org-irc org-checklist org-eshell org-notmuch org-contacts))
-                (require org-mod)))
+        (dolist (org-mod '(
+                           org-crypt
+                           org-info
+                           org-habit
+                           org-irc
+                           org-checklist
+                           org-eshell
+                           org-notmuch
+                           ))
+          (require org-mod)))
     #+end_src
 
 *** Keywords
@@ -2285,15 +2297,6 @@
       (setq org-src-fontify-natively t)
     #+end_src
 
-*** Contacts
-
-    Load and configure org-contacts.
-
-    #+begin_src emacs-lisp
-      (eval-after-load 'message
-        '(progn
-           (require 'org-contacts)))
-    #+end_src
 *** Habits
 
     Low noise settings for habits.
