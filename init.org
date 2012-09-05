@@ -441,16 +441,17 @@
                                  ac-source-yasnippet
                                  ac-source-filename
                                  ac-source-words-in-buffer
+                                 ac-source-words-in-same-mode-buffers
                                  ))
     #+end_src
 
     Show candidates right away
 
     #+begin_src emacs-lisp
-      (setq ac-delay 0)
+      (setq ac-delay 0.0)
       (setq ac-auto-show-menu 0.0)
       (setq ac-show-menu-immediately-on-auto-complete t)
-      (setq ac-quick-help-delay 2.0)
+      (setq ac-quick-help-delay 1.0)
     #+end_src
 
     Don't use fuzzy matching
