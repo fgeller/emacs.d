@@ -359,14 +359,6 @@
      (setq browse-url-browser-function 'browse-url-default-macosx-browser)
    #+end_src
 
-   Global whitespace settings. Override them in =.dir-local.el= or file
-   variables.
-
-   #+begin_src emacs-lisp
-     (setq c/whitespace-style '(face tabs spaces trailing lines space-before-tab newline indentation::space empty space-after-tab space-mark tab-mark newline-mark))
-     (setq-default whitespace-style c/whitespace-style)
-   #+end_src
-
    Don't disable narrowing.
 
    #+begin_src emacs-lisp
@@ -392,6 +384,35 @@
 
    #+begin_src emacs-lisp
      (delete-selection-mode 1)
+   #+end_src
+
+** Whitespace
+
+   Global whitespace settings. Override them in =.dir-local.el= or file
+   variables.
+
+   #+begin_src emacs-lisp
+     (setq c/whitespace-style '(face tabs spaces trailing lines space-before-tab newline indentation::space empty space-after-tab space-mark tab-mark newline-mark))
+     (setq-default whitespace-style c/whitespace-style)
+   #+end_src
+
+   Helper to decide whether we should clean up whitespace.
+
+   #+begin_src emacs-lisp
+     (defun c/should-cleanup-whitespace ()
+       ;; If a variable with the same name is bound -- use it
+       (if (boundp 'c/should-cleanup-whitespace)
+           c/should-cleanup-whitespace
+         ;; else default to:
+         t))
+   #+end_src
+
+   Helper to guard the call to whitespace-cleanup.
+
+   #+begin_src emacs-lisp
+     (defun c/maybe-cleanup-whitespace ()
+       (when (c/should-cleanup-whitespace)
+         (whitespace-cleanup)))
    #+end_src
 
 ** Yasnippet
@@ -785,7 +806,7 @@
        (hl-line-mode 1)
        (rainbow-mode 1)
        (flymake-mode 1)
-       (add-hook 'before-save-hook 'whitespace-cleanup nil 'local)
+       (add-hook 'before-save-hook 'c/maybe-cleanup-whitespace nil 'local)
        (jumper-mode 1)
        (add-hook 'before-save-hook 'jumper-update-defs-from-current-buffer nil 'local)
        (setq js2-use-font-lock-faces t)
@@ -796,7 +817,7 @@
        (setq js2-enter-indents-newline t)
        (setq js2-bounce-indent-p nil)
        (setq js2-auto-insert-catch-block t)
-       (setq js2-cleanup-whitespace t)
+       (setq js2-cleanup-whitespace nil)
        (setq js2-global-externs '(Ext console))
        (setq js2-highlight-level 3)
        (setq js2-mirror-mode t) ; conflicts with autopair
@@ -829,7 +850,7 @@
                                    ac-source-symbols
                                    )
                                  ac-sources))
-        (add-hook 'before-save-hook 'whitespace-cleanup nil 'local))
+        (add-hook 'before-save-hook 'c/maybe-cleanup-whitespace nil 'local))
 
       (add-hook 'emacs-lisp-mode-hook 'c/emacs-lisp-mode-initialization)
     #+end_src
@@ -924,7 +945,7 @@
        (setq ac-sources (cons 'ac-source-jumper ac-sources))
        (when buffer-file-name (flymake-mode 1))
        (set-fill-column 79)
-       (add-hook 'before-save-hook 'whitespace-cleanup nil 'local)
+       (add-hook 'before-save-hook 'c/maybe-cleanup-whitespace nil 'local)
        (add-hook 'before-save-hook 'jumper-update-defs-from-current-buffer nil 'local)
        )
      (add-hook 'python-mode-hook 'c/python-mode-initialization)
@@ -2094,7 +2115,7 @@
 
     #+begin_src emacs-lisp
         (defun c/org-mode-per-buffer-customization ()
-          (add-hook 'before-save-hook 'whitespace-cleanup nil 'local)
+          (add-hook 'before-save-hook 'c/maybe-cleanup-whitespace nil 'local)
           (turn-on-auto-fill))
 
         (add-hook 'org-mode-hook 'c/org-mode-per-buffer-customization)
