@@ -1327,6 +1327,7 @@
      (eval-after-load 'magit
        '(progn
           (define-key magit-status-mode-map (kbd "^") 'c/magit-full-push-repository)
+          (define-key magit-status-mode-map (kbd "W") 'c/magit-toggle-whitespace)
           ))
    #+end_src
 
@@ -2646,3 +2647,5 @@
 [17] https://github.com/alloy/terminal-notifier
 
 [18] http://emacswiki.org/emacs/TransposeWindows
+
+[19] https://github.com/magnars/.emacs.d/blob/master/setup-magit.el
