@@ -13,3 +13,6 @@
 [submodule "src/cedet"]
 	path = src/cedet
 	url = https://github.com/fgeller/cedet.git
+[submodule "snippets/java-mode"]
+	path = snippets/java-mode
+	url = https://github.com/fgeller/yasnippet-java-mode.git
