@@ -1296,7 +1296,7 @@
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c *") (make-repeatable-command 'c/duplicate-line))
      (define-key global-map (kbd "C-c ^") (make-repeatable-command 'join-line))
-     (define-key global-map (kbd "C-c >") 'mc/mark-more-like-this-extended)
+     (define-key global-map (kbd "C-c +") 'mc/mark-more-like-this-extended)
      (define-key global-map (kbd "C-c q") 'query-replace)
      (define-key global-map (kbd "C-c Q") 'query-replace-regexp)
      (define-key global-map (kbd "C-c w") (make-repeatable-command 'er/expand-region))
