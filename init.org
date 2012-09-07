@@ -106,6 +106,35 @@
       (reduce (lambda (accumulator element) (concat accumulator delimiter element))
               strings))
   #+end_src
+
+  Helper to define a group of commands that can be executed in consecutive key
+  presses. Heavily inspired by =text-scale-adjust=.
+
+  #+begin_src emacs-lisp
+    (defmacro define-command-group (name &rest maps)
+      "Defines a command that can be used to dispatch a sequence of
+     commands from using consecutive key presses. Heavily inspired by
+     `text-scale-adjust'."
+      (let* ((map-to-string (lambda (m) (format "%s → %s" (getf m :key) (symbol-name (getf m :command)))))
+             (prompt (c/join-strings ", " (loop for map in maps collect (funcall map-to-string map)))))
+        `(defun ,name ()
+           (interactive)
+           (let* ((step t)
+                  (ev last-command-event)
+                  (echo-keystrokes nil)
+                  (base (event-basic-type ev)))
+             (while step
+               (cond
+                ,@(loop for m in maps collect `((eq base ,(string-to-char (getf m :key))) (setq step t)))
+                (t (setq step nil)))
+               (when step
+                 (cond
+                  ,@(loop for m in maps collect `((eq base ,(string-to-char (getf m :key))) (call-interactively ',(getf m :command)))))
+                 (setq ev (read-event ,prompt))
+                 (setq base (event-basic-type ev))))
+             (push ev unread-command-events)))))
+  #+end_src
+
 * Loading libraries
 ** Globally desirable included libraries
 
@@ -1309,9 +1338,18 @@
      (define-key global-map (kbd "C-c +") 'mc/mark-more-like-this-extended)
      (define-key global-map (kbd "C-c q") 'query-replace)
      (define-key global-map (kbd "C-c Q") 'query-replace-regexp)
-     (define-key global-map (kbd "C-c w") (make-repeatable-command 'er/expand-region))
      (define-key global-map (kbd "C-x r t") 'inline-string-rectangle)
      (define-key global-map (kbd "M-y") 'helm-show-kill-ring)
+   #+end_src
+
+   Command group for expanding and contracting the active region.
+
+   #+begin_src emacs-lisp
+     (define-command-group c/expand-region-command-group
+       (:key ")" :command er/expand-region)
+       (:key "(" :command er/contract-region))
+
+     (define-key global-map (kbd "C-c )") 'c/expand-region-command-group)
    #+end_src
 
    Default to zapping up to char, not including the target. [13]
