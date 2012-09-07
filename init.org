@@ -2587,7 +2587,7 @@
              ("w/commits" . "tag:unread  and tag:w/commit and not \"via pb\"")
              ("ml/emacs*" . "tag:unread and tag:ml/emacs")
              ("ml/org" . "tag:unread and (tag:ml/org)")
-             ("ml/cedet" . "tag:unread and (tag:ml/cedet-devel)")
+             ("ml/cedet" . "tag:unread and (tag:ml/cedet)")
              ("ml/notmuch" . "tag:unread and (tag:ml/notmuch)")
              ))
    #+end_src
