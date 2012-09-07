@@ -10,3 +10,6 @@
 [submodule "src/org-mode"]
 	path = src/org-mode
 	url = git://orgmode.org/org-mode.git
+[submodule "src/cedet"]
+	path = src/cedet
+	url = https://github.com/fgeller/cedet.git
