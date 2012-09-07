@@ -23,3 +23,6 @@ auto-save-list
 /org-clock-save.el
 /emacs-sources
 /.mc-lists.el
+/semanticdb
+/ede-projects.el
+/.dir-local.el
