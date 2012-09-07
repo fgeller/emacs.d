@@ -67,6 +67,8 @@
 
 * Global helpers
 
+  *N.B.*: For many of these, you need the =cl= library.
+
   Helper to guess the project root based on files and folders that
   indicate the root of a project. Exclude tramp'd files.
 
