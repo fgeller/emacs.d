@@ -98,6 +98,14 @@
         (match-string 1)))
   #+end_src
 
+  Helper to join a list of strings with a given delimiter.
+
+  #+begin_src emacs-lisp
+    (defun c/join-strings (delimiter strings)
+      "Joins a list of strings with a given delimiter."
+      (reduce (lambda (accumulator element) (concat accumulator delimiter element))
+              strings))
+  #+end_src
 * Loading libraries
 ** Globally desirable included libraries
 
