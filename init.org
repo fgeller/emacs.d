@@ -921,8 +921,7 @@
 
     #+begin_src emacs-lisp
       (setq inferior-lisp-program "/usr/local/bin/sbcl")
-      (setq slime-lisp-implementations
-            '((sbcl ("sbcl" "--core" "sbcl.core-for-slime"))))
+      (setq slime-lisp-implementations '((sbcl ("sbcl"))))
       (require 'slime-autoloads)
       (slime-setup '(slime-fancy))
     #+end_src
