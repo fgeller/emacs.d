@@ -1646,8 +1646,8 @@
       mode-line-format
       (list
        " "
-       mode-line-mule-info ;; Info about the active input method and coding-system
-       mode-line-remote ;; Small indicator for tramp'ed files
+       'mode-line-mule-info ;; Info about the active input method and coding-system
+       'mode-line-remote ;; Small indicator for tramp'ed files
        '(:eval (propertize "%b" 'face 'mode-line-buffer-id)) ;; buffer name
        '(:eval (when buffer-read-only (propertize "%" 'face 'mode-line)))
        '(:eval (when (buffer-modified-p) (propertize "*" 'face 'mode-line-highlight)))
