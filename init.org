@@ -1410,11 +1410,10 @@
 
    #+begin_src emacs-lisp
      (define-command-group c/expand-region-command-group
-       (:key "#" :command er/expand-region)
        (:key "<" :command er/expand-region)
        (:key ">" :command er/contract-region))
 
-     (define-key global-map (kbd "C-c #") 'c/expand-region-command-group)
+     (define-key global-map (kbd "C-c <") 'c/expand-region-command-group)
    #+end_src
 
    Default to zapping up to char, not including the target. [13]
@@ -1452,6 +1451,8 @@
           (define-key org-mode-map (kbd "C-,") nil)
           (define-key org-mode-map (kbd "C-c *") nil)
           (define-key org-mode-map (kbd "C-c #") nil)
+          (define-key org-mode-map (kbd "C-c >") nil)
+          (define-key org-mode-map (kbd "C-c <") nil)
           (define-key org-mode-map (kbd "C-c ^") nil)
           (define-key org-mode-map (kbd "C-c t") 'org-todo)
           (define-key org-mode-map (kbd "C-c C-x C-u") 'c/org-get-chrome-link)))
@@ -1484,6 +1485,12 @@
     #+begin_src emacs-lisp
       (eval-after-load 'python
         '(progn
+           (define-key python-mode-map (kbd "C-c >") nil)
+           (define-key python-mode-map (kbd "C-c <") nil)
+           (define-key python-mode-map (kbd "C-c fs") 'c/split-python-args-across-lines)
+           (define-key python-mode-map (kbd "C-c f>") 'python-indent-shift-right)
+           (define-key python-mode-map (kbd "C-c f<") 'python-indent-shift-left)
+           (define-key python-mode-map (kbd "C-c fs") 'c/split-python-args-across-lines)
            (define-key python-mode-map (kbd "C-c fs") 'c/split-python-args-across-lines)
            (define-key python-mode-map (kbd "C-c tt") 'c/run-python-test)
            (define-key python-mode-map (kbd "C-c tc") 'c/run-python-test-class)
