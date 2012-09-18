@@ -2243,6 +2243,13 @@
         (add-hook 'org-mode-hook 'c/org-mode-per-buffer-customization)
     #+end_src
 
+    Ensure that we check all boxes, before marking a parent DONE.
+
+    #+begin_src emacs-lisp
+      (setq org-enforce-todo-checkbox-dependencies t)
+    #+end_src
+
+
 *** Folders and files
 
     Where to find org-files.
