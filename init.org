@@ -1201,6 +1201,7 @@
      (define-key global-map (kbd "C-c se") 'eshell)
      (define-key global-map (kbd "C-c sl") 'slime)
      (define-key global-map (kbd "C-c sp") 'python-shell-switch-to-shell)
+     (define-key global-map (kbd "C-c ss") 'shell)
    #+end_src
 
    Enable / disable modes
@@ -1464,6 +1465,7 @@
           (define-key org-mode-map (kbd "C-.") nil)
           (define-key org-mode-map (kbd "C-,") nil)
           (define-key org-mode-map (kbd "C-c *") nil)
+          (define-key org-mode-map (kbd "C-c &") 'org-mark-ring-goto)
           (define-key org-mode-map (kbd "C-c #") nil)
           (define-key org-mode-map (kbd "C-c >") nil)
           (define-key org-mode-map (kbd "C-c <") nil)
