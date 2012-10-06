@@ -225,7 +225,7 @@
     Fairly early loading of a development version of CEDET, to prevent loading
     of built-in version.
 
-    #+begin_src emacs-lisp
+    #+begin_src emacs-lisp :tangle no
       (load-file (expand-file-name "~/.emacs.d/src/cedet/cedet-devel-load.el"))
     #+end_src
 
@@ -823,7 +823,7 @@
 
    Configure semantic's default submodes.
 
-   #+begin_src emacs-lisp
+   #+begin_src emacs-lisp :tangle no
      (setq semantic-default-submodes
            '(
              global-semantic-idle-scheduler-mode
@@ -1116,7 +1116,7 @@
    Tell CEDET's semanticdb-javap and where to find information about global
    classes.
 
-   #+begin_src emacs-lisp
+   #+begin_src emacs-lisp :tangle no
      (setq semanticdb-javap-classpath '())
      (when linux-p
        (add-to-list 'semanticdb-javap-classpath "/usr/lib/jvm/java-7-openjdk-i386/jre"))
@@ -1131,8 +1131,6 @@
        (subword-mode 1)
        (pretty-symbols-mode 1)
        (hl-line-mode 1)
-       (require 'semantic/db-javap)
-       (semantic-mode 1)
        (auto-complete-mode 1)
        (when buffer-file-name (flymake-mode 1))
        (add-hook 'before-save-hook 'c/maybe-cleanup-whitespace nil 'local)
