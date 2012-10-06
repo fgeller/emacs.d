@@ -13,12 +13,19 @@
   Main sources are @purcell's emacs.d [11] and the Emacswiki [12].
 
 * Environment
+** Global variables
+
+   #+begin_src emacs-lisp
+     (setq mac-p (eq system-type 'darwin))
+     (setq linux-p (eq system-type 'gnu/linux))
+   #+end_src
+
 ** System name
 
    Don't use the FQDN
 
    #+begin_src emacs-lisp
-     (when (eq system-type 'darwin)
+     (when mac-p
        (setq system-name (car (split-string system-name "\\."))))
    #+end_src
 
@@ -691,9 +698,10 @@
    Use GNU find an Mac OS (via homebrew)
 
    #+begin_src emacs-lisp
-     (setq-default find-program "gfind")
-     (grep-apply-setting 'grep-find-command "gfind . -type f -exec grep -nH -e  {} +")
-     (grep-apply-setting 'grep-find-template "gfind . <X> -type f <F> -exec grep <C> -nH -e <R> {} +")
+     (when mac-p
+       (setq-default find-program "gfind")
+       (grep-apply-setting 'grep-find-command "gfind . -type f -exec grep -nH -e  {} +")
+       (grep-apply-setting 'grep-find-template "gfind . <X> -type f <F> -exec grep <C> -nH -e <R> {} +"))
    #+end_src
 
    Wrapper to =rgrep= to set =default-directory= to the (guessed) project root.
@@ -1085,10 +1093,13 @@
 
 ** Java
 
-   Set environment variables specific to Java on a Mac.
+   Set environment variables specific to Java.
 
    #+begin_src emacs-lisp
-     (setenv "JAVA_HOME" "/Library/Java/JavaVirtualMachines/1.7.0u.jdk/Contents/Home")
+     (when mac-p
+       (setenv "JAVA_HOME" "/Library/Java/JavaVirtualMachines/1.7.0u.jdk/Contents/Home"))
+     (when linux-p
+       (setenv "JAVA_HOME" "/usr/lib/jvm/java-7-openjdk-i386/jre"))
    #+end_src
 
    Special configuration for flymake
@@ -1106,10 +1117,11 @@
    classes.
 
    #+begin_src emacs-lisp
-     (setq semanticdb-javap-classpath
-           '(
-             "/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Classes/classes.jar"
-             ))
+     (setq semanticdb-javap-classpath '())
+     (when linux-p
+       (add-to-list 'semanticdb-javap-classpath "/usr/lib/jvm/java-7-openjdk-i386/jre"))
+     (when mac-p
+       (add-to-list 'semanticdb-javap-classpath "/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Classes/classes.jar"))
    #+end_src
 
    Configuration per-buffer.
@@ -2186,7 +2198,7 @@
 
    #+begin_src emacs-lisp
      (setq ls-lisp-use-insert-directory-program t)
-     (setq insert-directory-program "gls")
+     (setq insert-directory-program (if mac-p "gls" "ls"))
    #+end_src
 
 * Org
