@@ -1140,6 +1140,63 @@
      (add-hook 'java-mode-hook 'c/java-mode-initialization)
    #+end_src
 
+*** Tests
+
+    Assumes that it is only run only maven projects.
+
+**** Helpers
+
+     Run an individual test, by passing a restrictive predicate to
+     nosetest. Searches from =point= backward to find test method and
+     surrounding class name.
+
+     #+begin_src emacs-lisp
+       (defvar *c/last-java-test-compile-command* nil
+         "Is set by C/RUN-JAVA-TEST so that C/RERUN-JAVA-TEST knows
+         what to do.")
+       (defun c/run-java-test ()
+         (interactive)
+         (let* ((project-root (c/guess-project-root))
+                (class-name (c/find-backward "public class \\(.+Test\\)"))
+                (fun-name (c/find-backward "public void \\(test.+\\)("))
+                (cmd (format
+                      "cd %s && JAVA_HOME=%s mvn -Dtest=%s#%s test"
+                      project-root
+                      (getenv "JAVA_HOME")
+                      class-name
+                      fun-name)))
+           (setq *c/last-java-test-compile-command* cmd)
+           (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
+             (compile cmd t))))
+       (defun c/run-java-test-class ()
+         (interactive)
+         (let* ((project-root (c/guess-project-root))
+                (class-name (c/find-backward "public class \\(.+Test\\)"))
+                (cmd (format
+                      "cd %s && JAVA_HOME=%s mvn -Dtest=%s test"
+                      project-root
+                      (getenv "JAVA_HOME")
+                      class-name)))
+           (setq *c/last-java-test-compile-command* cmd)
+           (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
+             (compile cmd t))))
+       (defun c/run-java-tests-in-project ()
+         (interactive)
+         (let* ((project-root (c/guess-project-root))
+                (cmd (format
+                      "cd %s && JAVA_HOME=%s mvn test"
+                      project-root
+                      (getenv "JAVA_HOME"))))
+           (setq *c/last-java-test-compile-command* cmd)
+           (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
+             (compile cmd t))))
+       (defun c/rerun-java-test ()
+         (interactive)
+         (if *c/last-java-test-compile-command*
+             (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
+               (compile *c/last-java-test-compile-command* t))))
+     #+end_src
+
 * Key Bindings
 ** Helpers
 
@@ -1517,6 +1574,17 @@
            (eval-after-load 'flymake
              '(progn
                 (define-key python-mode-map (kbd "C-c !") (make-repeatable-command 'flymake-goto-next-error))))
+           ))
+    #+end_src
+
+*** Java mode
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'cc-mode
+        '(progn
+           (define-key java-mode-map (kbd "C-c tt") 'c/run-java-test)
+           (define-key java-mode-map (kbd "C-c tc") 'c/run-java-test-class)
+           (define-key java-mode-map (kbd "C-c tp") 'c/run-java-tests-in-project)
            ))
     #+end_src
 
