@@ -2263,7 +2263,6 @@
       (setq org-enforce-todo-checkbox-dependencies t)
     #+end_src
 
-
 *** Folders and files
 
     Where to find org-files.
