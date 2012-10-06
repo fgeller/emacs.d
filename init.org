@@ -1106,7 +1106,7 @@
 
    #+begin_src emacs-lisp
      (defun c/flymake-java-init ()
-         (list "/usr/bin/javac" "-Xlint"  (list buffer-file-name)))
+         (list "/usr/bin/javac" (list "-Xlint:all"  buffer-file-name)))
      (eval-after-load 'flymake
        '(progn
           (add-to-list 'flymake-allowed-file-name-masks
