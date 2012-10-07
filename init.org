@@ -1210,6 +1210,20 @@
                (compile *c/last-java-test-compile-command* t))))
      #+end_src
 
+** XML
+
+   Configuration per-buffer.
+
+   #+begin_src emacs-lisp
+     (defun c/xml-mode-initialization ()
+       (hl-line-mode 1)
+       (auto-complete-mode 1)
+       (setq show-trailing-whitespace t)
+       (add-hook 'before-save-hook 'c/maybe-cleanup-whitespace nil 'local)
+       )
+     (add-hook 'nxml-mode-hook 'c/xml-mode-initialization)
+   #+end_src
+
 * Key Bindings
 ** Helpers
 
