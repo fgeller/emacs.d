@@ -1116,7 +1116,10 @@
 
    #+begin_src emacs-lisp
      (defun c/flymake-java-init ()
-         (list "/usr/bin/javac" (list "-Xlint:all"  buffer-file-name)))
+       (let* ((test-class-path (expand-file-name ".test_classpath" (c/guess-project-root)))
+              (class-path (if (file-exists-p test-class-path) (c/file-contents test-class-path) ".")))
+         (list "/usr/bin/javac" (list "-classpath" class-path "-Xlint:all"  buffer-file-name))))
+
      (eval-after-load 'flymake
        '(progn
           (add-to-list 'flymake-allowed-file-name-masks
