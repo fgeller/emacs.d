@@ -1141,6 +1141,7 @@
        (subword-mode 1)
        (pretty-symbols-mode 1)
        (hl-line-mode 1)
+       (fci-mode 1)
        (auto-complete-mode 1)
        (c-set-offset 'arglist-intro '+)  ;; fixes indenting of arguments on the next line.
        (when buffer-file-name (flymake-mode 1))
