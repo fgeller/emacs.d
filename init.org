@@ -1170,7 +1170,7 @@
                 (class-name (c/find-backward "public class \\(.+Test\\)"))
                 (fun-name (c/find-backward "public void \\(test.+\\)("))
                 (cmd (format
-                      "cd %s && JAVA_HOME=%s mvn -Dtest=%s#%s test"
+                      "cd %s && JAVA_HOME=%s mvn -X -Dtest=%s#%s test"
                       project-root
                       (getenv "JAVA_HOME")
                       class-name
@@ -1183,7 +1183,7 @@
          (let* ((project-root (c/guess-project-root))
                 (class-name (c/find-backward "public class \\(.+Test\\)"))
                 (cmd (format
-                      "cd %s && JAVA_HOME=%s mvn -Dtest=%s test"
+                      "cd %s && JAVA_HOME=%s mvn -X -Dtest=%s test"
                       project-root
                       (getenv "JAVA_HOME")
                       class-name)))
@@ -1194,7 +1194,7 @@
          (interactive)
          (let* ((project-root (c/guess-project-root))
                 (cmd (format
-                      "cd %s && JAVA_HOME=%s mvn test"
+                      "cd %s && JAVA_HOME=%s mvn -X test"
                       project-root
                       (getenv "JAVA_HOME"))))
            (setq *c/last-java-test-compile-command* cmd)
