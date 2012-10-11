@@ -220,8 +220,8 @@
                              pretty-symbols-mode
                              python    ;; @fgallina's python's flying circus support for Emacs.
                              rainbow-mode
-                             slime
                              session
+                             slime
                              todochiku
                              undo-tree
                              wgrep
