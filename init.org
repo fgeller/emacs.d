@@ -1149,6 +1149,8 @@
        (fci-mode 1)
        (auto-complete-mode 1)
        (c-set-offset 'arglist-intro '+)  ;; fixes indenting of arguments on the next line.
+       (c-set-offset 'arglist-close '0)
+       (c-set-offset 'substatement-open '0)
        (when buffer-file-name (flymake-mode 1))
        (add-hook 'before-save-hook 'c/maybe-cleanup-whitespace nil 'local)
        )
