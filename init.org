@@ -215,6 +215,7 @@
                              mic-paren
                              move-text
                              multiple-cursors
+                             multi-term
                              org
                              pointback
                              popup ;; for auto-complete
