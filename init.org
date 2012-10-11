@@ -206,6 +206,7 @@
                              flymake
                              flymake-cursor
                              flymake-jshint
+                             gtags
                              helm
                              highlight-indentation
                              js2-mode
@@ -855,6 +856,48 @@
       )
    #+end_src
 
+** GNU Global
+
+   Helpers to update the GNU Global database incrementally based on definitions
+   in the current file, based on tips in the EmacsWiki [20].
+
+   #+begin_src emacs-lisp
+     (defun c/gtags-update-single (filename gtags-root)
+       "Update GNU Global database in GTAGS-ROOT for changes in file named FILENAME."
+       (interactive)
+       (start-process "update-gtags" "update-gtags"
+                      "bash" "-c" (concat "cd " gtags-root " ; gtags -i --single-update " filename )))
+
+     (defun c/gtags-update-current-file ()
+       "Updates a GNU Global database based on the definitions in the current file."
+       (interactive)
+       (let* ((gtags-root (gtags-get-rootpath))
+              (filename (buffer-file-name (current-buffer))))
+         (c/gtags-update-single filename gtags-root)
+         (message "Gtags updated for %s" filename)))
+
+     (defun c/gtags-update-hook ()
+       "Optionally updates the GNU Global database incrementally, if applicable."
+       (when (and (boundp 'gtags-mode) gtags-mode)
+         (when (gtags-get-rootpath)
+           (c/gtags-update-current-file))))
+   #+end_src
+
+   Use helm-gtags to access the GNU Global database.
+
+   #+begin_src emacs-lisp
+     ;; only lead helm-gtags, if we have loaded helm and gtags individually.
+     (eval-after-load 'helm '(eval-after-load 'gtags '(progn (require 'helm-gtags))))
+   #+end_src
+
+   Add a hook to update the GNU Global database upon saving a file.
+
+   #+begin_src emacs-lisp
+     (defun c/initialize-gtags-mode ()
+       (add-hook 'after-save-hook 'c/gtags-update-hook))
+     (add-hook 'gtags-mode-hook 'c/initialize-gtags-mode)
+   #+end_src
+
 ** Flymake
 
    #+begin_src emacs-lisp
@@ -1148,6 +1191,7 @@
        (hl-line-mode 1)
        (fci-mode 1)
        (auto-complete-mode 1)
+       (gtags-mode 1)
        (c-set-offset 'arglist-intro '+)  ;; fixes indenting of arguments on the next line.
        (c-set-offset 'arglist-close '0)
        (c-set-offset 'substatement-open '0)
@@ -1440,6 +1484,17 @@
           (define-key notmuch-hello-mode-map "g" 'c/notmuch-hello-update-and-jump-back-to-saved-searches)
           (define-key notmuch-hello-mode-map "G" 'c/notmuch-hello-offlineimap-update-and-jump-back-to-saved-searches)
           ))
+   #+end_src
+
+** GNU Global
+
+   Set some key bindings specific to gtags-mode.
+
+   #+begin_src emacs-lisp
+     (defun c/initialize-gtags-mode-key-bindings ()
+       (local-set-key (kbd "M-.") 'helm-gtags-find-tag)
+       (local-set-key (kbd "M-,") 'helm-gtags-pop-stack))
+     (add-hook 'gtags-mode-hook 'c/initialize-gtags-mode-key-bindings)
    #+end_src
 
 ** Helm
@@ -2915,3 +2970,5 @@
 [18] http://emacswiki.org/emacs/TransposeWindows
 
 [19] https://github.com/magnars/.emacs.d/blob/master/setup-magit.el
+
+  [20] http://emacswiki.org/emacs/GnuGlobal
