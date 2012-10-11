@@ -203,6 +203,7 @@
                              expand-region
                              feature-mode
                              fill-column-indicator
+                             flymake
                              flymake-cursor
                              flymake-jshint
                              helm
