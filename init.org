@@ -86,7 +86,7 @@
       (interactive)
       (let (
             (excludes '("/ssh:" "/sudo:"))
-            (root-indicators '(".git" ".hg" ".svn")))
+            (root-indicators '(".git" ".hg" ".svn" "pom.xml")))
         (when (and
                buffer-file-name
                (loop for exclude in excludes never (string-match exclude buffer-file-name)))
