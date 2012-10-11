@@ -1616,6 +1616,7 @@
            (define-key java-mode-map (kbd "C-c tt") 'c/run-java-test)
            (define-key java-mode-map (kbd "C-c tc") 'c/run-java-test-class)
            (define-key java-mode-map (kbd "C-c tp") 'c/run-java-tests-in-project)
+           (define-key java-mode-map (kbd "C-c tr") 'c/rerun-java-test)
            ))
     #+end_src
 
