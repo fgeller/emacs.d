@@ -1673,7 +1673,10 @@
            (define-key java-mode-map (kbd "C-c tc") 'c/run-java-test-class)
            (define-key java-mode-map (kbd "C-c tp") 'c/run-java-tests-in-project)
            (define-key java-mode-map (kbd "C-c tr") 'c/rerun-java-test)
-           ))
+           (eval-after-load 'flymake
+             '(progn
+                (define-key java-mode-map (kbd "C-c !") (make-repeatable-command 'flymake-goto-next-error))
+                ))))
     #+end_src
 
 * Appearance
