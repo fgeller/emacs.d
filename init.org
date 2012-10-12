@@ -1216,15 +1216,16 @@
        (defvar *c/last-java-test-compile-command* nil
          "Is set by C/RUN-JAVA-TEST so that C/RERUN-JAVA-TEST knows
          what to do.")
-       (defun c/run-java-test ()
-         (interactive)
+       (defun c/run-java-test (arg)
+         (interactive "P")
          (let* ((project-root (c/guess-project-root))
                 (class-name (c/find-backward "public class \\(.+Test\\)"))
                 (fun-name (c/find-backward "public void \\(test.+\\)("))
                 (cmd (format
-                      "cd %s && JAVA_HOME=%s mvn -Dtest=%s#%s test"
+                      "cd %s && JAVA_HOME=%s mvn %s -Dtest=%s#%s test"
                       project-root
                       (getenv "JAVA_HOME")
+                      (if arg "-X" "")
                       class-name
                       fun-name)))
            (setq *c/last-java-test-compile-command* cmd)
