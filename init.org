@@ -857,6 +857,15 @@
       )
    #+end_src
 
+
+   Fix regular expression for maven (3) output.
+
+   #+begin_src emacs-lisp
+     (add-to-list 'compilation-error-regexp-alist-alist
+                  ;; Adds the "ERROR " prefix
+                  '(maven "\\[ERROR\\] \\([0-9]*[^0-9\n]\\(?:[^\n :]\\| [^-/\n]\\|:[^ \n]\\)*?\\):\\[\\([0-9]+\\),\\([0-9]+\\)\\]" 1 2 3))
+   #+end_src
+
 ** GNU Global
 
    Helpers to update the GNU Global database incrementally based on definitions
