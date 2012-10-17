@@ -2440,11 +2440,11 @@
 
     #+begin_src emacs-lisp
       (setq
-       org-directory "~/Dropbox/org"
+       org-directory (expand-file-name "~/Cloud/org")
        org-default-notes-file (concat org-directory "/Tasks.org")
        org-agenda-files `(,org-directory)
        ;; work specific files and folders
-       c/work-org-directory "~/Dropbox/work"
+       c/work-org-directory "~/Cloud/work"
        c/work-org-agenda-files `(,c/work-org-directory)
        c/work-org-default-notes-file (concat c/work-org-directory "/Tasks.org")
        )
