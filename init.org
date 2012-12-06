@@ -220,7 +220,6 @@
                              pointback
                              popup ;; for auto-complete
                              pretty-symbols-mode
-                             python    ;; @fgallina's python's flying circus support for Emacs.
                              rainbow-mode
                              scala-mode
                              session
