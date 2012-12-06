@@ -221,7 +221,6 @@
                              popup ;; for auto-complete
                              pretty-symbols-mode
                              rainbow-mode
-                             scala-mode
                              session
                              slime
                              todochiku
@@ -348,6 +347,23 @@
      (autoload 'git-blame-mode "git-blame" "Minor mode for incremental blame for Git." t)
      (autoload 'magit-status "magit")
      (autoload 'rebase-mode "rebase-mode")
+    #+end_src
+
+    Scala!
+
+    #+begin_src emacs-lisp
+      (autoload 'scala-mode "scala-mode" nil t)
+      (add-to-list 'auto-mode-alist '("\\.scala\\'" . scala-mode))
+    #+end_src
+
+    ENSIME for Scala should be loaded with scala-mode.
+
+    #+begin_src emacs-lisp
+      (add-to-list 'load-path (expand-file-name "~/.emacs.d/src/ensime/elisp"))
+      (autoload 'ensime "ensime" "Read config file for settings. Then start an inferior ENSIME server and connect to its Swank server." t)
+      (autoload 'ensime-scala-mode-hook "ensime")
+      (eval-after-load 'scala-mode
+        '(add-hook 'scala-mode-hook 'ensime-scala-mode-hook))
     #+end_src
 
 * Text editing
@@ -1857,6 +1873,7 @@
         (propertize "%]" 'help-echo "Recursive edit, type C-M-c to get out")
         )
        '(:eval (c/mode-line-compilation))
+       '(:eval (when (fboundp 'ensime-modeline-string) (ensime-modeline-string)))
        '(vc-mode vc-mode)
        '(:eval (c/mode-line-flymake))
        ""
