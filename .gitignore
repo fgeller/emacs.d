@@ -25,3 +25,5 @@ auto-save-list
 /.mc-lists.el
 /semanticdb
 /ede-projects.el
+/var/pcache/ucs-utils
+/bbdb

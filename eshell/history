@@ -1,0 +1,9 @@
+ls
+ls -la
+mv color-theme-sanityinc-sorlarized color-theme-sanityinc-solarized
+ll
+ls
+ls ../src
+rm -dfr color-theme-sanityinc-solarized
+rm -fr color-theme-sanityinc-solarized
+ln -s ../src/color-theme-sanityinc-solarized .
