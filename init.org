@@ -1042,7 +1042,7 @@
               (local-file (file-relative-name
                            temp-file
                            (file-name-directory buffer-file-name))))
-         (list "pycheckers"  (list local-file))))
+         (list "flake8"  (list local-file))))
      (eval-after-load 'flymake
        '(progn
           (add-to-list 'flymake-allowed-file-name-masks
