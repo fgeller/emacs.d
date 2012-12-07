@@ -211,7 +211,6 @@
                              highlight-indentation
                              js2-mode
                              magit
-                             mark-multiple
                              mic-paren
                              move-text
                              multiple-cursors
@@ -271,7 +270,6 @@
     active region.
 
     #+begin_src emacs-lisp
-      (autoload 'inline-string-rectangle "inline-string-rectangle" t nil)
       (require 'multiple-cursors-autoloads)
     #+end_src
 
@@ -1587,7 +1585,6 @@
      (define-key global-map (kbd "C-c +") 'mc/mark-more-like-this-extended)
      (define-key global-map (kbd "C-c q") 'query-replace)
      (define-key global-map (kbd "C-c Q") 'query-replace-regexp)
-     (define-key global-map (kbd "C-x r t") 'inline-string-rectangle)
      (define-key global-map (kbd "M-y") 'helm-show-kill-ring)
    #+end_src
 
