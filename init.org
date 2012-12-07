@@ -1586,6 +1586,7 @@
      (define-key global-map (kbd "C-c q") 'query-replace)
      (define-key global-map (kbd "C-c Q") 'query-replace-regexp)
      (define-key global-map (kbd "M-y") 'helm-show-kill-ring)
+     (define-key global-map (kbd "C-c |") 'mc/edit-lines)
    #+end_src
 
    Command group for expanding and contracting the active region.
@@ -1596,6 +1597,12 @@
        (:key ">" :command er/contract-region))
 
      (define-key global-map (kbd "C-c <") 'c/expand-region-command-group)
+   #+end_src
+
+   Entry for multiple cursor editing.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-c >") 'mc/mark-more-like-this-extended)
    #+end_src
 
    Default to zapping up to char, not including the target. [13]
@@ -1637,6 +1644,7 @@
           (define-key org-mode-map (kbd "C-c >") nil)
           (define-key org-mode-map (kbd "C-c <") nil)
           (define-key org-mode-map (kbd "C-c ^") nil)
+          (define-key org-mode-map (kbd "C-c |") nil)
           (define-key org-mode-map (kbd "C-c t") 'org-todo)
           (define-key org-mode-map (kbd "C-c C-x C-u") 'c/org-get-chrome-link)))
    #+end_src
@@ -1700,6 +1708,17 @@
              '(progn
                 (define-key java-mode-map (kbd "C-c !") (make-repeatable-command 'flymake-goto-next-error))
                 ))))
+    #+end_src
+
+*** Scala mode
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'scala-mode
+        '(progn
+           (define-key scala-mode-map (kbd "C-c C-i C-i") 'ensime)
+           (define-key scala-mode-map (kbd "C-c C-i c") 'ensime-config-gen)
+           (define-key scala-mode-map (kbd "C-c C-i r") 'ensime-inf-eval-region)
+           (define-key scala-mode-map (kbd "C-c C-i b") 'ensime-inf-eval-buffer)))
     #+end_src
 
 * Appearance
