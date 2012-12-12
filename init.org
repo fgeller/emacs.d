@@ -3065,7 +3065,7 @@
 
 [19] https://github.com/magnars/.emacs.d/blob/master/setup-magit.el
 
-  [20] http://emacswiki.org/emacs/GnuGlobal
+[20] http://emacswiki.org/emacs/GnuGlobal
 
 [21] http://code.google.com/p/js2-mode/issues/detail?id=50
 
