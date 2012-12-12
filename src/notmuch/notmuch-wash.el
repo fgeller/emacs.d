@@ -363,6 +363,8 @@ for error."
 	  part)
       (goto-char patch-start)
       (if (or
+	   ;; naive fix to make sure we show attachments from git commitmailer
+	   (re-search-forward "hooks/post-receive" nil t)
 	   ;; Patch ends with signature.
 	   (re-search-forward notmuch-wash-signature-regexp nil t)
 	   ;; Patch ends with bugtraq comment.
