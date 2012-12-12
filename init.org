@@ -2823,7 +2823,7 @@
       notmuch-show-indent-messages-width 0
       notmuch-crypto-process-mime t
       notmuch-search-line-faces nil
-      notmuch-show-all-multipart/alternative-parts nil
+      notmuch-show-all-multipart/alternative-parts t
       notmuch-show-insert-text/plain-hook '(
                                             notmuch-wash-tidy-citations
                                             notmuch-wash-elide-blank-lines
