@@ -3,68 +3,51 @@
 ;; http://www.emacswiki.org/emacs/FlymakeCursor
 ;; https://github.com/illusori/emacs-flymake-cursor
 
-(defvar ec/e-at-point nil
-  "Error at point, after last command")
+(defvar ec/timer-seconds-delay 0.01
+  "The delay before a message is shown in minibuffer, prevents
+  minibuffer flickering")
 
-(defvar ec/e-display-timer nil
-  "A timer; when it fires, it displays the stored error message.")
+(defvar ec/message-at-point nil
+  "Message at point, after last command")
+
+(defvar ec/display-timer nil
+  "A timer; when it fires, it displays the stored message.")
 
 
-(defun ec/show-stored-error-now ()
-  "Displays the stored error in the minibuffer."
+(defun ec/message-at-point ()
+  (when (ensime-connected-p)
+    (let* ((point (point))
+           (ident (tooltip-identifier-from-point point)))
+      (cond
+       ;; compiler warning
+       ((ensime-overlays-at point)
+        (format "error: \"%s\""
+                (overlay-get (car (ensime-overlays-at point)) 'help-echo)))
+       ;; type info
+       (ident
+        (let ((type (ensime-eval
+                     `(swank:type-at-point ,buffer-file-name ,point))))
+          (when type
+            (format "type: %s" (ensime-type-full-name-with-args type)))))))))
+
+
+(defun ec/show-message-at-point-pretty-soon ()
+  (when ec/display-timer
+    (cancel-timer ec/display-timer))
+  (let ((message-at-point (ec/message-at-point)))
+    (if message-at-point
+        (setq ec/message-at-point message-at-point
+              ec/display-timer (run-at-time (format "%f sec" ec/timer-seconds-delay) nil 'ec/show-stored-message-now))
+      (setq ec/message-at-point nil
+            ec/display-timer nil))))
+
+
+(defun ec/show-stored-message-now ()
   (interactive)
   (let ((editing-p (= (minibuffer-depth) 0)))
-   (if (and ec/e-at-point editing-p)
-       (progn
-         (message "%s" ec/e-at-point)
-         (setq ec/e-display-timer nil)))))
-
-
-(defun ec/get-error-at-point ()
-  "Gets the first error on the line at point."
-  (when (ensime-overlays-at (point))
-    (overlay-get (car (ensime-overlays-at (point))) 'help-echo)))
-
-
-;;;###autoload
-(defun ec/show-error-at-point-now ()
-  "If the cursor is sitting on an error, display the error
-message in the minibuffer."
-  (interactive)
-  (if ec/e-display-timer
-      (progn
-        (cancel-timer ec/e-display-timer)
-        (setq ec/e-display-timer nil)))
-  (let ((error-at-point (ec/-get-error-at-point)))
-    (if error-at-point
-        (progn
-          (setq ec/e-at-point error-at-point)
-          (ec/show-stored-error-now)))))
-
-
-;;;###autoload
-(defun ec/show-error-at-point-pretty-soon ()
-  "If the cursor is sitting on an error, grab the error,
-and set a timer for \"pretty soon\". When the timer fires, the error
-message will be displayed in the minibuffer.
-
-This allows a post-command-hook to NOT cause the minibuffer to be
-updated 10,000 times as a user scrolls through a buffer
-quickly. Only when the user pauses on a line for more than a
-second, does the error message (if any) get displayed.
-
-"
-  (interactive)
-  (if ec/e-display-timer
-      (cancel-timer ec/e-display-timer))
-
-  (let ((error-at-point (ec/get-error-at-point)))
-    (if error-at-point
-        (setq ec/e-at-point error-at-point
-              ec/e-display-timer
-              (run-at-time "0.5 sec" nil 'ec/show-stored-error-now))
-      (setq ec/e-at-point nil
-            ec/e-display-timer nil))))
+    (when (and ec/message-at-point editing-p)
+      (message "%s" ec/message-at-point)
+      (setq ec/display-timer nil))))
 
 
 ;;;###autoload
@@ -75,7 +58,7 @@ second, does the error message (if any) get displayed.
 cursor is sitting on an error the error information is displayed
 in the minibuffer (rather than having to mouse over it)"
        (set (make-local-variable 'post-command-hook)
-            (cons 'ec/show-error-at-point-pretty-soon post-command-hook)))))
+            (cons 'ec/show-message-at-point-pretty-soon post-command-hook)))))
 
 
 (provide 'ensime-cursor)
