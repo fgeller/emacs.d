@@ -196,6 +196,8 @@
    #+begin_src emacs-lisp
      (setq c/elpa-packages '(
                              auto-complete
+                             back-button
+                             coffee-mode
                              dired+
                              dired-details
                              dired-details+
@@ -211,17 +213,20 @@
                              highlight-indentation
                              js2-mode
                              magit
+                             markdown-mode
                              mic-paren
                              move-text
                              multiple-cursors
                              multi-term
                              org
+                             php-mode
                              pointback
                              popup ;; for auto-complete
                              pretty-symbols-mode
                              rainbow-mode
                              session
                              slime
+                             smartparens
                              todochiku
                              undo-tree
                              wgrep
@@ -263,6 +268,13 @@
      (require 'move-text)
      (move-text-default-bindings)
    #+end_src
+
+    Smarter handling of characters that come in pairs.
+
+    #+begin_src emacs-lisp
+      (require 'smartparens)
+      (smartparens-global-mode 1)
+    #+end_src
 
 *** autoload'ed
 
