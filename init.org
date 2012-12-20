@@ -747,9 +747,9 @@
 
    #+begin_src emacs-lisp
      (when mac-p
-       (setq-default find-program "gfind")
-       (grep-apply-setting 'grep-find-command "gfind . -type f -exec grep -nH -e  {} +")
-       (grep-apply-setting 'grep-find-template "gfind . <X> -type f <F> -exec grep <C> -nH -e <R> {} +"))
+       (setq-default find-program "find")
+       (grep-apply-setting 'grep-find-command "find . -type f -exec grep -nH -e  {} +")
+       (grep-apply-setting 'grep-find-template "find . <X> -type f <F> -exec grep <C> -nH -e <R> {} +"))
    #+end_src
 
    Wrapper to =rgrep= to set =default-directory= to the (guessed) project root.
@@ -2096,7 +2096,7 @@
                     project-root-folder (c/guess-project-root))))
          (candidates . (lambda ()
                          (start-process-shell-command "file-search-process" nil
-                                                      "gfind" (format "%s -iname '*%s*' -print" project-root-folder helm-pattern))))
+                                                      "find" (format "%s -iname '*%s*' -print" project-root-folder helm-pattern))))
          (keymap . ,helm-generic-files-map)
          (mode-line . helm-generic-file-mode-line-string)
          (match helm-c-match-on-basename)
