@@ -2642,9 +2642,8 @@
                tags "ARCHIVE_TIME>=\"<-1w>\""
                ((org-agenda-archives-mode t)))
               ;; match those tagged with :inbox:, are not scheduled, are not DONE.
-              ("ii" "[i]nbox tagged tasks" tags "+inbox+TODO=\"TODO\"-SCHEDULED={.+}")
-              ("iw" "inbox tagged [w]ork tasks" tags "+inbox+TODO=\"TODO\"-SCHEDULED={.+}"
-               ((org-agenda-files ',c/work-org-agenda-files)))
+              ("ii" "[i]nbox tagged tasks" tags "+inbox-SCHEDULED={.+}/!+TODO|+STARTED")
+              ("iw" "inbox tagged [w]ork tasks" tags "+inbox+work-SCHEDULED={.+}/!+TODO|+STARTED")
               ("n" "Find a TAGged note" tags "" ((org-agenda-archives-mode t)))
               ("w" "Show work related tasks only" agenda ""
                ((org-agenda-files ',c/work-org-agenda-files)))))
