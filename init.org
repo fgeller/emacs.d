@@ -276,6 +276,13 @@
       (smartparens-global-mode 1)
     #+end_src
 
+    More convenient navigation through mark ring.
+
+    #+begin_src emacs-lisp
+     (require 'back-button)
+     (back-button-mode 1)
+    #+end_src
+
 *** autoload'ed
 
     Helpers to do rectangle insert inline and mark multiple occurrences of
@@ -1511,6 +1518,15 @@
      (define-key ctl-x-map "}" (make-repeatable-command 'enlarge-window-horizontally))
      (define-key ctl-x-map "{" (make-repeatable-command 'shrink-window-horizontally))
      (define-key ctl-x-map "o" (make-repeatable-command 'other-window))
+   #+end_src
+
+   More convenient navigation through mark rings.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-x t")
+       (make-repeatable-command 'back-button-local))
+     (define-key global-map (kbd "C-x T")
+       (make-repeatable-command 'back-button-global))
    #+end_src
 
 ** goto Map (M-g)
