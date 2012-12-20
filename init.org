@@ -2682,6 +2682,18 @@
       (setq org-clock-out-remove-zero-time-clocks t)
     #+end_src
 
+    Schedule tasks for now when clocking in.
+
+    #+begin_src emacs-lisp
+      (defun c/schedule-task-now ()
+        (interactive)
+        (let ((now (with-temp-buffer (org-time-stamp '(16)) (buffer-string))))
+          (org-schedule nil now)
+          (message "Scheduled started task for now")))
+
+      (add-hook 'org-clock-in-hook 'c/schedule-task-now)
+    #+end_src
+
 *** Capture
 
     Define additional capture templates for personal and work tasks.
