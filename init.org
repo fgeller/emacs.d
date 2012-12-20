@@ -2558,12 +2558,7 @@
       (setq
        org-directory (expand-file-name "~/Cloud/org")
        org-default-notes-file (concat org-directory "/Tasks.org")
-       org-agenda-files `(,org-directory)
-       ;; work specific files and folders
-       c/work-org-directory "~/Cloud/work"
-       c/work-org-agenda-files `(,c/work-org-directory)
-       c/work-org-default-notes-file (concat c/work-org-directory "/Tasks.org")
-       )
+       org-agenda-files `(,org-directory))
     #+end_src
 
 *** Modules
@@ -2643,10 +2638,9 @@
                ((org-agenda-archives-mode t)))
               ;; match those tagged with :inbox:, are not scheduled, are not DONE.
               ("ii" "[i]nbox tagged tasks" tags "+inbox-SCHEDULED={.+}/!+TODO|+STARTED")
-              ("iw" "inbox tagged [w]ork tasks" tags "+inbox+work-SCHEDULED={.+}/!+TODO|+STARTED")
-              ("n" "Find a TAGged note" tags "" ((org-agenda-archives-mode t)))
-              ("w" "Show work related tasks only" agenda ""
-               ((org-agenda-files ',c/work-org-agenda-files)))))
+              ("wi" "[w]ork tasks that are not scheduled" tags "+inbox+work-SCHEDULED={.+}/!+TODO|+STARTED")
+              ("ww" "[w]ork tasks" tags "+work")
+              ("n" "Find a TAGged note" tags "" ((org-agenda-archives-mode t)))))
     #+end_src
 
     Define the sorting order
@@ -2698,8 +2692,8 @@
                entry (file+olp ,org-default-notes-file "Tasks" "Inbox")
                "* TODO %?\n\n  %a\n  %i\n")
               ("w" "Work task"
-               entry (file+olp ,c/work-org-default-notes-file "Tasks" "Inbox")
-               "* TODO %?\n\n  %a\n  %i\n")
+               entry (file+olp ,org-default-notes-file "Tasks" "Inbox")
+               "* TODO %? :work:\n\n  %a\n  %i\n")
               ("n" "Note"
                entry (file+headline ,org-default-notes-file "Notes")
                "* %?\n\n  %a\n  %i\n")
