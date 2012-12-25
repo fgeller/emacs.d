@@ -1747,6 +1747,7 @@
        '(progn
           (define-key magit-status-mode-map (kbd "^") 'c/magit-full-push-repository)
           (define-key magit-status-mode-map (kbd "W") 'c/magit-toggle-whitespace)
+          (define-key magit-status-mode-map (kbd "q") 'c/magit-quit-session)
           ))
    #+end_src
 
@@ -2419,6 +2420,22 @@
        (interactive)
        (setq magit-diff-options (remove "-w" magit-diff-options))
        (magit-refresh))
+   #+end_src
+
+   @magnars magit window session tweaks: Start in fullscreen and restore
+   previous window configuration on quit.
+
+   #+begin_src emacs-lisp
+     (defadvice magit-status (around magit-fullscreen activate)
+       (window-configuration-to-register :magit-fullscreen)
+       ad-do-it
+       (delete-other-windows))
+
+     (defun c/magit-quit-session ()
+       "Restores the previous window configuration and kills the magit buffer"
+       (interactive)
+       (kill-buffer)
+       (jump-to-register :magit-fullscreen))
    #+end_src
 
 * TRAMP
