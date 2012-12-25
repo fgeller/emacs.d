@@ -276,6 +276,14 @@
       (smartparens-global-mode 1)
     #+end_src
 
+    Mode-specific customization of pairs.
+
+    #+begin_src emacs-lisp
+      ;; single quote
+      (dolist (mode '(emacs-lisp-mode magit-log-edit-mode))
+        (sp-add-local-ban-insert-pair "'" mode))
+    #+end_src
+
     More convenient navigation through mark ring.
 
     #+begin_src emacs-lisp
