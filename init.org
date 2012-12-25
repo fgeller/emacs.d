@@ -1059,6 +1059,7 @@
 
     #+begin_src emacs-lisp
       (defun c/emacs-lisp-mode-initialization ()
+        (setq tab-width 8)
         (pretty-symbols-mode 1)
         (eldoc-mode 1)
         (hl-line-mode 1)
