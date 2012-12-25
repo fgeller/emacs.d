@@ -1364,6 +1364,28 @@
                (compile *c/last-java-test-compile-command* t))))
      #+end_src
 
+** Scala
+
+   Tell ensime to behave and not override my auto-complete settings.
+
+   #+begin_src emacs-lisp
+     (setq ensime-ac-override-settings nil)
+   #+end_src
+
+   Configuration per-buffer.
+
+   #+begin_src emacs-lisp
+     (defun c/scala-mode-initialization ()
+       (subword-mode 1)
+       (pretty-symbols-mode 1)
+       (hl-line-mode 1)
+       (fci-mode 1)
+       (auto-complete-mode 1)
+       (setq show-trailing-whitespace t)
+       (add-hook 'before-save-hook 'c/maybe-cleanup-whitespace nil 'local))
+     (add-hook 'scala-mode-hook 'c/scala-mode-initialization)
+   #+end_src
+
 ** XML
 
    Configuration per-buffer.
