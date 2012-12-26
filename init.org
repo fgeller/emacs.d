@@ -280,7 +280,7 @@
 
     #+begin_src emacs-lisp
       ;; single quote
-      (dolist (mode '(emacs-lisp-mode magit-log-edit-mode))
+      (dolist (mode '(emacs-lisp-mode magit-log-edit-mode message-mode))
         (sp-add-local-ban-insert-pair "'" mode))
     #+end_src
 
