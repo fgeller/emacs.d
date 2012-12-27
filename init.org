@@ -219,6 +219,7 @@
                              multiple-cursors
                              multi-term
                              org
+                             org-magit
                              php-mode
                              pointback
                              popup ;; for auto-complete
