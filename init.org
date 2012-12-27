@@ -2480,6 +2480,12 @@
        (jump-to-register :magit-fullscreen))
    #+end_src
 
+   We like word-based diffs.
+
+   #+begin_src emacs-lisp
+     (setq magit-diff-refine-hunk 'all)
+   #+end_src
+
 * TRAMP
 
   I usually stay in Emacs to edit remote files, therefore it is unlikely
