@@ -210,6 +210,7 @@
                              flymake-jshint
                              gtags
                              helm
+                             helm-git
                              highlight-indentation
                              js2-mode
                              magit
@@ -253,7 +254,13 @@
     #+begin_src emacs-lisp
      (require 'helm-config)
      (helm-mode 1)
-   #+end_src
+    #+end_src
+
+    Also load the helm-git addon.
+
+    #+begin_src emacs-lisp
+      (require 'helm-git)
+    #+end_src
 
     Allows for selecting in semantic units. Interesting mostly for
     =prog-modes=, but needs to be =required=, so function definition is
@@ -2208,6 +2215,18 @@
        "Source for jumping to JUMPER defs.")
    #+end_src
 
+   Monkey-patch helm-git to work with non-git directories.
+
+   #+begin_src emacs-lisp
+     (eval-after-load 'helm-git
+       '(progn
+          (defadvice helm-c-git-files (around check-git-repo-p)
+            (when (and (boundp 'default-directory)
+                       (magit-get-top-dir default-directory))
+              ad-do-it))
+          (ad-activate 'helm-c-git-files)))
+   #+end_src
+
 ** Accessors to sources
 
    Collection of sources that we want fast access to.
@@ -2219,6 +2238,7 @@
         '(
           helm-c-source-buffers-list
           c/helm-c-source-jumper-defs
+          helm-c-source-git-files
           helm-c-source-recentf
           c/helm-c-source-project-file-search
           helm-c-source-buffer-not-found
