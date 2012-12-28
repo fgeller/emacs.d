@@ -3022,7 +3022,6 @@
            mail-specify-envelope-from t
            message-sendmail-envelope-from 'header
            mail-envelope-from 'header
-           gnus-inhibit-images t
            user-full-name "Felix Geller"
            user-mail-address "fgeller@gmail.com"
            message-signature "Felix Geller"
@@ -3037,6 +3036,62 @@
      (defun c/message-mode-customization ()
        (turn-on-auto-fill))
      (add-hook 'message-mode-hook 'c/message-mode-customization)
+   #+end_src
+
+** Gnus
+
+   Let's try reading news the old fashioned way.
+
+   #+begin_src emacs-lisp
+     (eval-after-load 'gnus
+       '(setq gnus-select-method '(nntp "Gmane" (nntp-address "news.gmane.org"))))
+   #+end_src
+
+   And also mails.
+
+   #+begin_src emacs-lisp
+     (eval-after-load 'gnus
+       '(add-to-list 'gnus-secondary-select-methods
+                     '(nnimap "gmail"
+                              (nnimap-address "imap.gmail.com")
+                              (nnimap-server-port 993)
+                              (nnimap-stream ssl)
+                              (nnimap-authinfo-file (expand-file-name "~/.authinfo.gpg"))
+                              (nnir-search-engine imap))))
+   #+end_src
+
+   And work mails.
+
+   #+begin_src emacs-lisp
+     (eval-after-load 'gnus
+       '(add-to-list 'gnus-secondary-select-methods
+                     '(nnimap "work"
+                              (nnimap-address "imap.gmail.com")
+                              (nnimap-server-port 993)
+                              (nnimap-stream ssl)
+                              (nnimap-authinfo-file (expand-file-name "~/.authinfo.gpg"))
+                              (nnir-search-engine imap))))
+   #+end_src
+
+   Let's use w3m for rendering HTML mails.
+
+   #+begin_src emacs-lisp
+     (eval-after-load 'gnus
+       '(setq mm-text-html-renderer 'gnus-w3m))
+   #+end_src
+
+   Searching mails via nnir.
+
+   #+begin_src emacs-lisp
+     (eval-after-load 'gnus
+       '(require 'nnir))
+   #+end_src
+
+   Sort everything via topics.
+
+   #+begin_src emacs-lisp
+     (eval-after-load 'gnus
+       '(add-hook 'gnus-group-mode-hook 'gnus-topic-mode))
    #+end_src
 
 * IRC
