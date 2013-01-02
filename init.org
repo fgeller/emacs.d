@@ -136,7 +136,11 @@
                 (t (setq step nil)))
                (when step
                  (cond
-                  ,@(loop for m in maps collect `((eq base ,(string-to-char (getf m :key))) (call-interactively ',(getf m :command)))))
+                  ,@(loop for m in maps collect (let ((key (string-to-char (getf m :key)))
+                                                      (command (getf m :command)))
+                                                  `((eq base ,key) (progn
+                                                                     (call-interactively ',command)
+                                                                     (setq last-command ',command))))))
                  (setq ev (read-event ,prompt))
                  (setq base (event-basic-type ev))))
              (push ev unread-command-events)))))
