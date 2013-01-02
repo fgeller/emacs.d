@@ -923,7 +923,6 @@
       )
    #+end_src
 
-
    Fix regular expression for maven (3) output.
 
    #+begin_src emacs-lisp
