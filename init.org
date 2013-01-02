@@ -170,6 +170,12 @@
      (require 'thingatpt)
    #+end_src
 
+   And let's activate some.
+
+   #+begin_src emacs-lisp
+     (winner-mode 1)
+   #+end_src
+
 ** ELPA
 
    Helper from @purcell to load elpa packages.
@@ -1552,6 +1558,17 @@
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-x wr") (make-repeatable-command 'c/rotate-windows))
    #+end_src
+
+   Group winner-mode commands.
+
+   #+begin_src emacs-lisp
+     (define-command-group c/winner-mode-command-group
+       (:key "v" :command winner-undo)
+       (:key "z" :command winner-redo))
+
+     (define-key global-map (kbd "C-x w v") 'c/winner-mode-command-group)
+   #+end_src
+
 
    Make several built-in window related commands repeatable.
 
