@@ -1861,10 +1861,23 @@
     #+end_src
 
 *** Scala mode
+**** Helpers
+
+     Shortcut to running an app via SBT.
+
+     #+begin_src emacs-lisp
+       (defun c/ensime-sbt-do-run ()
+         (interactive)
+         (ensime-sbt-switch)
+         (ensime-sbt-action "run"))
+     #+end_src
+
+**** Bindings
 
     #+begin_src emacs-lisp
       (eval-after-load 'scala-mode
         '(progn
+           (define-key scala-mode-map (kbd "C-c C-b C-r") 'c/ensime-sbt-do-run)
            (define-key scala-mode-map (kbd "C-c C-i C-i") 'ensime)
            (define-key scala-mode-map (kbd "C-c C-i c") 'ensime-config-gen)
            (define-key scala-mode-map (kbd "C-c C-i r") 'ensime-inf-eval-region)
