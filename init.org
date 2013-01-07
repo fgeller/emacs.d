@@ -221,6 +221,7 @@
                              gtags
                              helm
                              helm-git
+                             helm-gtags
                              highlight-indentation
                              js2-mode
                              magit
@@ -231,7 +232,7 @@
                              multi-term
                              org
                              org-magit
-                             php-mode
+                             php+-mode
                              pointback
                              popup ;; for auto-complete
                              pretty-symbols-mode
@@ -415,6 +416,14 @@
       (eval-after-load 'ensime
         '(progn
            (require 'ensime-cursor)))
+    #+end_src
+
+    Automagically load php+-mode.
+
+    #+begin_src emacs-lisp
+      (autoload 'php+-mode "php+-mode" "Major mode for editing php code." t)
+      (add-to-list 'auto-mode-alist '("\\.php$" . php+-mode))
+      (add-to-list 'auto-mode-alist '("\\.inc$" . php+-mode))
     #+end_src
 
 * Text editing
@@ -1409,6 +1418,30 @@
        (setq show-trailing-whitespace t)
        (add-hook 'before-save-hook 'c/maybe-cleanup-whitespace nil 'local))
      (add-hook 'scala-mode-hook 'c/scala-mode-initialization)
+   #+end_src
+
+** PHP
+
+   Tell php+-mode to leave my bindings alone.
+
+   #+begin_src emacs-lisp
+     (eval-after-load 'php+-mode
+       '(setq-default php+-mode-map (make-sparse-keymap)))
+   #+end_src
+
+   Configuration per-buffer.
+
+   #+begin_src emacs-lisp
+     (defun c/php-mode-initialization ()
+       (pretty-symbols-mode 1)
+       (hl-line-mode 1)
+       (fci-mode 1)
+       (gtags-mode 1)
+       (setq ac-sources (cons 'ac-source-gtags ac-sources))
+       (auto-complete-mode 1)
+       (setq show-trailing-whitespace t)
+       (add-hook 'before-save-hook 'c/maybe-cleanup-whitespace nil 'local))
+     (add-hook 'php+-mode-hook 'c/php-mode-initialization)
    #+end_src
 
 ** XML
