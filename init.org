@@ -412,7 +412,7 @@
 
     Load a simple library that displays the annotation at point in minibuffer.
 
-    #+begin_src emacs-lisp
+    #+begin_src emacs-lisp :tangle no
       (eval-after-load 'ensime
         '(progn
            (require 'ensime-cursor)))
