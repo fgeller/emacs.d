@@ -565,6 +565,8 @@
      (require 'yasnippet)
      (add-to-list 'yas/snippet-dirs (expand-file-name "~/.emacs.d/snippets"))
      (yas/global-mode 1)
+     (setq-default yas-prompt-functions
+                   (delete 'yas-x-prompt yas-prompt-functions))
    #+end_src
 
 ** Auto-completion
