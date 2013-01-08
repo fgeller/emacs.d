@@ -978,7 +978,7 @@
    Use helm-gtags to access the GNU Global database.
 
    #+begin_src emacs-lisp
-     ;; only lead helm-gtags, if we have loaded helm and gtags individually.
+     ;; only load helm-gtags, if we have loaded helm and gtags individually.
      (eval-after-load 'helm '(eval-after-load 'gtags '(progn (require 'helm-gtags))))
    #+end_src
 
