@@ -1713,6 +1713,7 @@
      (define-key global-map (kbd "C-c ha") 'helm-c-apropos)
      (define-key global-map (kbd "C-c hc") 'c/helm-contact)
      (define-key global-map (kbd "C-c hg") 'c/helm-do-rgrep)
+     (define-key global-map (kbd "C-c hi") 'helm-imenu)
      (define-key global-map (kbd "C-c hr") 'helm-regexp)
      (define-key global-map (kbd "C-c hu") 'helm-ucs)
      (define-key global-map (kbd "C-c hx") 'helm-M-x)
