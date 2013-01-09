@@ -1543,7 +1543,7 @@
 
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c ma") 'auto-complete-mode)
-     (define-key global-map (kbd "C-c mc") 'company-mode)
+     (define-key global-map (kbd "C-c md") 'diff-mode)
      (define-key global-map (kbd "C-c mf") 'flymake-mode)
      (define-key global-map (kbd "C-c mg") 'rgrep)
      (define-key global-map (kbd "C-c mi") 'highlight-indentation-mode)
