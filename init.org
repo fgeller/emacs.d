@@ -359,7 +359,6 @@
     Simple auto-completion.
 
     #+begin_src emacs-lisp
-      (autoload 'company-mode "company" nil t)
       (autoload 'auto-complete "auto-complete" nil t)
       (autoload 'auto-complete-mode "auto-complete" nil t)
     #+end_src
@@ -664,45 +663,6 @@
                                  (candidates . (c/jumper-candidates ac-prefix))
                                  (symbol . "s")
                                  (cache)))))
-     #+end_src
-
-*** Company mode
-**** Configuration
-
-     Start completion after a minimum of two characters.
-
-     #+begin_src emacs-lisp
-      (setq company-minimum-prefix-length 2)
-     #+end_src
-
-     Don't delay completion, offer candidates as soon as possible.
-
-     #+begin_src emacs-lisp
-      (setq company-idle-delay t)
-     #+end_src
-
-     Explicitly set the desired backends.
-
-     #+begin_src emacs-lisp
-       (setq company-backends '(company-elisp c/company-jumper))
-       (setq company-begin-commands '(self-insert-command))
-     #+end_src
-
-     Don't start completion after moving around, only after typing.
-
-     #+begin_src emacs-lisp
-      (setq company-begin-commands '(self-insert-command))
-     #+end_src
-
-**** Backends
-
-     Company backend for Jumper definitions.
-
-     #+begin_src emacs-lisp
-       (defun c/company-jumper (command &optional prefix &rest ignored)
-         (case command
-           ('prefix (company-grab-symbol))
-           ('candidates (c/jumper-candidates prefix))))
      #+end_src
 
 ** isearch
