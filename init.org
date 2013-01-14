@@ -237,6 +237,7 @@
                              popup ;; for auto-complete
                              pretty-symbols-mode
                              rainbow-mode
+                             scala-mode2
                              session
                              slime
                              smartparens
@@ -396,7 +397,6 @@
     Scala!
 
     #+begin_src emacs-lisp
-      (autoload 'scala-mode "scala-mode" nil t)
       (add-to-list 'auto-mode-alist '("\\.scala\\'" . scala-mode))
     #+end_src
 
@@ -406,7 +406,7 @@
       (add-to-list 'load-path (expand-file-name "~/.emacs.d/src/ensime/elisp"))
       (autoload 'ensime "ensime" "Read config file for settings. Then start an inferior ENSIME server and connect to its Swank server." t)
       (autoload 'ensime-scala-mode-hook "ensime")
-      (eval-after-load 'scala-mode
+      (eval-after-load 'scala-mode2
         '(add-hook 'scala-mode-hook 'ensime-scala-mode-hook))
     #+end_src
 
