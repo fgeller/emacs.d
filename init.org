@@ -409,14 +409,6 @@
         '(add-hook 'scala-mode-hook 'ensime-scala-mode-hook))
     #+end_src
 
-    Load a simple library that displays the annotation at point in minibuffer.
-
-    #+begin_src emacs-lisp :tangle no
-      (eval-after-load 'ensime
-        '(progn
-           (require 'ensime-cursor)))
-    #+end_src
-
     Automagically load php+-mode.
 
     #+begin_src emacs-lisp
