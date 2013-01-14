@@ -1859,7 +1859,7 @@
 **** Bindings
 
     #+begin_src emacs-lisp
-      (eval-after-load 'scala-mode
+      (eval-after-load 'scala-mode2
         '(progn
            (define-key scala-mode-map (kbd "C-c C-b C-r") 'c/ensime-sbt-do-run)
            (define-key scala-mode-map (kbd "C-c C-i C-i") 'ensime)
