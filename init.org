@@ -1081,6 +1081,7 @@
       (defun c/emacs-lisp-mode-initialization ()
         (setq tab-width 8)
         (eldoc-mode 1)
+        (paredit-mode 1)
         (elisp-slime-nav-mode 1)
         (setq ac-sources (append '(
                                    ac-source-features
