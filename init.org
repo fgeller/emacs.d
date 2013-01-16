@@ -231,6 +231,7 @@
                              multiple-cursors
                              multi-term
                              org
+                             org-mac-link-grabber
                              org-magit
                              php+-mode
                              pointback
@@ -415,6 +416,12 @@
       (autoload 'php+-mode "php+-mode" "Major mode for editing php code." t)
       (add-to-list 'auto-mode-alist '("\\.php$" . php+-mode))
       (add-to-list 'auto-mode-alist '("\\.inc$" . php+-mode))
+    #+end_src
+
+    Grab org-links from Mac applications.
+
+    #+begin_src emacs-lisp
+      (autoload 'omlg-grab-link "org-mac-link-grabber" "" t)
     #+end_src
 
 * Text editing
@@ -1769,6 +1776,7 @@
           (define-key org-mode-map (kbd "C-c <") nil)
           (define-key org-mode-map (kbd "C-c ^") nil)
           (define-key org-mode-map (kbd "C-c |") nil)
+          (define-key org-mode-map (kbd "C-c g") 'omlg-grab-link)
           (define-key org-mode-map (kbd "C-c t") 'org-todo)
           (define-key org-mode-map (kbd "C-c C-x C-u") 'c/org-get-chrome-link)))
    #+end_src
