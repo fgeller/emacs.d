@@ -2726,17 +2726,7 @@
 
     #+begin_src emacs-lisp
       (setq org-agenda-custom-commands
-            `(("d" . "Completed / archived items")
-              ("dt" "[t]oday"
-               tags "ARCHIVE_TIME>=\"<today>\""
-               ((org-agenda-archives-mode t)))
-              ("dy" "[y]esterday"
-               tags "ARCHIVE_TIME>=\"<-1d>\"&ARCHIVE_TIME<\"<today>\""
-               ((org-agenda-archives-mode t)))
-              ("dw" "[w]eek"
-               tags "ARCHIVE_TIME>=\"<-1w>\""
-               ((org-agenda-archives-mode t)))
-              ;; match those tagged with :inbox:, are not scheduled, are not DONE.
+            `(;; match those tagged with :inbox:, are not scheduled, are not DONE.
               ("ii" "[i]nbox tagged tasks" tags "+inbox-SCHEDULED={.+}/!+TODO|+STARTED|+WAITING")
               ("wi" "[w]ork tasks that are not scheduled" tags "+inbox+work-SCHEDULED={.+}/!+TODO|+STARTED|+WAITING")
               ("ww" "[w]ork tasks" tags "+work")
