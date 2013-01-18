@@ -233,6 +233,7 @@
                              org
                              org-mac-link-grabber
                              org-magit
+                             paredit
                              php+-mode
                              pointback
                              popup ;; for auto-complete
