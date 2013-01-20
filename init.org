@@ -1774,6 +1774,17 @@
      (define-key global-map (kbd "M-Z") 'zap-to-char)
    #+end_src
 
+   Kill entire line, no matter where we are on the line.
+
+   #+begin_src emacs-lisp
+     (defun c/kill-whole-line ()
+       (interactive)
+       (beginning-of-line)
+       (let ((kill-whole-line t))
+         (kill-line)))
+     (define-key global-map (kbd "C-c k") 'c/kill-whole-line)
+   #+end_src
+
 ** Flyspell
 
    #+begin_src emacs-lisp
