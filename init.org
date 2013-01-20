@@ -637,6 +637,12 @@
            '(ac-flyspell-workaround)))
     #+end_src
 
+    Use the ac-menu-map.
+
+    #+begin_src emacs-lisp
+      (setq ac-use-menu-map t)
+    #+end_src
+
 **** Candidates
 
      Helper to collect possible candidates from Jumper definitions
@@ -1842,6 +1848,26 @@
      (eval-after-load 're-builder
        '(progn
           (define-key reb-mode-map (kbd "M-%") 'c/reb-query-replace)))
+   #+end_src
+
+** auto-complete
+
+   Use more convenient =C-{n,p}= for selection [24].
+
+   #+begin_src emacs-lisp
+     (eval-after-load 'auto-complete
+       '(progn
+          (define-key ac-menu-map "\C-n" 'ac-next)
+          (define-key ac-menu-map "\C-p" 'ac-previous)))
+   #+end_src
+
+   Use TAB for completion, reset RET [25].
+
+   #+begin_src emacs-lisp
+     (eval-after-load 'auto-complete
+       '(progn
+          (define-key ac-completing-map "\t" 'ac-complete)
+          (define-key ac-completing-map "\r" nil)))
    #+end_src
 
 ** Programming modes
@@ -3349,3 +3375,7 @@
 [22] http://stackoverflow.com/a/7934783/750284
 
 [23] http://www.emacswiki.org/emacs/ReBuilder
+
+[24] http://cx4a.org/software/auto-complete/manual.html#Select_candidates_with_C-n_C-p_only_when_completion_menu_is_displayed
+
+[25] http://cx4a.org/software/auto-complete/manual.html#Finish_completion_by_TAB
