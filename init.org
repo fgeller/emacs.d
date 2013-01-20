@@ -3080,6 +3080,32 @@
        '(setq gnus-select-method '(nntp "Gmane" (nntp-address "news.gmane.org"))))
    #+end_src
 
+   Fixes the "From" header, based on the "Delivered-To" header. Defaults to
+   value of =user-mail-address=.
+
+   #+begin_src emacs-lisp
+     (setq gnus-posting-styles
+           '((""
+              ("From" (save-excursion
+                        (or (and (get-buffer gnus-article-buffer)
+                                 (set-buffer gnus-article-buffer)
+                                 (let ((delivered-to))
+                                   (gnus-summary-toggle-header 1)
+                                   (setq delivered-to (message-fetch-field "Delivered-To"))
+                                   (gnus-summary-toggle-header -1)
+                                   delivered-to))
+                            user-mail-address)))
+              ("Reply-To" (save-excursion
+                            (or (and (get-buffer gnus-article-buffer)
+                                     (set-buffer gnus-article-buffer)
+                                     (let ((delivered-to))
+                                       (gnus-summary-toggle-header 1)
+                                       (setq delivered-to (message-fetch-field "Delivered-To"))
+                                       (gnus-summary-toggle-header -1)
+                                       delivered-to))
+                                user-mail-address))))))
+   #+end_src
+
    And also mails.
 
    #+begin_src emacs-lisp
