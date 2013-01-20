@@ -425,6 +425,12 @@
       (autoload 'omlg-grab-link "org-mac-link-grabber" "" t)
     #+end_src
 
+    Highlight TODO and friends in strings and comments.
+
+    #+begin_src emacs-lisp
+      (autoload 'fic-mode "fic-mode" "Fic mode -- minor mode for highlighting FIXME/TODO in comments" t)
+    #+end_src
+
 * Text editing
 ** Helper
 
@@ -887,6 +893,7 @@
       (pretty-symbols-mode 1)
       (hl-line-mode 1)
       (fci-mode 1)
+      (fic-mode 1)
       (setq show-trailing-whitespace t)
       (auto-complete-mode 1)
       (add-hook 'before-save-hook 'c/maybe-cleanup-whitespace nil 'local))
