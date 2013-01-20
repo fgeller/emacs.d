@@ -2740,6 +2740,12 @@
       (setq org-loop-over-headlines-in-active-region t)
     #+end_src
 
+    Enable sticky agenda views.
+
+    #+begin_src emacs-lisp
+      (setq org-agenda-sticky t)
+    #+end_src
+
 *** Folders and files
 
     Where to find org-files.
