@@ -2303,6 +2303,14 @@
       (call-interactively 'eshell))
   #+end_src
 
+  Adds basic eshell-mode per buffer customization.
+
+  #+begin_src emacs-lisp
+    (defun c/eshell-mode-initialization ()
+      (auto-complete-mode 1))
+    (add-hook 'eshell-mode-hook 'c/eshell-mode-initialization)
+  #+end_src
+
 ** Visual commands
 
    Specify commands that should be handled by a term.
