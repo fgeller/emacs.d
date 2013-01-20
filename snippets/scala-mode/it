@@ -1,0 +1,5 @@
+# Author: Felix Geller
+# name: it(descr)(pending)
+# key: it
+# --
+it("should $1")(pending$0)
