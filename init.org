@@ -828,6 +828,28 @@
      (setq ediff-window-setup-function 'ediff-setup-windows-plain)
    #+end_src
 
+** re-builder
+
+   Switch to "string" syntax by default, which can be used for
+   replace-regexp. Switch back to "read" for Emacs Lisp regular expressions.
+
+   #+begin_src emacs-lisp
+     (setq reb-re-syntax 'string)
+   #+end_src
+
+   Helper to quickly jump to replace-regexp [23].
+
+   #+begin_src emacs-lisp
+     (defun c/reb-query-replace (to-string)
+       "Replace current RE from point with `query-replace-regexp'."
+       (interactive
+        (progn (barf-if-buffer-read-only)
+               (list (query-replace-read-to (reb-target-binding reb-regexp)
+                                            "Query replace"  t))))
+       (with-current-buffer reb-target-buffer
+         (query-replace-regexp (reb-target-binding reb-regexp) to-string)))
+   #+end_src
+
 ** Language helpers
 
    Fast switch to German postfix input method.
@@ -1792,6 +1814,16 @@
           (define-key magit-status-mode-map (kbd "W") 'c/magit-toggle-whitespace)
           (define-key magit-status-mode-map (kbd "q") 'c/magit-quit-session)
           ))
+   #+end_src
+
+** re-builder
+
+   Quickly jump to replace-regexp.
+
+   #+begin_src emacs-lisp
+     (eval-after-load 're-builder
+       '(progn
+          (define-key reb-mode-map (kbd "M-%") 'c/reb-query-replace)))
    #+end_src
 
 ** Programming modes
@@ -3299,3 +3331,5 @@
 [21] http://code.google.com/p/js2-mode/issues/detail?id=50
 
 [22] http://stackoverflow.com/a/7934783/750284
+
+[23] http://www.emacswiki.org/emacs/ReBuilder
