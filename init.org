@@ -1104,7 +1104,10 @@
    Hook coffee-mode into prog-mode specialization.
 
    #+begin_src emacs-lisp
+     (defun c/coffee-mode-initialization ()
+        (subword-mode 1))
      (add-hook 'coffee-mode-hook 'c/prog-mode-initialization)
+     (add-hook 'coffee-mode-hook 'c/coffee-mode-initialization)
    #+end_src
 
 ** Lisp
