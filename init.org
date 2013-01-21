@@ -404,7 +404,7 @@
     ENSIME for Scala should be loaded with scala-mode.
 
     #+begin_src emacs-lisp
-      (add-to-list 'load-path (expand-file-name "~/.emacs.d/src/ensime/elisp"))
+      (add-to-list 'load-path (expand-file-name "~/.emacs.d/src/ensime/dist/elisp"))
       (autoload 'ensime "ensime" "Read config file for settings. Then start an inferior ENSIME server and connect to its Swank server." t)
       (autoload 'ensime-scala-mode-hook "ensime")
       (eval-after-load 'scala-mode2

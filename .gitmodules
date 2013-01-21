@@ -22,3 +22,6 @@
 [submodule "src/fic-mode"]
 	path = src/fic-mode
 	url = https://github.com/lewang/fic-mode.git
+[submodule "src/ensime"]
+	path = src/ensime
+	url = https://github.com/fgeller/ensime.git
