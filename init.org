@@ -1533,6 +1533,12 @@
      (define-key global-map (kbd "C-c M-t l") (make-repeatable-command 'toggle-truncate-lines))
    #+end_src
 
+   Compilation helpers.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-c p") 'compile)
+   #+end_src
+
 ** C-x Map
 
    Helpers for scrolling - move one line at a time, and scroll similar
