@@ -2386,6 +2386,7 @@
 
   #+begin_src emacs-lisp
     (defun c/eshell-mode-initialization ()
+      (setq ac-sources (cons 'ac-source-files-in-current-dir ac-sources))
       (auto-complete-mode 1))
     (add-hook 'eshell-mode-hook 'c/eshell-mode-initialization)
   #+end_src
