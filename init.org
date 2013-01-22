@@ -1411,12 +1411,7 @@
 
    #+begin_src emacs-lisp
      (defun c/scala-mode-initialization ()
-       (subword-mode 1)
-       (setq ac-sources (cons 'ac-source-ensime-completions ac-sources))
-       (make-local-variable 'ac-delay)
-       (setq ac-delay 1.0)
-       (make-local-variable 'ac-auto-show-menu)
-       (setq ac-auto-show-menu 1.0))
+       (subword-mode 1))
      (add-hook 'scala-mode-hook 'c/scala-mode-initialization)
    #+end_src
 
