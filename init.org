@@ -1105,7 +1105,8 @@
 
    #+begin_src emacs-lisp
      (defun c/coffee-mode-initialization ()
-        (subword-mode 1))
+       (setq tab-width 2)
+       (subword-mode 1))
      (add-hook 'coffee-mode-hook 'c/prog-mode-initialization)
      (add-hook 'coffee-mode-hook 'c/coffee-mode-initialization)
    #+end_src
@@ -1411,7 +1412,8 @@
 
    #+begin_src emacs-lisp
      (defun c/scala-mode-initialization ()
-       (subword-mode 1))
+       (subword-mode 1)
+       (setq tab-width 2))
      (add-hook 'scala-mode-hook 'c/scala-mode-initialization)
    #+end_src
 
