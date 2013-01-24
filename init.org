@@ -929,6 +929,18 @@
       )
    #+end_src
 
+   Change the buffer name to me a bit more informative and uniquish.
+
+   #+begin_src emacs-lisp
+     (defun c/compilation-buffer-name-function (mode-name)
+       ; `thisdir' and `command' are bound in calling function `compilation-start'
+       (format "*%s: %s*"
+               (file-name-nondirectory (directory-file-name thisdir))
+               command))
+
+     (setq compilation-buffer-name-function 'c/compilation-buffer-name-function)
+   #+end_src
+
    Fix regular expression for maven (3) output.
 
    #+begin_src emacs-lisp
