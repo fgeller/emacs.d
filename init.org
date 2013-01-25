@@ -239,6 +239,7 @@
                              popup ;; for auto-complete
                              pretty-symbols-mode
                              rainbow-mode
+                             s
                              scala-mode2
                              session
                              slime
@@ -311,6 +312,12 @@
     #+begin_src emacs-lisp
      (require 'back-button)
      (back-button-mode 1)
+    #+end_src
+
+    @magnars' helpers for string manipulation.
+
+    #+begin_src emacs-lisp
+      (require 's)
     #+end_src
 
 *** autoload'ed
