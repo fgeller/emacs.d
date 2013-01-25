@@ -218,12 +218,14 @@
                              flymake
                              flymake-cursor
                              flymake-jshint
+                             flymake-json
                              gtags
                              helm
                              helm-git
                              helm-gtags
                              highlight-indentation
                              js2-mode
+                             json-mode
                              magit
                              markdown-mode
                              mic-paren
@@ -436,6 +438,12 @@
 
     #+begin_src emacs-lisp
       (autoload 'fic-mode "fic-mode" "Fic mode -- minor mode for highlighting FIXME/TODO in comments" t)
+    #+end_src
+
+    Flymake configuration for JSON files.
+
+    #+begin_src emacs-lisp
+      (autoload 'flymake-json-load "flymake-json" "" t)
     #+end_src
 
 * Text editing
@@ -1074,48 +1082,40 @@
 
 ** JSON
 
-   Jump through some hoops to get basic linting for JSON files via js2-mode [21].
-
    #+begin_src emacs-lisp
-     (add-to-list 'auto-mode-alist '("\\.json$" . js2-mode))
-     (defadvice js2-reparse (before json)
-        (setq js2-buffer-file-name buffer-file-name))
-     (ad-activate 'js2-reparse)
-
-     (defadvice js2-parse-statement (around json)
-        (if (and (= tt js2-LC)
-                        js2-buffer-file-name
-                        (string-equal (substring js2-buffer-file-name -5) ".json")
-                        (eq (+ (save-excursion
-                                                (goto-char (point-min))
-                                                (back-to-indentation)
-                                                (while (eolp)
-                                                        (next-line)
-                                                        (back-to-indentation))
-                                                (point)) 1) js2-ts-cursor))
-                (setq ad-return-value (js2-parse-assign-expr))
-                ad-do-it))
-     (ad-activate 'js2-parse-statement)
+     (add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
+     (add-hook 'json-mode-hook 'flymake-json-load)
    #+end_src
 
-   Helper to pretty print a JSON buffer [22].
+   Helper to beautify JSON via jsonlint.
 
    #+begin_src emacs-lisp
-     (defun c/pretty-print-json ()
+     (defun c/beautify-json-with-jsonlint ()
        (interactive)
-       (let ((beginning (if mark-active (min (point) (mark)) (point-min)))
-             (end (if mark-active (max (point) (mark)) (point-max))))
-         (shell-command-on-region
-          beginning end
-          (concat
-           "python -c "
-           "'import sys,json;"
-           "data=json.loads(sys.stdin.read()); "
-           "print json.dumps(data,sort_keys=True,indent=4)."
-           "decode(\"unicode_escape\")."
-           "encode(\"utf8\",\"replace\")"
-           "' ")
-          (current-buffer) t)))
+       (when buffer-file-name
+         (let* ((err-regex "line [0-9]+, col [0-9]+, found") ;; stolen from flymake-json
+                (old-contents (buffer-substring (point-min) (point-max)))
+                (new-contents (with-temp-buffer
+                                (insert old-contents)
+                                (shell-command-on-region (point-min) (point-max) "jsonlint -c" nil t)
+                                (goto-char (point-min))
+                                (if (looking-at-p err-regex) (progn (message "should be true") nil)
+                                  (buffer-substring (point-min) (point-max))))))
+           (when new-contents
+             (let ((old-point (point)))
+               (delete-region (point-min) (point-max))
+               (insert new-contents)
+               (goto-char old-point))))))
+   #+end_src
+
+   Buffer-specific customization.
+
+   #+begin_src emacs-lisp
+     (defun c/json-mode-initialization ()
+       (setq tab-width 2)
+       (make-local-variable 'before-save-hook)
+       (add-hook 'before-save-hook 'c/beautify-json-with-jsonlint))
+     (add-hook 'json-mode-hook 'c/json-mode-initialization)
    #+end_src
 
 ** CoffeeScript
@@ -1903,8 +1903,16 @@
            (eval-after-load 'flymake
              '(progn
                 (define-key js2-mode-map (kbd "C-c !") (make-repeatable-command 'flymake-goto-next-error))
-                (define-key js2-mode-map (kbd "C-c ff") 'c/pretty-print-json)
                 ))))
+    #+end_src
+
+*** JSON mode
+
+    Override default formatting function.
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'json-mode
+        '(define-key json-mode-map (kbd "C-c C-f") 'c/beautify-json-with-jsonlint))
     #+end_src
 
 *** Python mode
@@ -3415,8 +3423,6 @@
 [19] https://github.com/magnars/.emacs.d/blob/master/setup-magit.el
 
 [20] http://emacswiki.org/emacs/GnuGlobal
-
-[21] http://code.google.com/p/js2-mode/issues/detail?id=50
 
 [22] http://stackoverflow.com/a/7934783/750284
 
