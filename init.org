@@ -1786,10 +1786,10 @@
 
    #+begin_src emacs-lisp
      (define-command-group c/expand-region-command-group
-       (:key "<" :command er/expand-region)
-       (:key ">" :command er/contract-region))
+       (:key "." :command er/expand-region)
+       (:key "," :command er/contract-region))
 
-     (define-key global-map (kbd "C-c <") 'c/expand-region-command-group)
+     (define-key global-map (kbd "C-c .") 'c/expand-region-command-group)
    #+end_src
 
    Entry for multiple cursor editing.
