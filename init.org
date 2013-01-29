@@ -508,7 +508,7 @@
    Enable electric indenting.
 
    #+begin_src emacs-lisp
-     (electric-indent-mode 1)
+     (electric-indent-mode 0)
    #+end_src
 
    Disable electric pairing.
