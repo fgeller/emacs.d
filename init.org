@@ -1126,7 +1126,8 @@
      (eval-after-load 'coffee-mode
        '(eval-after-load 'flymake
           '(progn
-             (require 'flymake-coffee))))
+             (require 'flymake-coffee)
+             (setq flymake-coffee-coffeelint-configuration-file (expand-file-name "~/.coffeelint.json")))))
    #+end_src
 
    Hook coffee-mode into prog-mode specialization.
