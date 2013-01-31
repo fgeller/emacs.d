@@ -1910,6 +1910,8 @@
 ** Programming modes
 *** Prog mode
 
+    Bindings that are shared among modes that are derived from prog-mode.
+
     #+begin_src emacs-lisp
       (define-key prog-mode-map (kbd "RET") 'newline-and-indent)
     #+end_src
@@ -1986,6 +1988,8 @@
      #+end_src
 
 **** Bindings
+
+     Bindings specific to scala-mode2
 
     #+begin_src emacs-lisp
       (eval-after-load 'scala-mode2
