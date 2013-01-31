@@ -2030,12 +2030,7 @@
       blink-matching-paren t
       default-frame-alist '((left-fringe . 1) (right-fringe . 0) (scroll-bar-width . nil))
       scroll-bar-width 0
-      default-frame-scroll-bars nil
-      ;;column-number-mode t
-      ;;size-indication-mode t
-      ;;mouse-yank-at-point t
-      )
-
+      default-frame-scroll-bars nil)
    #+end_src
 
    Highlight URLs and email addresses.
