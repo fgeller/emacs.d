@@ -207,6 +207,7 @@
                              auto-complete
                              back-button
                              coffee-mode
+                             diff-hl
                              dired+
                              dired-details
                              dired-details+
@@ -319,6 +320,12 @@
 
     #+begin_src emacs-lisp
       (require 's)
+    #+end_src
+
+    Highlight uncommitted diffs in left fringe, always.
+
+    #+begin_src emacs-lisp
+      (global-diff-hl-mode)
     #+end_src
 
 *** autoload'ed
@@ -2021,7 +2028,7 @@
       transient-mark-mode t   ;; highlight the active region when mark is active
       show-trailing-whitespace nil ;; don't show trailing whitespace globally
       blink-matching-paren t
-      default-frame-alist '((left-fringe . 0) (right-fringe . 0) (scroll-bar-width . nil))
+      default-frame-alist '((left-fringe . 1) (right-fringe . 0) (scroll-bar-width . nil))
       scroll-bar-width 0
       default-frame-scroll-bars nil
       ;;column-number-mode t
