@@ -197,7 +197,6 @@
    #+begin_src emacs-lisp
      (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/"))
      (add-to-list 'package-archives '("elpa" . "http://tromey.com/elpa/"))
-     (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
      (package-initialize)
    #+end_src
 
