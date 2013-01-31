@@ -1908,6 +1908,12 @@
    #+end_src
 
 ** Programming modes
+*** Prog mode
+
+    #+begin_src emacs-lisp
+      (define-key prog-mode-map (kbd "RET") 'newline-and-indent)
+    #+end_src
+
 *** JS2 mode
 
     #+begin_src emacs-lisp
