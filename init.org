@@ -298,8 +298,7 @@
 
     #+begin_src emacs-lisp
       ;; single quote
-      (dolist (mode '(emacs-lisp-mode magit-log-edit-mode message-mode))
-        (sp-add-local-ban-insert-pair "'" mode))
+      (sp-local-pair '(emacs-lisp-mode magit-log-edit-mode message-mode) "'" "." :actions nil)
     #+end_src
 
     More convenient navigation through mark ring.
