@@ -258,13 +258,6 @@
 ** Globally desirable external libraries
 *** require'd
 
-    Fairly early loading of a development version of CEDET, to prevent loading
-    of built-in version.
-
-    #+begin_src emacs-lisp :tangle no
-      (load-file (expand-file-name "~/.emacs.d/src/cedet/cedet-devel-load.el"))
-    #+end_src
-
     Helm is used for most completion and especially file/buffer
     navigation. Needed from the start.
 
