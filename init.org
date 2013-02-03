@@ -2912,6 +2912,21 @@
       (setq org-agenda-sorting-strategy '((agenda habit-down time-up todo-state-down)))
     #+end_src
 
+    Automatically jump to agenda when idle, based on [21]
+
+    #+begin_src emacs-lisp
+      (defun c/jump-to-org-agenda ()
+        (interactive)
+        (let ((wind (get-buffer-window org-agenda-buffer-name t)))
+          (if wind (select-window wind)
+            (call-interactively 'org-agenda-list))
+          (delete-other-windows)))
+
+      (defun c/schedule-jumping-to-agenda ()
+        (run-with-idle-timer 300 t 'c/jump-to-org-agenda))
+      (add-hook 'org-agenda-mode-hook 'c/schedule-jumping-to-agenda)
+    #+end_src
+
 *** Clock
 
     Enable persisting the history and clock values across emacs sessions.
@@ -3459,3 +3474,5 @@
 [24] http://cx4a.org/software/auto-complete/manual.html#Select_candidates_with_C-n_C-p_only_when_completion_menu_is_displayed
 
 [25] http://cx4a.org/software/auto-complete/manual.html#Finish_completion_by_TAB
+
+[21] http://orgmode.org/worg/org-hacks.html#sec-1-9-11
