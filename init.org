@@ -299,6 +299,7 @@
     #+begin_src emacs-lisp
       ;; single quote
       (sp-local-pair '(emacs-lisp-mode magit-log-edit-mode message-mode) "'" "'" :actions nil)
+      (sp-local-pair '(scala-mode) "`" "`")
     #+end_src
 
     More convenient navigation through mark ring.
