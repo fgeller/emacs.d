@@ -297,9 +297,10 @@
     Mode-specific customization of pairs.
 
     #+begin_src emacs-lisp
-      ;; single quote
-      (sp-local-pair '(emacs-lisp-mode magit-log-edit-mode message-mode) "'" "'" :actions nil)
+      (sp-local-pair '(emacs-lisp-mode magit-log-edit-mode message-mode) "'" nil :actions nil)
       (sp-local-pair '(scala-mode) "`" "`")
+      (sp-local-pair '(scala-mode) "${" "}")
+      (sp-local-pair '(scala-mode) "s\"" "\"")
     #+end_src
 
     More convenient navigation through mark ring.
