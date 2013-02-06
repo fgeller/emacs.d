@@ -301,6 +301,9 @@
       (sp-local-pair '(scala-mode) "`" "`")
       (sp-local-pair '(scala-mode) "${" "}")
       (sp-local-pair '(scala-mode) "s\"" "\"")
+      ;; not sure why we need to add this, doc says this is on by default
+      ;; https://github.com/Fuco1/smartparens/wiki/Wrapping
+      (sp-local-tag '(sgml-mode html-mode) "<" "<_>" "</_>" :transform 'sp-match-sgml-tags)
     #+end_src
 
     More convenient navigation through mark ring.
