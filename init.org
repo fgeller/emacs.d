@@ -1108,6 +1108,20 @@
                (goto-char old-point))))))
    #+end_src
 
+   Helper to convert contents of buffer to a JSON string.
+
+   #+begin_src emacs-lisp
+     (defun c/escape-to-json-string ()
+       (interactive)
+       (goto-char (point-min))
+       (save-excursion
+         (while (re-search-forward "\"" nil t)
+           (replace-match "\\\"" nil t)))
+       (save-excursion
+         (while (re-search-forward "\n" nil t)
+           (replace-match "\\n" nil t))))
+   #+end_src
+
    Buffer-specific customization.
 
    #+begin_src emacs-lisp
