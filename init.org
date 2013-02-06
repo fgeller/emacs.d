@@ -2440,6 +2440,7 @@
 
    #+begin_src emacs-lisp
      (defun c/eshell-mode-initialization ()
+       (toggle-truncate-lines -1) ;; always fold lines
        (setq ac-sources (cons 'ac-source-files-in-current-dir ac-sources))
        (auto-complete-mode 1))
      (add-hook 'eshell-mode-hook 'c/eshell-mode-initialization)
