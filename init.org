@@ -2912,6 +2912,12 @@
       (setq org-agenda-remove-tags nil)
     #+end_src
 
+    Flush them to column 100.
+
+    #+begin_src emacs-lisp
+      (setq org-agenda-tags-column -100)
+    #+end_src
+
     Start the week on a weekday (aka Monday).
 
     #+begin_src emacs-lisp
