@@ -1,0 +1,6 @@
+# -*- coding: utf-8; tab-width:2; mode: snippet -*-
+# name: clog
+# key: clog
+# contributor: Felix Geller <fgeller@gmail.com>
+# --
+console.log($0)
