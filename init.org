@@ -248,6 +248,7 @@
                              smartparens
                              todochiku
                              undo-tree
+                             uuid
                              wgrep
                              yasnippet
                              ))
