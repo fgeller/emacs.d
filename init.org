@@ -273,6 +273,12 @@
       (require 'helm-git)
     #+end_src
 
+    And helm-imenu...
+
+    #+begin_src emacs-lisp
+      (require 'helm-imenu)
+    #+end_src
+
     Allows for selecting in semantic units. Interesting mostly for
     =prog-modes=, but needs to be =required=, so function definition is
     available for make-repeatable-command
@@ -2415,11 +2421,11 @@
        (helm-other-buffer
         '(
           helm-c-source-buffers-list
-          c/helm-c-source-jumper-defs
           helm-c-source-git-files
           helm-c-source-recentf
-          c/helm-c-source-project-file-search
+          helm-c-source-imenu
           helm-c-source-buffer-not-found
+          helm-c-source-moccur
           )
         "*c/helm-jump*"))
    #+end_src
