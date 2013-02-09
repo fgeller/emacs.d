@@ -2329,26 +2329,6 @@
 
 ** Sources
 
-   Source that searches for files in current project [8].
-
-   #+begin_src emacs-lisp
-     (defvar c/helm-c-source-project-file-search
-       `((name . "Project File Search")
-         (init . (lambda ()
-                   (setq
-                    helm-default-directory default-directory
-                    project-root-folder (c/guess-project-root))))
-         (candidates . (lambda ()
-                         (start-process-shell-command "file-search-process" nil
-                                                      "find" (format "%s -iname '*%s*' -print" project-root-folder helm-pattern))))
-         (keymap . ,helm-generic-files-map)
-         (mode-line . helm-generic-file-mode-line-string)
-         (match helm-c-match-on-basename)
-         (type . file)
-         (requires-pattern . 4))
-       "Source for searching files in current project recursively.")
-   #+end_src
-
    Source for contents of a jumper file.
 
    #+begin_src emacs-lisp
@@ -3489,8 +3469,6 @@
 [6] http://emacswiki.org/emacs/SearchAtPoint#toc6
 
 [7] http://github.com/defunkt/emacs
-
-[8] http://www.emacswiki.org/emacs/AnythingSources#toc14
 
 [9] http://www.masteringemacs.org/articles/2010/12/13/complete-guide-mastering-eshell/
 
