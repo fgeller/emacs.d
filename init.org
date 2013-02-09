@@ -2217,13 +2217,18 @@
 * Buffers and sessions
 ** Settings
 
-   Don't remember temporary and tramp'ed files.
+   Set a limit on maximum remembered files and forget temporary files.
 
    #+begin_src emacs-lisp
      (setq
       recentf-max-saved-items 300
-      recentf-exclude '("/tmp/")
-      )
+      recentf-exclude '("/tmp/"))
+   #+end_src
+
+   Store recent file list in .emacs.d, rather than HOME.
+
+   #+begin_src emacs-lisp
+     (setq recentf-save-file (expand-file-name "~/.emacs.d/recentf"))
    #+end_src
 
    Don't ask when reverting buffer to buffer-file's contents.
