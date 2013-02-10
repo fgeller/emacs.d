@@ -1860,7 +1860,7 @@
    Entry for multiple cursor editing.
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c >") 'mc/mark-more-like-this-extended)
+     (define-key global-map (kbd "C-c <down>") 'mc/mark-more-like-this-extended)
    #+end_src
 
    Default to zapping up to char, not including the target. [13]
