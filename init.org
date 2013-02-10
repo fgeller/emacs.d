@@ -2248,6 +2248,7 @@
    #+end_src
 
 *** popwin
+
    Use popwin for managing popups.
 
    #+begin_src emacs-lisp
