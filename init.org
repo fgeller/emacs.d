@@ -278,9 +278,9 @@
       (require 'helm-imenu)
     #+end_src
 
-    Allows for selecting in semantic units. Interesting mostly for
-    =prog-modes=, but needs to be =required=, so function definition is
-    available for make-repeatable-command
+    Expand-region allows for selecting in semantic units. Interesting mostly for
+    =prog-modes=, but needs to be =required=, so function definition is available
+    for make-repeatable-command.
 
     #+begin_src emacs-lisp
      (require 'expand-region)
@@ -337,7 +337,6 @@
     Notifications.
 
     #+begin_src emacs-lisp
-      (setq todochiku-icons-directory (expand-file-name "~/.emacs.d/src/todochiku-icons/"))
       (autoload 'todochiku-message "todochiku" t nil)
     #+end_src
 
@@ -3127,6 +3126,12 @@
 
 * Notifications
 ** todochiku
+
+   Where to find cool icons.
+
+   #+begin_src emacs-lisp
+     (setq todochiku-icons-directory (expand-file-name "~/.emacs.d/src/todochiku-icons/"))
+   #+end_src
 
    No default message when compilation is finished.
 
