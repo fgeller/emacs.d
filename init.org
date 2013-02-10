@@ -15,6 +15,8 @@
 * Environment
 ** Global variables
 
+   Predicates for host operating system.
+
    #+begin_src emacs-lisp
      (setq mac-p (eq system-type 'darwin))
      (setq linux-p (eq system-type 'gnu/linux))
@@ -56,6 +58,12 @@
        (add-to-list 'load-path addition)
        (let ((default-directory addition))
          (normal-top-level-add-subdirs-to-load-path)))
+   #+end_src
+
+   ENSIME wants to be special.
+
+   #+begin_src emacs-lisp
+     (add-to-list 'load-path (expand-file-name "~/.emacs.d/src/ensime/dist/elisp"))
    #+end_src
 
 ** Exec path
@@ -105,15 +113,6 @@
         (match-string 1)))
   #+end_src
 
-  Helper to join a list of strings with a given delimiter.
-
-  #+begin_src emacs-lisp
-    (defun c/join-strings (delimiter strings)
-      "Joins a list of strings with a given delimiter."
-      (reduce (lambda (accumulator element) (concat accumulator delimiter element))
-              strings))
-  #+end_src
-
   Helper to define a group of commands that can be executed in consecutive key
   presses. Heavily inspired by =text-scale-adjust=.
 
@@ -123,7 +122,7 @@
      commands from using consecutive key presses. Heavily inspired by
      `text-scale-adjust'."
       (let* ((map-to-string (lambda (m) (format "%s → %s" (getf m :key) (symbol-name (getf m :command)))))
-             (prompt (c/join-strings ", " (loop for map in maps collect (funcall map-to-string map)))))
+             (prompt (s-join ", " (loop for map in maps collect (funcall map-to-string map)))))
         `(defun ,name ()
            (interactive)
            (let* ((step t)
@@ -168,12 +167,7 @@
      (require 'uniquify)
      (require 'grep)
      (require 'thingatpt)
-   #+end_src
-
-   And let's activate some.
-
-   #+begin_src emacs-lisp
-     (winner-mode 1)
+     (require 'server)
    #+end_src
 
 ** ELPA
@@ -391,16 +385,9 @@
      (autoload 'rebase-mode "rebase-mode")
     #+end_src
 
-    Scala!
-
-    #+begin_src emacs-lisp
-      (add-to-list 'auto-mode-alist '("\\.scala\\'" . scala-mode))
-    #+end_src
-
     ENSIME for Scala should be loaded with scala-mode.
 
     #+begin_src emacs-lisp
-      (add-to-list 'load-path (expand-file-name "~/.emacs.d/src/ensime/dist/elisp"))
       (autoload 'ensime "ensime" "Read config file for settings. Then start an inferior ENSIME server and connect to its Swank server." t)
       (autoload 'ensime-scala-mode-hook "ensime")
       (eval-after-load 'scala-mode2
@@ -411,8 +398,6 @@
 
     #+begin_src emacs-lisp
       (autoload 'php+-mode "php+-mode" "Major mode for editing php code." t)
-      (add-to-list 'auto-mode-alist '("\\.php$" . php+-mode))
-      (add-to-list 'auto-mode-alist '("\\.inc$" . php+-mode))
     #+end_src
 
     Grab org-links from Mac applications.
@@ -1475,6 +1460,12 @@
 
 ** Scala
 
+   Let's use a cooler major-mode.
+
+    #+begin_src emacs-lisp
+      (add-to-list 'auto-mode-alist '("\\.scala\\'" . scala-mode))
+    #+end_src
+
    Tell ensime to behave and not override my auto-complete settings.
 
    #+begin_src emacs-lisp
@@ -1492,6 +1483,13 @@
    #+end_src
 
 ** PHP
+
+   Let's use php+.
+
+   #+begin_src emacs-lisp
+     (add-to-list 'auto-mode-alist '("\\.php$" . php+-mode))
+     (add-to-list 'auto-mode-alist '("\\.inc$" . php+-mode))
+   #+end_src
 
    Tell php+-mode to leave my bindings alone.
 
@@ -2238,7 +2236,15 @@
    #+end_src
 
 ** Windows
+*** Winner
 
+   Let's change to winner-mode!
+
+   #+begin_src emacs-lisp
+     (winner-mode 1)
+   #+end_src
+
+*** popwin
    Use popwin for managing popups.
 
    #+begin_src emacs-lisp
@@ -3117,337 +3123,338 @@
       (setq org-habit-graph-column 60)
     #+end_src
 
-* Notifications
-** todochiku
+* Communication
+** Notifications
+*** todochiku
 
-   Where to find cool icons.
+    Where to find cool icons.
+
+    #+begin_src emacs-lisp
+      (setq todochiku-icons-directory (expand-file-name "~/.emacs.d/src/todochiku-icons/"))
+    #+end_src
+
+    No default message when compilation is finished.
+
+    #+begin_src emacs-lisp
+      (setq todochiku-compile-message nil)
+    #+end_src
+
+    Add custom notification.
+
+    #+begin_src emacs-lisp
+      (defun c/notify-finished-compilation (buf msg)
+        (todochiku-message
+         (format "Compilation in %s:" buf)
+         msg
+         (if (string-match "finished[[:space:]]*" msg) (todochiku-icon 'check) (todochiku-icon 'alert))))
+      (add-hook 'compilation-finish-functions 'c/notify-finished-compilation)
+    #+end_src
+
+    Use the notification center, rather than growl [16]. Requires
+    terminal-notifier [17].
+
+    #+begin_src emacs-lisp
+      (setq c/terminal-notifier-path
+            "/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier")
+
+      (defadvice todochiku-get-arguments (around todochiku-nc)
+        (setq ad-return-value
+              (list "-title" title "-message" message "-activate" "org.gnu.Emacs")))
+
+      (when (file-executable-p c/terminal-notifier-path)
+        (setq todochiku-command c/terminal-notifier-path)
+        (ad-activate 'todochiku-get-arguments))
+
+      (when (file-executable-p c/terminal-notifier-path)
+        (defadvice todochiku-get-arguments (around todochiku-terminal-notifier activate)
+          (setq ad-return-value
+                (list "-title" title "-message" message "-activate" "org.gnu.Emacs")))
+        (setq todochiku-command c/terminal-notifier-path))
+    #+end_src
+
+** Email
+*** Mailcap
+
+    #+begin_src emacs-lisp
+      ;; use open for PDFs (rather than gv) and images (rather than display)
+      (setcdr (assoc 'viewer (cdr (assoc "pdf" (assoc "application"  mailcap-mime-data))))
+              "open %s")
+      (setcdr (assoc 'viewer (cdr (assoc ".*" (assoc "image"  mailcap-mime-data))))
+              "open %s")
+      (setcdr (assoc 'test (cdr (assoc ".*" (assoc "image"  mailcap-mime-data))))
+              'window-system)
+    #+end_src
+
+*** Notmuch
+
+    Helper
+
+    #+begin_src emacs-lisp
+      (defun c/notmuch-archive-all-and-quit ()
+        (interactive)
+        (notmuch-search-tag-all '(("-unread" "-inbox" "-w/inbox")))
+        (notmuch-search-quit)
+        (c/notmuch-jump-back-to-saved-searches))
+
+      (defun c/notmuch-archive ()
+        (interactive)
+        (notmuch-search-tag '("-unread" "-inbox" "-w/inbox"))
+        (notmuch-search-refresh-view))
+
+      (defun c/notmuch-jump-back-to-saved-searches ()
+        (interactive)
+        (goto-line 4))
+
+      (defun c/notmuch-hello-update-and-jump-back-to-saved-searches ()
+        (interactive)
+        (notmuch-hello-update)
+        (c/notmuch-jump-back-to-saved-searches))
+
+      (defun c/notmuch-hello-offlineimap-update-and-jump-back-to-saved-searches ()
+        (interactive)
+        (shell-command "offlineimap")
+        (notmuch-hello-update)
+        (c/notmuch-jump-back-to-saved-searches))
+    #+end_src
+
+    Settings
+
+    #+begin_src emacs-lisp
+      (setq
+       notmuch-fcc-dirs nil
+       notmuch-mua-user-agent-function 'notmuch-mua-user-agent-emacs
+       notmuch-search-oldest-first nil
+       notmuch-show-logo nil
+       notmuch-show-indent-messages-width 0
+       notmuch-crypto-process-mime t
+       notmuch-search-line-faces nil
+       notmuch-show-all-multipart/alternative-parts t
+       notmuch-show-insert-text/plain-hook '(
+                                             notmuch-wash-tidy-citations
+                                             notmuch-wash-elide-blank-lines
+                                             notmuch-wash-excerpt-citations
+                                             notmuch-wash-convert-inline-patch-to-part
+                                             )
+       )
+      (defun c/truncate-long-lines () (toggle-truncate-lines -1))
+      (eval-after-load 'notmuch
+        '(progn
+           (add-hook 'notmuch-show-hook 'notmuch-show-turn-on-visual-line-mode)
+           (add-hook 'notmuch-show-hook 'c/truncate-long-lines)
+           (add-hook 'notmuch-search-hook 'notmuch-hl-line-mode)))
+    #+end_src
+
+    Define what sections should be shown in the 'hello' overview.
+    Don't show search fields and the footer.
+
+    #+begin_src emacs-lisp
+      (setq notmuch-hello-sections
+            '(
+              notmuch-hello-insert-header
+              notmuch-hello-insert-saved-searches
+              notmuch-hello-insert-alltags
+              ))
+    #+end_src
+
+    Show all tags in the 'hello' overview.
+
+    #+begin_src emacs-lisp
+      (setq notmuch-show-all-tags-list t)
+    #+end_src
+
+    Saved searches.
+
+    #+begin_src emacs-lisp
+      (setq notmuch-saved-searches
+            '(
+              ("inbox" . "tag:inbox")
+              ("w/inbox" . "tag:w/inbox")
+              ("w/commits" . "tag:unread  and tag:w/commit and not \"via pb\"")
+              ("ml/emacs*" . "tag:unread and tag:ml/emacs")
+              ("ml/org" . "tag:unread and (tag:ml/org)")
+              ("ml/cedet" . "tag:unread and (tag:ml/cedet)")
+              ("ml/notmuch" . "tag:unread and (tag:ml/notmuch)")
+              ))
+    #+end_src
+
+*** Message
+
+    Helper
+
+    #+begin_src emacs-lisp
+      (defun c/insert-message-sign-pgpmime ()
+        (interactive)
+        (save-excursion
+          (beginning-of-buffer)
+          (re-search-forward "--text follows this line--" (point-max) t)
+          (end-of-line)
+          (newline)
+          (insert "<#secure method=pgpmime mode=sign>")
+          (newline)))
+
+      (defun c/goto-message-body ()
+        (interactive)
+        (message-goto-body)
+        (if (re-search-forward "sign>" (point-max) t)
+            (newline)))
+    #+end_src
+
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'message
+        '(progn
+           (setq
+            message-kill-buffer-on-exit t
+            message-send-mail-partially-limit nil
+            send-mail-function 'sendmail-send-it
+            mail-from-style 'angles
+            ;; http://notmuchmail.org/emacstips/#index12h2
+            mail-specify-envelope-from t
+            message-sendmail-envelope-from 'header
+            mail-envelope-from 'header
+            user-full-name "Felix Geller"
+            user-mail-address "fgeller@gmail.com"
+            message-signature "Felix Geller"
+            )
+           (add-hook 'message-setup-hook 'c/insert-message-sign-pgpmime)
+           ))
+    #+end_src
+
+    Buffer-specific customization.
+
+    #+begin_src emacs-lisp
+      (defun c/message-mode-customization ()
+        (turn-on-auto-fill))
+      (add-hook 'message-mode-hook 'c/message-mode-customization)
+    #+end_src
+
+*** Gnus
+
+    Let's try reading news the old fashioned way.
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'gnus
+        '(setq gnus-select-method '(nntp "Gmane" (nntp-address "news.gmane.org"))))
+    #+end_src
+
+    Fixes the "From" header, based on the "Delivered-To" header. Defaults to
+    value of =user-mail-address=.
+
+    #+begin_src emacs-lisp
+      (setq gnus-posting-styles
+            '((""
+               ("From" (save-excursion
+                         (or (and (get-buffer gnus-article-buffer)
+                                  (set-buffer gnus-article-buffer)
+                                  (let ((delivered-to))
+                                    (gnus-summary-toggle-header 1)
+                                    (setq delivered-to (message-fetch-field "Delivered-To"))
+                                    (gnus-summary-toggle-header -1)
+                                    delivered-to))
+                             user-mail-address)))
+               ("Reply-To" (save-excursion
+                             (or (and (get-buffer gnus-article-buffer)
+                                      (set-buffer gnus-article-buffer)
+                                      (let ((delivered-to))
+                                        (gnus-summary-toggle-header 1)
+                                        (setq delivered-to (message-fetch-field "Delivered-To"))
+                                        (gnus-summary-toggle-header -1)
+                                        delivered-to))
+                                 user-mail-address))))))
+    #+end_src
+
+    And also mails.
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'gnus
+        '(add-to-list 'gnus-secondary-select-methods
+                      '(nnimap "gmail"
+                               (nnimap-address "imap.gmail.com")
+                               (nnimap-server-port 993)
+                               (nnimap-stream ssl)
+                               (nnimap-authinfo-file (expand-file-name "~/.authinfo.gpg"))
+                               (nnir-search-engine imap))))
+    #+end_src
+
+    And work mails.
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'gnus
+        '(add-to-list 'gnus-secondary-select-methods
+                      '(nnimap "work"
+                               (nnimap-address "imap.gmail.com")
+                               (nnimap-server-port 993)
+                               (nnimap-stream ssl)
+                               (nnimap-authinfo-file (expand-file-name "~/.authinfo.gpg"))
+                               (nnir-search-engine imap))))
+    #+end_src
+
+    Let's use w3m for rendering HTML mails.
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'gnus
+        '(setq mm-text-html-renderer 'gnus-w3m))
+    #+end_src
+
+    Searching mails via nnir.
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'gnus
+        '(require 'nnir))
+    #+end_src
+
+    Sort everything via topics.
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'gnus
+        '(add-hook 'gnus-group-mode-hook 'gnus-topic-mode))
+    #+end_src
+
+** IRC
+
+   Who will I be?
 
    #+begin_src emacs-lisp
-     (setq todochiku-icons-directory (expand-file-name "~/.emacs.d/src/todochiku-icons/"))
+     (setq erc-nick "fg")
    #+end_src
 
-   No default message when compilation is finished.
+   Reduce the noise by ignoring status information.
 
    #+begin_src emacs-lisp
-     (setq todochiku-compile-message nil)
+     (setq erc-hide-list '("NICK"))
    #+end_src
 
-   Add custom notification.
+   Get notifications when receiving private messages.
 
    #+begin_src emacs-lisp
-     (defun c/notify-finished-compilation (buf msg)
-       (todochiku-message
-        (format "Compilation in %s:" buf)
-        msg
-        (if (string-match "finished[[:space:]]*" msg) (todochiku-icon 'check) (todochiku-icon 'alert))))
-     (add-hook 'compilation-finish-functions 'c/notify-finished-compilation)
+     (defun c/notify-privmsg (proc parsed)
+       (let ((nick (car (erc-parse-user (erc-response.sender parsed))))
+             (target (car (erc-response.command-args parsed)))
+             (msg (erc-response.contents parsed)))
+         (when (and (erc-current-nick-p target)
+                    (not (erc-is-message-ctcp-and-not-action-p msg)))
+           (todochiku-message (format "ERC message from: %s" nick)
+                              msg
+                              (todochiku-icon 'irc)
+                              nil)))
+       nil)
+     (setq erc-server-PRIVMSG-functions '(c/notify-privmsg erc-server-PRIVMSG))
    #+end_src
 
-   Use the notification center, rather than growl [16]. Requires
-   terminal-notifier [17].
+   Notification when my nick is mentioned.
 
    #+begin_src emacs-lisp
-     (setq c/terminal-notifier-path
-           "/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier")
-
-     (defadvice todochiku-get-arguments (around todochiku-nc)
-       (setq ad-return-value
-             (list "-title" title "-message" message "-activate" "org.gnu.Emacs")))
-
-     (when (file-executable-p c/terminal-notifier-path)
-       (setq todochiku-command c/terminal-notifier-path)
-       (ad-activate 'todochiku-get-arguments))
-
-     (when (file-executable-p c/terminal-notifier-path)
-       (defadvice todochiku-get-arguments (around todochiku-terminal-notifier activate)
-         (setq ad-return-value
-               (list "-title" title "-message" message "-activate" "org.gnu.Emacs")))
-       (setq todochiku-command c/terminal-notifier-path))
+     (defun c/notify-nick-mentioned (match-type nick msg)
+       (let ((short-nick (car (split-string nick "!"))))
+         (when (and
+                (eq match-type 'current-nick)
+                (not (string= short-nick "localhost"))
+                (not (string-match "Server:.+" short-nick))
+                (not (string= short-nick erc-nick)))
+           (todochiku-message
+            (format "%s mentioned your nick." short-nick) msg (todochiku-icon 'irc) t))))
+     (add-hook 'erc-text-matched-hook 'c/notify-nick-mentioned)
    #+end_src
-
-* Email
-** Mailcap
-
-   #+begin_src emacs-lisp
-     ;; use open for PDFs (rather than gv) and images (rather than display)
-     (setcdr (assoc 'viewer (cdr (assoc "pdf" (assoc "application"  mailcap-mime-data))))
-             "open %s")
-     (setcdr (assoc 'viewer (cdr (assoc ".*" (assoc "image"  mailcap-mime-data))))
-             "open %s")
-     (setcdr (assoc 'test (cdr (assoc ".*" (assoc "image"  mailcap-mime-data))))
-             'window-system)
-   #+end_src
-
-** Notmuch
-
-   Helper
-
-   #+begin_src emacs-lisp
-     (defun c/notmuch-archive-all-and-quit ()
-       (interactive)
-       (notmuch-search-tag-all '(("-unread" "-inbox" "-w/inbox")))
-       (notmuch-search-quit)
-       (c/notmuch-jump-back-to-saved-searches))
-
-     (defun c/notmuch-archive ()
-       (interactive)
-       (notmuch-search-tag '("-unread" "-inbox" "-w/inbox"))
-       (notmuch-search-refresh-view))
-
-     (defun c/notmuch-jump-back-to-saved-searches ()
-       (interactive)
-       (goto-line 4))
-
-     (defun c/notmuch-hello-update-and-jump-back-to-saved-searches ()
-       (interactive)
-       (notmuch-hello-update)
-       (c/notmuch-jump-back-to-saved-searches))
-
-     (defun c/notmuch-hello-offlineimap-update-and-jump-back-to-saved-searches ()
-       (interactive)
-       (shell-command "offlineimap")
-       (notmuch-hello-update)
-       (c/notmuch-jump-back-to-saved-searches))
-   #+end_src
-
-   Settings
-
-   #+begin_src emacs-lisp
-     (setq
-      notmuch-fcc-dirs nil
-      notmuch-mua-user-agent-function 'notmuch-mua-user-agent-emacs
-      notmuch-search-oldest-first nil
-      notmuch-show-logo nil
-      notmuch-show-indent-messages-width 0
-      notmuch-crypto-process-mime t
-      notmuch-search-line-faces nil
-      notmuch-show-all-multipart/alternative-parts t
-      notmuch-show-insert-text/plain-hook '(
-                                            notmuch-wash-tidy-citations
-                                            notmuch-wash-elide-blank-lines
-                                            notmuch-wash-excerpt-citations
-                                            notmuch-wash-convert-inline-patch-to-part
-                                            )
-      )
-     (defun c/truncate-long-lines () (toggle-truncate-lines -1))
-     (eval-after-load 'notmuch
-       '(progn
-          (add-hook 'notmuch-show-hook 'notmuch-show-turn-on-visual-line-mode)
-          (add-hook 'notmuch-show-hook 'c/truncate-long-lines)
-          (add-hook 'notmuch-search-hook 'notmuch-hl-line-mode)))
-   #+end_src
-
-   Define what sections should be shown in the 'hello' overview.
-   Don't show search fields and the footer.
-
-   #+begin_src emacs-lisp
-     (setq notmuch-hello-sections
-           '(
-             notmuch-hello-insert-header
-             notmuch-hello-insert-saved-searches
-             notmuch-hello-insert-alltags
-             ))
-   #+end_src
-
-   Show all tags in the 'hello' overview.
-
-   #+begin_src emacs-lisp
-     (setq notmuch-show-all-tags-list t)
-   #+end_src
-
-   Saved searches.
-
-   #+begin_src emacs-lisp
-     (setq notmuch-saved-searches
-           '(
-             ("inbox" . "tag:inbox")
-             ("w/inbox" . "tag:w/inbox")
-             ("w/commits" . "tag:unread  and tag:w/commit and not \"via pb\"")
-             ("ml/emacs*" . "tag:unread and tag:ml/emacs")
-             ("ml/org" . "tag:unread and (tag:ml/org)")
-             ("ml/cedet" . "tag:unread and (tag:ml/cedet)")
-             ("ml/notmuch" . "tag:unread and (tag:ml/notmuch)")
-             ))
-   #+end_src
-
-** Message
-
-   Helper
-
-   #+begin_src emacs-lisp
-     (defun c/insert-message-sign-pgpmime ()
-       (interactive)
-       (save-excursion
-         (beginning-of-buffer)
-         (re-search-forward "--text follows this line--" (point-max) t)
-         (end-of-line)
-         (newline)
-         (insert "<#secure method=pgpmime mode=sign>")
-         (newline)))
-
-     (defun c/goto-message-body ()
-       (interactive)
-       (message-goto-body)
-       (if (re-search-forward "sign>" (point-max) t)
-           (newline)))
-   #+end_src
-
-
-   #+begin_src emacs-lisp
-     (eval-after-load 'message
-       '(progn
-          (setq
-           message-kill-buffer-on-exit t
-           message-send-mail-partially-limit nil
-           send-mail-function 'sendmail-send-it
-           mail-from-style 'angles
-           ;; http://notmuchmail.org/emacstips/#index12h2
-           mail-specify-envelope-from t
-           message-sendmail-envelope-from 'header
-           mail-envelope-from 'header
-           user-full-name "Felix Geller"
-           user-mail-address "fgeller@gmail.com"
-           message-signature "Felix Geller"
-           )
-          (add-hook 'message-setup-hook 'c/insert-message-sign-pgpmime)
-          ))
-   #+end_src
-
-   Buffer-specific customization.
-
-   #+begin_src emacs-lisp
-     (defun c/message-mode-customization ()
-       (turn-on-auto-fill))
-     (add-hook 'message-mode-hook 'c/message-mode-customization)
-   #+end_src
-
-** Gnus
-
-   Let's try reading news the old fashioned way.
-
-   #+begin_src emacs-lisp
-     (eval-after-load 'gnus
-       '(setq gnus-select-method '(nntp "Gmane" (nntp-address "news.gmane.org"))))
-   #+end_src
-
-   Fixes the "From" header, based on the "Delivered-To" header. Defaults to
-   value of =user-mail-address=.
-
-   #+begin_src emacs-lisp
-     (setq gnus-posting-styles
-           '((""
-              ("From" (save-excursion
-                        (or (and (get-buffer gnus-article-buffer)
-                                 (set-buffer gnus-article-buffer)
-                                 (let ((delivered-to))
-                                   (gnus-summary-toggle-header 1)
-                                   (setq delivered-to (message-fetch-field "Delivered-To"))
-                                   (gnus-summary-toggle-header -1)
-                                   delivered-to))
-                            user-mail-address)))
-              ("Reply-To" (save-excursion
-                            (or (and (get-buffer gnus-article-buffer)
-                                     (set-buffer gnus-article-buffer)
-                                     (let ((delivered-to))
-                                       (gnus-summary-toggle-header 1)
-                                       (setq delivered-to (message-fetch-field "Delivered-To"))
-                                       (gnus-summary-toggle-header -1)
-                                       delivered-to))
-                                user-mail-address))))))
-   #+end_src
-
-   And also mails.
-
-   #+begin_src emacs-lisp
-     (eval-after-load 'gnus
-       '(add-to-list 'gnus-secondary-select-methods
-                     '(nnimap "gmail"
-                              (nnimap-address "imap.gmail.com")
-                              (nnimap-server-port 993)
-                              (nnimap-stream ssl)
-                              (nnimap-authinfo-file (expand-file-name "~/.authinfo.gpg"))
-                              (nnir-search-engine imap))))
-   #+end_src
-
-   And work mails.
-
-   #+begin_src emacs-lisp
-     (eval-after-load 'gnus
-       '(add-to-list 'gnus-secondary-select-methods
-                     '(nnimap "work"
-                              (nnimap-address "imap.gmail.com")
-                              (nnimap-server-port 993)
-                              (nnimap-stream ssl)
-                              (nnimap-authinfo-file (expand-file-name "~/.authinfo.gpg"))
-                              (nnir-search-engine imap))))
-   #+end_src
-
-   Let's use w3m for rendering HTML mails.
-
-   #+begin_src emacs-lisp
-     (eval-after-load 'gnus
-       '(setq mm-text-html-renderer 'gnus-w3m))
-   #+end_src
-
-   Searching mails via nnir.
-
-   #+begin_src emacs-lisp
-     (eval-after-load 'gnus
-       '(require 'nnir))
-   #+end_src
-
-   Sort everything via topics.
-
-   #+begin_src emacs-lisp
-     (eval-after-load 'gnus
-       '(add-hook 'gnus-group-mode-hook 'gnus-topic-mode))
-   #+end_src
-
-* IRC
-
-  Who will I be?
-
-  #+begin_src emacs-lisp
-    (setq erc-nick "fg")
-  #+end_src
-
-  Reduce the noise by ignoring status information.
-
-  #+begin_src emacs-lisp
-    (setq erc-hide-list '("NICK"))
-  #+end_src
-
-  Get notifications when receiving private messages.
-
-  #+begin_src emacs-lisp
-    (defun c/notify-privmsg (proc parsed)
-      (let ((nick (car (erc-parse-user (erc-response.sender parsed))))
-            (target (car (erc-response.command-args parsed)))
-            (msg (erc-response.contents parsed)))
-        (when (and (erc-current-nick-p target)
-                   (not (erc-is-message-ctcp-and-not-action-p msg)))
-          (todochiku-message (format "ERC message from: %s" nick)
-                             msg
-                             (todochiku-icon 'irc)
-                             nil)))
-      nil)
-    (setq erc-server-PRIVMSG-functions '(c/notify-privmsg erc-server-PRIVMSG))
-  #+end_src
-
-  Notification when my nick is mentioned.
-
-  #+begin_src emacs-lisp
-    (defun c/notify-nick-mentioned (match-type nick msg)
-      (let ((short-nick (car (split-string nick "!"))))
-        (when (and
-               (eq match-type 'current-nick)
-               (not (string= short-nick "localhost"))
-               (not (string-match "Server:.+" short-nick))
-               (not (string= short-nick erc-nick)))
-          (todochiku-message
-           (format "%s mentioned your nick." short-nick) msg (todochiku-icon 'irc) t))))
-    (add-hook 'erc-text-matched-hook 'c/notify-nick-mentioned)
-  #+end_src
 
 * Server
 
@@ -3455,7 +3462,6 @@
   shells.
 
   #+begin_src emacs-lisp
-    (require 'server)
     (unless (server-running-p)
       (server-start))
   #+end_src
