@@ -200,6 +200,7 @@
      (setq c/elpa-packages '(
                              auto-complete
                              back-button
+                             calfw
                              coffee-mode
                              diff-hl
                              dired+
@@ -1583,6 +1584,7 @@
 
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c ma") 'auto-complete-mode)
+     (define-key global-map (kbd "C-c mc") 'c/open-calendar)
      (define-key global-map (kbd "C-c md") 'diff-mode)
      (define-key global-map (kbd "C-c mf") 'flymake-mode)
      (define-key global-map (kbd "C-c mg") 'rgrep)
@@ -3456,6 +3458,23 @@
      (add-hook 'erc-text-matched-hook 'c/notify-nick-mentioned)
    #+end_src
 
+** Calendar
+*** calfw
+
+    Helper to produce calendar from multiple sources [8].
+
+    #+begin_src emacs-lisp
+      (defun c/open-calendar ()
+        (interactive)
+        (require 'calfw-ical)
+        (require 'calfw-org)
+        (cfw:open-calendar-buffer
+         :contents-sources
+         (list
+          (cfw:org-create-source "#728a05")
+          (cfw:ical-create-source "gcal" fg/gcal-ics "#2075c7"))))
+    #+end_src
+
 * Server
 
   Start the server so that we can connect via emacsclient from other
@@ -3559,3 +3578,5 @@
 [25] http://cx4a.org/software/auto-complete/manual.html#Finish_completion_by_TAB
 
 [21] http://orgmode.org/worg/org-hacks.html#sec-1-9-11
+
+[8] http://www.emacswiki.org/emacs/Calfw#toc11
