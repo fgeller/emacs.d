@@ -272,12 +272,6 @@
       (require 'helm-git)
     #+end_src
 
-    And helm-imenu...
-
-    #+begin_src emacs-lisp
-      (require 'helm-imenu)
-    #+end_src
-
     Expand-region allows for selecting in semantic units. Interesting mostly for
     =prog-modes=, but needs to be =required=, so function definition is available
     for make-repeatable-command.
@@ -2459,7 +2453,6 @@
           helm-c-source-buffers-list
           helm-c-source-git-files
           helm-c-source-recentf
-          helm-c-source-imenu
           helm-c-source-buffer-not-found
           helm-c-source-moccur
           )
