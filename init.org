@@ -332,6 +332,12 @@
       (global-diff-hl-mode)
     #+end_src
 
+    Manage popup windows.
+
+    #+begin_src emacs-lisp
+      (require 'popwin)
+    #+end_src
+
 *** autoload'ed
 
     Helpers to do rectangle insert inline and mark multiple occurrences of
@@ -1682,6 +1688,12 @@
        (make-repeatable-command 'back-button-global))
    #+end_src
 
+   Bind popwin's map.
+
+   #+begin_src emacs-lisp
+     (global-set-key (kbd "C-x wp") popwin:keymap)
+   #+end_src
+
 ** goto Map (M-g)
 
    Alternatives to default =M->= and =M-<= to be consistent.
@@ -2212,6 +2224,21 @@
      (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
      (setq uniquify-after-kill-buffer-p t)
      (setq uniquify-ignore-buffers-re "^\\*")
+   #+end_src
+
+** Windows
+
+   Use popwin for managing popups.
+
+   #+begin_src emacs-lisp
+     (setq display-buffer-function 'popwin:display-buffer)
+   #+end_src
+
+   Custom popups.
+
+   #+begin_src emacs-lisp
+     (push '("\\*\\(c/\\)?helm[ a-zA-Z0-9_-]*\\*" :regexp t :height 15) popwin:special-display-config)
+     (push '("\\*magit-edit-log\\*" :regexp t :height 15)               popwin:special-display-config)
    #+end_src
 
 * Buffers and sessions
