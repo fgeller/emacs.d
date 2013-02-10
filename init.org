@@ -264,7 +264,6 @@
 
     #+begin_src emacs-lisp
      (require 'helm-config)
-     (helm-mode 1)
     #+end_src
 
     Also load the helm-git addon.
@@ -291,45 +290,24 @@
 
     #+begin_src emacs-lisp
      (require 'move-text)
-     (move-text-default-bindings)
-   #+end_src
+    #+end_src
 
     Smarter handling of characters that come in pairs.
 
     #+begin_src emacs-lisp
       (require 'smartparens)
-      (smartparens-global-mode 1)
-    #+end_src
-
-    Mode-specific customization of pairs.
-
-    #+begin_src emacs-lisp
-      (sp-local-pair '(emacs-lisp-mode magit-log-edit-mode message-mode org-mode) "'" nil :actions nil)
-      (sp-local-pair '(scala-mode) "`" "`")
-      (sp-local-pair '(scala-mode) "${" "}")
-      (sp-local-pair '(scala-mode) "s\"" "\"")
-      ;; not sure why we need to add this, doc says this is on by default
-      ;; https://github.com/Fuco1/smartparens/wiki/Wrapping
-      (sp-local-tag '(sgml-mode html-mode) "<" "<_>" "</_>" :transform 'sp-match-sgml-tags)
     #+end_src
 
     More convenient navigation through mark ring.
 
     #+begin_src emacs-lisp
      (require 'back-button)
-     (back-button-mode 1)
     #+end_src
 
     @magnars' helpers for string manipulation.
 
     #+begin_src emacs-lisp
       (require 's)
-    #+end_src
-
-    Highlight uncommitted diffs in left fringe, always.
-
-    #+begin_src emacs-lisp
-      (global-diff-hl-mode)
     #+end_src
 
     Manage popup windows.
@@ -566,6 +544,12 @@
      (delete-selection-mode 1)
    #+end_src
 
+   Activate moving text via M-↑ and M-↓
+
+   #+begin_src emacs-lisp
+     (move-text-default-bindings)
+   #+end_src
+
 ** Whitespace
 
    Global whitespace settings. Override them in =.dir-local.el= or file
@@ -603,6 +587,26 @@
      (yas/global-mode 1)
      (setq-default yas-prompt-functions
                    (delete 'yas-x-prompt yas-prompt-functions))
+   #+end_src
+
+** Smartparens
+
+   Activate it!
+
+   #+begin_src emacs-lisp
+     (smartparens-global-mode 1)
+   #+end_src
+
+   Mode-specific customization of pairs.
+
+   #+begin_src emacs-lisp
+     (sp-local-pair '(emacs-lisp-mode magit-log-edit-mode message-mode org-mode) "'" nil :actions nil)
+     (sp-local-pair '(scala-mode) "`" "`")
+     (sp-local-pair '(scala-mode) "${" "}")
+     (sp-local-pair '(scala-mode) "s\"" "\"")
+     ;; not sure why we need to add this, doc says this is on by default
+     ;; https://github.com/Fuco1/smartparens/wiki/Wrapping
+     (sp-local-tag '(sgml-mode html-mode) "<" "<_>" "</_>" :transform 'sp-match-sgml-tags)
    #+end_src
 
 ** Auto-completion
@@ -843,7 +847,21 @@
      (add-hook 'magit-log-edit-mode-hook 'c/enable-flyspell)
    #+end_src
 
+** back-button
+
+   Easier navigation of global and local mark ring.
+
+   #+begin_src emacs-lisp
+     (back-button-mode 1)
+   #+end_src
+
 ** diff
+
+    Highlight uncommitted diffs in left fringe, always.
+
+    #+begin_src emacs-lisp
+      (global-diff-hl-mode)
+    #+end_src
 
    Some customization for diff-mode buffers to show whitespace.
 
@@ -2334,6 +2352,13 @@
     #+end_src
 
 * Helm
+
+  Let's activate helm!
+
+  #+begin_src emacs-lisp
+    (helm-mode 1)
+  #+end_src
+
 ** Configuration
 
    Don't fill in single matches when selecting files.
