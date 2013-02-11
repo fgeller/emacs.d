@@ -1119,7 +1119,7 @@
                                 (insert old-contents)
                                 (shell-command-on-region (point-min) (point-max) "jsonlint -c" nil t)
                                 (goto-char (point-min))
-                                (if (looking-at-p err-regex) (progn (message "should be true") nil)
+                                (if (looking-at-p err-regex) (progn (message "Given JSON is not well-formed.") nil)
                                   (buffer-substring (point-min) (point-max))))))
            (when new-contents
              (let ((old-point (point)))
