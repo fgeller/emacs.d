@@ -206,6 +206,7 @@
                              dired+
                              dired-details
                              dired-details+
+                             edit-server
                              elisp-slime-nav
                              expand-region
                              feature-mode
@@ -303,6 +304,12 @@
 
     #+begin_src emacs-lisp
       (require 'popwin)
+    #+end_src
+
+    Connect from Chrome.
+
+    #+begin_src emacs-lisp
+      (require 'edit-server)
     #+end_src
 
 *** autoload'ed
@@ -3487,6 +3494,13 @@
   #+begin_src emacs-lisp
     (unless (server-running-p)
       (server-start))
+  #+end_src
+
+  Start edit-server so that we can connect via Chrome to edit textarea
+  elements.
+
+  #+begin_src emacs-lisp
+    (edit-server-start)
   #+end_src
 
 * I18n
