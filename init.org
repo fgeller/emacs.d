@@ -2293,13 +2293,14 @@
      (setq display-buffer-function 'popwin:display-buffer)
    #+end_src
 
-   Custom popups.
+   What buffers/windows should be handled as popups.
 
    #+begin_src emacs-lisp
      (push '("\\*\\(c/\\)?helm[ a-zA-Z0-9_-]*\\*" :regexp t :height 15) popwin:special-display-config)
      (push '("\\*magit-edit-log\\*" :regexp t :height 15)               popwin:special-display-config)
      (push '(grep-mode :noselect nil)                                   popwin:special-display-config)
      (push '(occur-mode :noselect nil)                                  popwin:special-display-config)
+     (push '("\\*Inspector\\*" :regexp t :position left :width 80)      popwin:special-display-config)
    #+end_src
 
 * Buffers and sessions
