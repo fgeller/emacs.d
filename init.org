@@ -1592,7 +1592,7 @@
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c ma") 'auto-complete-mode)
      (define-key global-map (kbd "C-c mc") 'c/open-calendar)
-     (define-key global-map (kbd "C-c md") 'diff-mode)
+     (define-key global-map (kbd "C-c md") 'c/popwin-dired)
      (define-key global-map (kbd "C-c mf") 'flymake-mode)
      (define-key global-map (kbd "C-c mg") 'rgrep)
      (define-key global-map (kbd "C-c mi") 'highlight-indentation-mode)
@@ -2304,6 +2304,17 @@
         :default-config-keywords '(:position :bottom)))
      (defun c/popwin-shell-shell () (interactive) (c/popwin-shell 'shell))
      (defun c/popwin-shell-eshell () (interactive) (c/popwin-shell 'eshell))
+   #+end_src
+
+   Helper to start dired via popwin.
+
+   #+begin_src emacs-lisp
+     (defun c/popwin-dired ()
+       (interactive)
+       (popwin:display-buffer-1
+        (save-window-excursion
+          (dired-noselect (or default-directory (expand-file-name "~/"))  nil))
+        :default-config-keywords '(:position :left :width 40)))
    #+end_src
 
    What buffers/windows should be handled as popups.
