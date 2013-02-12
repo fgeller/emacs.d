@@ -1581,10 +1581,10 @@
    Start different kinds of shells
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c se") 'eshell)
+     (define-key global-map (kbd "C-c se") 'c/popwin-shell-eshell)
      (define-key global-map (kbd "C-c sl") 'slime)
      (define-key global-map (kbd "C-c sp") 'python-shell-switch-to-shell)
-     (define-key global-map (kbd "C-c ss") 'shell)
+     (define-key global-map (kbd "C-c ss") 'c/popwin-shell-shell)
    #+end_src
 
    Enable / disable modes
@@ -2291,6 +2291,19 @@
 
    #+begin_src emacs-lisp
      (setq display-buffer-function 'popwin:display-buffer)
+   #+end_src
+
+   Helpers to start shells. Not sure why `popwin:special-display-config' doesn't
+   work here. Based on `popwin-term:term'.
+
+   #+begin_src emacs-lisp
+     (defun c/popwin-shell (fun-name)
+       (popwin:display-buffer-1
+        (save-window-excursion
+          (call-interactively fun-name))
+        :default-config-keywords '(:position :bottom)))
+     (defun c/popwin-shell-shell () (interactive) (c/popwin-shell 'shell))
+     (defun c/popwin-shell-eshell () (interactive) (c/popwin-shell 'eshell))
    #+end_src
 
    What buffers/windows should be handled as popups.
