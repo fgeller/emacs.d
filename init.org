@@ -1644,6 +1644,37 @@
      (define-key ctl-x-map (kbd "<down>") (make-repeatable-command 'c/scroll-down))
    #+end_src
 
+
+   Helpers from [26] to change split windows.
+
+   #+begin_src emacs-lisp
+     (defun c/split-window-func-with-other-buffer (split-function)
+       (lexical-let ((s-f split-function))
+         (lambda ()
+           (interactive)
+           (funcall s-f)
+           (set-window-buffer (next-window) (other-buffer)))))
+
+     (defun c/split-window-horizontally-instead ()
+       (interactive)
+       (save-excursion
+         (delete-other-windows)
+         (funcall (c/split-window-func-with-other-buffer 'split-window-horizontally))))
+
+     (defun c/split-window-vertically-instead ()
+       (interactive)
+       (save-excursion
+         (delete-other-windows)
+         (funcall (c/split-window-func-with-other-buffer 'split-window-vertically))))
+   #+end_src
+
+   Bind them to =C-x w |= and =C-x w _=
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-x w |") 'c/split-window-horizontally-instead)
+     (define-key global-map (kbd "C-x w _") 'c/split-window-vertically-instead)
+   #+end_src
+
    Helper from [18] to rotate the windows clock-wise.
 
    #+begin_src emacs-lisp
@@ -3598,3 +3629,5 @@
 [21] http://orgmode.org/worg/org-hacks.html#sec-1-9-11
 
 [8] http://www.emacswiki.org/emacs/Calfw#toc11
+
+[26] https://github.com/purcell/emacs.d/blob/master/init-windows.el
