@@ -1885,7 +1885,7 @@
        (beginning-of-line)
        (let ((kill-whole-line t))
          (kill-line)))
-     (define-key global-map (kbd "C-c k") 'c/kill-whole-line)
+     (define-key global-map (kbd "C-c k") (make-repeatable-command 'c/kill-whole-line))
    #+end_src
 
 ** Flyspell
