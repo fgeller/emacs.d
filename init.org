@@ -2081,15 +2081,15 @@
 
      Bindings specific to scala-mode2
 
-    #+begin_src emacs-lisp
-      (eval-after-load 'scala-mode2
-        '(progn
-           (define-key scala-mode-map (kbd "C-c C-b C-r") 'c/ensime-sbt-do-run)
-           (define-key scala-mode-map (kbd "C-c C-i C-i") 'ensime)
-           (define-key scala-mode-map (kbd "C-c C-i c") 'ensime-config-gen)
-           (define-key scala-mode-map (kbd "C-c C-i r") 'ensime-inf-eval-region)
-           (define-key scala-mode-map (kbd "C-c C-i b") 'ensime-inf-eval-buffer)))
-    #+end_src
+     #+begin_src emacs-lisp
+       (eval-after-load 'scala-mode2
+         '(progn
+            (define-key scala-mode-map (kbd "C-c C-b C-r") 'c/ensime-sbt-do-run)
+            (define-key scala-mode-map (kbd "C-c C-i C-i") 'ensime)
+            (define-key scala-mode-map (kbd "C-c C-i c") 'ensime-config-gen)
+            (define-key scala-mode-map (kbd "C-c C-i r") 'ensime-inf-eval-region)
+            (define-key scala-mode-map (kbd "C-c C-i b") 'ensime-inf-eval-buffer)))
+     #+end_src
 
 * Appearance
 ** General GUI Settings
