@@ -2091,6 +2091,15 @@
             (define-key scala-mode-map (kbd "C-c C-i b") 'ensime-inf-eval-buffer)))
      #+end_src
 
+     Bind ENSIME's selection expansion/contraction mechanism to the same key as
+     expand-region.
+
+     #+begin_src emacs-lisp
+       (eval-after-load 'ensime
+         '(progn
+            (define-key scala-mode-map (kbd "C-c .") 'ensime-expand-selection-command)))
+     #+end_src
+
 * Appearance
 ** General GUI Settings
 
