@@ -1,0 +1,5 @@
+# Author: Felix Geller <fgeller@gmail.com>
+# name: p
+# key: p
+# --
+println(s"$1\$\{$0\}")
