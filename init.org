@@ -179,7 +179,7 @@
              (package-install package)
            (progn
              (package-refresh-contents)
-             (require-package package min-version t)))))
+             (c/require-package package min-version t)))))
    #+end_src
 
    Configure ELPA package handling.
