@@ -232,6 +232,7 @@
                              php+-mode
                              pointback
                              popup ;; for auto-complete
+                             popwin
                              pretty-symbols-mode
                              rainbow-mode
                              s
