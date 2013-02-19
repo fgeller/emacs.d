@@ -2897,6 +2897,18 @@
      (setq insert-directory-program (if mac-p "gls" "ls"))
    #+end_src
 
+   Augment switches to ls [27].
+
+   #+begin_src emacs-lisp
+     (setq-default dired-listing-switches "-alhv")
+   #+end_src
+
+   Suggest "other" buffer as target for operations [27].
+
+   #+begin_src emacs-lisp
+     (setq dired-dwim-target t)
+   #+end_src
+
 * Org
 *** General settings
 
@@ -3662,3 +3674,5 @@
 [8] http://www.emacswiki.org/emacs/Calfw#toc11
 
 [26] https://github.com/purcell/emacs.d/blob/master/init-windows.el
+
+[27] http://www.reddit.com/r/emacs/comments/18qa15/dired_discussion/
