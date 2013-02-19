@@ -2902,7 +2902,7 @@
    Augment switches to ls [27].
 
    #+begin_src emacs-lisp
-     (setq-default dired-listing-switches "-alhv")
+     (setq-default dired-listing-switches "-ahlv --group-directories-first --time-style=long-iso")
    #+end_src
 
    Suggest "other" buffer as target for operations [27].
