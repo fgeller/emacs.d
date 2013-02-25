@@ -1489,6 +1489,16 @@
      (add-hook 'scala-mode-hook 'c/scala-mode-initialization)
    #+end_src
 
+   Helper to fall back to expand-region, when ENSIME isn't connected.
+
+   #+begin_src emacs-lisp
+     (defun c/maybe-ensime-expand-selection-command ()
+       (interactive)
+       (if (ensime-connected-p)
+           (ensime-expand-selection-command)
+         (c/expand-region-command-group)))
+   #+end_src
+
 ** PHP
 
    Let's use php+.
@@ -2099,7 +2109,7 @@
      #+begin_src emacs-lisp
        (eval-after-load 'ensime
          '(progn
-            (define-key scala-mode-map (kbd "C-c .") 'ensime-expand-selection-command)))
+            (define-key scala-mode-map (kbd "C-c .") 'c/maybe-ensime-expand-selection-command)))
      #+end_src
 
 * Appearance
