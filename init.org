@@ -1473,7 +1473,7 @@
       (add-to-list 'auto-mode-alist '("\\.scala\\'" . scala-mode))
     #+end_src
 
-   Tell ensime to behave and not override my auto-complete settings.
+   Tell ENSIME to behave and not override my auto-complete settings.
 
    #+begin_src emacs-lisp
      (setq ensime-ac-override-settings nil)
