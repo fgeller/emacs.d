@@ -3113,6 +3113,19 @@
       (add-hook 'org-agenda-mode-hook 'c/schedule-jumping-to-agenda)
     #+end_src
 
+    Full screen for agenda.
+
+    #+begin_src emacs-lisp
+      (defadvice org-agenda (around org-agenda-fullscreen activate)
+        (window-configuration-to-register :org-agenda-fullscreen)
+        ad-do-it
+        (delete-other-windows))
+
+      (defadvice org-agenda-quit (around org-agenda-quit-fullscreen activate)
+        ad-do-it
+        (jump-to-register :org-agenda-fullscreen))
+    #+end_src
+
 *** Clock
 
     Enable persisting the history and clock values across emacs sessions.
