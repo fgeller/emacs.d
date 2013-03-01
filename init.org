@@ -253,6 +253,7 @@
 
 ** Globally desirable external libraries
 *** require'd
+**** helm
 
     Helm is used for most completion and especially file/buffer
     navigation. Needed from the start.
@@ -267,6 +268,8 @@
       (require 'helm-git)
     #+end_src
 
+**** expand-region
+
     Expand-region allows for selecting in semantic units. Interesting mostly for
     =prog-modes=, but needs to be =required=, so function definition is available
     for make-repeatable-command.
@@ -275,11 +278,15 @@
      (require 'expand-region)
    #+end_src
 
+**** move-text
+
     Move lines up and down with =meta= and cursor keys.
 
     #+begin_src emacs-lisp
      (require 'move-text)
     #+end_src
+
+**** smartparens
 
     Smarter handling of characters that come in pairs.
 
@@ -287,11 +294,15 @@
       (require 'smartparens)
     #+end_src
 
+**** back-button
+
     More convenient navigation through mark ring.
 
     #+begin_src emacs-lisp
      (require 'back-button)
     #+end_src
+
+**** s
 
     @magnars' helpers for string manipulation.
 
@@ -299,11 +310,15 @@
       (require 's)
     #+end_src
 
+**** popwin
+
     Manage popup windows.
 
     #+begin_src emacs-lisp
       (require 'popwin)
     #+end_src
+
+**** edit-server
 
     Connect from Chrome.
 
