@@ -776,6 +776,7 @@
 
    #+begin_src emacs-lisp
      (add-to-list 'grep-find-ignored-directories "env")
+     (add-to-list 'grep-find-ignored-directories ".ensime_lucene")
    #+end_src
 
    Use GNU find an Mac OS (via homebrew)
