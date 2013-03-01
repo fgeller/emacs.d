@@ -1,10 +1,10 @@
 # Author: Jonas Bonèr <jonas@jonasboner.com>
-# name: try { .. } catch { case e => ..}
+# name: try { .. } catch { case ex => ..}
 # key: try
 # --
 try {
   $0
 } catch {
-  case ${1:e}: ${2:Exception} => 
-    ${1:println(\"ERROR: \" + e) // TODO: handle exception}\n}
+  case ${1:ex}: ${2:Throwable} =>
+    ${1:println(\"ERROR: \" + ex) // TODO: handle exception}\n}
 }
