@@ -45,7 +45,7 @@
 
    #+begin_src emacs-lisp
      (setq find-function-C-source-directory
-           (expand-file-name "~/.emacs.d/emacs-sources"))
+           (expand-file-name "~/.emacs.d/emacs-sources/src"))
    #+end_src
 
 ** Load path

@@ -25,3 +25,6 @@
 [submodule "src/ensime"]
 	path = src/ensime
 	url = https://github.com/fgeller/ensime.git
+[submodule "emacs-sources"]
+	path = emacs-sources
+	url = https://github.com/emacsmirror/emacs.git

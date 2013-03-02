@@ -21,7 +21,6 @@ auto-save-list
 /init.el
 /srecode-map.el
 /org-clock-save.el
-/emacs-sources
 /.mc-lists.el
 /semanticdb
 /ede-projects.el
