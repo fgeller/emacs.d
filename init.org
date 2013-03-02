@@ -39,6 +39,14 @@
      (setenv "EDITOR" "emacsclient")
    #+end_src
 
+** Paging
+
+   Default to cat, i.e., no paging.
+
+   #+begin_src emacs-lisp
+     (setenv "PAGER" "cat")
+   #+end_src
+
 ** Sources path
 
    Where to find Emacs' sources.
