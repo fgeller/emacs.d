@@ -2005,7 +2005,6 @@
    #+begin_src emacs-lisp
      (eval-after-load 'magit
        '(progn
-          (define-key magit-status-mode-map (kbd "^") 'c/magit-full-push-repository)
           (define-key magit-status-mode-map (kbd "W") 'c/magit-toggle-whitespace)
           (define-key magit-status-mode-map (kbd "q") 'c/magit-quit-session)
           ))
@@ -2805,23 +2804,6 @@
    #+begin_src emacs-lisp
      (defun c/magit-log-edit-initialization () (auto-fill-mode 1))
      (add-hook 'magit-log-edit-mode-hook 'c/magit-log-edit-initialization)
-   #+end_src
-
-   Helper to push (via hg-git) from a status buffer.
-
-   #+begin_src emacs-lisp
-     (defun c/magit-full-push-repository ()
-       (interactive)
-       (let* ((repo-path (magit-get-top-dir default-directory))
-              (repo-name (file-name-nondirectory (directory-file-name repo-path))))
-         (message "Starting full-push of %s" repo-name)
-         (let ((sentinel (lambda (process event)
-                           (todochiku-message (format "%s %s" process event)
-                                              (format "Process %s received event %s." process event)
-                                              (todochiku-icon 'alert))))
-               (proc (start-process (format "full-push" repo-name) "*full-push*"
-                                    "bash" (expand-file-name "~/bin/full-push") repo-name)))
-           (set-process-sentinel proc sentinel))))
    #+end_src
 
    @magnars helpers to toggle whitespace handling in a magit-status buffer [19].
