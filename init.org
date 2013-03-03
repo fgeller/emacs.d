@@ -204,6 +204,7 @@
    #+begin_src emacs-lisp
      (setq c/elpa-packages '(
                              auto-complete
+                             ace-jump-mode
                              back-button
                              calfw
                              coffee-mode
@@ -1617,6 +1618,12 @@
      (define-key global-map (kbd "C-,") 'c/pop-local-mark)
    #+end_src
 
+   Short-distance jumping to chars.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+   #+end_src
+
 ** C-c Map
 
    Start different kinds of shells
@@ -1987,6 +1994,7 @@
           (define-key org-mode-map (kbd "C-.") nil)
           (define-key org-mode-map (kbd "C-,") nil)
           (define-key org-mode-map (kbd "C-c .") nil)
+          (define-key org-mode-map (kbd "C-c SPC") nil)
           (define-key org-mode-map (kbd "C-c ,") nil)
           (define-key org-mode-map (kbd "C-c *") nil)
           (define-key org-mode-map (kbd "C-c &") 'org-mark-ring-goto)
