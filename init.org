@@ -2275,7 +2275,7 @@
            (string-match "\\([0-9]+\\)/\\([0-9]+\\)" flymake-mode-line-e-w)
            (let ((error-str (match-string 1 flymake-mode-line-e-w))
                  (warn-str (match-string 2 flymake-mode-line-e-w)))
-             (concat " τ:" (propertize error-str 'face 'flymake-errline) "," (propertize warn-str 'face 'flymake-warnline))))))
+             (concat " t:" (propertize error-str 'face 'flymake-errline) "," (propertize warn-str 'face 'flymake-warnline))))))
    #+end_src
 
    Propertized mode-line string that shows special symbols to
@@ -2305,9 +2305,6 @@
                                              ;  mode-name
        (list
         (propertize "%[" 'help-echo "Recursive edit, type C-M-c to get out")
-        `(:propertize ("" mode-name)
-                      mouse-face mode-line-highlight
-                      local-map ,mode-line-major-mode-keymap)
         (propertize "%n" 'help-echo "mouse-2: Remove narrowing from the current buffer"
                     'mouse-face 'mode-line-highlight
                     'local-map (make-mode-line-mouse-map
@@ -2316,11 +2313,10 @@
         )
        '(:eval (c/mode-line-compilation))
        '(:eval (when (fboundp 'ensime-modeline-string) (ensime-modeline-string)))
-       '(vc-mode vc-mode)
        '(:eval (c/mode-line-flymake))
        ""
        mode-line-client
-       " ⌚ "
+       " "
        '(:eval (when (and (boundp 'org-mode-line-string) (org-clocking-p)) org-mode-line-string))
        )
       )
