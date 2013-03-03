@@ -1500,12 +1500,6 @@
 
    Monkey-patch ENSIME, to only recognize Build.scala as an sbt root indicator.
 
-   #+begin_src emacs-lisp
-     (eval-after-load 'ensime-sbt
-       '(defun ensime-sbt-project-dir-p (path)
-          (file-exists-p (concat path "/project/Build.scala" ))))
-   #+end_src
-
    Tell ENSIME to behave and not override my auto-complete settings.
 
    #+begin_src emacs-lisp
