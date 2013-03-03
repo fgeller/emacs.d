@@ -242,7 +242,6 @@
                              php+-mode
                              pointback
                              popup ;; for auto-complete
-                             popwin
                              pretty-symbols-mode
                              rainbow-mode
                              s
@@ -317,14 +316,6 @@
 
     #+begin_src emacs-lisp
       (require 's)
-    #+end_src
-
-**** popwin
-
-    Manage popup windows.
-
-    #+begin_src emacs-lisp
-      (require 'popwin)
     #+end_src
 
 **** edit-server
@@ -1623,10 +1614,10 @@
    Start different kinds of shells
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c se") 'c/popwin-shell-eshell)
+     (define-key global-map (kbd "C-c se") 'eshell)
      (define-key global-map (kbd "C-c sl") 'slime)
      (define-key global-map (kbd "C-c sp") 'python-shell-switch-to-shell)
-     (define-key global-map (kbd "C-c ss") 'c/popwin-shell-shell)
+     (define-key global-map (kbd "C-c ss") 'shell)
    #+end_src
 
    Enable / disable modes
@@ -1634,7 +1625,6 @@
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c ma") 'auto-complete-mode)
      (define-key global-map (kbd "C-c mc") 'c/open-calendar)
-     (define-key global-map (kbd "C-c md") 'c/popwin-dired)
      (define-key global-map (kbd "C-c mf") 'flymake-mode)
      (define-key global-map (kbd "C-c mg") 'rgrep)
      (define-key global-map (kbd "C-c mi") 'highlight-indentation-mode)
@@ -1777,12 +1767,6 @@
        (make-repeatable-command 'back-button-local))
      (define-key global-map (kbd "C-x T")
        (make-repeatable-command 'back-button-global))
-   #+end_src
-
-   Bind popwin's map.
-
-   #+begin_src emacs-lisp
-     (global-set-key (kbd "C-x wp") popwin:keymap)
    #+end_src
 
 ** goto Map (M-g)
@@ -2331,48 +2315,6 @@
 
    #+begin_src emacs-lisp
      (winner-mode 1)
-   #+end_src
-
-*** popwin
-
-   Use popwin for managing popups.
-
-   #+begin_src emacs-lisp
-     (setq display-buffer-function 'popwin:display-buffer)
-   #+end_src
-
-   Helpers to start shells. Not sure why `popwin:special-display-config' doesn't
-   work here. Based on `popwin-term:term'.
-
-   #+begin_src emacs-lisp
-     (defun c/popwin-shell (fun-name)
-       (popwin:display-buffer-1
-        (save-window-excursion
-          (call-interactively fun-name))
-        :default-config-keywords '(:position :bottom)))
-     (defun c/popwin-shell-shell () (interactive) (c/popwin-shell 'shell))
-     (defun c/popwin-shell-eshell () (interactive) (c/popwin-shell 'eshell))
-   #+end_src
-
-   Helper to start dired via popwin.
-
-   #+begin_src emacs-lisp
-     (defun c/popwin-dired ()
-       (interactive)
-       (popwin:display-buffer-1
-        (save-window-excursion
-          (dired-noselect (or default-directory (expand-file-name "~/"))  nil))
-        :default-config-keywords '(:position :left :width 40)))
-   #+end_src
-
-   What buffers/windows should be handled as popups.
-
-   #+begin_src emacs-lisp
-     (push '("\\*\\(c/\\)?helm[ a-zA-Z0-9_-]*\\*" :regexp t :height 15) popwin:special-display-config)
-     (push '("\\*magit-edit-log\\*" :regexp t :height 15)               popwin:special-display-config)
-     (push '(grep-mode :noselect nil)                                   popwin:special-display-config)
-     (push '(occur-mode :noselect nil)                                  popwin:special-display-config)
-     (push '("\\*Inspector\\*" :regexp t :position left :width 80)      popwin:special-display-config)
    #+end_src
 
 * Buffers and sessions
