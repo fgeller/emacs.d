@@ -1986,6 +1986,18 @@
           (define-key org-mode-map (kbd "C-c C-x C-u") 'c/org-get-chrome-link)))
    #+end_src
 
+** Eshell
+
+   Eshell's mode map seems to be only activated when in an eshell buffer,
+   therefore hook into buffer setup for (un)binding keys.
+
+   #+begin_src emacs-lisp
+     (defun c/eshell-bindings ()
+       (define-key eshell-mode-map (kbd "C-c C-x") nil)
+       (define-key eshell-mode-map (kbd "C-c SPC") nil))
+     (add-hook 'eshell-mode-hook 'c/eshell-bindings)
+   #+end_src
+
 ** Magit
 
    #+begin_src emacs-lisp
