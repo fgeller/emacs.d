@@ -2797,7 +2797,7 @@
    We like word-based diffs.
 
    #+begin_src emacs-lisp
-     (setq magit-diff-refine-hunk 'all)
+     (setq magit-diff-refine-hunk t)
    #+end_src
 
 * TRAMP
