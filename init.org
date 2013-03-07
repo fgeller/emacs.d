@@ -654,7 +654,7 @@
     Limit menu height
 
     #+begin_src emacs-lisp
-      (setq ac-menu-height 5)
+      (setq ac-menu-height 0)
     #+end_src
 
     Start completion after x characters have been inserted
@@ -2207,10 +2207,10 @@
      (setq c/variable-width-font-family "Calibri")
      (setq c/variable-width-font-height 180)
      (setq c/mono-space-font-family "Consolas")
-     (setq c/mono-space-font-height 160)
+     (setq c/mono-space-font-height 170)
      (set-face-attribute 'default nil
-                         :family c/mono-space-font-family
-                         :height c/mono-space-font-height
+                         :family c/variable-width-font-family
+                         :height c/variable-width-font-height
                          :weight 'normal
                          )
    #+end_src
@@ -2234,11 +2234,13 @@
 
    Use monospace for some modes.
 
-   #+begin_src emacs-lisp :tangle no
+   #+begin_src emacs-lisp :tangle yes
      (add-hook 'calendar-mode-hook 'c/set-mono-space-font)
-     (add-hook 'notmuch-hello-mode-hook 'c/set-mono-space-font)
-     (add-hook 'notmuch-search-hook 'c/set-mono-space-font)
+     (add-hook 'magit-log-mode-hook 'c/set-mono-space-font)
+     (add-hook 'eshell-mode-hook 'c/set-mono-space-font)
      (add-hook 'term-mode-hook 'c/set-mono-space-font)
+     (add-hook 'sql-login-hook 'c/set-mono-space-font)
+     (add-hook 'gnus-summary-mode-hook 'c/set-mono-space-font)
    #+end_src
 
 ** Theme
@@ -3018,7 +3020,7 @@
     Do show tags in the agenda.
 
     #+begin_src emacs-lisp
-      (setq org-agenda-remove-tags nil)
+      (setq org-agenda-remove-tags t)
     #+end_src
 
     Flush them to column 100.
