@@ -787,11 +787,13 @@
 
 ** grep
 
-   Ignore virtualenv folders (typically named =env=)
+   More files and folders that can be ignored.
 
    #+begin_src emacs-lisp
-     (add-to-list 'grep-find-ignored-directories "env")
-     (add-to-list 'grep-find-ignored-directories ".ensime_lucene")
+     (dolist (filename '("GPATH" "GRTAGS" "GTAGS"))
+             (add-to-list 'grep-find-ignored-files filename))
+     (dolist (dirname '("env" ".ensime_lucene" "target"))
+             (add-to-list 'grep-find-ignored-directories dirname))
    #+end_src
 
    Use GNU find an Mac OS (via homebrew)
