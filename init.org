@@ -1504,7 +1504,6 @@
    #+begin_src emacs-lisp
      (defun c/scala-mode-initialization ()
        (subword-mode 1)
-       (fci-mode 1)
        (setq tab-width 2))
      (add-hook 'scala-mode-hook 'c/scala-mode-initialization)
    #+end_src
