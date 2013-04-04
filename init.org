@@ -805,24 +805,6 @@
        (grep-apply-setting 'grep-find-template "find . <X> -type f <F> -exec grep <C> -nH -e <R> {} +"))
    #+end_src
 
-   Wrapper to =rgrep= to set =default-directory= to the (guessed) project root.
-
-   #+begin_src emacs-lisp
-     (defun c/rgrep-from-project-root ()
-       (interactive)
-       (let ((default-directory (c/guess-project-root)))
-         (call-interactively 'rgrep)))
-   #+end_src
-
-   Appearance of the results buffer.
-
-   #+begin_src emacs-lisp
-     (setq
-      grep-highlight-matches t
-      grep-scroll-output t
-      )
-   #+end_src
-
 ** ispell
 
    Use aspell on Mac OS.
