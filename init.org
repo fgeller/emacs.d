@@ -2435,6 +2435,13 @@
 
 ** Configuration
 
+   Quick, quiiiiick!
+
+   #+begin_src emacs-lisp
+     (setq helm-idle-delay 0.01)
+     (setq helm-input-idle-delay 0.01)
+   #+end_src
+
    Don't fill in single matches when selecting files.
 
    #+begin_src emacs-lisp
