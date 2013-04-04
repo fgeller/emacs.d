@@ -967,11 +967,16 @@
 
    #+begin_src emacs-lisp
      (defun c/compilation-buffer-name-function (mode-name)
-       ; `thisdir' and `command' are bound in calling function `compilation-start'
-       (format "*%s: %s*"
-               (file-name-nondirectory (directory-file-name thisdir))
-               command))
-
+       ;; `thisdir' and `command' are bound in calling function `compilation-start'
+       (let ((dir (file-name-nondirectory (directory-file-name thisdir))))
+         (if (string-equal "grep" mode-name)
+             (let ((pattern (progn
+                              (string-match "find .+grep.+-nH -e \\(.+\\) {}.*" command)
+                              (match-string 1 command))))
+               (format "*%s> grep [%s]" dir pattern))
+           (format "*%> %s*"
+                   dir
+                   command))))
      (setq compilation-buffer-name-function 'c/compilation-buffer-name-function)
    #+end_src
 
