@@ -2153,7 +2153,7 @@
      (tool-bar-mode -1)
      (setq-default
       blink-cursor-delay 0
-      blink-cursor-interval 0.5
+      blink-cursor-interval 0.2
       use-file-dialog nil
       use-dialog-box nil
       inhibit-startup-screen t
