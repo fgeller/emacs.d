@@ -252,6 +252,7 @@
                              todochiku
                              undo-tree
                              uuid
+                             visual-regexp
                              wgrep
                              yasnippet
                              ))
@@ -438,6 +439,13 @@
 
     #+begin_src emacs-lisp
       (autoload 'flymake-json-load "flymake-json" "" t)
+    #+end_src
+
+    Visual feedback when replacing regular expressions.
+
+    #+begin_src emacs-lisp
+      (autoload 'vr/replace "visual-regexp" "" t)
+      (autoload 'vr/query-replace "visual-regexp" "" t)
     #+end_src
 
 * Text editing
@@ -1894,7 +1902,7 @@
      (define-key global-map (kbd "C-c *") (make-repeatable-command 'c/duplicate-line))
      (define-key global-map (kbd "C-c ^") (make-repeatable-command 'join-line))
      (define-key global-map (kbd "C-c q") 'query-replace)
-     (define-key global-map (kbd "C-c Q") 'query-replace-regexp)
+     (define-key global-map (kbd "C-c Q") 'vr/query-replace)
      (define-key global-map (kbd "M-y") 'helm-show-kill-ring)
      (define-key global-map (kbd "C-c |") 'mc/edit-lines)
    #+end_src
