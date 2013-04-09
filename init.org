@@ -2236,6 +2236,7 @@
      (add-hook 'calendar-mode-hook 'c/set-mono-space-font)
      (add-hook 'magit-log-mode-hook 'c/set-mono-space-font)
      (add-hook 'eshell-mode-hook 'c/set-mono-space-font)
+     (add-hook 'shell-mode-hook 'c/set-mono-space-font)
      (add-hook 'term-mode-hook 'c/set-mono-space-font)
      (add-hook 'sql-login-hook 'c/set-mono-space-font)
      (add-hook 'gnus-summary-mode-hook 'c/set-mono-space-font)
