@@ -2207,8 +2207,8 @@
      (setq c/mono-space-font-family "Consolas")
      (setq c/mono-space-font-height 170)
      (set-face-attribute 'default nil
-                         :family c/variable-width-font-family
-                         :height c/variable-width-font-height
+                         :family c/mono-space-font-family
+                         :height c/mono-space-font-height
                          :weight 'normal
                          )
    #+end_src
