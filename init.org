@@ -1634,11 +1634,35 @@
      (define-key global-map (kbd "C-c mj") 'jumper-line-mode)
    #+end_src
 
+   Helpers to toggle the contents of the mode-line for less noise.
+
+   #+begin_src emacs-lisp
+     (defun c/hide-mode-line ()
+       "Clears the mode-line format string and decreases the face height."
+       (interactive)
+       (setq-default mode-line-format "")
+       (set-face-attribute 'mode-line nil :height 0.1))
+
+     (defun c/show-mode-line ()
+       "Restores the mode-line format string and face height to the default settings."
+       (interactive)
+       (setq-default mode-line-format c/mode-line-format)
+       (set-face-attribute 'mode-line nil :height (face-attribute 'default :height)))
+
+     (defun c/toggle-mode-line ()
+       "Globally toggles the modeline by clearing the format string."
+       (interactive)
+       (if (eq "" mode-line-format)
+           (c/show-mode-line)
+         (c/hide-mode-line)))
+   #+end_src
+
    Toggle functions
 
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c M-t d") (make-repeatable-command 'toggle-debug-on-error))
      (define-key global-map (kbd "C-c M-t l") (make-repeatable-command 'toggle-truncate-lines))
+     (define-key global-map (kbd "C-c M-t m") (make-repeatable-command 'c/toggle-mode-line))
    #+end_src
 
    Formatting helpers
@@ -2283,34 +2307,33 @@
    Less noise in the mode-line. Based on several sources [2]
 
    #+begin_src emacs-lisp
-     (setq-default
-      mode-line-format
-      (list
-       " "
-       'mode-line-mule-info ;; Info about the active input method and coding-system
-       'mode-line-remote ;; Small indicator for tramp'ed files
-       '(:eval (propertize "%b" 'face 'mode-line-buffer-id)) ;; buffer name
-       '(:eval (when buffer-read-only (propertize "%" 'face 'mode-line)))
-       '(:eval (when (buffer-modified-p) (propertize "*" 'face 'mode-line-highlight)))
-       (propertize " %l:%c %p/%I " 'face 'mode-line) ;; line
-                                             ;  mode-name
+     (defvar c/mode-line-format
        (list
-        (propertize "%[" 'help-echo "Recursive edit, type C-M-c to get out")
-        (propertize "%n" 'help-echo "mouse-2: Remove narrowing from the current buffer"
-                    'mouse-face 'mode-line-highlight
-                    'local-map (make-mode-line-mouse-map
-                                'mouse-2 #'mode-line-widen))
-        (propertize "%]" 'help-echo "Recursive edit, type C-M-c to get out")
+        " "
+        'mode-line-mule-info ;; Info about the active input method and coding-system
+        'mode-line-remote ;; Small indicator for tramp'ed files
+        '(:eval (propertize "%b" 'face 'mode-line-buffer-id)) ;; buffer name
+        '(:eval (when buffer-read-only (propertize "%" 'face 'mode-line)))
+        '(:eval (when (buffer-modified-p) (propertize "*" 'face 'mode-line-highlight)))
+        (propertize " %l:%c %p/%I " 'face 'mode-line) ;; line
+                                             ;  mode-name
+        (list
+         (propertize "%[" 'help-echo "Recursive edit, type C-M-c to get out")
+         (propertize "%n" 'help-echo "mouse-2: Remove narrowing from the current buffer"
+                     'mouse-face 'mode-line-highlight
+                     'local-map (make-mode-line-mouse-map
+                                 'mouse-2 #'mode-line-widen))
+         (propertize "%]" 'help-echo "Recursive edit, type C-M-c to get out")
+         )
+        '(:eval (c/mode-line-compilation))
+        '(:eval (when (fboundp 'ensime-modeline-string) (ensime-modeline-string)))
+        '(:eval (c/mode-line-flymake))
+        ""
+        mode-line-client
+        " "
+        '(:eval (when (and (boundp 'org-mode-line-string) (org-clocking-p)) org-mode-line-string))
         )
-       '(:eval (c/mode-line-compilation))
-       '(:eval (when (fboundp 'ensime-modeline-string) (ensime-modeline-string)))
-       '(:eval (c/mode-line-flymake))
-       ""
-       mode-line-client
-       " "
-       '(:eval (when (and (boundp 'org-mode-line-string) (org-clocking-p)) org-mode-line-string))
-       )
-      )
+       "Low noise mode-line format.")
    #+end_src
 
 ** Buffer Name
@@ -2598,6 +2621,12 @@
 
      (add-hook 'eshell-pre-command-hook  'c/eshell-rename-buffer-before-command)
      (add-hook 'eshell-post-command-hook 'c/eshell-rename-buffer-after-command)
+   #+end_src
+
+   Don't try to access the mode-line, we want control over that.
+
+   #+begin_src emacs-lisp
+     (setq eshell-status-in-mode-line nil)
    #+end_src
 
 *** Visual commands
