@@ -984,7 +984,7 @@
                               (string-match "find .+grep.+-nH -e \\(.+\\) {}.*" command)
                               (match-string 1 command))))
                (format "*%s> grep [%s]" dir pattern))
-           (format "*%> %s*"
+           (format "*%s> %s*"
                    dir
                    command))))
      (setq compilation-buffer-name-function 'c/compilation-buffer-name-function)
