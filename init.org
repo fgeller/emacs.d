@@ -3379,15 +3379,112 @@
         '(setq gnus-select-method '(nntp "Gmane" (nntp-address "news.gmane.org"))))
     #+end_src
 
+**** User configuration
+
+     Fixes the "From" header, based on the "Delivered-To" header. Defaults to
+     value of =user-mail-address=.
+
+     #+begin_src emacs-lisp
+       (setq gnus-posting-styles
+             '((""
+                ("From" (save-excursion
+                          (or (and (get-buffer gnus-article-buffer)
+                                   (set-buffer gnus-article-buffer)
+                                   (let ((delivered-to))
+                                     (gnus-summary-toggle-header 1)
+                                     (setq delivered-to (message-fetch-field "Delivered-To"))
+                                     (gnus-summary-toggle-header -1)
+                                     delivered-to))
+                              user-mail-address)))
+                ("Reply-To" (save-excursion
+                              (or (and (get-buffer gnus-article-buffer)
+                                       (set-buffer gnus-article-buffer)
+                                       (let ((delivered-to))
+                                         (gnus-summary-toggle-header 1)
+                                         (setq delivered-to (message-fetch-field "Delivered-To"))
+                                         (gnus-summary-toggle-header -1)
+                                         delivered-to))
+                                  user-mail-address))))))
+     #+end_src
+
+**** Looks
+
+    No annoying separator.
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'gnus
+        '(progn
+           (setq gnus-treat-body-boundary nil)))
+    #+end_src
+
+    Sort everything via topics.
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'gnus
+        '(add-hook 'gnus-group-mode-hook 'gnus-topic-mode))
+    #+end_src
+
+    Summary line look.
+
+    #+begin_src emacs-lisp
+      (setq gnus-summary-line-format
+            (concat "%z%U%R %~(max-right 17)~(pad-right 17)&user-date;  "
+                    "%~(max-right 20)~(pad-right 20)f %B%s\n"))
+    #+end_src
+
+    Group buffer line look.
+
+    #+begin_src emacs-lisp
+      (setq gnus-group-line-format "%S%p[%8t]\t%P%5y:%B%(%g%)%O\n")
+    #+end_src
+
+    Tons of special characters based on and copied from Julien Dang [29].
+
+    #+begin_src emacs-lisp
+      (setq gnus-summary-to-prefix "→"
+            gnus-summary-newsgroup-prefix "⇶"
+            gnus-ticked-mark ?⚑
+            gnus-dormant-mark ?⚐
+            gnus-expirable-mark ?♻
+            gnus-read-mark ?✓
+            gnus-del-mark ?✗
+            gnus-killed-mark ?☠
+            gnus-replied-mark ?↺
+            gnus-forwarded-mark ?↪
+            gnus-cached-mark ?☍
+            gnus-recent-mark ?✩
+            gnus-unseen-mark ?★
+            gnus-unread-mark ?✉
+            gnus-score-below-mark ?↓
+            gnus-sum-thread-tree-false-root " ◌ "
+            gnus-sum-thread-tree-single-indent "· "
+            gnus-sum-thread-tree-indent "   "
+            gnus-sum-thread-tree-root "· "
+            gnus-sum-thread-tree-leaf-with-other "├─▸ "
+            gnus-sum-thread-tree-single-leaf "└─▸ "
+            gnus-sum-thread-tree-vertical "│ ")
+    #+end_src
+
+    Turn on gravatar!
+
+    #+begin_src emacs-lisp
+      (setq gnus-treat-from-gravatar 'head)
+      (setq gnus-treat-mail-gravatar 'head)
+    #+end_src
+
+**** Article display
+
     Commit highlighting from [28].
 
     #+begin_src emacs-lisp
       (eval-after-load 'gnus
         '(progn
            (require 'gnus-article-treat-patch)
-           (setq ft/gnus-article-patch-conditions
-                 '( "^@@ -[0-9]+,[0-9]+ \\+[0-9]+,[0-9]+ @@" ))))TE
+           (setq gnus-article-patch-conditions
+                 '( "^@@ -[0-9]+,[0-9]+ \\+[0-9]+,[0-9]+ @@" ))))
     #+end_src
+
+***** HTML
 
     Toggling between text & HTML if need be.
 
@@ -3398,64 +3495,14 @@
             '("text/html" "image/.*"))
     #+end_src
 
-    Fixes the "From" header, based on the "Delivered-To" header. Defaults to
-    value of =user-mail-address=.
-
-    #+begin_src emacs-lisp
-      (setq gnus-posting-styles
-            '((""
-               ("From" (save-excursion
-                         (or (and (get-buffer gnus-article-buffer)
-                                  (set-buffer gnus-article-buffer)
-                                  (let ((delivered-to))
-                                    (gnus-summary-toggle-header 1)
-                                    (setq delivered-to (message-fetch-field "Delivered-To"))
-                                    (gnus-summary-toggle-header -1)
-                                    delivered-to))
-                             user-mail-address)))
-               ("Reply-To" (save-excursion
-                             (or (and (get-buffer gnus-article-buffer)
-                                      (set-buffer gnus-article-buffer)
-                                      (let ((delivered-to))
-                                        (gnus-summary-toggle-header 1)
-                                        (setq delivered-to (message-fetch-field "Delivered-To"))
-                                        (gnus-summary-toggle-header -1)
-                                        delivered-to))
-                                 user-mail-address))))))
-    #+end_src
-
-    And also mails.
-
-    #+begin_src emacs-lisp
-      (eval-after-load 'gnus
-        '(add-to-list 'gnus-secondary-select-methods
-                      '(nnimap "gmail"
-                               (nnimap-address "imap.gmail.com")
-                               (nnimap-server-port 993)
-                               (nnimap-stream ssl)
-                               (nnimap-authinfo-file (expand-file-name "~/.authinfo.gpg"))
-                               (nnir-search-engine imap))))
-    #+end_src
-
-    And work mails.
-
-    #+begin_src emacs-lisp
-      (eval-after-load 'gnus
-        '(add-to-list 'gnus-secondary-select-methods
-                      '(nnimap "work"
-                               (nnimap-address "imap.gmail.com")
-                               (nnimap-server-port 993)
-                               (nnimap-stream ssl)
-                               (nnimap-authinfo-file (expand-file-name "~/.authinfo.gpg"))
-                               (nnir-search-engine imap))))
-    #+end_src
-
     Let's use w3m for rendering HTML mails.
 
     #+begin_src emacs-lisp
       (eval-after-load 'gnus
         '(setq mm-text-html-renderer 'gnus-w3m))
     #+end_src
+
+**** Mail
 
     Searching mails via nnir.
 
@@ -3464,11 +3511,10 @@
         '(require 'nnir))
     #+end_src
 
-    Sort everything via topics.
+    Don't nag me about reading saved settings.
 
     #+begin_src emacs-lisp
-      (eval-after-load 'gnus
-        '(add-hook 'gnus-group-mode-hook 'gnus-topic-mode))
+      (setq gnus-always-read-dribble-file t)
     #+end_src
 
 ** IRC
@@ -3652,3 +3698,5 @@
 [27] http://www.reddit.com/r/emacs/comments/18qa15/dired_discussion/
 
 [28] http://bewatermyfriend.org/p/2011/00a/
+
+[29] http://git.naquadah.org/?p=~jd/emacs.d.git;a=summary
