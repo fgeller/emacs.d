@@ -235,6 +235,7 @@
                              move-text
                              multiple-cursors
                              multi-term
+                             notmuch
                              org
                              org-mac-link-grabber
                              org-magit
