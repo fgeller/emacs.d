@@ -220,6 +220,7 @@
                              fill-column-indicator
                              flymake
                              flymake-cursor
+                             flymake-easy
                              flymake-jshint
                              flymake-json
                              gtags
