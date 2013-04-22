@@ -1607,6 +1607,13 @@
      (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
    #+end_src
 
+   Beginning and end of buffer.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-c (") 'beginning-of-buffer)
+     (define-key global-map (kbd "C-c )") 'end-of-buffer)
+   #+end_src
+
 ** C-c Map
 
    Start different kinds of shells
