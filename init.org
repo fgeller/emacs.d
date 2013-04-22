@@ -664,7 +664,7 @@
     Limit menu height
 
     #+begin_src emacs-lisp
-      (setq ac-menu-height 0)
+      (setq ac-menu-height 3)
     #+end_src
 
     Start completion after x characters have been inserted
