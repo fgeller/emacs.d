@@ -3388,6 +3388,16 @@
            (setq ft/gnus-article-patch-conditions
                  '( "^@@ -[0-9]+,[0-9]+ \\+[0-9]+,[0-9]+ @@" ))))TE
     #+end_src
+
+    Toggling between text & HTML if need be.
+
+    #+begin_src emacs-lisp
+      (setq gnus-buttonized-mime-types
+            '("multipart/alternative" "multipart/signed")
+            mm-discouraged-alternatives
+            '("text/html" "image/.*"))
+    #+end_src
+
     Fixes the "From" header, based on the "Delivered-To" header. Defaults to
     value of =user-mail-address=.
 
