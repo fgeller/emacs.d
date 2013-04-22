@@ -3379,6 +3379,15 @@
         '(setq gnus-select-method '(nntp "Gmane" (nntp-address "news.gmane.org"))))
     #+end_src
 
+    Commit highlighting from [28].
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'gnus
+        '(progn
+           (require 'gnus-article-treat-patch)
+           (setq ft/gnus-article-patch-conditions
+                 '( "^@@ -[0-9]+,[0-9]+ \\+[0-9]+,[0-9]+ @@" ))))TE
+    #+end_src
     Fixes the "From" header, based on the "Delivered-To" header. Defaults to
     value of =user-mail-address=.
 
@@ -3631,3 +3640,5 @@
 [26] https://github.com/purcell/emacs.d/blob/master/init-windows.el
 
 [27] http://www.reddit.com/r/emacs/comments/18qa15/dired_discussion/
+
+[28] http://bewatermyfriend.org/p/2011/00a/
