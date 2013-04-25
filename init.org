@@ -3564,6 +3564,20 @@
      (add-hook 'erc-text-matched-hook 'c/notify-nick-mentioned)
    #+end_src
 
+   Automatically sign into Bitlbee account [30].
+
+   #+begin_src emacs-lisp
+     (defun c/bitlbee-identify ()
+       "If we're on the bitlbee server, send the identify command to
+      the &bitlbee channel."
+       (when (and (string= "localhost" erc-session-server)
+                  (string= "&bitlbee" (buffer-name)))
+         (erc-message "PRIVMSG" (format "%s identify %s"
+                                        (erc-default-target)
+                                        fg/bitlbee-password))))
+     (add-hook 'erc-join-hook 'c/bitlbee-identify)
+   #+end_src
+
 * Server
 
   Start the server so that we can connect via emacsclient from other
@@ -3684,3 +3698,5 @@
 [28] http://bewatermyfriend.org/p/2011/00a/
 
 [29] http://git.naquadah.org/?p=~jd/emacs.d.git;a=summary
+
+[30] http://www.emacswiki.org/BitlBee
