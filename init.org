@@ -1633,6 +1633,8 @@
 
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c ma") 'auto-complete-mode)
+     (define-key global-map (kbd "C-c mee") 'erc)
+     (define-key global-map (kbd "C-c meb") 'c/erc-bitlbee)
      (define-key global-map (kbd "C-c mf") 'flymake-mode)
      (define-key global-map (kbd "C-c mg") 'rgrep)
      (define-key global-map (kbd "C-c mi") 'highlight-indentation-mode)
@@ -3562,6 +3564,14 @@
            (todochiku-message
             (format "%s mentioned your nick." short-nick) msg (todochiku-icon 'irc) t))))
      (add-hook 'erc-text-matched-hook 'c/notify-nick-mentioned)
+   #+end_src
+
+   Bitlbee shortcut.
+
+   #+begin_src emacs-lisp
+     (defun c/erc-bitlbee ()
+       (interactive)
+       (erc :server "localhost" :port "6667" :nick erc-nick))
    #+end_src
 
    Automatically sign into Bitlbee account [30].
