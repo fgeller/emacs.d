@@ -247,6 +247,7 @@
                              popup ;; for auto-complete
                              pretty-symbols-mode
                              rainbow-mode
+                             rainbow-delimiters
                              s
                              scala-mode2
                              session
@@ -1202,6 +1203,7 @@
         (setq tab-width 8)
         (eldoc-mode 1)
         (paredit-mode 1)
+        (rainbow-delimiters-mode)
         (elisp-slime-nav-mode 1)
         (setq ac-sources (append '(
                                    ac-source-features
@@ -1501,6 +1503,7 @@
 
    #+begin_src emacs-lisp
      (defun c/scala-mode-initialization ()
+       (rainbow-delimiters-mode)
        (subword-mode 1)
        (setq tab-width 2))
      (add-hook 'scala-mode-hook 'c/scala-mode-initialization)
