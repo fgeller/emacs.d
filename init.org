@@ -206,7 +206,6 @@
                              auto-complete
                              ace-jump-mode
                              back-button
-                             calfw
                              coffee-mode
                              diff-hl
                              dired+
@@ -1631,7 +1630,6 @@
 
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c ma") 'auto-complete-mode)
-     (define-key global-map (kbd "C-c mc") 'c/open-calendar)
      (define-key global-map (kbd "C-c mf") 'flymake-mode)
      (define-key global-map (kbd "C-c mg") 'rgrep)
      (define-key global-map (kbd "C-c mi") 'highlight-indentation-mode)
@@ -2266,7 +2264,6 @@
    Use monospace for some modes.
 
    #+begin_src emacs-lisp :tangle yes
-     (add-hook 'calendar-mode-hook 'c/set-mono-space-font)
      (add-hook 'magit-log-mode-hook 'c/set-mono-space-font)
      (add-hook 'eshell-mode-hook 'c/set-mono-space-font)
      (add-hook 'shell-mode-hook 'c/set-mono-space-font)
@@ -3563,23 +3560,6 @@
             (format "%s mentioned your nick." short-nick) msg (todochiku-icon 'irc) t))))
      (add-hook 'erc-text-matched-hook 'c/notify-nick-mentioned)
    #+end_src
-
-** Calendar
-*** calfw
-
-    Helper to produce calendar from multiple sources [8].
-
-    #+begin_src emacs-lisp
-      (defun c/open-calendar ()
-        (interactive)
-        (require 'calfw-ical)
-        (require 'calfw-org)
-        (cfw:open-calendar-buffer
-         :contents-sources
-         (list
-          (cfw:org-create-source "#728a05")
-          (cfw:ical-create-source "gcal" fg/gcal-ics "#2075c7"))))
-    #+end_src
 
 * Server
 
