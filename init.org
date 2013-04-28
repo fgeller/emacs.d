@@ -1491,8 +1491,6 @@
       (add-to-list 'auto-mode-alist '("\\.scala\\'" . scala-mode))
     #+end_src
 
-   Monkey-patch ENSIME, to only recognize Build.scala as an sbt root indicator.
-
    Tell ENSIME to behave and not override my auto-complete settings.
 
    #+begin_src emacs-lisp
