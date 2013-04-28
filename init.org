@@ -1517,6 +1517,24 @@
          (c/expand-region-command-group)))
    #+end_src
 
+   Helpers to send actions to SBT process.
+
+   #+begin_src emacs-lisp
+     (defvar c/ensime-last-sbt-command nil "Last command that was sent to SBT process")
+     (defun c/ensime-send-sbt-command (command)
+       "Send COMMAND as an action to the associated SBT process."
+       (interactive "sCommand: ")
+       (setq c/ensime-last-sbt-command command)
+       (ensime-sbt-action c/ensime-last-sbt-command))
+
+     (defun c/ensime-resend-last-sbt-command ()
+       "Resend commands that was last sent to associated SBT process."
+       (interactive)
+       (if c/ensime-last-sbt-command
+           (ensime-sbt-action  c/ensime-last-sbt-command)
+         (message "Last SBT was not set, don't know what to send.")))
+   #+end_src
+
 ** PHP
 
    Let's use php+.
@@ -2163,6 +2181,15 @@
             (define-key scala-mode-map (kbd "C-c C-i c") 'ensime-config-gen)
             (define-key scala-mode-map (kbd "C-c C-i r") 'ensime-inf-eval-region)
             (define-key scala-mode-map (kbd "C-c C-i b") 'ensime-inf-eval-buffer)))
+     #+end_src
+
+     Bindings for sending actions to SBT process.
+
+     #+begin_src emacs-lisp
+       (eval-after-load 'ensime
+         '(progn
+            (define-key ensime-mode-map (kbd "C-c C-b b") 'c/ensime-resend-last-sbt-command)
+            (define-key ensime-mode-map (kbd "C-c C-b B") 'c/ensime-send-sbt-command)))
      #+end_src
 
      Bind ENSIME's selection expansion/contraction mechanism to the same key as
