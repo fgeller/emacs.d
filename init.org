@@ -2680,6 +2680,24 @@
      (setq eshell-status-in-mode-line nil)
    #+end_src
 
+   Print latest entries in dir-ring after directory change.
+
+   #+begin_src emacs-lisp
+     (defvar c/eshell-print-dir-ring-limit 5 "The number of ring entries that will be printed")
+     (defun c/eshell-print-dir-ring ()
+       "Shamelessly copied from `eshell/cd' and modified to fit my needs."
+       (let* ((len (ring-length eshell-last-dir-ring))
+              (index (min len (1- c/eshell-print-dir-ring-limit))))
+         (eshell-init-print-buffer)
+         (while (>= index 0)
+           (eshell-buffered-print
+            (concat (number-to-string index) ": "
+                    (ring-ref eshell-last-dir-ring index) "\n"))
+           (setq index (1- index)))
+         (eshell-flush)))
+     (add-hook 'eshell-directory-change-hook 'c/eshell-print-dir-ring)
+   #+end_src
+
 *** Visual commands
 
     Specify commands that should be handled by a term.
