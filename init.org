@@ -2791,7 +2791,7 @@
 ** Shell
 
    #+begin_src emacs-lisp
-     (setq shell-file-name "/bin/zsh")
+     (setq shell-file-name "/usr/local/bin/bash")
    #+end_src
 
    Adds basic shell-mode per buffer customization.
