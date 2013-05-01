@@ -1538,7 +1538,7 @@
        "Find the next class name backwards and send a test-only
      command to SBT process."
        (interactive)
-       (let* ((class-name (c/find-backward "class \\(.+?\\)\\( \\|(\\)"))
+       (let* ((class-name (c/find-backward "^class \\(.+?\\)\\( \\|(\\)"))
               (sbt-action (format "test-only *%s" class-name)))
          (c/ensime-send-sbt-command sbt-action)))
    #+end_src
