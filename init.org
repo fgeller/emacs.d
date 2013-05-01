@@ -1533,6 +1533,14 @@
        (if c/ensime-last-sbt-command
            (ensime-sbt-action  c/ensime-last-sbt-command)
          (message "Last SBT was not set, don't know what to send.")))
+
+     (defun c/ensime-run-current-test-suite ()
+       "Find the next class name backwards and send a test-only
+     command to SBT process."
+       (interactive)
+       (let* ((class-name (c/find-backward "class \\(.+?\\)\\( \\|(\\)"))
+              (sbt-action (format "test-only *%s" class-name)))
+         (c/ensime-send-sbt-command sbt-action)))
    #+end_src
 
 ** PHP
@@ -2189,7 +2197,8 @@
        (eval-after-load 'ensime
          '(progn
             (define-key ensime-mode-map (kbd "C-c C-b b") 'c/ensime-resend-last-sbt-command)
-            (define-key ensime-mode-map (kbd "C-c C-b B") 'c/ensime-send-sbt-command)))
+            (define-key ensime-mode-map (kbd "C-c C-b B") 'c/ensime-send-sbt-command)
+            (define-key ensime-mode-map (kbd "C-c C-b t") 'c/ensime-run-current-test-suite)))
      #+end_src
 
      Bind ENSIME's selection expansion/contraction mechanism to the same key as
