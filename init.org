@@ -2384,6 +2384,8 @@
         '(:eval (c/mode-line-compilation))
         '(:eval (when (fboundp 'ensime-modeline-string) (ensime-modeline-string)))
         '(:eval (c/mode-line-flymake))
+        '(t erc-modified-channels-object)
+        mode-line-misc-info
         ""
         mode-line-client
         " "
