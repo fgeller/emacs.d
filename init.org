@@ -2350,6 +2350,16 @@
         (t mode-line-process)))
    #+end_src
 
+   Default setting for mode-line.
+
+   #+begin_src emacs-lisp
+     (defvar c/default-mode-line-format
+       '("%e" mode-line-front-space mode-line-mule-info mode-line-client mode-line-modified mode-line-remote mode-line-frame-identification mode-line-buffer-identification "   " mode-line-position smartrep-mode-line-string
+         (vc-mode vc-mode)
+         "  " mode-line-modes mode-line-misc-info mode-line-end-spaces)
+       "Default built-in mode-line-format.")
+   #+end_src
+
    Less noise in the mode-line. Based on several sources [2]
 
    #+begin_src emacs-lisp
