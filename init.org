@@ -2388,8 +2388,6 @@
         mode-line-misc-info
         ""
         mode-line-client
-        " "
-        '(:eval (when (and (boundp 'org-mode-line-string) (org-clocking-p)) org-mode-line-string))
         )
        "Low noise mode-line format.")
    #+end_src
