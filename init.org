@@ -2404,6 +2404,12 @@
        "Low noise mode-line format.")
    #+end_src
 
+   Apply less noisy format.
+
+   #+begin_src emacs-lisp
+     (setq-default mode-line-format c/mode-line-format)
+   #+end_src
+
 ** Buffer Name
 
    #+begin_src emacs-lisp
