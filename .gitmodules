@@ -28,3 +28,6 @@
 [submodule "emacs-sources"]
 	path = emacs-sources
 	url = https://github.com/emacsmirror/emacs.git
+[submodule "themes/noctilux-theme"]
+	path = themes/noctilux-theme
+	url = git@github.com:fgeller/noctilux-theme.git

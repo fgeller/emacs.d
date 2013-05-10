@@ -2326,10 +2326,10 @@
 
 ** Theme
 
-   Load the solarized theme implementation by @purcell.
+   Load the theme that I currently like.
 
    #+begin_src emacs-lisp
-     (require 'color-theme-sanityinc-solarized)
+     (load-theme 'noctilux t)
    #+end_src
 
 ** Mode-line
