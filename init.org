@@ -74,6 +74,18 @@
      (add-to-list 'load-path (expand-file-name "~/.emacs.d/src/ensime/dist/elisp"))
    #+end_src
 
+** Themes path
+
+   Add a local themes directory.
+
+   #+begin_src emacs-lisp
+     (let ((themes-directory (expand-file-name "~/.emacs.d/themes")))
+       (dolist (file (directory-files themes-directory))
+         (let ((expanded-file (expand-file-name file themes-directory)))
+           (when (file-directory-p expanded-file)
+             (add-to-list 'custom-theme-load-path expanded-file)))))
+   #+end_src
+
 ** Exec path
 
    Use @purcell's library to fix `exec-path' based an default shell's PATH
