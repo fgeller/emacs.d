@@ -2844,7 +2844,7 @@
 
 * Version Control
 
-  Use solarized colors for annote-goodness.
+  Use solarized colors for annotate-goodness.
 
   #+begin_src emacs-lisp
     (setq vc-annotate-background "#fcf4dc")
