@@ -2324,14 +2324,6 @@
      (add-hook 'gnus-summary-mode-hook 'c/set-mono-space-font)
    #+end_src
 
-** Theme
-
-   Load the theme that I currently like.
-
-   #+begin_src emacs-lisp
-     (load-theme 'noctilux t)
-   #+end_src
-
 ** Mode-line
 
    Propertized mode-line string that shows errors and warnings when
