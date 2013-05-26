@@ -3333,7 +3333,7 @@
 
     #+begin_src emacs-lisp
       (setq org-habit-preceding-days 7)
-      (setq org-habit-show-habits-only-for-today t)
+      (setq org-habit-show-habits-only-for-today nil)
       (setq org-habit-completed-glyph ?.)
       (setq org-habit-today-glyph ?o)
       (setq org-habit-graph-column 60)
