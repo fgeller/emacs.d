@@ -3205,7 +3205,7 @@
           (delete-other-windows)))
 
       (defun c/schedule-jumping-to-agenda ()
-        (run-with-idle-timer 300 t 'c/jump-to-org-agenda))
+        (run-with-idle-timer 600 t 'c/jump-to-org-agenda))
       (add-hook 'org-agenda-mode-hook 'c/schedule-jumping-to-agenda)
     #+end_src
 
