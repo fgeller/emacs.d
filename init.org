@@ -343,6 +343,15 @@
       (require 'edit-server)
     #+end_src
 
+**** guru-mode
+
+     Load and enable guru-mode.
+
+     #+begin_src emacs-lisp
+       (require 'guru-mode)
+       (guru-global-mode 1)
+     #+end_src
+
 *** autoload'ed
 
     Helpers to do rectangle insert inline and mark multiple occurrences of
