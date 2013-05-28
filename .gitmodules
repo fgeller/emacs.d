@@ -1,9 +1,6 @@
 [submodule "src/emacs-flymake"]
 	path = src/emacs-flymake
 	url = https://github.com/illusori/emacs-flymake.git
-[submodule "src/color-theme-sanityinc-solarized"]
-	path = src/color-theme-sanityinc-solarized
-	url = https://github.com/fgeller/color-theme-sanityinc-solarized.git
 [submodule "src/jumper"]
 	path = src/jumper
 	url = https://github.com/fgeller/jumper.git
@@ -31,3 +28,6 @@
 [submodule "themes/noctilux-theme"]
 	path = themes/noctilux-theme
 	url = git@github.com:fgeller/noctilux-theme.git
+[submodule "themes/color-theme-sanityinc-solarized"]
+	path = themes/color-theme-sanityinc-solarized
+	url = https://github.com/fgeller/color-theme-sanityinc-solarized.git
