@@ -3161,10 +3161,10 @@
       (setq org-agenda-span 'day)
     #+end_src
 
-    Do show tags in the agenda.
+    Show tags in the agenda?
 
     #+begin_src emacs-lisp
-      (setq org-agenda-remove-tags t)
+      (setq org-agenda-remove-tags nil)
     #+end_src
 
     Flush them to column 100.
