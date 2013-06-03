@@ -268,6 +268,7 @@
                              pretty-symbols-mode
                              rainbow-mode
                              rainbow-delimiters
+                             request
                              s
                              scala-mode2
                              session
