@@ -2485,6 +2485,13 @@
      (setq auto-revert-verbose nil)
    #+end_src
 
+   Faster polling for file changes.
+
+   #+begin_src emacs-lisp
+     (setq auto-revert-interval 0.5)
+     (auto-revert-set-timer)
+   #+end_src
+
 ** Automatic saving and backing up
 *** Session management
 
