@@ -96,6 +96,14 @@
        (exec-path-from-shell-initialize))
    #+end_src
 
+** Garbage collection
+
+   Increase the defaults.
+
+   #+begin_src emacs-lisp
+     (setq-default gc-cons-threshold (* 8192 8192))
+   #+end_src
+
 * Global helpers
 
   *N.B.*: For many of these, you need the =cl= library.
