@@ -2886,6 +2886,8 @@
 
 ** Shell
 
+   Use BASH.
+
    #+begin_src emacs-lisp
      (setq shell-file-name "/usr/local/bin/bash")
    #+end_src
