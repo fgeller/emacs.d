@@ -2892,10 +2892,19 @@
      (setq shell-file-name "/usr/local/bin/bash")
    #+end_src
 
+   Change =default-directory= based on prompt [32].
+
+   #+begin_src emacs-lisp
+     (defun c/maybe-set-default-directory-from-shell-prompt (text)
+       (when (string-match "^\\([^:\n]+\\): " text)
+         (cd (substring text (match-beginning 1) (match-end 1)))))
+   #+end_src
+
    Adds basic shell-mode per buffer customization.
 
    #+begin_src emacs-lisp
      (defun c/shell-mode-initialization ()
+       (add-hook 'comint-output-filter-functions 'c/maybe-set-default-directory-from-shell-prompt nil t)
        (setq ac-sources (cons 'ac-source-files-in-current-dir ac-sources))
        (auto-complete-mode 1))
      (add-hook 'shell-mode-hook 'c/shell-mode-initialization)
@@ -3836,3 +3845,5 @@
 [30] http://www.emacswiki.org/BitlBee
 
 [31] http://stackoverflow.com/a/14731718/750284
+
+[32] http://www.emacswiki.org/emacs/ShellMode#toc8
