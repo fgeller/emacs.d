@@ -981,6 +981,17 @@
     (add-hook 'prog-mode-hook 'c/prog-mode-initialization)
   #+end_src
 
+  Helper to enable paredit in non-lisp function [33].
+
+  #+begin_src emacs-lisp
+    (defun c/paredit-nonlisp ()
+      "Turn on paredit mode for non-lisps."
+      (interactive)
+      (set (make-local-variable 'paredit-space-for-delimiter-predicates)
+           '((lambda (endp delimiter) nil)))
+      (paredit-mode 1))
+  #+end_src
+
 ** CEDET
 
    Configure semantic's default submodes.
@@ -1547,6 +1558,7 @@
        (rainbow-delimiters-mode)
        (subword-mode 1)
        (setq tab-width 2)
+       (c/paredit-nonlisp)
        (add-hook 'after-save-hook 'c/scalariform-daemon-format-file nil 'make-it-local))
      (add-hook 'scala-mode-hook 'c/scala-mode-initialization)
    #+end_src
@@ -3847,3 +3859,5 @@
 [31] http://stackoverflow.com/a/14731718/750284
 
 [32] http://www.emacswiki.org/emacs/ShellMode#toc8
+
+[33] https://github.com/technomancy/emacs-starter-kit
