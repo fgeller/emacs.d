@@ -485,6 +485,15 @@
 * Text editing
 ** Helper
 
+   Open a new line and indent its contents.
+
+   #+begin_src emacs-lisp
+     (defun c/open-new-line ()
+       (interactive)
+       (save-excursion
+         (newline-and-indent)))
+   #+end_src
+
    Duplicate the current line, below point.
 
    #+begin_src emacs-lisp
@@ -2022,6 +2031,12 @@
    #+end_src
 
 ** Text editing
+
+   Open a new line and indent it.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-o") 'c/open-new-line)
+   #+end_src
 
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c *") (make-repeatable-command 'c/duplicate-line))
