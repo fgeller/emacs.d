@@ -504,6 +504,16 @@
        (copy-from-above-command))
    #+end_src
 
+   Beginning of line, or end of indentation...
+
+   #+begin_src emacs-lisp
+     (defun c/beginning-of-line-dwim ()
+       (interactive)
+       (if (bolp)
+           (back-to-indentation)
+         (beginning-of-line)))
+   #+end_src
+
    Change the number at point incrementally.
 
    #+begin_src emacs-lisp
@@ -2031,6 +2041,12 @@
    #+end_src
 
 ** Text editing
+
+   Beginning of line are end of indentation...
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-a") 'c/beginning-of-line-dwim)
+   #+end_src
 
    Open a new line and indent it.
 
