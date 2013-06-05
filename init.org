@@ -2038,12 +2038,34 @@
      (define-key global-map (kbd "C-o") 'c/open-new-line)
    #+end_src
 
+   Duplicating current line.
+
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c *") (make-repeatable-command 'c/duplicate-line))
+   #+end_src
+
+   Join this line to the previous.
+
+   #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c ^") (make-repeatable-command 'join-line))
+   #+end_src
+
+   Replace strings and regexs.
+
+   #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c q") 'query-replace)
      (define-key global-map (kbd "C-c Q") 'vr/query-replace)
+   #+end_src
+
+   Use helm to show and search the kill-ring.
+
+   #+begin_src emacs-lisp
      (define-key global-map (kbd "M-y") 'helm-show-kill-ring)
+   #+end_src
+
+   Mini macros via multiple-cursors.
+
+   #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c |") 'mc/edit-lines)
    #+end_src
 
