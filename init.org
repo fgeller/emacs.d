@@ -504,14 +504,34 @@
        (copy-from-above-command))
    #+end_src
 
-   Beginning of line, or end of indentation...
+   Beginning of line ⬌ end of indentation helper.
+
+   #+begin_src emacs-lisp
+     (defun c/beginning-of-line-dwim-helper (back-to-indent-fun)
+       (let ((start-point (point))
+             bol-point)
+         (save-excursion
+           (beginning-of-line)
+           (setq bol-point (point)))
+         (if (eq start-point bol-point)
+             (funcall back-to-indent-fun)
+           (beginning-of-line))))
+   #+end_src
+
+   Toggle between =beginning-of-line= and =back-to-indentation=.
 
    #+begin_src emacs-lisp
      (defun c/beginning-of-line-dwim ()
        (interactive)
-       (if (bolp)
-           (back-to-indentation)
-         (beginning-of-line)))
+       (c/beginning-of-line-dwim-helper 'back-to-indentation))
+   #+end_src
+
+   Toggle between =beginning-of-line= and =eshell-bol=.
+
+   #+begin_src emacs-lisp
+     (defun c/eshell-beginning-of-line-dwim ()
+       (interactive)
+       (c/beginning-of-line-dwim-helper 'eshell-bol))
    #+end_src
 
    Change the number at point incrementally.
@@ -2042,7 +2062,7 @@
 
 ** Text editing
 
-   Beginning of line are end of indentation...
+   Beginning of line or end of indentation...
 
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-a") 'c/beginning-of-line-dwim)
@@ -2168,7 +2188,8 @@
    #+begin_src emacs-lisp
      (defun c/eshell-bindings ()
        (define-key eshell-mode-map (kbd "C-c C-x") nil)
-       (define-key eshell-mode-map (kbd "C-c SPC") nil))
+       (define-key eshell-mode-map (kbd "C-c SPC") nil)
+       (define-key eshell-mode-map (kbd "C-a") 'c/eshell-beginning-of-line-dwim))
      (add-hook 'eshell-mode-hook 'c/eshell-bindings)
    #+end_src
 
