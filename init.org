@@ -494,14 +494,41 @@
          (newline-and-indent)))
    #+end_src
 
-   Duplicate the current line, below point.
+   Helpers to duplicate line or region from @magnars [34].
 
    #+begin_src emacs-lisp
-     (defun c/duplicate-line ()
-       (interactive)
-       (forward-line 1)
-       (open-line 1)
-       (copy-from-above-command))
+     (defun c/duplicate-current-line-or-region (arg)
+       "Duplicates the current line or region ARG times.
+     If there's no region, the current line will be duplicated."
+       (interactive "p")
+       (if (region-active-p)
+           (let ((beg (region-beginning))
+                 (end (region-end)))
+             (c/duplicate-region arg beg end))
+         (c/duplicate-current-line arg)))
+
+     (defun c/duplicate-region (&optional num start end)
+       "Duplicates the region bounded by START and END NUM times.
+     If no START and END is provided, the current region-beginning and
+     region-end is used."
+       (interactive "p")
+       (save-excursion
+        (let* ((start (or start (region-beginning)))
+               (end (or end (region-end)))
+               (region (buffer-substring start end)))
+          (goto-char end)
+          (dotimes (i num)
+            (insert region)))))
+
+     (defun c/duplicate-current-line (&optional num)
+       "Duplicate the current line NUM times."
+       (interactive "p")
+       (save-excursion
+        (when (eq (point-at-eol) (point-max))
+          (goto-char (point-max))
+          (newline)
+          (forward-char -1))
+        (c/duplicate-region num (point-at-bol) (1+ (point-at-eol)))))
    #+end_src
 
    Beginning of line ⬌ end of indentation helper.
@@ -2077,7 +2104,7 @@
    Duplicating current line.
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c *") (make-repeatable-command 'c/duplicate-line))
+     (define-key global-map (kbd "C-c *") (make-repeatable-command 'c/duplicate-current-line-or-region))
    #+end_src
 
    Join this line to the previous.
@@ -3935,3 +3962,5 @@
 [32] http://www.emacswiki.org/emacs/ShellMode#toc8
 
 [33] https://github.com/technomancy/emacs-starter-kit
+
+[34] https://github.com/magnars/.emacs.d/blob/master/defuns/editing-defuns.el
