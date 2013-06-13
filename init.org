@@ -361,6 +361,12 @@
        (guru-global-mode 1)
      #+end_src
 
+**** floobits
+
+     #+begin_src emacs-lisp
+       (load "~/.emacs.d/src/floobits/floobits.el")
+     #+end_src
+
 *** autoload'ed
 
     Helpers to do rectangle insert inline and mark multiple occurrences of
