@@ -1826,6 +1826,7 @@
 
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c M-t d") (make-repeatable-command 'toggle-debug-on-error))
+     (define-key global-map (kbd "C-c M-t f") (make-repeatable-command 'c/toggle-mono-space-font-height))
      (define-key global-map (kbd "C-c M-t l") (make-repeatable-command 'toggle-truncate-lines))
      (define-key global-map (kbd "C-c M-t m") (make-repeatable-command 'c/toggle-mode-line))
    #+end_src
@@ -2439,6 +2440,17 @@
 
 ** Fonts
 
+   Helper to set default font face attributes.
+
+   #+begin_src emacs-lisp
+     (defun c/set-default-face-attributes ()
+       (interactive)
+       (set-face-attribute 'default nil
+                           :family c/mono-space-font-family
+                           :height c/mono-space-font-height
+                           :weight 'normal))
+   #+end_src
+
    Set default fonts across frames.
 
    #+begin_src emacs-lisp
@@ -2446,10 +2458,16 @@
      (setq c/variable-width-font-height 180)
      (setq c/mono-space-font-family "Consolas")
      (setq c/mono-space-font-height 170)
-     (set-face-attribute 'default nil
-                         :family c/mono-space-font-family
-                         :height c/mono-space-font-height
-                         :weight 'normal)
+     (c/set-default-face-attributes)
+   #+end_src
+
+   Define helper to toggle between common mono-space font heights.
+
+   #+begin_src emacs-lisp
+     (defun c/toggle-mono-space-font-height ()
+       (interactive)
+       (setq c/mono-space-font-height (if (eq 170 c/mono-space-font-height) 140 170))
+       (c/set-default-face-attributes))
    #+end_src
 
    Define some helpers to switch between variable-width and mono-spaced
