@@ -3531,6 +3531,12 @@
       (setq org-src-fontify-natively t)
     #+end_src
 
+    Load language support.
+
+    #+begin_src emacs-lisp
+      (setq org-babel-load-languages '((emacs-lisp . t) (scala . t)))
+    #+end_src
+
 *** Habits
 
     Low noise settings for habits.
