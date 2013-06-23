@@ -243,6 +243,7 @@
                              flymake-jshint
                              flymake-json
                              gtags
+                             haskell-mode
                              helm
                              helm-git
                              helm-gtags
