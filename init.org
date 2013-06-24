@@ -963,18 +963,6 @@
       (global-diff-hl-mode)
     #+end_src
 
-   Some customization for diff-mode buffers to show whitespace.
-
-   #+begin_src emacs-lisp
-     (defun c/diff-mode-customization ()
-       (interactive)
-       ; need to set this again, as diff-mode thinks it knows my
-       ; preferences better than me.
-       (setq whitespace-style c/whitespace-style)
-       (whitespace-mode))
-     (add-hook 'diff-mode-hook 'c/diff-mode-customization)
-   #+end_src
-
 ** ediff
 
    Split the diff windows horizontally, rather than vertically.
