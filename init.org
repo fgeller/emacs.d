@@ -1811,6 +1811,15 @@
          (c/hide-mode-line)))
    #+end_src
 
+   Define helper to toggle between common mono-space font heights.
+
+   #+begin_src emacs-lisp
+     (defun c/toggle-mono-space-font-height ()
+       (interactive)
+       (setq c/mono-space-font-height (if (eq 170 c/mono-space-font-height) 140 170))
+       (c/set-default-face-attributes))
+   #+end_src
+
    Toggle functions
 
    #+begin_src emacs-lisp
@@ -2448,15 +2457,6 @@
      (setq c/mono-space-font-family "Consolas")
      (setq c/mono-space-font-height 170)
      (c/set-default-face-attributes)
-   #+end_src
-
-   Define helper to toggle between common mono-space font heights.
-
-   #+begin_src emacs-lisp
-     (defun c/toggle-mono-space-font-height ()
-       (interactive)
-       (setq c/mono-space-font-height (if (eq 170 c/mono-space-font-height) 140 170))
-       (c/set-default-face-attributes))
    #+end_src
 
    Define some helpers to switch between variable-width and mono-spaced
