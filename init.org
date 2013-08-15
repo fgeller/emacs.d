@@ -237,6 +237,7 @@
                              exec-path-from-shell
                              feature-mode
                              fill-column-indicator
+                             floobits
                              flymake
                              flymake-cursor
                              flymake-easy
@@ -362,11 +363,6 @@
        (guru-global-mode 1)
      #+end_src
 
-**** floobits
-
-     #+begin_src emacs-lisp
-       (load "~/.emacs.d/src/floobits/floobits.el")
-     #+end_src
 
 *** autoload'ed
 
