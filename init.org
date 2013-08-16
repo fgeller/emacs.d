@@ -258,6 +258,7 @@
                              move-text
                              multiple-cursors
                              org
+                             org-plus-contrib
                              org-mac-link-grabber
                              org-magit
                              paredit
