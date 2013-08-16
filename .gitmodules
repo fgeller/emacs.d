@@ -31,6 +31,3 @@
 [submodule "themes/color-theme-sanityinc-solarized"]
 	path = themes/color-theme-sanityinc-solarized
 	url = https://github.com/fgeller/color-theme-sanityinc-solarized.git
-[submodule "src/floobits"]
-	path = src/floobits
-	url = git@github.com:Floobits/floobits-emacs.git
