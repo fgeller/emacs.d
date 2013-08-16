@@ -257,13 +257,10 @@
                              mic-paren
                              move-text
                              multiple-cursors
-                             multi-term
                              org
                              org-mac-link-grabber
                              org-magit
                              paredit
-                             pcmpl-args
-                             pcmpl-git
                              php+-mode
                              pointback
                              popup ;; for auto-complete
