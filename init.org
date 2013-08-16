@@ -47,6 +47,14 @@
      (setenv "PAGER" "cat")
    #+end_src
 
+** Shell
+
+   Default to custom bash installation.
+
+   #+begin_src emacs-lisp
+     (setenv "SHELL" "/usr/local/bin/bash")
+   #+end_src
+
 ** Sources path
 
    Where to find Emacs' sources.
