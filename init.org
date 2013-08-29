@@ -1663,6 +1663,33 @@
          (c/ensime-send-sbt-command sbt-action)))
    #+end_src
 
+   Helpers to generate ensime configuration and add my sources.
+
+   #+begin_src emacs-lisp
+     (defun c/read-file (file-name)
+       (let ((buf (find-file-read-only file-name))
+             (src (buffer-substring-no-properties (point-min) (point-max))))
+         (kill-buffer buf)
+         (condition-case error
+             (read src))))
+
+     (defun c/ensime-add-sources (config-file)
+       (interactive)
+       (let* ((current-config (c/read-file config-file))
+              (sub-projects (plist-get current-config :subprojects))
+              (source-dirs (with-temp-buffer
+                             (insert-file-contents fg/scala-sources)
+                             (split-string (buffer-string) "\n" t))))
+         (-each sub-projects
+                (lambda (sub-project)
+                  (plist-put sub-project :reference-source-roots source-dirs)))
+         (with-temp-file config-file
+           (insert (format "%S" current-config)))))
+
+     (defun eshell/ensime-add-sources ()
+       (c/ensime-add-sources (expand-file-name ".ensime")))
+   #+end_src
+
 ** PHP
 
    Let's use php+.
