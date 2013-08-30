@@ -2751,6 +2751,12 @@
      (setq helm-buffer-max-length 50)
    #+end_src
 
+   Remember follow-mode setting across helm sessions.
+
+   #+begin_src emacs-lisp
+     (setq helm-follow-mode-persistent t)
+   #+end_src
+
 ** Sources
 
    Source for contents of a jumper file.
