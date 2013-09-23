@@ -2508,7 +2508,7 @@
 
    Use monospace for some modes.
 
-   #+begin_src emacs-lisp :tangle yes
+   #+begin_src emacs-lisp :tangle no
      (add-hook 'magit-log-mode-hook 'c/set-mono-space-font)
      (add-hook 'eshell-mode-hook 'c/set-mono-space-font)
      (add-hook 'shell-mode-hook 'c/set-mono-space-font)
