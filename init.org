@@ -1862,6 +1862,8 @@
 
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c fa") 'align-regexp)
+     (define-key global-map (kbd "C-c fs") 'sort-lines)
+
    #+end_src
 
    Compilation helpers.
