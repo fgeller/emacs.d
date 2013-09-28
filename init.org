@@ -232,8 +232,9 @@
 
    #+begin_src emacs-lisp
      (setq c/elpa-packages '(
-                             auto-complete
                              ace-jump-mode
+                             auto-complete
+                             anzu
                              back-button
                              coffee-mode
                              diff-hl
@@ -369,6 +370,16 @@
        (require 'guru-mode)
        (guru-global-mode 1)
      #+end_src
+
+**** anzu
+
+     Show relative position in search results in mode-line.
+
+     #+begin_src emacs-lisp
+       (require 'anzu)
+       (global-anzu-mode +1)
+     #+end_src
+
 
 *** autoload'ed
 
