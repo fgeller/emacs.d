@@ -2081,7 +2081,7 @@
      (setq helm-command-prefix-key "C-c h")
      (define-key global-map (kbd "C-c ha") 'helm-c-apropos)
      (define-key global-map (kbd "C-c hc") 'c/helm-contact)
-     (define-key global-map (kbd "C-c hg") 'c/helm-do-rgrep)
+     (define-key global-map (kbd "C-c hgg") 'c/helm-git-grep)
      (define-key global-map (kbd "C-c hi") 'helm-imenu)
      (define-key global-map (kbd "C-c hr") 'helm-regexp)
      (define-key global-map (kbd "C-c hu") 'helm-ucs)
@@ -2877,6 +2877,19 @@
        (helm :sources '(helm-source-occur helm-source-moccur)
              :buffer "*c/helm-multi-occur-all*"
              :input (thing-at-point 'symbol)))
+   #+end_src
+
+   Helper to use git grep via helm in current repo.
+
+   #+begin_src emacs-lisp
+     (defun c/helm-git-grep ()
+       (interactive)
+       (let ((git-root (and (boundp 'default-directory)
+                            (magit-get-top-dir default-directory))))
+         (when git-root
+           (let ((helm-grep-default-command "git grep %p")
+                 (target-dir git-root))
+             (helm-do-grep-1 (list target-dir) t nil '("*"))))))
    #+end_src
 
 * Shells
