@@ -1040,6 +1040,25 @@
        (c/set-german-dictionary))
    #+end_src
 
+** Pretty symbols
+
+   Mostly duplicating default settings, only little fine-tuning of pretty symbols.
+
+   #+begin_src emacs-lisp
+     (setq  pretty-symbol-patterns
+            '((?λ lambda "\\<lambda\\>" (emacs-lisp-mode inferior-lisp-mode lisp-mode scheme-mode python-mode inferior-python-mode))
+              (?λ lambda "\\<function\\>" (js-mode js2-mode))
+              (8800 relational "!=" (c-mode c++-mode go-mode java-mode js-mode perl-mode cperl-mode ruby-mode python-mode inferior-python-mode))
+              (8800 relational "/=" (emacs-lisp-mode inferior-lisp-mode lisp-mode scheme-mode))
+              (8805 relational ">=" (c-mode c++-mode go-mode java-mode js-mode perl-mode cperl-mode ruby-mode python-mode inferior-python-mode emacs-lisp-mode inferior-lisp-mode lisp-mode scheme-mode))
+              (8804 relational "<=" (c-mode c++-mode go-mode java-mode js-mode perl-mode cperl-mode ruby-mode python-mode inferior-python-mode emacs-lisp-mode inferior-lisp-mode lisp-mode scheme-mode))
+              (8743 logical "&&" (c-mode c++-mode go-mode java-mode js-mode perl-mode cperl-mode ruby-mode python-mode inferior-python-mode))
+              (8743 logical "\\<and\\>" (emacs-lisp-mode inferior-lisp-mode lisp-mode scheme-mode))
+              (8744 logical "||" (c-mode c++-mode go-mode java-mode js-mode perl-mode cperl-mode ruby-mode python-mode inferior-python-mode))
+              (8744 logical "\\<or\\>" (emacs-lisp-mode inferior-lisp-mode lisp-mode scheme-mode))
+              (172 logical "\\<not\\>" (emacs-lisp-mode inferior-lisp-mode lisp-mode scheme-mode))))
+   #+end_src
+
 * Programming
 
   Basic configuration that is shared among all programming modes.
