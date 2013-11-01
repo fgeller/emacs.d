@@ -232,7 +232,6 @@
 
    #+begin_src emacs-lisp
      (setq c/elpa-packages '(
-                             ace-jump-mode
                              auto-complete
                              anzu
                              back-button
@@ -1796,12 +1795,6 @@
    #+begin_src emacs-lisp
      (defun c/pop-local-mark () (interactive) (set-mark-command 1))
      (define-key global-map (kbd "C-,") 'c/pop-local-mark)
-   #+end_src
-
-   Short-distance jumping to chars.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
    #+end_src
 
    Beginning and end of buffer.
