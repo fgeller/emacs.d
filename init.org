@@ -240,6 +240,7 @@
 
    #+begin_src emacs-lisp
      (setq c/elpa-packages '(
+                             ag
                              auto-complete
                              anzu
                              back-button
@@ -295,6 +296,7 @@
                              undo-tree
                              uuid
                              wgrep
+                             wgrep-ag
                              yasnippet
                              ))
      (dolist (package c/elpa-packages)
@@ -1833,7 +1835,8 @@
      (define-key global-map (kbd "C-c mee") 'erc)
      (define-key global-map (kbd "C-c meb") 'c/erc-bitlbee)
      (define-key global-map (kbd "C-c mf") 'flymake-mode)
-     (define-key global-map (kbd "C-c mg") 'rgrep)
+     (define-key global-map (kbd "C-c mgg") 'ag-project-at-point)
+     (define-key global-map (kbd "C-c mgG") 'ag)
      (define-key global-map (kbd "C-c mi") 'highlight-indentation-mode)
      (define-key global-map (kbd "C-c mm") 'magit-status)
      (define-key global-map (kbd "C-c mn") 'gnus)
@@ -2096,7 +2099,8 @@
      (setq helm-command-prefix-key "C-c h")
      (define-key global-map (kbd "C-c ha") 'helm-c-apropos)
      (define-key global-map (kbd "C-c hc") 'c/helm-contact)
-     (define-key global-map (kbd "C-c hgg") 'c/helm-git-grep)
+     (define-key global-map (kbd "C-c hgG") 'c/helm-ag)
+     (define-key global-map (kbd "C-c hgg") 'c/helm-ag-project)
      (define-key global-map (kbd "C-c hi") 'helm-imenu)
      (define-key global-map (kbd "C-c hr") 'helm-regexp)
      (define-key global-map (kbd "C-c hu") 'helm-ucs)
@@ -2854,6 +2858,31 @@
           (ad-activate 'helm-c-git-files)))
    #+end_src
 
+*** ag
+
+    Source for the silver searcher that re-uses much of helm-grep's
+    functionality.
+
+    #+begin_src emacs-lisp
+      (defvar c/helm-ag-source
+        '((name . "the silver searcher")
+          (header-name . (lambda (name) name))
+          (candidates-process . c/helm-ag-collect-candidates)
+          (no-matchplugin)
+          (nohighlight)
+          (filtered-candidate-transformer helm-grep-cand-transformer)
+          (action . (("Find File" . helm-grep-action)))
+          (persistent-action . helm-grep-persistent-action)
+          (requires-pattern . 3)
+          (delayed))
+        "Basic ag source for helm")
+
+      (defun c/helm-ag-collect-candidates ()
+        (let* ((split-pattern (split-string helm-pattern " " t))
+               (full-command (mapconcat (lambda (pattern) (format "ag --nocolor -S --nogroup %s" pattern)) split-pattern " | ")))
+          (start-file-process-shell-command "ag" helm-buffer full-command)))
+    #+end_src
+
 ** Accessors to sources
 
    Collection of sources that we want fast access to.
@@ -2906,6 +2935,25 @@
                  (target-dir git-root))
              (helm-do-grep-1 (list target-dir) t nil '("*"))))))
    #+end_src
+
+*** ag
+
+    Quick access to the silver searcher in current directory.
+
+    #+begin_src emacs-lisp
+      (defun c/helm-ag ()
+        (interactive)
+        (unless helm-ff-default-directory (setq helm-ff-default-directory default-directory))
+        (helm :sources c/helm-ag-source :buffer "*c/helm-ag*"))
+    #+end_src
+
+    Quick access to the silver searcher in current project.
+
+    #+begin_src emacs-lisp
+      (defun c/helm-ag-project ()
+        (interactive)
+        (with-project-root (c/helm-ag)))
+    #+end_src
 
 * Shells
 ** Eshell
