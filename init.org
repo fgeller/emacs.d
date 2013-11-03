@@ -256,6 +256,7 @@
                              flymake-easy
                              flymake-jshint
                              flymake-json
+                             go-mode
                              gtags
                              haskell-mode
                              helm
@@ -1725,6 +1726,20 @@
 
    #+begin_src emacs-lisp
      (add-hook 'nxml-mode-hook 'c/prog-mode-initialization)
+   #+end_src
+
+** Go
+
+   Per-buffer configuration.
+
+   #+begin_src emacs-lisp
+     (defun c/go-mode-initialization ()
+       (rainbow-delimiters-mode)
+       (subword-mode 1)
+       (linum-mode 1)
+       (add-hook 'before-save-hook 'gofmt-before-save nil 'make-it-local))
+
+     (add-hook 'go-mode-hook 'c/go-mode-initialization)
    #+end_src
 
 * Key Bindings
