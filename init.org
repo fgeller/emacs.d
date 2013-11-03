@@ -2790,6 +2790,7 @@
    #+end_src
 
 ** Sources
+*** Jumper
 
    Source for contents of a jumper file.
 
@@ -2845,6 +2846,8 @@
          (filtered-candidate-transformer c/helm-jumper-def-transformer))
        "Source for jumping to JUMPER defs.")
    #+end_src
+
+*** helm-git
 
    Monkey-patch helm-git to work with non-git directories.
 
