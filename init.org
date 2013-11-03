@@ -2120,8 +2120,10 @@
 
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c eb") 'eval-buffer)
+     (define-key global-map (kbd "C-c ed") 'eval-defun)
      (define-key global-map (kbd "C-c ee") 'eval-last-sexp)
      (define-key global-map (kbd "C-c er") 'eval-region)
+
    #+end_src
 
 ** Input Environment
