@@ -3989,6 +3989,17 @@
     (setenv "LANGUAGE" "en_US.UTF-8")
   #+end_src
 
+* Misc helpers
+
+  Start scalariform daemon via compilation-mode
+
+  #+begin_src emacs-lisp
+    (defun c/start-scalari ()
+      (interactive)
+      (cd "~/Cloud/Devel/scala/scalariform-daemon")
+      (compile "sbt run"))
+  #+end_src
+
 * Start buffer
 
   Load an org-file, rather than the =*scratch*= buffer, as most doodles
