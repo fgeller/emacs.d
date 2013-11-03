@@ -276,7 +276,6 @@
                              multiple-cursors
                              org
                              org-plus-contrib
-                             org-mac-link-grabber
                              org-magit
                              paredit
                              php+-mode
@@ -475,12 +474,6 @@
 
     #+begin_src emacs-lisp
       (autoload 'php+-mode "php+-mode" "Major mode for editing php code." t)
-    #+end_src
-
-    Grab org-links from Mac applications.
-
-    #+begin_src emacs-lisp
-      (autoload 'omlg-grab-link "org-mac-link-grabber" "" t)
     #+end_src
 
     Highlight TODO and friends in strings and comments.
