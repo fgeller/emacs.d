@@ -135,6 +135,14 @@
            thereis (locate-dominating-file (or buffer-file-name default-directory) root-indicator)))))
   #+end_src
 
+  Easy use of project root as =default-directory=.
+
+  #+begin_src emacs-lisp
+    (defmacro with-project-root (fun)
+      `(let ((default-directory (or (c/guess-project-root) default-directory)))
+         ,fun))
+  #+end_src
+
   Look backward for a regex  and return group 1.
 
   #+begin_src emacs-lisp
