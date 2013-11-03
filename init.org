@@ -291,6 +291,7 @@
                              session
                              slime
                              smartparens
+                             smartscan
                              todochiku
                              undo-tree
                              uuid
@@ -1065,6 +1066,7 @@
       (fic-mode 1)
       (setq show-trailing-whitespace t)
       (auto-complete-mode 1)
+      (smartscan-mode 1)
       (add-hook 'before-save-hook 'c/maybe-cleanup-whitespace nil 'local))
     (add-hook 'prog-mode-hook 'c/prog-mode-initialization)
   #+end_src
