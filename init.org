@@ -475,8 +475,9 @@
     #+begin_src emacs-lisp
       (autoload 'ensime "ensime" "Read config file for settings. Then start an inferior ENSIME server and connect to its Swank server." t)
       (autoload 'ensime-scala-mode-hook "ensime")
+      (autoload 'ensime-connected-p "ensime")
       (eval-after-load 'scala-mode2
-        '(add-hook 'scala-mode-hook 'ensime-scala-mode-hook))
+        '(when (ensime-connected-p) (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)))
     #+end_src
 
     Automagically load php+-mode.
