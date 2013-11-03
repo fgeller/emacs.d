@@ -49,10 +49,10 @@
 
 ** Shell
 
-   Default to custom bash installation.
+   Default to custom shell installation.
 
    #+begin_src emacs-lisp
-     (setenv "SHELL" "/usr/local/bin/bash")
+     (setenv "SHELL" "/usr/local/bin/zsh")
    #+end_src
 
 ** Sources path
@@ -3110,10 +3110,10 @@
 
 ** Shell
 
-   Use BASH.
+   Configure default shell.
 
    #+begin_src emacs-lisp
-     (setq shell-file-name "/usr/local/bin/bash")
+     (setq shell-file-name "/usr/local/bin/zsh")
    #+end_src
 
    Change =default-directory= based on prompt [32].
