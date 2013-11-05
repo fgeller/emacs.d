@@ -237,19 +237,15 @@
                              ag
                              auto-complete
                              anzu
-                             back-button
                              coffee-mode
                              diff-hl
                              dired+
                              dired-details
                              dired-details+
-                             edit-server
                              elisp-slime-nav
                              ensime
                              expand-region
                              exec-path-from-shell
-                             feature-mode
-                             fill-column-indicator
                              floobits
                              flymake
                              flymake-cursor
@@ -266,30 +262,23 @@
                              js2-mode
                              json-mode
                              magit
-                             markdown-mode
                              mic-paren
-                             move-text
                              multiple-cursors
                              org
                              org-plus-contrib
-                             org-magit
                              paredit
                              php+-mode
                              pointback
                              popup ;; for auto-complete
-                             pretty-symbols-mode
+                             pretty-symbols
                              rainbow-mode
                              rainbow-delimiters
-                             request
                              s
                              scala-mode2
                              session
-                             slime
                              smartparens
                              smartscan
-                             todochiku
                              undo-tree
-                             uuid
                              wgrep
                              wgrep-ag
                              yasnippet
@@ -325,14 +314,6 @@
      (require 'expand-region)
    #+end_src
 
-**** move-text
-
-    Move lines up and down with =meta= and cursor keys.
-
-    #+begin_src emacs-lisp
-     (require 'move-text)
-    #+end_src
-
 **** smartparens
 
     Smarter handling of characters that come in pairs.
@@ -341,28 +322,12 @@
       (require 'smartparens)
     #+end_src
 
-**** back-button
-
-    More convenient navigation through mark ring.
-
-    #+begin_src emacs-lisp
-     (require 'back-button)
-    #+end_src
-
 **** s
 
     @magnars' helpers for string manipulation.
 
     #+begin_src emacs-lisp
       (require 's)
-    #+end_src
-
-**** edit-server
-
-    Connect from Chrome.
-
-    #+begin_src emacs-lisp
-      (require 'edit-server)
     #+end_src
 
 **** anzu
@@ -381,29 +346,6 @@
 
     #+begin_src emacs-lisp
       (require 'multiple-cursors-autoloads)
-    #+end_src
-
-    Email. With tags. Org-mode support for direct mail links. Yay.
-
-    #+begin_src emacs-lisp
-      (autoload 'notmuch "notmuch" t nil)
-      (eval-after-load 'notmuch
-        '(progn
-           (require 'org-notmuch)))
-    #+end_src
-
-    Notifications.
-
-    #+begin_src emacs-lisp
-      (autoload 'todochiku-message "todochiku" t nil)
-    #+end_src
-
-    @gigamonkey's jumper mode.
-
-    #+begin_src emacs-lisp
-      (autoload 'jumper-mode "jumper" t nil)
-      (autoload 'jumper-line-mode "jumper" t nil)
-      (autoload 'jumper-update-defs-from-current-buffer "jumper-update" t nil)
     #+end_src
 
     Slime / tag like navigation for Emacs Lisp.
@@ -643,12 +585,6 @@
      (delete-selection-mode 1)
    #+end_src
 
-   Activate moving text via M-↑ and M-↓
-
-   #+begin_src emacs-lisp
-     (move-text-default-bindings)
-   #+end_src
-
 ** Whitespace
 
    Global whitespace settings. Override them in =.dir-local.el= or file
@@ -663,10 +599,8 @@
 
    #+begin_src emacs-lisp
      (defun c/should-cleanup-whitespace ()
-       ;; If a variable with the same name is bound -- use it
        (if (boundp 'c/should-cleanup-whitespace)
            c/should-cleanup-whitespace
-         ;; else default to:
          t))
    #+end_src
 
@@ -776,40 +710,6 @@
     #+begin_src emacs-lisp
       (setq ac-use-menu-map t)
     #+end_src
-
-**** Candidates
-
-     Helper to collect possible candidates from Jumper definitions
-     based on a given prefix.
-
-     #+begin_src emacs-lisp
-       (defun c/jumper-candidates (prefix)
-         (let* ((jumper-file (jumper-find-jumper-file)))
-           (when jumper-file
-             (let ((jumper-file-buffer (find-file-noselect jumper-file)))
-               (with-temp-buffer
-                 (insert-buffer-substring jumper-file-buffer)
-                 (goto-char (point-min))
-                 (keep-lines (concat "^" prefix ".*[[:digit:]]+$"))
-                 (goto-char (point-min))
-                 (while (not (eobp))
-                   (re-search-forward "^\\([^\t]+\\).+$")
-                   (replace-match "\\1" nil nil)
-                   (forward-line 1))
-                 (split-string (buffer-string)))))))
-     #+end_src
-
-     Define a source for auto-complete based on Jumper definitions.
-
-     #+begin_src emacs-lisp
-       (eval-after-load 'auto-complete
-          '(progn
-             (ac-define-source jumper
-                               '((depends jumper)
-                                 (candidates . (c/jumper-candidates ac-prefix))
-                                 (symbol . "s")
-                                 (cache)))))
-     #+end_src
 
 ** isearch
 
@@ -931,14 +831,6 @@
      (add-hook 'magit-log-edit-mode-hook 'c/enable-flyspell)
    #+end_src
 
-** back-button
-
-   Easier navigation of global and local mark ring.
-
-   #+begin_src emacs-lisp
-     (back-button-mode 1)
-   #+end_src
-
 ** diff
 
     Highlight uncommitted diffs in left fringe, always.
@@ -992,7 +884,6 @@
        (interactive)
        (set-input-method 'german-postfix))
    #+end_src
-
 
    Fast switch to German dictionary for spell-checking.
 
@@ -1060,19 +951,6 @@
       (paredit-mode 1))
   #+end_src
 
-** CEDET
-
-   Configure semantic's default submodes.
-
-   #+begin_src emacs-lisp :tangle no
-     (setq semantic-default-submodes
-           '(
-             global-semantic-idle-scheduler-mode
-             global-semanticdb-minor-mode
-             global-semantic-idle-completions-mode
-             ))
-   #+end_src
-
 ** Compiling
 
    Settings for compilation mode.
@@ -1107,14 +985,6 @@
      (add-to-list 'compilation-error-regexp-alist-alist
                   ;; Adds the "ERROR " prefix
                   '(maven "\\[ERROR\\] \\([0-9]*[^0-9\n]\\(?:[^\n :]\\| [^-/\n]\\|:[^ \n]\\)*?\\):\\[\\([0-9]+\\),\\([0-9]+\\)\\]" 1 2 3))
-   #+end_src
-
-   Handle escape codes in compilation output.
-
-   #+begin_src emacs-lisp
-     (defun c/apply-ansi-colors-to-region-in-compilation-buffer ()
-       (ansi-color-apply-on-region compilation-filter-start (point)))
-     (add-hook 'compilation-filter-hook 'c/apply-ansi-colors-to-region-in-compilation-buffer)
    #+end_src
 
 ** CSS
@@ -1201,8 +1071,6 @@
        (subword-mode 1)
        (rainbow-mode 1)
        (flymake-mode 1)
-       (jumper-mode 1)
-       (add-hook 'before-save-hook 'jumper-update-defs-from-current-buffer nil 'local)
        (setq js2-use-font-lock-faces t)
        (setq js2-mode-must-byte-compile nil)
        (setq js2-basic-offset 4)
@@ -1325,28 +1193,6 @@
       (add-hook 'emacs-lisp-mode-hook 'c/emacs-lisp-mode-initialization)
     #+end_src
 
-*** Common Lisp
-
-    Basic slime setup.
-
-    #+begin_src emacs-lisp
-      (setq inferior-lisp-program "/usr/local/bin/sbcl")
-      (setq slime-lisp-implementations '((sbcl ("sbcl"))))
-      (require 'slime-autoloads)
-      (slime-setup '(slime-fancy))
-    #+end_src
-
-** Makefile
-
-   Configuration per buffer.
-
-   #+begin_src emacs-lisp
-     (defun c/makefile-mode-initialization ()
-       (jumper-mode 1)
-       (add-hook 'before-save-hook 'jumper-update-defs-from-current-buffer nil 'local))
-     (add-hook 'makefile-mode-hook 'c/makefile-mode-initialization)
-   #+end_src
-
 ** Python
 
    Basic system-wide configuration for @fgallina's flying circus. Taken
@@ -1407,11 +1253,8 @@
    #+begin_src emacs-lisp
      (defun c/python-mode-initialization ()
        (subword-mode 1)
-       (jumper-mode 1)
-       (setq ac-sources (cons 'ac-source-jumper ac-sources))
        (when buffer-file-name (flymake-mode 1))
-       (set-fill-column 79)
-       (add-hook 'before-save-hook 'jumper-update-defs-from-current-buffer nil 'local))
+       (set-fill-column 79))
      (add-hook 'python-mode-hook 'c/python-mode-initialization)
    #+end_src
 
@@ -1511,17 +1354,6 @@
                        (list "\\.java\\'" 'c/flymake-java-init))))
    #+end_src
 
-   Tell CEDET's semanticdb-javap and where to find information about global
-   classes.
-
-   #+begin_src emacs-lisp :tangle no
-     (setq semanticdb-javap-classpath '())
-     (when linux-p
-       (add-to-list 'semanticdb-javap-classpath "/usr/lib/jvm/java-7-openjdk-i386/jre"))
-     (when mac-p
-       (add-to-list 'semanticdb-javap-classpath "/System/Library/Frameworks/JavaVM.framework/Versions/1.6/Classes/classes.jar"))
-   #+end_src
-
    Configuration per-buffer.
 
    #+begin_src emacs-lisp
@@ -1591,6 +1423,7 @@
              (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
                (compile *c/last-java-test-compile-command* t))))
      #+end_src
+
 
 ** Scala
 
@@ -1828,7 +1661,6 @@
      (define-key global-map (kbd "C-c mr") 'auto-revert-mode)
      (define-key global-map (kbd "C-c ms") 'sql-mysql)
      (define-key global-map (kbd "C-c mw") 'whitespace-mode)
-     (define-key global-map (kbd "C-c mj") 'jumper-line-mode)
    #+end_src
 
    Helpers to toggle the contents of the mode-line for less noise.
@@ -2456,7 +2288,6 @@
    Highlight URLs and email addresses.
 
    #+begin_src emacs-lisp
-     ;;(setq goto-address-mail-face 'link)
      (add-hook 'find-file-hooks 'goto-address-prog-mode)
    #+end_src
 
@@ -2525,15 +2356,6 @@
    #+end_src
 
    Use monospace for some modes.
-
-   #+begin_src emacs-lisp :tangle no
-     (add-hook 'magit-log-mode-hook 'c/set-mono-space-font)
-     (add-hook 'eshell-mode-hook 'c/set-mono-space-font)
-     (add-hook 'shell-mode-hook 'c/set-mono-space-font)
-     (add-hook 'term-mode-hook 'c/set-mono-space-font)
-     (add-hook 'sql-login-hook 'c/set-mono-space-font)
-     (add-hook 'gnus-summary-mode-hook 'c/set-mono-space-font)
-   #+end_src
 
 ** Mode-line
 
@@ -2619,21 +2441,6 @@
      (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
      (setq uniquify-after-kill-buffer-p t)
      (setq uniquify-ignore-buffers-re "^\\*")
-   #+end_src
-
-** Windows
-*** Winner
-
-   Let's change to winner-mode!
-
-   #+begin_src emacs-lisp
-     (winner-mode 1)
-   #+end_src
-
-   ... and configure it to ignore my Helm buffer.
-
-   #+begin_src emacs-lisp
-     (add-to-list 'winner-boring-buffers "*c/helm-jump*")
    #+end_src
 
 * Buffers and sessions
@@ -2777,63 +2584,6 @@
    #+end_src
 
 ** Sources
-*** Jumper
-
-   Source for contents of a jumper file.
-
-   #+begin_src emacs-lisp
-     (require 'jumper)
-     (defvar *c/helm-jumper-def-line* "\\([^[:blank:]]+\\)[[:blank:]]+\\([^[:blank:]]+\\)[[:blank:]]+\\([^[:blank:]]+\\)")
-     (defvar *c/helm-jumper-candidate-line-format* "%s in %s%s at line %s")
-
-     (defun c/helm-jumper-defs-init ()
-       "Load defs from JUMPER file into helm candidate buffer."
-       (ignore-errors
-         (let ((jumper-file (jumper-find-jumper-file)))
-           (let ((defs (with-current-buffer
-                           (find-file-noselect jumper-file)
-                         (buffer-substring (point-min) (point-max)))))
-             (with-current-buffer (helm-candidate-buffer 'global)
-               (insert defs))))))
-
-     (defun c/helm-jumper-def-components (def-line)
-       "Decompose the components of a JUMPER def line into (DEF FILE LINE)"
-       (string-match *c/helm-jumper-def-line* def-line)
-       (let (
-             (def (match-string 1 def-line))
-             (file (match-string 2 def-line))
-             (line (match-string 3 def-line)))
-         (list def file (string-to-number line))))
-
-     (defun c/helm-jumper-def-transformer (candidates sources)
-       "Add highlighting of candidate components."
-       (loop for candidate in candidates
-             collect
-             (cons
-              (destructuring-bind (def file line) (c/helm-jumper-def-components candidate)
-                (format *c/helm-jumper-candidate-line-format*
-                        (propertize def 'face 'font-lock-keyword-face)
-                        (file-name-directory file)
-                        (propertize (file-name-nondirectory file) 'face 'font-lock-builtin-face)
-                        (propertize (number-to-string line) 'face 'shadow)))
-              candidate)))
-
-     (defun c/helm-jumper-jump-to-def (def-line)
-       "Jump to a selected definition."
-       (destructuring-bind (def file line) (c/helm-jumper-def-components def-line)
-         (jumper-jump-to file line def)))
-
-     (defvar c/helm-c-source-jumper-defs
-       '((name . "Jump to JUMPER defs")
-         (init . c/helm-jumper-defs-init)
-         (candidates-in-buffer)
-         (persistent-help . "Jump to this def")
-         (action . c/helm-jumper-jump-to-def)
-         (candidate-number-limit . 10)
-         (filtered-candidate-transformer c/helm-jumper-def-transformer))
-       "Source for jumping to JUMPER defs.")
-   #+end_src
-
 *** helm-git
 
    Monkey-patch helm-git to work with non-git directories.
@@ -2995,24 +2745,6 @@
 
    #+begin_src emacs-lisp
      (setq eshell-status-in-mode-line nil)
-   #+end_src
-
-   Print latest entries in dir-ring after directory change.
-
-   #+begin_src emacs-lisp
-     (defvar c/eshell-print-dir-ring-limit 5 "The number of ring entries that will be printed")
-     (defun c/eshell-print-dir-ring ()
-       "Shamelessly copied from `eshell/cd' and modified to fit my needs."
-       (let* ((len (ring-length eshell-last-dir-ring))
-              (index (min len (1- c/eshell-print-dir-ring-limit))))
-         (eshell-init-print-buffer)
-         (while (>= index 0)
-           (eshell-buffered-print
-            (concat (number-to-string index) ": "
-                    (ring-ref eshell-last-dir-ring index) "\n"))
-           (setq index (1- index)))
-         (eshell-flush)))
-     (add-hook 'eshell-directory-change-hook 'c/eshell-print-dir-ring)
    #+end_src
 
 *** Visual commands
@@ -3655,54 +3387,6 @@
     #+end_src
 
 * Communication
-** Notifications
-*** todochiku
-
-    Where to find cool icons.
-
-    #+begin_src emacs-lisp
-      (setq todochiku-icons-directory (expand-file-name "~/.emacs.d/src/todochiku-icons/"))
-    #+end_src
-
-    No default message when compilation is finished.
-
-    #+begin_src emacs-lisp
-      (setq todochiku-compile-message nil)
-    #+end_src
-
-    Add custom notification.
-
-    #+begin_src emacs-lisp
-      (defun c/notify-finished-compilation (buf msg)
-        (todochiku-message
-         (format "Compilation in %s:" buf)
-         msg
-         (if (string-match "finished[[:space:]]*" msg) (todochiku-icon 'check) (todochiku-icon 'alert))))
-      (add-hook 'compilation-finish-functions 'c/notify-finished-compilation)
-    #+end_src
-
-    Use the notification center, rather than growl [16]. Requires
-    terminal-notifier [17].
-
-    #+begin_src emacs-lisp
-      (setq c/terminal-notifier-path
-            "/Applications/terminal-notifier.app/Contents/MacOS/terminal-notifier")
-
-      (defadvice todochiku-get-arguments (around todochiku-nc)
-        (setq ad-return-value
-              (list "-title" title "-message" message "-activate" "org.gnu.Emacs")))
-
-      (when (file-executable-p c/terminal-notifier-path)
-        (setq todochiku-command c/terminal-notifier-path)
-        (ad-activate 'todochiku-get-arguments))
-
-      (when (file-executable-p c/terminal-notifier-path)
-        (defadvice todochiku-get-arguments (around todochiku-terminal-notifier activate)
-          (setq ad-return-value
-                (list "-title" title "-message" message "-activate" "org.gnu.Emacs")))
-        (setq todochiku-command c/terminal-notifier-path))
-    #+end_src
-
 ** Email
 *** Mailcap
 
@@ -3737,7 +3421,6 @@
         (if (re-search-forward "sign>" (point-max) t)
             (newline)))
     #+end_src
-
 
     #+begin_src emacs-lisp
       (eval-after-load 'message
@@ -3976,13 +3659,6 @@
   #+begin_src emacs-lisp
     (unless (server-running-p)
       (server-start))
-  #+end_src
-
-  Start edit-server so that we can connect via Chrome to edit textarea
-  elements.
-
-  #+begin_src emacs-lisp
-    (edit-server-start)
   #+end_src
 
 * I18n
