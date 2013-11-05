@@ -267,7 +267,7 @@
                              org
                              org-plus-contrib
                              paredit
-                             php+-mode
+                             php-mode
                              pointback
                              popup ;; for auto-complete
                              pretty-symbols
@@ -395,12 +395,6 @@
      (autoload 'git-blame-mode "git-blame" "Minor mode for incremental blame for Git." t)
      (autoload 'magit-status "magit")
      (autoload 'rebase-mode "rebase-mode")
-    #+end_src
-
-    Automagically load php+-mode.
-
-    #+begin_src emacs-lisp
-      (autoload 'php+-mode "php+-mode" "Major mode for editing php code." t)
     #+end_src
 
     Highlight TODO and friends in strings and comments.
@@ -1530,18 +1524,11 @@
 
 ** PHP
 
-   Let's use php+.
+   Tell php-mode to leave my bindings alone.
 
    #+begin_src emacs-lisp
-     (add-to-list 'auto-mode-alist '("\\.php$" . php+-mode))
-     (add-to-list 'auto-mode-alist '("\\.inc$" . php+-mode))
-   #+end_src
-
-   Tell php+-mode to leave my bindings alone.
-
-   #+begin_src emacs-lisp
-     (eval-after-load 'php+-mode
-       '(setq-default php+-mode-map (make-sparse-keymap)))
+     (eval-after-load 'php-mode
+       '(setq-default php-mode-map (make-sparse-keymap)))
    #+end_src
 
    Configuration per-buffer.
@@ -1550,7 +1537,7 @@
      (defun c/php-mode-initialization ()
        (gtags-mode 1)
        (setq ac-sources (cons 'ac-source-gtags ac-sources)))
-     (add-hook 'php+-mode-hook 'c/php-mode-initialization)
+     (add-hook 'php-mode-hook 'c/php-mode-initialization)
    #+end_src
 
 ** XML
