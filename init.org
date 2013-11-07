@@ -1346,7 +1346,7 @@
 
    #+begin_src emacs-lisp
      (when mac-p
-       (setenv "JAVA_HOME" "/Library/Java/JavaVirtualMachines/jdk1.7.0_25.jdk/Contents/Home"))
+       (setenv "JAVA_HOME" "/Library/Java/JavaVirtualMachines/jdk1.7.0_45.jdk/Contents/Home"))
      (when linux-p
        (setenv "JAVA_HOME" "/usr/lib/jvm/java-7-openjdk-i386/jre"))
    #+end_src
