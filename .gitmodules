@@ -31,3 +31,6 @@
 [submodule "themes/color-theme-sanityinc-solarized"]
 	path = themes/color-theme-sanityinc-solarized
 	url = https://github.com/fgeller/color-theme-sanityinc-solarized.git
+[submodule "src/sort-imports"]
+	path = src/sort-imports
+	url = git@github.com:fgeller/sort-imports.el.git
