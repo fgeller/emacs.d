@@ -1,9 +1,8 @@
-# Author: Jonas Bonèr <jonas@jonasboner.com>
-# name: option match { case None => .. }
+# Author: Felix Geller <fgeller@gmail.com>
+# name: match on Option
 # key: match
 # --
-${1:option} match {
-  case None => $0
-  case Some(res) => 
-
-}
+${1:this} match {
+  case None ⇒ ${2:None}
+  case Some(${3:a}) ⇒ ${4:a}
+}$0

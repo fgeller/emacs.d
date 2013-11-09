@@ -1,0 +1,8 @@
+# Author: Felix Geller <fgeller@gmail.com>
+# name: match on Either
+# key: match
+# --
+${1:this} match {
+  case Left(${2:l}) ⇒ ${3:l}
+  case Right(${4:r}) ⇒ ${5:r}
+}$0
