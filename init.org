@@ -286,6 +286,7 @@
                              session
                              smartparens
                              smartscan
+                             todochiku
                              undo-tree
                              wgrep
                              wgrep-ag
@@ -435,6 +436,12 @@
 
     #+begin_src emacs-lisp
       (autoload 'flymake-json-load "flymake-json" "" t)
+    #+end_src
+
+    Notifications.
+
+    #+begin_src emacs-lisp
+      (autoload 'todochiku-message "todochiku" t nil)
     #+end_src
 
 * Text editing
@@ -3413,6 +3420,53 @@
     #+end_src
 
 * Communication
+** Notifications
+*** todochiku
+
+    Where to find cool icons.
+
+    #+begin_src emacs-lisp
+      (setq todochiku-icons-directory (expand-file-name "~/.emacs.d/src/todochiku-icons/"))
+    #+end_src
+
+    No default message when compilation is finished.
+
+    #+begin_src emacs-lisp
+      (setq todochiku-compile-message nil)
+    #+end_src
+
+    Add custom notification.
+
+    #+begin_src emacs-lisp
+      (defun c/notify-finished-compilation (buf msg)
+        (todochiku-message
+         (format "Compilation in %s:" buf)
+         msg
+         (if (string-match "finished[[:space:]]*" msg) (todochiku-icon 'check) (todochiku-icon 'alert))))
+      (add-hook 'compilation-finish-functions 'c/notify-finished-compilation)
+    #+end_src
+
+    Use the notification center, rather than growl [16]. Requires
+    terminal-notifier [17].
+
+    #+begin_src emacs-lisp
+      (setq c/terminal-notifier-path "/usr/local/bin/terminal-notifier")
+
+      (defadvice todochiku-get-arguments (around todochiku-nc)
+        (setq ad-return-value
+              (list "-title" title "-message" message "-activate" "org.gnu.Emacs")))
+
+      (when (file-executable-p c/terminal-notifier-path)
+        (setq todochiku-command c/terminal-notifier-path)
+        (ad-activate 'todochiku-get-arguments))
+
+      (when (file-executable-p c/terminal-notifier-path)
+        (defadvice todochiku-get-arguments (around todochiku-terminal-notifier activate)
+          (setq ad-return-value
+                (list "-title" title "-message" message "-activate" "org.gnu.Emacs")))
+        (setq todochiku-command c/terminal-notifier-path))
+    #+end_src
+
 ** Email
 *** Mailcap
 
