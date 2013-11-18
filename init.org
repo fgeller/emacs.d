@@ -253,6 +253,7 @@
                              expand-region
                              exec-path-from-shell
                              floobits
+                             flycheck
                              flymake
                              flymake-cursor
                              flymake-easy
