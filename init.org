@@ -958,6 +958,14 @@
      (setq pretty-symbol-categories '(lambda relational logical))
    #+end_src
 
+** occur
+
+   Enable follow-mode in occur buffers.
+
+   #+begin_src emacs-lisp
+     (add-hook 'occur-mode-hook 'next-error-follow-minor-mode)
+   #+end_src
+
 * Programming
 
   Basic configuration that is shared among all programming modes.
