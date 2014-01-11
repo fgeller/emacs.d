@@ -240,6 +240,7 @@
 
    #+begin_src emacs-lisp
      (setq c/elpa-packages '(
+                             ace-jump-mode
                              ag
                              auto-complete
                              anzu
@@ -1719,6 +1720,13 @@
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-<") 'beginning-of-buffer)
      (define-key global-map (kbd "C->") 'end-of-buffer)
+   #+end_src
+
+   Via ace-jump-mode.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-c C-m") 'ace-jump-word-mode)
+     (define-key global-map (kbd "C-c C-M") 'ace-jump-char-mode)
    #+end_src
 
 ** C-c Map
