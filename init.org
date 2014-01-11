@@ -1474,7 +1474,6 @@
                (compile *c/last-java-test-compile-command* t))))
      #+end_src
 
-
 ** Scala
 
    Let's use a cooler major-mode.
