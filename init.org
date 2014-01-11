@@ -1610,6 +1610,17 @@
      (add-hook 'go-mode-hook 'c/go-mode-initialization)
    #+end_src
 
+** Haskell
+
+   Basic setup.
+
+   #+begin_src emacs-lisp
+     (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+     (add-hook 'haskell-mode-hook 'turn-on-eldoc-mode)
+     (add-hook 'haskell-mode-hook 'turn-on-haskell-doc)
+     (add-hook 'haskell-mode-hook 'flycheck-mode)
+   #+end_src
+
 * Key Bindings
 ** Helpers
 
