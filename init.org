@@ -3502,7 +3502,7 @@
 
       (defadvice todochiku-get-arguments (around todochiku-nc)
         (setq ad-return-value
-              (list "-title" title "-message" message "-activate" "org.gnu.Emacs")))
+              (list "-title" title "-message" message "-activate" "org.gnu.Emacs" "-sender" "org.gnu.Emacs")))
 
       (when (file-executable-p c/terminal-notifier-path)
         (setq todochiku-command c/terminal-notifier-path)
@@ -3511,7 +3511,7 @@
       (when (file-executable-p c/terminal-notifier-path)
         (defadvice todochiku-get-arguments (around todochiku-terminal-notifier activate)
           (setq ad-return-value
-                (list "-title" title "-message" message "-activate" "org.gnu.Emacs")))
+                (list "-title" title "-message" message "-activate" "org.gnu.Emacs" "-sender" "org.gnu.Emacs")))
         (setq todochiku-command c/terminal-notifier-path))
     #+end_src
 
