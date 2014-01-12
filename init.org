@@ -271,6 +271,7 @@
                              js2-mode
                              json-mode
                              magit
+                             malabar-mode
                              mic-paren
                              multiple-cursors
                              org
@@ -451,6 +452,12 @@
 
     #+begin_src emacs-lisp
       (autoload 'todochiku-message "todochiku" t nil)
+    #+end_src
+
+    java-mode alternative.
+
+    #+begin_src emacs-lisp
+      (autoload 'malabar-mode "malabar-mode" nil t)
     #+end_src
 
 * Text editing
@@ -2285,6 +2292,21 @@
              '(progn
                 (define-key java-mode-map (kbd "C-c !") (make-repeatable-command 'flymake-goto-next-error))
                 ))))
+    #+end_src
+
+    Trying a newer kid: malabar-mode.
+
+    #+begin_src emacs-lisp
+      (setq semantic-default-submodes '(global-semantic-idle-scheduler-mode
+                                        global-semanticdb-minor-mode
+                                        global-semantic-idle-summary-mode
+                                        global-semantic-mru-bookmark-mode))
+
+      (eval-after-load 'malabar-mode
+        '(semantic-mode 1))
+
+      ;;(require 'malabar-mode)
+      (add-to-list 'auto-mode-alist '("\\.java\\'" . malabar-mode))
     #+end_src
 
 *** Scala mode
