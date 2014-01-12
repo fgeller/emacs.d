@@ -1517,7 +1517,6 @@
        (rainbow-delimiters-mode)
        (subword-mode 1)
        (setq tab-width 2)
-       (c/paredit-nonlisp)
        (linum-mode 1)
        (gtags-mode 1)
        (add-hook 'after-save-hook 'c/scalariform-daemon-format-file nil 'make-it-local))
