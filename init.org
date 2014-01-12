@@ -1519,6 +1519,7 @@
        (setq tab-width 2)
        (c/paredit-nonlisp)
        (linum-mode 1)
+       (gtags-mode 1)
        (add-hook 'after-save-hook 'c/scalariform-daemon-format-file nil 'make-it-local))
      (add-hook 'scala-mode-hook 'c/scala-mode-initialization)
    #+end_src
@@ -1984,7 +1985,7 @@
    #+begin_src emacs-lisp
      (defun c/initialize-gtags-mode-key-bindings ()
        (local-set-key (kbd "M-.") 'helm-gtags-find-tag)
-       (local-set-key (kbd "M-,") 'helm-gtags-pop-stack))
+       (local-set-key (kbd "M-?") 'helm-gtags-pop-stack))
      (add-hook 'gtags-mode-hook 'c/initialize-gtags-mode-key-bindings)
    #+end_src
 
