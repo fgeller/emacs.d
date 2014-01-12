@@ -250,6 +250,7 @@
                              dired+
                              dired-details
                              dired-details+
+                             discover
                              elisp-slime-nav
                              expand-region
                              exec-path-from-shell
@@ -2223,6 +2224,15 @@
        '(progn
           (define-key ac-completing-map "\t" 'ac-complete)
           (define-key ac-completing-map "\r" nil)))
+   #+end_src
+
+** discover
+
+   Mode to discover more options.
+
+   #+begin_src emacs-lisp
+     (require 'discover)
+     (discover-mode 1)
    #+end_src
 
 ** Programming modes
