@@ -1729,8 +1729,7 @@
    Via ace-jump-mode.
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c C-m") 'ace-jump-word-mode)
-     (define-key global-map (kbd "C-c C-M") 'ace-jump-char-mode)
+    (define-key global-map (kbd "C-c C-h") 'ace-jump-mode)
    #+end_src
 
 ** C-c Map
