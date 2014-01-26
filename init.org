@@ -667,10 +667,10 @@
 
 ** Smartparens
 
-   Activate it!
+   Activate it?
 
    #+begin_src emacs-lisp
-     (smartparens-global-mode 1)
+     (smartparens-global-mode -1)
    #+end_src
 
    Mode-specific customization of pairs.
