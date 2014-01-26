@@ -1681,8 +1681,8 @@
                                (set-face-background 'mode-line-inactive "#fcf4dc")))
              (t (progn
                   (setq cursor-type 'bar)
-                  (set-face-background 'mode-line "#e9e2cb")
-                  (set-face-background 'mode-line-inactive "#e9e2cb")))))
+                  (set-face-background 'mode-line "#0a2832")
+                  (set-face-background 'mode-line-inactive "#0a2832")))))
 
 
      (add-hook 'god-mode-enabled-hook 'c/god-mode-update-cursor)
