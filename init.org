@@ -427,16 +427,6 @@
      (autoload 'rebase-mode "rebase-mode")
     #+end_src
 
-    ENSIME for Scala should be loaded with scala-mode.
-
-    #+begin_src emacs-lisp
-      (autoload 'ensime "ensime" "Read config file for settings. Then start an inferior ENSIME server and connect to its Swank server." t)
-      (autoload 'ensime-scala-mode-hook "ensime")
-      (autoload 'ensime-connected-p "ensime")
-      (eval-after-load 'scala-mode2
-        '(when (ensime-connected-p) (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)))
-    #+end_src
-
     Highlight TODO and friends in strings and comments.
 
     #+begin_src emacs-lisp
@@ -1490,12 +1480,6 @@
     #+begin_src emacs-lisp
       (add-to-list 'auto-mode-alist '("\\.scala\\'" . scala-mode))
     #+end_src
-
-   Tell ENSIME to behave and not override my auto-complete settings.
-
-   #+begin_src emacs-lisp
-     (setq ensime-ac-override-settings nil)
-   #+end_src
 
    Hook to call scalariform-daemon for formatting.
 
