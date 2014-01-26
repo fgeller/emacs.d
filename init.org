@@ -1060,8 +1060,8 @@
      (defun c/gtags-update-single (filename gtags-root)
        "Update GNU Global database in GTAGS-ROOT for changes in file named FILENAME."
        (interactive)
-       (start-process "update-gtags" "update-gtags"
-                      "bash" "-c" (concat "cd " gtags-root " ; gtags -i --single-update " filename )))
+       (let ((command (concat "cd " gtags-root " ; GTAGSLABEL=ctags GTAGSCONF=/usr/local/share/gtags/gtags.conf gtags -v --debug -i --single-update " filename )))
+        (start-process "update-gtags" "update-gtags" "zsh" "-c" command)))
 
      (defun c/gtags-update-current-file ()
        "Updates a GNU Global database based on the definitions in the current file."
