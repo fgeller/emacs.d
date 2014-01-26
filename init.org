@@ -1702,8 +1702,16 @@
    Use helm sources for fast jumping to buffers or files.
 
    #+begin_src emacs-lisp
-   (define-key global-map (kbd "C-t") 'c/helm-jump)
+     (define-key global-map (kbd "C-;") 'c/helm-jump)
    #+end_src
+
+   Unbind the key in local maps.
+
+   #+begin_src emacs-lisp
+     (eval-after-load 'flyspell
+       '(define-key flyspell-mode-map (kbd "C-;") nil))
+   #+end_src
+
 
    Jump to previous marks to go backwards.
 
