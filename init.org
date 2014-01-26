@@ -269,6 +269,7 @@
                              helm-git
                              helm-gtags
                              highlight-indentation
+                             highlight-symbol
                              js2-mode
                              json-mode
                              magit
@@ -963,6 +964,12 @@
      (add-hook 'occur-mode-hook 'next-error-follow-minor-mode)
    #+end_src
 
+** highlight-symbol
+
+   #+begin_src emacs-lisp
+     (setq highlight-symbol-on-navigation-p t)
+   #+end_src
+
 * Programming
 
   Basic configuration that is shared among all programming modes.
@@ -974,7 +981,8 @@
       (fic-mode 1)
       (setq show-trailing-whitespace t)
       (auto-complete-mode 1)
-      (smartscan-mode 1)
+      (highlight-symbol-mode 1)
+      (highlight-symbol-nav-mode 1)
       (add-hook 'before-save-hook 'c/maybe-cleanup-whitespace nil 'local))
     (add-hook 'prog-mode-hook 'c/prog-mode-initialization)
   #+end_src
