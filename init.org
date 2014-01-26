@@ -208,6 +208,7 @@
      (require 'grep)
      (require 'thingatpt)
      (require 'server)
+     (require 'subword)
    #+end_src
 
 ** ELPA
@@ -2113,6 +2114,31 @@
    #+begin_src emacs-lisp
      (define-key global-map (kbd "M-z") 'zap-up-to-char)
      (define-key global-map (kbd "M-Z") 'zap-to-char)
+   #+end_src
+
+   Helper to kill entire word, not just forward part.
+
+   #+begin_src emacs-lisp
+     (defun c/subword-kill-backwards ()
+       (interactive)
+       (backward-word)
+       (subword-kill 1))
+   #+end_src
+
+   Unbind =C-z= which is not a prefix by default.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-z") nil)
+   #+end_src
+
+   Some helpers that are convenient on god-mode.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-z C-z") 'subword-kill)
+     (define-key global-map (kbd "C-z C-d") 'subword-kill)
+     (define-key global-map (kbd "C-z C-c") 'zap-to-char)
+     (define-key global-map (kbd "C-z C-w") 'c/subword-kill-backwards)
+     (define-key global-map (kbd "C-z C-s") 'sp-kill-symbol)
    #+end_src
 
    Kill entire line, no matter where we are on the line.
