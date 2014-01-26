@@ -1692,7 +1692,8 @@
    Manually control where god-mode is enabled.
 
    #+begin_src emacs-lisp
-     (setq god-exempt-major-modes '())
+     (setq god-exempt-major-modes '()
+           god-exempt-predicates '())
      (god-mode-all)
    #+end_src
 
