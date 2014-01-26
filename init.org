@@ -370,6 +370,12 @@
        (require 'god-mode)
      #+end_src
 
+**** flycheck
+
+     #+begin_src emacs-lisp
+       (add-hook 'after-init-hook #'global-flycheck-mode)
+     #+end_src
+
 *** autoload'ed
 
     Helpers to do rectangle insert inline and mark multiple occurrences of
@@ -1616,7 +1622,6 @@
      (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
      (add-hook 'haskell-mode-hook 'turn-on-eldoc-mode)
      (add-hook 'haskell-mode-hook 'turn-on-haskell-doc)
-     (add-hook 'haskell-mode-hook 'flycheck-mode)
    #+end_src
 
 * Key Bindings
