@@ -277,6 +277,7 @@
                              malabar-mode
                              mic-paren
                              multiple-cursors
+                             nlinum
                              org
                              org-plus-contrib
                              paredit
@@ -1506,7 +1507,7 @@
        (rainbow-delimiters-mode)
        (subword-mode 1)
        (setq tab-width 2)
-       (linum-mode 1)
+       (nlinum-mode 1)
        (gtags-mode 1)
        (add-hook 'after-save-hook 'c/scalariform-daemon-format-file nil 'make-it-local))
      (add-hook 'scala-mode-hook 'c/scala-mode-initialization)
@@ -1609,7 +1610,7 @@
      (defun c/go-mode-initialization ()
        (rainbow-delimiters-mode)
        (subword-mode 1)
-       (linum-mode 1)
+       (nlinum-mode 1)
        (add-hook 'before-save-hook 'gofmt-before-save nil 'make-it-local))
 
      (add-hook 'go-mode-hook 'c/go-mode-initialization)
