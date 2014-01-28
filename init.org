@@ -2402,7 +2402,7 @@
       inhibit-startup-echo-area-message t
       truncate-lines t
       truncate-partial-width-windows nil
-      visible-bell nil
+      visible-bell 1
       transient-mark-mode t   ;; highlight the active region when mark is active
       show-trailing-whitespace nil ;; don't show trailing whitespace globally
       blink-matching-paren t
