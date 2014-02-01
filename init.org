@@ -1732,6 +1732,7 @@
 
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-l") nil)
+     (define-key global-map (kbd "C-l C-l") 'recenter-top-bottom)
      (define-key global-map (kbd "C-l C-e") 'eshell)
      (define-key global-map (kbd "C-l C-s") 'shell)
      (define-key global-map (kbd "C-l C-c") 'erc)
