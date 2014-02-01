@@ -2133,14 +2133,24 @@
      (define-key global-map (kbd "C-z") nil)
    #+end_src
 
+   Helper to zap backwards.
+
+   #+begin_src emacs-lisp
+     (defun c/zap-up-to-char-backwards ()
+       (interactive)
+       (let ((current-prefix-arg -1))
+         (call-interactively 'zap-up-to-char)))
+   #+end_src
+
    Some helpers that are convenient on god-mode.
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-z C-z") 'subword-kill)
+     (define-key global-map (kbd "C-z C-a") 'c/zap-up-to-char-backwards)
+     (define-key global-map (kbd "C-z C-s") 'zap-up-to-char)
+     (define-key global-map (kbd "C-z C-z") 'zap-up-to-char)
      (define-key global-map (kbd "C-z C-d") 'subword-kill)
-     (define-key global-map (kbd "C-z C-c") 'zap-up-to-char)
      (define-key global-map (kbd "C-z C-w") 'c/subword-kill-backwards)
-     (define-key global-map (kbd "C-z C-s") 'sp-kill-symbol)
+     (define-key global-map (kbd "C-z C-h") 'sp-kill-symbol)
    #+end_src
 
    Kill entire line, no matter where we are on the line.
