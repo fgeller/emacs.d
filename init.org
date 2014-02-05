@@ -3775,6 +3775,11 @@
         '(setq mm-text-html-renderer 'gnus-w3m))
     #+end_src
 
+    Images
+
+    #+begin_src emacs-lisp
+      (setq gnus-blocked-images nil)
+    #+end_src
 **** Mail
 
     Searching mails via nnir.
