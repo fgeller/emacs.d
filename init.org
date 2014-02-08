@@ -2430,6 +2430,7 @@
    #+begin_src emacs-lisp
      (set-scroll-bar-mode nil)
      (tool-bar-mode -1)
+     (menu-bar-mode -1)
      (setq-default
       blink-cursor-delay 0
       blink-cursor-interval 0.2
