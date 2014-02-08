@@ -273,6 +273,7 @@
                              highlight-symbol
                              js2-mode
                              json-mode
+                             key-chord
                              magit
                              malabar-mode
                              mic-paren
@@ -376,6 +377,14 @@
 
      #+begin_src emacs-lisp
        (add-hook 'after-init-hook #'global-flycheck-mode)
+     #+end_src
+
+**** key-chord
+
+     Allow for using custom chords for key bindings.
+
+     #+begin_src emacs-lisp
+       (key-chord-mode 1)
      #+end_src
 
 *** autoload'ed
@@ -1660,7 +1669,7 @@
    One key to bind them all...
 
    #+begin_src emacs-lisp
-     (global-set-key (kbd "<escape>") 'god-mode-all)
+     (key-chord-define-global "xm" 'god-mode-all)
    #+end_src
 
    Add some additional bindings so they are easier to access from god-mode.
