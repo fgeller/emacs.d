@@ -1669,7 +1669,7 @@
    One key to bind them all...
 
    #+begin_src emacs-lisp
-     (key-chord-define-global "xm" 'god-mode-all)
+     (key-chord-define-global "qd" 'god-mode-all)
    #+end_src
 
    Add some additional bindings so they are easier to access from god-mode.
