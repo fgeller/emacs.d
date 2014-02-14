@@ -568,6 +568,11 @@
        (c/change-num-at-point '-))
    #+end_src
 
+   #+begin_src emacs-lisp
+     (global-set-key (kbd "C-c C-+") 'c/inc-num-at-point)
+     (global-set-key (kbd "C-c C--") 'c/dec-num-at-point)
+   #+end_src
+
    Goto the matching paren of when point is looking at one.
 
    #+begin_src emacs-lisp
@@ -1670,6 +1675,7 @@
 
    #+begin_src emacs-lisp
      (key-chord-define-global "qd" 'god-mode-all)
+     (define-key global-map (kbd "M-o") nil)
    #+end_src
 
    Add some additional bindings so they are easier to access from god-mode.
@@ -1729,7 +1735,6 @@
    #+begin_src emacs-lisp
     (define-key global-map (kbd "C-c C-h") 'ace-jump-mode)
    #+end_src
-
 
 ** Jumping
 
@@ -2097,20 +2102,20 @@
    Duplicating current line.
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c *") (make-repeatable-command 'c/duplicate-current-line-or-region))
+     (define-key global-map (kbd "C-c C-n") 'c/duplicate-current-line-or-region)
    #+end_src
 
    Join this line to the previous.
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c ^") (make-repeatable-command 'join-line))
+     (define-key global-map (kbd "C-c C-e") 'join-line)
    #+end_src
 
    Replace strings and regexs.
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c q") 'anzu-query-replace)
-     (define-key global-map (kbd "C-c Q") 'anzu-query-replace-regexp)
+     (define-key global-map (kbd "C-c C-q") 'anzu-query-replace)
+     (define-key global-map (kbd "C-c C-Q") 'anzu-query-replace-regexp)
    #+end_src
 
    Use helm to show and search the kill-ring.
@@ -2122,7 +2127,7 @@
    Mini macros via multiple-cursors.
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c |") 'mc/edit-lines)
+     (define-key global-map (kbd "C-c C-;") 'mc/edit-lines)
    #+end_src
 
    Expanding and contracting current region.
