@@ -2428,6 +2428,14 @@
             (define-key scala-mode-map (kbd "C-c .") 'c/maybe-ensime-expand-selection-command)))
      #+end_src
 
+*** Go
+
+    Bindings specifc to go-mode.
+
+    #+begin_src emacs-lisp
+      (add-hook 'go-mode-hook (lambda () (local-set-key (kbd "M-.") 'godef-jump)))
+    #+end_src
+
 * Appearance
 ** General GUI Settings
 
