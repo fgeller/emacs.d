@@ -1757,7 +1757,6 @@
      (define-key global-map (kbd "C->") 'end-of-buffer)
    #+end_src
 
-
 ** C-c Map
 
    Enable / disable modes
