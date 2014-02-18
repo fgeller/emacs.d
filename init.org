@@ -1818,8 +1818,8 @@
    Formatting helpers
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c fa") 'align-regexp)
-     (define-key global-map (kbd "C-c fs") 'sort-lines)
+     (define-key global-map (kbd "C-c C-f C-a") 'align-regexp)
+     (define-key global-map (kbd "C-c C-f C-s") 'sort-lines)
 
    #+end_src
 
