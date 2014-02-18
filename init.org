@@ -1101,6 +1101,28 @@
      (eval-after-load 'helm '(eval-after-load 'gtags '(progn (require 'helm-gtags))))
    #+end_src
 
+   Monkey-patch helm-gtags to color-code the candidates.
+
+   #+begin_src emacs-lisp
+     (eval-after-load 'helm-gtags
+     '(progn
+       (setq helm-source-gtags-tags
+       `((name . "GNU GLOBAL")
+         (init . helm-gtags-tags-init)
+         (candidates-in-buffer)
+         (candidate-number-limit . ,helm-gtags-maximum-candidates)
+         (persistent-action . helm-gtags-tags-persistent-action)
+         (real-to-display . helm-gtags-tags-candidate-transformer)
+         (action . helm-gtags-action-openfile)))
+
+     (defun helm-gtags-tags-candidate-transformer (candidate)
+       (when (string-match "\\(.+?\\):\\(.+?\\):\\(.+\\)" candidate)
+         (format "%s:%s:%s"
+                 (propertize (match-string 1 candidate) 'face 'font-lock-keyword-face)
+                 (propertize (match-string 2 candidate) 'face 'font-lock-variable-name-face)
+                 (propertize (match-string 3 candidate) 'face 'font-lock-comment-face))))))
+   #+end_src
+
    Add a hook to update the GNU Global database upon saving a file.
 
    #+begin_src emacs-lisp
