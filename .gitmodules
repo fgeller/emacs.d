@@ -34,3 +34,6 @@
 [submodule "src/sort-imports"]
 	path = src/sort-imports
 	url = git@github.com:fgeller/sort-imports.el.git
+[submodule "src/emacs-helm-gtags"]
+	path = src/emacs-helm-gtags
+	url = git@github.com:fgeller/emacs-helm-gtags.git
