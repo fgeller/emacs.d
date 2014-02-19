@@ -1596,6 +1596,31 @@
        (c/ensime-add-sources (expand-file-name ".ensime")))
    #+end_src
 
+   Helper to import a given name based on helm-gtags.
+
+   #+begin_src emacs-lisp
+     (defun helm-gtags-action-import-tag (elm)
+       (let* ((filename (first (split-string elm ":")))
+              (tagname (helm-attr 'helm-gtags-tagname))
+              (default-directory (helm-gtags-base-directory))
+              (package (save-excursion
+                         (with-current-buffer (find-file-noselect filename)
+                           (goto-char (point-min))
+                           (if (looking-at-p "package ")
+                               (buffer-substring (+ (point) (length "package ")) (point-at-eol))
+                             "PACKAGE"))))
+              (import-statement (format "import %s.%s" package tagname)))
+         (goto-char (point-min))
+         (when (looking-at-p "package ") (forward-line 1) (newline))
+         (insert import-statement)
+         (when helm-gtags-pulse-at-cursor
+           (pulse-momentary-highlight-one-line (point)))))
+
+     (setcdr (assq 'action helm-source-gtags-tags)
+             '(("Jump to tag" . helm-gtags-action-openfile)
+               ("Import tag" . helm-gtags-action-import-tag)))
+   #+end_src
+
 ** PHP
 
    Tell php-mode to leave my bindings alone.
