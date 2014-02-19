@@ -315,10 +315,11 @@
      (require 'helm-config)
     #+end_src
 
-    Also load the helm-git addon.
+    Also load some add-ons.
 
     #+begin_src emacs-lisp
       (require 'helm-git)
+      (require 'helm-gtags)
     #+end_src
 
 **** expand-region
