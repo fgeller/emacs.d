@@ -136,15 +136,15 @@
       "Guess the project root based on files and folders that
     indicate the root of a project. Exclude tramp'd files."
       (interactive)
-      (let (
+      (let ((current-file (or buffer-file-name default-directory))
             (excludes '("/ssh:" "/sudo:"))
             (root-indicators '(".git" ".hg" ".svn" "pom.xml")))
         (when (and
-               buffer-file-name
-               (loop for exclude in excludes never (string-match exclude buffer-file-name)))
+               current-file
+               (loop for exclude in excludes never (string-match exclude current-file)))
           (loop
            for root-indicator in root-indicators
-           thereis (locate-dominating-file (or buffer-file-name default-directory) root-indicator)))))
+           thereis (locate-dominating-file current-file root-indicator)))))
   #+end_src
 
   Easy use of project root as =default-directory=.
