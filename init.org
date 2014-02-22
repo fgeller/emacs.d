@@ -2122,6 +2122,15 @@
        'isearch-repeat-backward)
    #+end_src
 
+** Smartparens
+
+   Bindings to unwrap and forward slurp smartparens sexps.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "M-s") 'sp-unwrap-sexp)
+     (define-key global-map (kbd "M-o") 'sp-forward-slurp-sexp)
+   #+end_src
+
 ** Text editing
 
    Beginning of line or end of indentation...
