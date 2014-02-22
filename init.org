@@ -306,7 +306,6 @@
                              smartparens
                              smartscan
                              todochiku
-                             undo-tree
                              wgrep
                              wgrep-ag
                              yasnippet
