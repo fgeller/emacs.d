@@ -1942,8 +1942,9 @@
    Bind them to =C-x w |= and =C-x w _=
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-x w |") 'c/split-window-horizontally-instead)
-     (define-key global-map (kbd "C-x w _") 'c/split-window-vertically-instead)
+     (define-key global-map (kbd "C-x C-w") nil)
+     (define-key global-map (kbd "C-x C-w C-|") 'c/split-window-horizontally-instead)
+     (define-key global-map (kbd "C-x C-w C--") 'c/split-window-vertically-instead)
    #+end_src
 
    Helper from [18] to rotate the windows clock-wise.
@@ -1976,27 +1977,14 @@
    Bind it to =C-x wr=.
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-x wr") (make-repeatable-command 'c/rotate-windows))
+     (define-key global-map (kbd "C-x C-w C-r") 'c/rotate-windows)
    #+end_src
 
-   Group winner-mode commands.
+   Bindings for un/re-doing window layouts.
 
    #+begin_src emacs-lisp
-     (define-command-group c/winner-mode-command-group
-       (:key "v" :command winner-undo)
-       (:key "z" :command winner-redo))
-
-     (define-key global-map (kbd "C-x w v") 'c/winner-mode-command-group)
-   #+end_src
-
-
-   Make several built-in window related commands repeatable.
-
-   #+begin_src emacs-lisp
-     (define-key ctl-x-map "^" (make-repeatable-command 'enlarge-window))
-     (define-key ctl-x-map "}" (make-repeatable-command 'enlarge-window-horizontally))
-     (define-key ctl-x-map "{" (make-repeatable-command 'shrink-window-horizontally))
-     (define-key ctl-x-map "o" (make-repeatable-command 'other-window))
+     (define-key global-map (kbd "C-x C-w C-w") 'winner-undo)
+     (define-key global-map (kbd "C-x C-w C-b") 'winner-redo)
    #+end_src
 
 ** goto Map (M-g)
