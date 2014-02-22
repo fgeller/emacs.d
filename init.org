@@ -2189,9 +2189,9 @@
    Helper to kill entire word, not just forward part.
 
    #+begin_src emacs-lisp
-     (defun c/subword-kill-backwards ()
+     (defun c/subword-kill ()
        (interactive)
-       (backward-word)
+       (subword-backward)
        (subword-kill 1))
    #+end_src
 
@@ -2216,6 +2216,7 @@
      (define-key global-map (kbd "C-z C-z") 'c/zap-up-to-char-backwards)
      (define-key global-map (kbd "C-z C-x") 'zap-up-to-char)
      (define-key global-map (kbd "C-z C-h") 'sp-kill-symbol)
+     (define-key global-map (kbd "C-z C-w") 'c/subword-kill)
    #+end_src
 
    Kill entire line, no matter where we are on the line.
