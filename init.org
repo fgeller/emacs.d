@@ -22,6 +22,12 @@
      (setq linux-p (eq system-type 'gnu/linux))
    #+end_src
 
+   Predicates for windowing system.
+
+   #+begin_src emacs-lisp
+     (setq terminal-p (not window-system))
+   #+end_src
+
 ** System name
 
    Don't use the FQDN
