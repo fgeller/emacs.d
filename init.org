@@ -2860,10 +2860,8 @@
           helm-c-source-git-files
           helm-c-source-recentf
           helm-c-source-buffer-not-found
-          helm-source-gtags-select
           )
         "*c/helm-jump*"))
-
    #+end_src
 
    Wrapper to =helm-do-grep= that sends the prefix argument so we search
