@@ -1833,29 +1833,6 @@
      (define-key global-map (kbd "C-l C-w") 'whitespace-mode)
    #+end_src
 
-   Helpers to toggle the contents of the mode-line for less noise.
-
-   #+begin_src emacs-lisp
-     (defun c/hide-mode-line ()
-       "Clears the mode-line format string and decreases the face height."
-       (interactive)
-       (setq-default mode-line-format "")
-       (set-face-attribute 'mode-line nil :height 0.1))
-
-     (defun c/show-mode-line ()
-       "Restores the mode-line format string and face height to the default settings."
-       (interactive)
-       (setq-default mode-line-format c/mode-line-format)
-       (set-face-attribute 'mode-line nil :height (face-attribute 'default :height)))
-
-     (defun c/toggle-mode-line ()
-       "Globally toggles the modeline by clearing the format string."
-       (interactive)
-       (if (eq "" mode-line-format)
-           (c/show-mode-line)
-         (c/hide-mode-line)))
-   #+end_src
-
    Define helper to toggle between common mono-space font heights.
 
    #+begin_src emacs-lisp
@@ -1871,7 +1848,6 @@
      (define-key global-map (kbd "C-c M-t d") (make-repeatable-command 'toggle-debug-on-error))
      (define-key global-map (kbd "C-c M-t f") (make-repeatable-command 'c/toggle-mono-space-font-height))
      (define-key global-map (kbd "C-c M-t l") (make-repeatable-command 'toggle-truncate-lines))
-     (define-key global-map (kbd "C-c M-t m") (make-repeatable-command 'c/toggle-mode-line))
    #+end_src
 
    Formatting helpers
