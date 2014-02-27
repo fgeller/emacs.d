@@ -1861,7 +1861,9 @@
    Compilation helpers.
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c p") 'compile)
+     (define-key global-map (kbd "C-c C-v") nil)
+     (define-key global-map (kbd "C-c C-v C-C") 'compile)
+     (define-key global-map (kbd "C-c C-v C-c") 'recompile)
    #+end_src
 
 ** C-x Map
