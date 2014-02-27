@@ -2092,7 +2092,7 @@
 
    #+begin_src emacs-lisp
      (define-key isearch-mode-map (kbd "M-w") 'isearch-yank-symbol)
-     (define-key isearch-mode-map [(control return)] 'isearch-exit-other-end)
+     (define-key isearch-mode-map [(shift return)] 'isearch-exit-other-end)
      (define-key isearch-mode-map (kbd "C-o") 'isearch-occur)
      (define-key isearch-mode-map (kbd "M-z") 'zap-to-isearch)
    #+end_src
