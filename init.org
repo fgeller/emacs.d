@@ -1633,25 +1633,41 @@
 
    #+begin_src emacs-lisp
      (defun helm-gtags-action-import-tag (elm)
-       (let* ((filename (first (split-string elm ":")))
-              (tagname (helm-attr 'helm-gtags-tagname))
-              (default-directory (helm-gtags-base-directory))
-              (package (save-excursion
-                         (with-current-buffer (find-file-noselect filename)
-                           (goto-char (point-min))
-                           (if (looking-at-p "package ")
-                               (buffer-substring (+ (point) (length "package ")) (point-at-eol))
-                             "PACKAGE"))))
-              (import-statement (format "import %s.%s" package tagname)))
-         (goto-char (point-min))
-         (when (looking-at-p "package ") (forward-line 1) (newline))
-         (insert import-statement)
-         (when helm-gtags-pulse-at-cursor
-           (pulse-momentary-highlight-one-line (point)))))
+       (when (string-match "\\(.+?\\):\\([0-9]+\\):\\(.+\\)" elm)
+         (let* ((filename (match-string 1 elm))
+                (tagname (helm-attr 'helm-gtags-tagname))
+                (default-directory (helm-gtags-base-directory))
+                (package (save-excursion
+                           (with-current-buffer (find-file-noselect filename)
+                             (goto-char (point-min))
+                             (while (and (not (looking-at-p "package ")) (not (eobp)))
+                               (beginning-of-line)
+                               (forward-line 1))
+                             (if (looking-at-p "package ")
+                                 (buffer-substring (+ (point) (length "package ")) (point-at-eol))
+                               "PACKAGE"))))
+                (import-statement (format "import %s.%s" package tagname)))
+           (goto-char (point-min))
+           (when (looking-at-p "package ") (forward-line 1) (newline))
+           (insert import-statement)
+           (when helm-gtags-pulse-at-cursor
+             (pulse-momentary-highlight-one-line (point))))))
 
-     (setcdr (assq 'action helm-source-gtags-tags)
-             '(("Jump to tag" . helm-gtags-action-openfile)
-               ("Import tag" . helm-gtags-action-import-tag)))
+     (defvar helm-source-gtags-import-tag
+       `((name . "GNU GLOBAL")
+         (init . helm-gtags-tags-init)
+         (candidates-in-buffer)
+         (candidate-number-limit . ,helm-gtags-maximum-candidates)
+         (real-to-display . helm-gtags-tags-candidate-transformer)
+         (persistent-action . helm-gtags-action-import-tag)
+         (action . helm-gtags-action-import-tag)))
+
+     (setq overriding-local-map nil)
+
+     (defun helm-gtags-import-tag ()
+       "Jump to definition"
+       (interactive)
+       (helm-gtags-common '(helm-source-gtags-import-tag)))
    #+end_src
 
 ** PHP
