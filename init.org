@@ -1975,6 +1975,16 @@
      (define-key global-map (kbd "C-x C-w C-b") 'winner-redo)
    #+end_src
 
+   Binding to kill buffer without mercy.
+
+   #+begin_src emacs-lisp
+     (defun c/kill-buffer-without-asking ()
+       (interactive)
+       (kill-buffer nil))
+
+     (define-key global-map (kbd "C-x C-k") 'c/kill-buffer-without-asking)
+   #+end_src
+
 ** goto Map (M-g)
 
    Alternatives to default =M->= and =M-<= to be consistent.
