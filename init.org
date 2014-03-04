@@ -1805,6 +1805,12 @@
      (setq ace-jump-mode-case-fold t)
    #+end_src
 
+   Only in current window.
+
+   #+begin_src emacs-lisp
+     (setq ace-jump-mode-scope 'window)
+   #+end_src
+
    More convenient binding.
 
    #+begin_src emacs-lisp
