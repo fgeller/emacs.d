@@ -1822,10 +1822,13 @@
    #+begin_src emacs-lisp
      (defvar c/ace-jump-zap-to-char-start nil)
      (defun c/ace-jump-delete-region ()
-       (message "blubbs from %s to %s" c/ace-jump-zap-to-char-start (point))
-       (delete-region (point) c/ace-jump-zap-to-char-start)
-       (setq c/ace-jump-zap-to-char-start nil)
-       (remove-hook 'ace-jump-mode-end-hook 'c/ace-jump-delete-region))
+       (let* ((backwards-zap (< (point) c/ace-jump-zap-to-char-start))
+              (start c/ace-jump-zap-to-char-start)
+             (end (if backwards-zap  (+ 1 (point)) (point))))
+         (delete-region  start end)
+         (setq c/ace-jump-zap-to-char-start nil)
+         (remove-hook 'ace-jump-mode-end-hook 'c/ace-jump-delete-region)
+         (when backwards-zap  (forward-char 1))))
 
      (defun c/ace-jump-zap-to-char (zap-char)
        (interactive (list (read-char "Zap to char:")))
