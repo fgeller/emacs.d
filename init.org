@@ -4051,6 +4051,32 @@
       (compile "sbt run"))
   #+end_src
 
+** gtags
+
+   Helpers to control gtags.
+
+   #+begin_src emacs-lisp
+     (defun c/gtags-clean-root ()
+       (interactive)
+       (with-project-root
+         (-each '("GTAGS" "GRTAGS" "GPATH")
+           (lambda (f)
+             (let ((expanded-file-name (expand-file-name f)))
+               (when (file-exists-p expanded-file-name)
+                 (delete-file expanded-file-name)))))))
+   #+end_src
+
+  Reset gtags for a scala project.
+
+  #+begin_src emacs-lisp
+    (defun c/gtags-reset-scala-root ()
+      (interactive)
+      (with-project-root
+       (let ((cmd "find . -name \"*.scala\" | while read f; do GTAGSLABEL=ctags GTAGSCONF=~/Sync/dotfiles/gtags.conf gtags -i --single-update $f; done"))
+         (c/gtags-clean-root)
+         (compile cmd))))
+  #+end_src
+
 * Start buffer
 
   Load an org-file, rather than the =*scratch*= buffer, as most doodles
