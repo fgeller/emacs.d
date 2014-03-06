@@ -2086,7 +2086,7 @@
    #+begin_src emacs-lisp
      (defun c/initialize-gtags-mode-key-bindings ()
        (local-set-key (kbd "M-.") 'helm-gtags-find-tag)
-       (local-set-key (kbd "M-?") 'helm-gtags-pop-stack))
+       (local-set-key (kbd "M-/") 'helm-gtags-pop-stack))
      (add-hook 'gtags-mode-hook 'c/initialize-gtags-mode-key-bindings)
    #+end_src
 
