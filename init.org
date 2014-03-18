@@ -2545,6 +2545,14 @@
             (140 . "#728a05")))
   #+end_src
 
+  Use solarized colors for ansi colors.
+
+  #+begin_src emacs-lisp
+    (unless terminal-p
+        (setq ansi-color-names-vector ["#0a2832" "#c60007" "#728a05" "#a57705" "#2075c7" "#c61b6e" "#259185" "#e9e2cb"])
+        (setq ansi-color-map (ansi-color-make-color-map)))
+  #+end_src
+
 ** General GUI Settings
 
    Less noisy Emacs startup and less noise on screen per default.
