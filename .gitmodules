@@ -37,3 +37,6 @@
 [submodule "src/emacs-helm-gtags"]
 	path = src/emacs-helm-gtags
 	url = git@github.com:fgeller/emacs-helm-gtags.git
+[submodule "themes/flatui-theme.el"]
+	path = themes/flatui-theme.el
+	url = git@github.com:fgeller/flatui-theme.el.git
