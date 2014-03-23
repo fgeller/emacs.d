@@ -1672,6 +1672,20 @@
        (helm-gtags-common '(helm-source-gtags-import-tag)))
    #+end_src
 
+   Scala test control
+
+   #+begin_src emacs-lisp
+     (defun c/scala-ignore-all-tests ()
+       (interactive)
+       (save-excursion
+         (replace-regexp "\\bit(\\(s\\)?\"" "ignore(\\1\"" nil (point-min) (point-max))))
+
+     (defun c/scala-enable-all-tests ()
+       (interactive)
+       (save-excursion
+         (replace-regexp "\\bignore(\\(s\\)?\"" "it(\\1\"" nil (point-min) (point-max))))
+   #+end_src
+
 ** PHP
 
    Tell php-mode to leave my bindings alone.
@@ -2493,6 +2507,8 @@
      #+begin_src emacs-lisp
        (eval-after-load 'scala-mode2
          '(progn
+            (define-key scala-mode-map (kbd "C-c C-t C-i") 'c/scala-ignore-all-tests)
+            (define-key scala-mode-map (kbd "C-c C-t C-e") 'c/scala-enable-all-tests)
             (define-key scala-mode-map (kbd "C-c C-b C-r") 'c/ensime-sbt-do-run)
             (define-key scala-mode-map (kbd "C-c C-i C-i") 'ensime)
             (define-key scala-mode-map (kbd "C-c C-i c") 'ensime-config-gen)
