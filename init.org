@@ -375,6 +375,7 @@
      #+begin_src emacs-lisp
        (require 'anzu)
        (global-anzu-mode +1)
+       (setq anzu-search-threshold 1000)
      #+end_src
 
 **** god-mode
