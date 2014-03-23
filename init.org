@@ -1789,10 +1789,9 @@
 
    #+begin_src emacs-lisp
      (defun c/god-mode-update-cursor ()
-       (cond (god-local-mode (progn
-                               (setq cursor-type 'box)
-                               (set-face-background 'fringe (if terminal-p "white" "#fcf4dc"))))
-             (t (set-face-background 'fringe (if terminal-p "black" "#0a2832")))))
+       (cond (god-local-mode
+              (set-face-background 'fringe (if (or terminal-p (not (boundp 'flatui-colors-alist))) "white" (cdr (assoc  "silver" flatui-colors-alist)))))
+             (t (set-face-background 'fringe (if (or terminal-p (not (boundp 'flatui-colors-alist))) "black" (cdr (assoc "wet-asphalt" flatui-colors-alist)))))))
 
      (add-hook 'god-mode-enabled-hook 'c/god-mode-update-cursor)
      (add-hook 'god-mode-disabled-hook 'c/god-mode-update-cursor)
