@@ -297,6 +297,7 @@
                              pointback
                              popup ;; for auto-complete
                              pretty-symbols
+                             prodigy
                              rainbow-mode
                              rainbow-delimiters
                              request
@@ -725,13 +726,13 @@
    Activate it?
 
    #+begin_src emacs-lisp
-     (smartparens-global-mode 1)
+     (smartparens-global-mode -1)
    #+end_src
 
    Mode-specific customization of pairs.
 
    #+begin_src emacs-lisp
-     (sp-pair "'" nil :actions :rem)
+     (sp-local-pair '(emacs-lisp-mode magit-log-edit-mode message-mode org-mode) "'" nil :actions nil)
      (sp-local-pair '(scala-mode) "`" "`")
      (sp-local-pair '(scala-mode) "${" "}")
      (sp-local-pair '(scala-mode) "s\"" "\"")
@@ -2526,33 +2527,6 @@
     #+end_src
 
 * Appearance
-** Theme
-
-
-  Use solarized colors for annotate-goodness.
-
-  #+begin_src emacs-lisp
-    (setq vc-annotate-background "#fcf4dc")
-    (setq vc-annotate-very-old-color "#042028")
-    (setq vc-annotate-color-map
-          '((20  . "#a57705")
-            (40  . "#bd3612")
-            (50  . "#c60007")
-            (60  . "#c61b6e")
-            (80  . "#5859b7")
-            (100 . "#2075c7")
-            (120 . "#259185")
-            (140 . "#728a05")))
-  #+end_src
-
-  Use solarized colors for ansi colors.
-
-  #+begin_src emacs-lisp
-    (unless terminal-p
-        (setq ansi-color-names-vector ["#0a2832" "#c60007" "#728a05" "#a57705" "#2075c7" "#c61b6e" "#259185" "#e9e2cb"])
-        (setq ansi-color-map (ansi-color-make-color-map)))
-  #+end_src
-
 ** General GUI Settings
 
    Less noisy Emacs startup and less noise on screen per default.
@@ -3217,6 +3191,22 @@
    #+end_src
 
 * Version Control
+
+  Use solarized colors for annotate-goodness.
+
+  #+begin_src emacs-lisp
+    (setq vc-annotate-background "#fcf4dc")
+    (setq vc-annotate-very-old-color "#042028")
+    (setq vc-annotate-color-map
+          '((20 . "#a57705")
+            (40 . "#bd3612")
+            (50 . "#c60007")
+            (60 . "#c61b6e")
+            (80 . "#5859b7")
+            (100 ."#2075c7")
+            (120 ."#259185")
+            (140 ."#728a05")))
+  #+end_src
 
   Ignore tramp'ed files for speeeeed [1]
 
