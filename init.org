@@ -2312,10 +2312,10 @@
 ** Org mode
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c of") 'org-footnote-action)
-     (define-key global-map (kbd "C-c l") 'org-store-link)
-     (define-key global-map (kbd "C-c a") 'org-agenda)
-     (define-key global-map (kbd "C-c c") 'org-capture)
+     (define-key global-map (kbd "C-c C-o C-f") 'org-footnote-action)
+     (define-key global-map (kbd "C-c C-o C-l") 'org-store-link)
+     (define-key global-map (kbd "C-c C-o C-a") 'org-agenda)
+     (define-key global-map (kbd "C-c C-o C-c") 'org-capture)
 
      (eval-after-load 'org-agenda
        '(define-key org-agenda-mode-map (kbd "C-c t") 'org-agenda-todo))
@@ -2324,21 +2324,9 @@
      (eval-after-load 'org
        '(progn
           (define-key org-mode-map (kbd "C-'") nil)
-          (define-key org-mode-map (kbd "C-.") nil)
-          (define-key org-mode-map (kbd "C-,") nil)
-          (define-key org-mode-map (kbd "C-c .") nil)
-          (define-key org-mode-map (kbd "C-c SPC") nil)
-          (define-key org-mode-map (kbd "C-c ,") nil)
-          (define-key org-mode-map (kbd "C-c *") nil)
-          (define-key org-mode-map (kbd "C-c &") 'org-mark-ring-goto)
-          (define-key org-mode-map (kbd "C-c #") nil)
-          (define-key org-mode-map (kbd "C-c >") nil)
-          (define-key org-mode-map (kbd "C-c <") nil)
-          (define-key org-mode-map (kbd "C-c ^") nil)
-          (define-key org-mode-map (kbd "C-c |") nil)
-          (define-key org-mode-map (kbd "C-c g") 'omlg-grab-link)
-          (define-key org-mode-map (kbd "C-c t") 'org-todo)
-          (define-key org-mode-map (kbd "C-c C-x C-u") 'c/org-get-chrome-link)))
+          (define-key org-mode-map (kbd "C-c C-o") nil)
+          (define-key org-mode-map (kbd "C-c C-n") nil)
+          (define-key org-mode-map (kbd "C-c C-e") nil)))
    #+end_src
 
 ** Eshell
