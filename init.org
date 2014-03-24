@@ -388,30 +388,58 @@
 
      Enable god-mode in special modes via =overriding-local-map=.
 
+     #+begin_src emacs-lisp :tangle yes
+         (defvar gm-stored-overriding-local-map nil)
+         (make-variable-buffer-local 'gm-stored-overriding-local-map)
+         (defvar gm-special-override-modes nil)
+         (defvar gm-debug nil)
+         ;;(setq gm-debug t)
+         (setq gm-special-override-modes '(magit-mode dired-mode woman-mode))
+
+         (add-hook 'god-mode-disabled-hook 'gm-release-override-map)
+         ;;(remove-hook 'god-mode-disabled-hook 'gm-maybe-release-override-map)
+         (add-hook 'god-mode-enabled-hook 'gm-maybe-override-map)
+
+         (setq overriding-local-map nil)
+
+         (defun gm-release-override-map ()
+           (cond (gm-stored-overriding-local-map
+                  (when gm-debug (message "[gm] releasing override-local-map in buffer %s to %s" (buffer-name) (car gm-stored-overriding-local-map)))
+                  (setq overriding-local-map (car gm-stored-overriding-local-map)))
+                 (t
+                  ;; (when gm-debug (message "[gm] in buffer %s forcing overriding-local-map to nil from %s" (buffer-name) overriding-local-map))
+                  ;; (setq overriding-local-map nil)
+                  ))
+           (setq gm-stored-overriding-local-map nil))
+
+
+         (defun gm-maybe-override-map ()
+           (when (and
+                  god-global-mode
+                  (not (eq overriding-local-map god-local-mode-map))
+                  (-any? 'derived-mode-p gm-special-override-modes))
+             (when gm-debug (message "[gm] activating override map in buffer %s, storing %s" (buffer-name) `(,overriding-local-map . t)))
+             (make-variable-buffer-local 'overriding-local-map)
+             (setq gm-stored-overriding-local-map `(,overriding-local-map . t))
+             (setq overriding-local-map god-local-mode-map)))
+
+       (defun c/escape-god-mode-override ()
+         (interactive)
+         (setq overriding-local-map nil)
+         (message "released god-mode override"))
+
+       (define-key global-map (kbd "C-c C-x C-x") 'c/escape-god-mode-override)
+     #+end_src
+
      #+begin_src emacs-lisp
-       (defvar gm-stored-overriding-local-map nil)
-       (defvar gm-special-override-modes nil)
-       (defvar gm-debug nil)
-       (setq gm-special-override-modes '(magit-mode dired-mode woman-mode))
+       (defun c/toggle-org-src-edit ()
+         (interactive)
+         (cond
+          ((eq major-mode 'org-mode) (call-interactively 'org-edit-src-code))
+          ((-contains? minor-mode-list 'org-src-mode) (org-edit-src-exit))
+          (t (message "Ignoring: Neither editing nor in org-mode"))))
 
-       (add-hook 'god-mode-disabled-hook 'gm-maybe-release-override-map)
-       (add-hook 'god-mode-enabled-hook 'gm-maybe-override-map)
-
-       (defun gm-maybe-release-override-map ()
-         (when gm-stored-overriding-local-map
-           (when gm-debug (message "[gm] releasing override-local-map to %s" (car gm-stored-overriding-local-map)))
-           (setq overriding-local-map (car gm-stored-overriding-local-map))
-           (setq gm-stored-overriding-local-map nil)))
-
-       (defun gm-maybe-override-map ()
-         (when gm-debug (message "[gm] maybe override map, in buffer %s with god-global-mode %s major-mode %s" (buffer-name) god-global-mode major-mode))
-         (when (and
-                god-global-mode
-                (not (eq overriding-local-map god-local-mode-map))
-                (-any? 'derived-mode-p gm-special-override-modes))
-           (when gm-debug (message "[gm] activating override map, storing %s" `(,overriding-local-map . t)))
-           (setq gm-stored-overriding-local-map `(,overriding-local-map . t))
-           (setq overriding-local-map god-local-mode-map)))
+       (define-key global-map (kbd "C-c C-'") 'c/toggle-org-src-edit)
      #+end_src
 
 **** flycheck
