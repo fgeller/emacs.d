@@ -1706,7 +1706,11 @@
      (defun c/scala-ignore-all-tests ()
        (interactive)
        (save-excursion
-         (replace-regexp "\\bit(\\(s\\)?\"" "ignore(\\1\"" nil (point-min) (point-max))))
+         (replace-regexp "\\bit(\\(s\\)?\"" "ignore(\\1\"" nil (point-min) (point-max)))
+       (unless current-prefix-arg
+         (save-excursion
+           (search-backward "ignore(" nil)
+           (replace-match "it(" nil t))))
 
      (defun c/scala-enable-all-tests ()
        (interactive)
