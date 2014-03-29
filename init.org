@@ -2356,6 +2356,8 @@
      (define-key global-map (kbd "C-c C-o C-l") 'org-store-link)
      (define-key global-map (kbd "C-c C-o C-a") 'org-agenda)
      (define-key global-map (kbd "C-c C-o C-c") 'org-capture)
+     (define-key global-map (kbd "C-c C-o C-o") 'org-clock-out)
+     (define-key global-map (kbd "C-c C-o C-i") 'org-clock-in)
 
      (eval-after-load 'org-agenda
        '(define-key org-agenda-mode-map (kbd "C-c t") 'org-agenda-todo))
