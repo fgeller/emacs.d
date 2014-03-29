@@ -2590,7 +2590,8 @@
       transient-mark-mode t   ;; highlight the active region when mark is active
       show-trailing-whitespace nil ;; don't show trailing whitespace globally
       blink-matching-paren t
-      default-frame-alist '((left-fringe . 1) (right-fringe . 0) (scroll-bar-width . nil))
+      initial-frame-alist '((left-fringe . 1) (right-fringe . 1) (scroll-bar-width . nil))
+      default-frame-alist '((left-fringe . 1) (right-fringe . 1) (scroll-bar-width . nil))
       scroll-bar-width 0
       default-frame-scroll-bars nil)
    #+end_src
