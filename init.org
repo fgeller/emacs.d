@@ -1831,7 +1831,7 @@
      (defun c/god-mode-update-cursor ()
        (cond (god-local-mode
               (set-face-background 'fringe (if (or terminal-p (not (boundp 'flatui-colors-alist))) "white" (cdr (assoc  "silver" flatui-colors-alist)))))
-             (t (set-face-background 'fringe (if (or terminal-p (not (boundp 'flatui-colors-alist))) "black" (cdr (assoc "wet-asphalt" flatui-colors-alist)))))))
+             (t (set-face-background 'fringe (if (or terminal-p (not (boundp 'flatui-colors-alist))) "black" (cdr (assoc "pumpkin" flatui-colors-alist)))))))
 
      (add-hook 'god-mode-enabled-hook 'c/god-mode-update-cursor)
      (add-hook 'god-mode-disabled-hook 'c/god-mode-update-cursor)
