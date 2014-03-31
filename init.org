@@ -2529,6 +2529,30 @@
          (ensime-sbt-action "run"))
      #+end_src
 
+     Helper to find unused imports.
+
+     #+begin_src emacs-lisp
+       (defun c/find-unused-imports ()
+         (interactive)
+         (let* ((full-buffer-contents (buffer-substring-no-properties (point-min) (point-max)))
+                (unused-import-lines
+                 (with-temp-buffer
+                   (insert full-buffer-contents)
+                   (goto-char (point-min))
+                   (keep-lines si-import-line-regex (point-min) (point-max))
+                   (let* ((import-lines (s-split "\n" (filter-buffer-substring (point-min) (point-max) t) t))
+                          (unused-import-lines (-flatten (-map
+                                                          (lambda (line) (let* ((name (cadr (s-match "import .+\\.\\(.+\\)" line)))
+                                                                           (count (s-count-matches name full-buffer-contents)))
+                                                                      (when (eq count 1) line)))
+                                                          import-lines))))
+                     unused-import-lines))))
+           (goto-char (point-min))
+           (insert (s-join "\n" unused-import-lines))
+           (open-line 2)
+           (-each unused-import-lines (lambda (line) (save-excursion (flush-lines line))))))
+     #+end_src
+
 **** Bindings
 
      Bindings specific to scala-mode2
@@ -2539,7 +2563,8 @@
             (define-key scala-mode-map (kbd "C-c C-t C-i") 'c/scala-ignore-all-tests)
             (define-key scala-mode-map (kbd "C-c C-t C-e") 'c/scala-enable-all-tests)
             (define-key scala-mode-map (kbd "C-c C-t C-o") 'helm-gtags-import-tag)
-            (define-key scala-mode-map (kbd "C-c C-t C-s") 'si-sort-imports)))
+            (define-key scala-mode-map (kbd "C-c C-t C-s") 'si-sort-imports)
+            (define-key scala-mode-map (kbd "C-c C-t C-a") 'c/find-unused-imports)))
      #+end_src
 
      Bindings for sending actions to SBT process.
