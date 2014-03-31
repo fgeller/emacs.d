@@ -2666,8 +2666,6 @@
                            :family c/mono-space-font-family :height c/mono-space-font-height :weight 'normal))
    #+end_src
 
-   Use monospace for some modes.
-
 ** Mode-line
 
    Propertized mode-line string that shows errors and warnings when
