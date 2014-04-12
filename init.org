@@ -282,6 +282,7 @@
                              helm-git
                              highlight-indentation
                              highlight-symbol
+                             htmlize
                              indent-guide
                              js2-mode
                              json-mode
