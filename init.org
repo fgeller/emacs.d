@@ -2356,12 +2356,10 @@
 ** Org mode
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c C-o C-f") 'org-footnote-action)
-     (define-key global-map (kbd "C-c C-o C-l") 'org-store-link)
      (define-key global-map (kbd "C-c C-o C-a") 'org-agenda)
      (define-key global-map (kbd "C-c C-o C-c") 'org-capture)
-     (define-key global-map (kbd "C-c C-o C-o") 'org-clock-out)
-     (define-key global-map (kbd "C-c C-o C-i") 'org-clock-in)
+     (define-key global-map (kbd "C-c C-o C-l") 'org-store-link)
+     (define-key global-map (kbd "C-c C-o C-b") 'c/org-get-chrome-link)
 
      (eval-after-load 'org-agenda
        '(define-key org-agenda-mode-map (kbd "C-c t") 'org-agenda-todo))
@@ -2372,7 +2370,11 @@
           (define-key org-mode-map (kbd "C-'") nil)
           (define-key org-mode-map (kbd "C-c C-o") nil)
           (define-key org-mode-map (kbd "C-c C-n") nil)
-          (define-key org-mode-map (kbd "C-c C-e") nil)))
+          (define-key org-mode-map (kbd "C-c C-e") nil)
+          (define-key org-mode-map (kbd "C-c C-o C-s") 'c/org-schedule-and-refile)
+          (define-key org-mode-map (kbd "C-c C-o C-f") 'org-footnote-action)
+          (define-key org-mode-map (kbd "C-c C-o C-o") 'org-clock-out)
+          (define-key org-mode-map (kbd "C-c C-o C-i") 'org-clock-in)))
    #+end_src
 
 ** Eshell
@@ -3529,6 +3531,15 @@
           (require org-mod)))
     #+end_src
 
+*** Scheduling
+
+    #+begin_src emacs-lisp
+      (defun c/org-schedule-and-refile ()
+        (interactive)
+        (call-interactively 'org-schedule)
+        (org-refile))
+    #+end_src
+
 *** Keywords
 
     Define the list of keywords to use for identifying the state of a
@@ -3677,17 +3688,16 @@
       (setq org-capture-templates
             `(("t" "Task"
                entry (file+olp ,org-default-notes-file "Inbox")
-               "* TODO %?\n\n  %a\n  %i\n")
+               "* TODO %?\n\n")
               ("w" "Work task"
                entry (file+olp ,org-default-notes-file "Inbox")
-               "* TODO %? :work:\n\n  %a\n  %i\n")
+               "* TODO %? :work:\n\n")
               ("n" "Note"
                entry (file+headline ,org-default-notes-file "Notes")
                "* %?\n\n  %a\n  %i\n")
               ("s" "Scratch"
                entry (file+headline (expand-file-name "scratch.org" org-directory) "Scratch")
-               "* Scratch it %U\n\n%i\n")
-              ))
+               "* Scratch it %U\n\n%i\n")))
     #+end_src
 
     Helper based on @jwiegley's dot-emacs to get the URL of the
@@ -3708,8 +3718,7 @@
           (do-applescript
            (string-to-multibyte "tell application \"Google Chrome\"
               close active tab of front window
-      end tell"))
-          ))
+      end tell"))))
     #+end_src
 
 *** Refile
@@ -3736,18 +3745,6 @@
 
     #+begin_src emacs-lisp
       (setq org-babel-load-languages '((emacs-lisp . t) (scala . t)))
-    #+end_src
-
-*** Habits
-
-    Low noise settings for habits.
-
-    #+begin_src emacs-lisp
-      (setq org-habit-preceding-days 7)
-      (setq org-habit-show-habits-only-for-today nil)
-      (setq org-habit-completed-glyph ?.)
-      (setq org-habit-today-glyph ?o)
-      (setq org-habit-graph-column 60)
     #+end_src
 
 * Communication
