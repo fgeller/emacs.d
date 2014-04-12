@@ -1506,6 +1506,9 @@
      (defun c/java-mode-initialization ()
        (subword-mode 1)
        (gtags-mode 1)
+       (indent-guide-mode 1)
+       (rainbow-delimiters-mode)
+       (nlinum-mode 1)
        (c-set-offset 'arglist-intro '+)  ;; fixes indenting of arguments on the next line.
        (c-set-offset 'arglist-close '0)
        (c-set-offset 'substatement-open '0))
