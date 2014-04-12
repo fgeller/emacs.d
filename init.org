@@ -2545,14 +2545,13 @@
                  (with-temp-buffer
                    (insert full-buffer-contents)
                    (goto-char (point-min))
-                   (keep-lines si-import-line-regex (point-min) (point-max))
-                   (let* ((import-lines (s-split "\n" (filter-buffer-substring (point-min) (point-max) t) t))
-                          (unused-import-lines (-flatten (-map
-                                                          (lambda (line) (let* ((name (cadr (s-match "import .+\\.\\(.+\\)" line)))
-                                                                           (count (s-count-matches name full-buffer-contents)))
-                                                                      (when (eq count 1) line)))
-                                                          import-lines))))
-                     unused-import-lines))))
+                   (keep-lines "^import " (point-min) (point-max))
+                   (let* ((import-lines (s-split "\n" (filter-buffer-substring (point-min) (point-max) t) t)))
+                     (-flatten (-map
+                                (lambda (line) (let* ((name (cadr (s-match "import .+\\.\\(.+\\)" line)))
+                                                 (count (s-count-matches name full-buffer-contents)))
+                                            (when (eq count 1) line)))
+                                import-lines))))))
            (goto-char (point-min))
            (insert (s-join "\n" unused-import-lines))
            (open-line 2)
