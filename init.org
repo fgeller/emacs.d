@@ -446,7 +446,7 @@
 
 **** flycheck
 
-     #+begin_src emacs-lisp
+     #+begin_src emacs-lisp :tangle no
        (add-hook 'after-init-hook #'global-flycheck-mode)
      #+end_src
 
