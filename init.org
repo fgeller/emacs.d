@@ -3714,7 +3714,7 @@
                     (string-to-multibyte "tell application \"Google Chrome\"
               URL of active tab of front window
       end tell"))))
-          (insert (org-make-link-string (substring url 0 nil) (substring subject 0 nil)))
+          (insert (org-make-link-string (substring url 1 -1) (substring subject 1 -1)))
           (do-applescript
            (string-to-multibyte "tell application \"Google Chrome\"
               close active tab of front window
