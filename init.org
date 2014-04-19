@@ -2714,10 +2714,10 @@
         " "
         'mode-line-mule-info ;; Info about the active input method and coding-system
         'mode-line-remote ;; Small indicator for tramp'ed files
-        '(:eval (propertize "%b" 'face 'mode-line-buffer-id)) ;; buffer name
-        '(:eval (when buffer-read-only (propertize "%" 'face 'mode-line)))
-        '(:eval (when (buffer-modified-p) (propertize "*" 'face 'mode-line-highlight)))
-        (propertize " %l:%c %p/%I " 'face 'mode-line) ;; line
+        '(:eval (propertize "%b")) ;; buffer name
+        '(:eval (when buffer-read-only (propertize "%")))
+        '(:eval (when (buffer-modified-p) (propertize "*")))
+        (propertize " %l:%c %p/%I ") ;; line
                                              ;  mode-name
         (list
          (propertize "%[" 'help-echo "Recursive edit, type C-M-c to get out")
@@ -2747,36 +2747,69 @@
    Helpers to hide mode-line [32].
 
     #+begin_src emacs-lisp
-       (defvar-local hidden-mode-line-mode nil)
-       (defvar-local hide-mode-line nil)
+      (defvar-local hidden-mode-line-mode nil)
+      (defvar-local hide-mode-line nil)
 
-       (define-minor-mode hidden-mode-line-mode
-         "Minor mode to hide the mode-line in the current buffer."
-         :init-value nil
-         :global nil
-         :variable hidden-mode-line-mode
-         :group 'editing-basics
-         (if hidden-mode-line-mode
-             (setq hide-mode-line mode-line-format
-                   mode-line-format " ")
-           (setq mode-line-format hide-mode-line
-                 hide-mode-line nil))
-         (force-mode-line-update)
-         ;; Apparently force-mode-line-update is not always enough to
-         ;; redisplay the mode-line
-         (redraw-display)
-         (when (and (called-interactively-p 'interactive)
-                    hidden-mode-line-mode)
-           (run-with-idle-timer
-            0 nil 'message
-            (concat "Hidden Mode Line Mode enabled.  "
-                    "Use M-x hidden-mode-line-mode to make the mode-line appear."))))
+      (define-minor-mode hidden-mode-line-mode
+        "Minor mode to hide the mode-line in the current buffer."
+        :init-value nil
+        :global nil
+        :variable hidden-mode-line-mode
+        :group 'editing-basics
 
-       ;; Activate hidden-mode-line-mode
-       (hidden-mode-line-mode 1)
+        (cond (hidden-mode-line-mode
+               (setq hide-mode-line mode-line-format
+                     hide-header-line header-line-format
+                     mode-line-format " "
+                     header-line-format nil
+                     helm-mode-line-string " ")
+               (set-face-attribute 'header-line nil :height 50)
+               (set-face-attribute 'mode-line nil :height 50)
+               (set-face-attribute 'mode-line-inactive nil :height 50)
+               (set-face-attribute 'mode-line nil :foreground (face-attribute 'fringe :background))
+               (set-face-attribute 'mode-line nil :background (face-attribute 'fringe :background))
+               (set-face-attribute 'mode-line-buffer-id nil :foreground (face-attribute 'fringe :background))
+               (set-face-attribute 'mode-line-buffer-id nil :background (face-attribute 'fringe :background))
+               (set-face-attribute 'mode-line-inactive nil :foreground (face-attribute 'fringe :background))
+               (set-face-attribute 'mode-line-inactive nil :background (face-attribute 'fringe :background))
+               (set-face-attribute 'header-line nil :foreground (face-attribute 'fringe :background))
+               (set-face-attribute 'header-line nil :background (face-attribute 'fringe :background))
+               (set-face-attribute 'helm-candidate-number nil :foreground (face-attribute 'fringe :background))
+               (set-face-attribute 'helm-candidate-number nil :background (face-attribute 'fringe :background)))
+              (t
+               (setq mode-line-format hide-mode-line)
+               (set-face-attribute 'header-line nil :height (face-attribute 'default :height))
+               (set-face-attribute 'mode-line nil :height (face-attribute 'default :height))
+               (set-face-attribute 'mode-line-inactive nil :height (face-attribute 'default :height))))
+        (force-mode-line-update)
+        ;; Apparently force-mode-line-update is not always enough to
+        ;; redisplay the mode-line
+        (redraw-display)
+        (when (and (called-interactively-p 'interactive)
+                   hidden-mode-line-mode)
+          (run-with-idle-timer
+           0 nil 'message
+           (concat "Hidden Mode Line Mode enabled.  "
+                   "Use M-x hidden-mode-line-mode to make the mode-line appear."))))
 
-       ;; If you want to hide the mode-line in all new buffers
-       (add-hook 'after-change-major-mode-hook 'hidden-mode-line-mode)
+      ;; Activate hidden-mode-line-mode
+      (hidden-mode-line-mode 1)
+
+      ;; If you want to hide the mode-line in all new buffers
+      (add-hook 'after-change-major-mode-hook 'hidden-mode-line-mode)
+
+      ;; Command to toggle the display of the mode-line as a header
+      (defvar-local header-line-format nil)
+      (defun mode-line-in-header ()
+        (interactive)
+        (if (not (equal hide-mode-line header-line-format))
+            (progn
+              (set-face-attribute 'header-line nil :height (face-attribute 'default :height))
+              (set-face-attribute 'header-line nil :foreground (face-attribute 'default :foreground))
+              (setq header-line-format hide-mode-line))
+          (setq header-line-format nil))
+        (set-window-buffer nil (current-buffer)))
+
     #+end_src
 
 ** Buffer Name
