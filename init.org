@@ -1892,9 +1892,9 @@
    Toggle functions
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c M-t d") (make-repeatable-command 'toggle-debug-on-error))
-     (define-key global-map (kbd "C-c M-t f") (make-repeatable-command 'c/toggle-mono-space-font-height))
-     (define-key global-map (kbd "C-c M-t l") (make-repeatable-command 'toggle-truncate-lines))
+     (define-key global-map (kbd "C-c C-/ C-d") 'toggle-debug-on-error)
+     (define-key global-map (kbd "C-c C-/ C-h") 'mode-line-in-header)
+     (define-key global-map (kbd "C-c C-/ C-l") 'toggle-truncate-lines)
    #+end_src
 
    Formatting helpers
