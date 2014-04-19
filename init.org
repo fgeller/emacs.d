@@ -1290,6 +1290,25 @@
       (add-hook 'emacs-lisp-mode-hook 'c/emacs-lisp-mode-initialization)
     #+end_src
 
+*** Scheme
+
+    Use MIT Scheme.
+
+    #+begin_src emacs-lisp
+      (setq scheme-program-name "mit-scheme")
+    #+end_src
+
+    Configuration per-buffer.
+
+    #+begin_src emacs-lisp
+      (defun c/scheme-mode-initialization ()
+        (require 'xscheme)  ;; interaction with MIT Scheme
+        (paredit-mode 1)
+        (rainbow-delimiters-mode))
+
+      (add-hook 'scheme-mode-hook 'c/scheme-mode-initialization)
+    #+end_src
+
 ** Python
 
    Basic system-wide configuration for @fgallina's flying circus. Taken
