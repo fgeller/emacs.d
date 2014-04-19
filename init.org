@@ -297,7 +297,6 @@
                              paredit
                              php-mode
                              pointback
-                             popup ;; for auto-complete
                              pretty-symbols
                              prodigy
                              rainbow-mode
