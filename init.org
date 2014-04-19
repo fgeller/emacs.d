@@ -255,7 +255,6 @@
      (setq c/elpa-packages '(
                              ace-jump-mode
                              ag
-                             auto-complete
                              anzu
                              back-button
                              coffee-mode
@@ -426,13 +425,6 @@
 
     #+begin_src emacs-lisp
       (autoload 'session "session" nil t)
-    #+end_src
-
-    Simple auto-completion.
-
-    #+begin_src emacs-lisp
-      (autoload 'auto-complete "auto-complete" nil t)
-      (autoload 'auto-complete-mode "auto-complete" nil t)
     #+end_src
 
     Highlight indentation and current indentation depth.
@@ -722,73 +714,12 @@
    #+end_src
 
 ** Auto-completion
-*** auto-complete
-**** Configuration
 
-    Load the addition config helpers.
+   Completion via company-mode
 
-    #+begin_src emacs-lisp
-      (eval-after-load 'auto-complete
-        '(require 'auto-complete-config))
-    #+end_src
-
-    Global sources for candidates
-
-    #+begin_src emacs-lisp
-      (setq-default ac-sources '(
-                                 ac-source-yasnippet
-                                 ac-source-filename
-                                 ac-source-words-in-same-mode-buffers
-                                 ))
-    #+end_src
-
-    Show candidates right away
-
-    #+begin_src emacs-lisp
-      (setq ac-delay 0.0)
-      (setq ac-auto-show-menu 0.0)
-      (setq ac-show-menu-immediately-on-auto-complete t)
-      (setq ac-quick-help-delay 1.0)
-    #+end_src
-
-    Don't use fuzzy matching
-
-    #+begin_src emacs-lisp
-      (setq ac-use-fuzzy nil)
-    #+end_src
-
-    Don't use dictionaries
-
-    #+begin_src emacs-lisp
-      (setq ac-dictionary-files nil)
-    #+end_src
-
-    Limit menu height
-
-    #+begin_src emacs-lisp
-      (setq ac-menu-height 3)
-    #+end_src
-
-    Start completion after x characters have been inserted
-
-    #+begin_src emacs-lisp
-      (setq ac-auto-start 2)
-    #+end_src
-
-    Need a work around for flyspell (some timer issues cause
-    auto-complete to be delayed significantly.
-
-    #+begin_src emacs-lisp
-      (eval-after-load 'flyspell
-        '(eval-after-load 'auto-complete
-           '(ac-flyspell-workaround)))
-    #+end_src
-
-    Use the ac-menu-map.
-
-    #+begin_src emacs-lisp
-      (setq ac-use-menu-map t)
-    #+end_src
+   #+begin_src emacs-lisp
+     (add-hook 'after-init-hook 'global-company-mode)
+   #+end_src
 
 ** isearch
 
@@ -1030,7 +961,6 @@
       (hl-line-mode 1)
       (fic-mode 1)
       (setq show-trailing-whitespace t)
-      (auto-complete-mode 1)
       (highlight-symbol-mode 1)
       (highlight-symbol-nav-mode 1)
       (add-hook 'before-save-hook 'c/maybe-cleanup-whitespace nil 'local))
@@ -1278,14 +1208,7 @@
         (eldoc-mode 1)
         (paredit-mode 1)
         (rainbow-delimiters-mode)
-        (elisp-slime-nav-mode 1)
-        (setq ac-sources (append '(
-                                   ac-source-features
-                                   ac-source-functions
-                                   ac-source-variables
-                                   ac-source-symbols
-                                   )
-                                 ac-sources)))
+        (elisp-slime-nav-mode 1))
 
       (add-hook 'emacs-lisp-mode-hook 'c/emacs-lisp-mode-initialization)
     #+end_src
@@ -1710,8 +1633,7 @@
 
    #+begin_src emacs-lisp
      (defun c/php-mode-initialization ()
-       (gtags-mode 1)
-       (setq ac-sources (cons 'ac-source-gtags ac-sources)))
+       (gtags-mode 1))
      (add-hook 'php-mode-hook 'c/php-mode-initialization)
    #+end_src
 
@@ -2358,26 +2280,6 @@
           (define-key reb-mode-map (kbd "M-%") 'c/reb-query-replace)))
    #+end_src
 
-** auto-complete
-
-   Use more convenient =C-{n,p}= for selection [24].
-
-   #+begin_src emacs-lisp
-     (eval-after-load 'auto-complete
-       '(progn
-          (define-key ac-menu-map "\C-n" 'ac-next)
-          (define-key ac-menu-map "\C-p" 'ac-previous)))
-   #+end_src
-
-   Use TAB for completion, reset RET [25].
-
-   #+begin_src emacs-lisp
-     (eval-after-load 'auto-complete
-       '(progn
-          (define-key ac-completing-map "\t" 'ac-complete)
-          (define-key ac-completing-map "\r" nil)))
-   #+end_src
-
 ** discover
 
    Mode to discover more options.
@@ -2624,7 +2526,7 @@
      (setq c/variable-width-font-family "Calibri")
      (setq c/variable-width-font-height 180)
      (setq c/mono-space-font-family "Monaco")
-     (setq c/mono-space-font-height 130)
+     (setq c/mono-space-font-height 150)
      (c/set-default-face-attributes)
    #+end_src
 
@@ -3158,9 +3060,7 @@
 
    #+begin_src emacs-lisp
      (defun c/eshell-mode-initialization ()
-       (toggle-truncate-lines -1) ;; always fold lines
-       (setq ac-sources (cons 'ac-source-files-in-current-dir ac-sources))
-       (auto-complete-mode 1))
+       (toggle-truncate-lines -1))
      (add-hook 'eshell-mode-hook 'c/eshell-mode-initialization)
    #+end_src
 
@@ -3304,9 +3204,7 @@
    Adds basic shell-mode per buffer customization.
 
    #+begin_src emacs-lisp
-     (defun c/shell-mode-initialization ()
-       (setq ac-sources (cons 'ac-source-files-in-current-dir ac-sources))
-       (auto-complete-mode 1))
+     (defun c/shell-mode-initialization ())
      (add-hook 'shell-mode-hook 'c/shell-mode-initialization)
    #+end_src
 
@@ -4258,10 +4156,6 @@
 [22] http://stackoverflow.com/a/7934783/750284
 
 [23] http://www.emacswiki.org/emacs/ReBuilder
-
-[24] http://cx4a.org/software/auto-complete/manual.html#Select_candidates_with_C-n_C-p_only_when_completion_menu_is_displayed
-
-[25] http://cx4a.org/software/auto-complete/manual.html#Finish_completion_by_TAB
 
 [21] http://orgmode.org/worg/org-hacks.html#sec-1-9-11
 
