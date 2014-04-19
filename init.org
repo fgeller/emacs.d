@@ -1064,8 +1064,16 @@
 
 ** highlight-symbol
 
+   Allow navigation to symbol occurrences.
+
    #+begin_src emacs-lisp
      (setq highlight-symbol-on-navigation-p t)
+   #+end_src
+
+   Reduce idle time before highlighting.
+
+   #+begin_src emacs-lisp
+     (setq highlight-symbol-idle-delay 0.5)
    #+end_src
 
 * Programming
