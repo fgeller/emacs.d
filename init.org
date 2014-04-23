@@ -384,6 +384,8 @@
 
      #+begin_src emacs-lisp
        (require 'god-mode)
+       (define-global-minor-mode global-god-mode god-local-mode god-mode-maybe-activate)
+       (global-god-mode 1)
      #+end_src
 
 **** flycheck
