@@ -408,6 +408,12 @@
        (require 'indent-guide)
      #+end_src
 
+**** nlinum
+
+     #+begin_src emacs-lisp
+       (require 'nlinum)
+     #+end_src
+
 *** autoload'ed
 
     Helpers to do rectangle insert inline and mark multiple occurrences of
