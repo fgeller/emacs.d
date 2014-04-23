@@ -3019,7 +3019,6 @@
        (t (message "Ignoring: Neither editing nor in org-mode"))))
   #+end_src
 
-
    Visual feedback that god-mode is enabled.
 
    #+begin_src emacs-lisp
