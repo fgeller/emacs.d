@@ -2245,9 +2245,11 @@
      (eval-after-load 'org
        '(progn
           (define-key org-mode-map (kbd "C-'") nil)
+          (define-key org-mode-map (kbd "C-c C-q") nil)
           (define-key org-mode-map (kbd "C-c C-o") nil)
           (define-key org-mode-map (kbd "C-c C-n") nil)
           (define-key org-mode-map (kbd "C-c C-e") nil)
+          (define-key org-mode-map (kbd "C-c C-o C-q") 'org-set-tags-command)
           (define-key org-mode-map (kbd "C-c C-o C-s") 'c/org-schedule-and-refile)
           (define-key org-mode-map (kbd "C-c C-o C-e") 'org-export-dispatch)
           (define-key org-mode-map (kbd "C-c C-o C-f") 'org-footnote-action)
