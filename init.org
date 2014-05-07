@@ -3462,7 +3462,7 @@
 
     #+begin_src emacs-lisp
       (setq
-       org-directory (expand-file-name "~/Cloud/org")
+       org-directory (expand-file-name "~/orgs")
        org-default-notes-file (concat org-directory "/Tasks.org")
        org-agenda-files `(,org-directory))
     #+end_src
