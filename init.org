@@ -1711,9 +1711,7 @@
    One key to bind them all...
 
    #+begin_src emacs-lisp
-     (if terminal-p
-         (key-chord-define-global "qd" 'god-mode-all)
-       (define-key global-map (kbd "<escape>") 'god-mode-all))
+     (key-chord-define-global "yy" 'god-mode-all)
    #+end_src
 
    Add some additional bindings so they are easier to access from god-mode.
