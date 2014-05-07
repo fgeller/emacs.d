@@ -268,12 +268,6 @@
                              exec-path-from-shell
                              floobits
                              flycheck
-                             flymake
-                             flymake-coffee
-                             flymake-cursor
-                             flymake-easy
-                             flymake-jshint
-                             flymake-json
                              go-mode
                              god-mode
                              gtags
@@ -470,12 +464,6 @@
 
     #+begin_src emacs-lisp
       (autoload 'fic-mode "fic-mode" "Fic mode -- minor mode for highlighting FIXME/TODO in comments" t)
-    #+end_src
-
-    Flymake configuration for JSON files.
-
-    #+begin_src emacs-lisp
-      (autoload 'flymake-json-load "flymake-json" "" t)
     #+end_src
 
     Notifications.
@@ -1076,21 +1064,6 @@
      (add-hook 'gtags-mode-hook 'c/initialize-gtags-mode)
    #+end_src
 
-** Flymake
-
-   #+begin_src emacs-lisp
-     (eval-after-load 'flymake
-       '(progn
-          (require 'flymake-jshint)
-          (require 'flymake-cursor)
-          ;; don't want this on Mac OS X -- http://koansys.com/tech/emacs-hangs-on-flymake-under-os-x
-          (setq flymake-gui-warnings-enabled nil)
-          (setq flymake-start-syntax-check-on-newline t)
-          (setq flymake-compilation-prevents-syntax-check nil)
-          (setq flymake-run-in-place nil)  ;; I want my copies in the system temp dir.
-          ))
-   #+end_src
-
 ** Javascript
 
    Use =js2-mode= for editing Javascript.
@@ -1106,7 +1079,6 @@
      (defun c/js2-mode-initialization ()
        (subword-mode 1)
        (rainbow-mode 1)
-       (flymake-mode 1)
        (setq js2-use-font-lock-faces t)
        (setq js2-mode-must-byte-compile nil)
        (setq js2-basic-offset 4)
@@ -1133,7 +1105,6 @@
 
    #+begin_src emacs-lisp
      (add-to-list 'auto-mode-alist '("\\.json\\'" . json-mode))
-     (add-hook 'json-mode-hook 'flymake-json-load)
    #+end_src
 
    Helper to beautify JSON via jsonlint.
@@ -1184,24 +1155,13 @@
 
 ** CoffeeScript
 
-   Load flymake for coffeescript.
-
-   #+begin_src emacs-lisp
-     (eval-after-load 'coffee-mode
-       '(eval-after-load 'flymake
-          '(progn
-             (require 'flymake-coffee)
-             (setq flymake-coffee-coffeelint-configuration-file (expand-file-name "~/.coffeelint.json")))))
-   #+end_src
-
    Hook coffee-mode into prog-mode specialization.
 
    #+begin_src emacs-lisp
      (defun c/coffee-mode-initialization ()
        (setq tab-width 2)
        (setq coffee-tab-width 2)
-       (subword-mode 1)
-       (flymake-coffee-load))
+       (subword-mode 1))
      (add-hook 'coffee-mode-hook 'c/prog-mode-initialization)
      (add-hook 'coffee-mode-hook 'c/coffee-mode-initialization)
    #+end_src
@@ -1262,22 +1222,6 @@
           ))
    #+end_src
 
-   Special configuration for flymake
-
-   #+begin_src emacs-lisp
-     (defun c/flymake-python-init ()
-       (let* ((temp-file (flymake-init-create-temp-buffer-copy
-                          'flymake-create-temp-intemp))
-              (local-file (file-relative-name
-                           temp-file
-                           (file-name-directory buffer-file-name))))
-         (list "flake8"  (list local-file))))
-     (eval-after-load 'flymake
-       '(progn
-          (add-to-list 'flymake-allowed-file-name-masks
-                       (list "\\.py\\'" 'c/flymake-python-init))))
-   #+end_src
-
    Helper to split arguments across lines.
 
    #+begin_src emacs-lisp
@@ -1301,7 +1245,6 @@
    #+begin_src emacs-lisp
      (defun c/python-mode-initialization ()
        (subword-mode 1)
-       (when buffer-file-name (flymake-mode 1))
        (set-fill-column 79))
      (add-hook 'python-mode-hook 'c/python-mode-initialization)
    #+end_src
@@ -1386,20 +1329,6 @@
        (setenv "JAVA_HOME" "/Library/Java/JavaVirtualMachines/jdk1.7.0_45.jdk/Contents/Home"))
      (when linux-p
        (setenv "JAVA_HOME" "/usr/lib/jvm/java-7-openjdk-i386/jre"))
-   #+end_src
-
-   Special configuration for flymake
-
-   #+begin_src emacs-lisp
-     (defun c/flymake-java-init ()
-       (let* ((test-class-path (expand-file-name ".test_classpath" (c/guess-project-root)))
-              (class-path (if (file-exists-p test-class-path) (c/file-contents test-class-path) ".")))
-         (list "/usr/bin/javac" (list "-classpath" class-path "-Xlint:all"  buffer-file-name))))
-
-     (eval-after-load 'flymake
-       '(progn
-          (add-to-list 'flymake-allowed-file-name-masks
-                       (list "\\.java\\'" 'c/flymake-java-init))))
    #+end_src
 
    Configuration per-buffer.
@@ -2307,17 +2236,6 @@
       (define-key prog-mode-map (kbd "RET") 'newline-and-indent)
     #+end_src
 
-*** JS2 mode
-
-    #+begin_src emacs-lisp
-      (eval-after-load 'js2-mode
-        '(progn
-           (eval-after-load 'flymake
-             '(progn
-                (define-key js2-mode-map (kbd "C-c !") (make-repeatable-command 'flymake-goto-next-error))
-                ))))
-    #+end_src
-
 *** JSON mode
 
     Override default formatting function.
@@ -2345,9 +2263,6 @@
            (define-key python-mode-map (kbd "C-c tr") 'c/rerun-python-test)
            (define-key python-mode-map (kbd "C-c db") 'c/python-insert-ipdb-breakpoint)
            (define-key python-mode-map (kbd "C-RET") 'newline-and-indent)
-           (eval-after-load 'flymake
-             '(progn
-                (define-key python-mode-map (kbd "C-c !") (make-repeatable-command 'flymake-goto-next-error))))
            ))
     #+end_src
 
@@ -2361,10 +2276,7 @@
            (define-key java-mode-map (kbd "C-c tp") 'c/run-java-tests-in-project)
            (define-key java-mode-map (kbd "C-c tr") 'c/rerun-java-test)
            (define-key java-mode-map (kbd "C-c .") nil)
-           (eval-after-load 'flymake
-             '(progn
-                (define-key java-mode-map (kbd "C-c !") (make-repeatable-command 'flymake-goto-next-error))
-                ))))
+           ))
     #+end_src
 
     Trying a newer kid: malabar-mode.
@@ -2558,23 +2470,6 @@
 
 ** Mode-line
 
-   Propertized mode-line string that shows errors and warnings when
-   flymake is running.
-
-   #+begin_src emacs-lisp
-     (defun c/mode-line-flymake ()
-       (when (and
-              (boundp 'flymake-mode-line-e-w)
-              flymake-mode-line-e-w
-              (not (string= "" flymake-mode-line-e-w))
-              (not (string= "0/0" flymake-mode-line-e-w)))
-         (progn
-           (string-match "\\([0-9]+\\)/\\([0-9]+\\)" flymake-mode-line-e-w)
-           (let ((error-str (match-string 1 flymake-mode-line-e-w))
-                 (warn-str (match-string 2 flymake-mode-line-e-w)))
-             (concat " t:" (propertize error-str 'face 'flymake-errline) "," (propertize warn-str 'face 'flymake-warnline))))))
-   #+end_src
-
    Propertized mode-line string that shows special symbols to
    highlight compilation results.
 
@@ -2619,7 +2514,6 @@
          )
         '(:eval (c/mode-line-compilation))
         '(:eval (when (fboundp 'ensime-modeline-string) (ensime-modeline-string)))
-        '(:eval (c/mode-line-flymake))
         '(t erc-modified-channels-object)
         mode-line-misc-info
         ""
