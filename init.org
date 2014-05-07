@@ -1487,7 +1487,7 @@
                   c/scalariform-preferences-file)
          (require 'request)
          (request
-          "http://localhost:8080/format"
+          "http://localhost:5474/format"
           :params `((fileName . ,buffer-file-name)
                     (preferencesFile . ,c/scalariform-preferences-file)))))
    #+end_src
