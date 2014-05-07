@@ -269,6 +269,7 @@
                              floobits
                              flycheck
                              flymake
+                             flymake-coffee
                              flymake-cursor
                              flymake-easy
                              flymake-jshint
