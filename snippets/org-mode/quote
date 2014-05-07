@@ -1,0 +1,7 @@
+# -*- mode:snippet; coding: utf-8 -*-
+# name: Block Quote
+# key: quote
+# --
+#+begin_quote
+$0
+#+end_quote
