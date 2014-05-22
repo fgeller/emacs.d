@@ -282,7 +282,6 @@
                              json-mode
                              key-chord
                              magit
-                             malabar-mode
                              mic-paren
                              multiple-cursors
                              nlinum
@@ -470,12 +469,6 @@
 
     #+begin_src emacs-lisp
       (autoload 'todochiku-message "todochiku" t nil)
-    #+end_src
-
-    java-mode alternative.
-
-    #+begin_src emacs-lisp
-      (autoload 'malabar-mode "malabar-mode" nil t)
     #+end_src
 
 * Text editing
@@ -1340,7 +1333,7 @@
        (indent-guide-mode 1)
        (rainbow-delimiters-mode)
        (nlinum-mode 1))
-     (add-hook 'malabar-mode-hook 'c/java-mode-initialization)
+     (add-hook 'java-mode-hook 'c/java-mode-initialization)
    #+end_src
 
 *** Tests
@@ -2271,27 +2264,14 @@
     #+begin_src emacs-lisp
       (eval-after-load 'cc-mode
         '(progn
-           (define-key java-mode-map (kbd "C-c tt") 'c/run-java-test)
-           (define-key java-mode-map (kbd "C-c tc") 'c/run-java-test-class)
-           (define-key java-mode-map (kbd "C-c tp") 'c/run-java-tests-in-project)
-           (define-key java-mode-map (kbd "C-c tr") 'c/rerun-java-test)
-           (define-key java-mode-map (kbd "C-c .") nil)
-           ))
+           (define-key java-mode-map (kbd "C-c .") nil)))
     #+end_src
-
-    Trying a newer kid: malabar-mode.
 
     #+begin_src emacs-lisp
       (setq semantic-default-submodes '(global-semantic-idle-scheduler-mode
                                         global-semanticdb-minor-mode
                                         global-semantic-idle-summary-mode
                                         global-semantic-mru-bookmark-mode))
-
-      (eval-after-load 'malabar-mode
-        '(semantic-mode 1))
-
-      ;;(require 'malabar-mode)
-      (add-to-list 'auto-mode-alist '("\\.java\\'" . malabar-mode))
     #+end_src
 
 *** Scala mode
