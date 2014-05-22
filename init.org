@@ -2437,6 +2437,16 @@
      (c/set-default-face-attributes)
    #+end_src
 
+   Helper to set the font height interactively.
+
+   #+begin_src emacs-lisp
+     (defun c/set-font-height (height)
+       (interactive
+        (list (read-number "Height: " c/mono-space-font-height)))
+       (setq c/mono-space-font-height height)
+       (c/set-default-face-attributes))
+   #+end_src
+
    Define some helpers to switch between variable-width and mono-spaced
    fonts per buffer.
 
