@@ -1569,6 +1569,7 @@
 
    #+begin_src emacs-lisp
      (defun c/php-mode-initialization ()
+       (flycheck-mode 1)
        (gtags-mode 1))
      (add-hook 'php-mode-hook 'c/php-mode-initialization)
    #+end_src
