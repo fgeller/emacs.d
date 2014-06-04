@@ -4007,13 +4007,25 @@
 
 ** Prodigy
 
-  #+begin_src emacs-lisp
-    (prodigy-define-service
-      :name "Scalariform Daemon"
-      :command "sbt"
-      :args '("run")
-      :cwd "~/Cloud/Devel/scala/scalariform-daemon")
-  #+end_src
+   Daemon to format scala files.
+
+   #+begin_src emacs-lisp
+     (prodigy-define-service
+       :name "Scalariform Daemon"
+       :command "sbt"
+       :args '("run")
+       :cwd "~/Cloud/Devel/scala/scalariform-daemon")
+   #+end_src
+
+   Serve beltmogul files locally.
+
+   #+begin_src emacs-lisp
+     (prodigy-define-service
+       :name "local beltmogul"
+       :command "python"
+       :args '("-m" "SimpleHTTPServer")
+       :cwd "~/blog/public_html")
+   #+end_src
 
 * Start buffer
 
