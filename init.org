@@ -1642,6 +1642,7 @@
 
    #+begin_src emacs-lisp
      (key-chord-define-global "yy" 'god-mode-all)
+     (key-chord-define-global "oe" 'god-mode-all)
    #+end_src
 
    Add some additional bindings so they are easier to access from god-mode.
