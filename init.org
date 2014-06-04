@@ -2263,8 +2263,7 @@
            (define-key python-mode-map (kbd "C-c tp") 'c/run-python-tests-in-project)
            (define-key python-mode-map (kbd "C-c tr") 'c/rerun-python-test)
            (define-key python-mode-map (kbd "C-c db") 'c/python-insert-ipdb-breakpoint)
-           (define-key python-mode-map (kbd "C-RET") 'newline-and-indent)
-           ))
+           (define-key python-mode-map (kbd "C-RET") 'newline-and-indent)))
     #+end_src
 
 *** Java mode
