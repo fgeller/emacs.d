@@ -300,6 +300,7 @@
                              smartparens
                              smartscan
                              todochiku
+                             uuid
                              wgrep
                              wgrep-ag
                              yasnippet
@@ -3952,6 +3953,29 @@
       (interactive)
       (cd "~/Cloud/Devel/scala/scalariform-daemon")
       (compile "sbt run"))
+  #+end_src
+
+  Insert a UUID.
+
+  #+begin_src emacs-lisp
+    (defun c/insert-uuid ()
+      (interactive)
+      (insert (uuid-string)))
+  #+end_src
+
+  Insert date time string.
+
+  #+begin_src emacs-lisp
+    (defun c/iso-timestamp ()
+      (interactive)
+      (let ((saved-tz (getenv "TZ")))
+        (setenv "TZ" "Etc/UTC")
+        (let ((date (with-temp-buffer
+                      (call-process "gdate" nil (current-buffer) nil "--iso-8601=seconds")
+                      (delete-backward-char 1)
+                      (buffer-substring (point-min) (point-max)))))
+          (setenv "TZ" saved-tz)
+          date)))
   #+end_src
 
 ** gtags
