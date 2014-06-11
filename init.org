@@ -257,6 +257,7 @@
                              ag
                              anzu
                              back-button
+                             cider
                              coffee-mode
                              diff-hl
                              dired+
@@ -2355,6 +2356,13 @@
 
     #+begin_src emacs-lisp
       (add-hook 'go-mode-hook (lambda () (local-set-key (kbd "M-.") 'godef-jump)))
+    #+end_src
+
+*** Clojure
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'clojure-mode
+        '(define-key clojure-mode-map (kbd "C-c C-e") nil))
     #+end_src
 
 * Appearance
