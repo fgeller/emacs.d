@@ -259,6 +259,8 @@
                              back-button
                              cider
                              coffee-mode
+                             company
+                             company-cider
                              diff-hl
                              dired+
                              dired-details
@@ -1167,6 +1169,32 @@
    #+end_src
 
 ** Lisp
+*** Clojure
+
+    Turn on eldoc mode for clojure buffers.
+
+    #+begin_src emacs-lisp
+      (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+    #+end_src
+
+    Syntax highlighting in REPL.
+
+    #+begin_src emacs-lisp
+      (setq cider-repl-use-clojure-font-lock t)
+    #+end_src
+
+    Use smartparens for structured editing.
+
+    #+begin_src emacs-lisp
+      (add-hook 'cider-repl-mode-hook 'smartparens-strict-mode)
+      (add-hook 'clojure-mode-hook 'smartparens-strict-mode)
+    #+end_src
+
+    #+begin_src emacs-lisp
+      (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
+      (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
+    #+end_src
+
 *** Emacs Lisp
 
     Configuration per-buffer.
