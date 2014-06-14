@@ -1664,12 +1664,19 @@
        (intern (concat (symbol-name cmd) "-repeat")))
    #+end_src
 
+** key-chord
+
+   Lower the delay for two-key chords.
+
+   #+begin_src emacs-lisp
+     (setq key-chord-two-keys-delay 0.075)
+   #+end_src
+
 ** god-mode
 
    One key to bind them all...
 
    #+begin_src emacs-lisp
-     (key-chord-define-global "yy" 'god-mode-all)
      (key-chord-define-global "oe" 'god-mode-all)
    #+end_src
 
