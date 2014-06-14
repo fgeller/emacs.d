@@ -254,6 +254,7 @@
    #+begin_src emacs-lisp
      (setq c/elpa-packages '(
                              ace-jump-mode
+                             ace-window
                              ag
                              anzu
                              back-button
@@ -1711,12 +1712,6 @@
      (setq ace-jump-mode-scope 'window)
    #+end_src
 
-   More convenient binding.
-
-   #+begin_src emacs-lisp
-    (define-key global-map (kbd "C-c C-h") 'ace-jump-mode)
-   #+end_src
-
    Helpers to zap via ace-jump.
 
    #+begin_src emacs-lisp
@@ -1737,6 +1732,14 @@
        (ace-jump-char-mode zap-char))
    #+end_src
 
+** ace-window
+
+   Use home row keys to identify windows.
+
+   #+begin_src emacs-lisp
+    (setq aw-keys '(?n ?e ?o ?i ?a ?s ?h ?t ?y ?g))
+   #+end_src
+
 ** Jumping
 
    Use helm sources for fast jumping to buffers or files.
@@ -1745,17 +1748,18 @@
      (define-key global-map (kbd "C-'") 'c/helm-jump)
    #+end_src
 
-   Jump to previous marks to go backwards.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-,") 'back-button-global)
-   #+end_src
-
-   Beginning and end of buffer.
+   beginning and end of buffer.
 
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-<") 'beginning-of-buffer)
      (define-key global-map (kbd "C->") 'end-of-buffer)
+   #+end_src
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-l C-c C-l") 'goto-line)
+     (define-key global-map (kbd "C-l C-c C-c") 'ace-jump-mode)
+     (define-key global-map (kbd "C-l C-c C-m") 'back-button-local)
+     (define-key global-map (kbd "C-l C-c C-w") 'ace-window)
    #+end_src
 
 ** C-c Map
@@ -2129,13 +2133,6 @@
 
    #+begin_src emacs-lisp
      (define-key global-map (kbd "C-c C->") 'mc/mark-more-like-this-extended)
-   #+end_src
-
-   Default to zapping up to char, not including the target. [13]
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "M-z") 'zap-up-to-char)
-     (define-key global-map (kbd "M-Z") 'zap-to-char)
    #+end_src
 
    Helper to kill entire word, not just forward part.
