@@ -301,7 +301,6 @@
                              scala-mode2
                              session
                              smartparens
-                             smartscan
                              todochiku
                              uuid
                              wgrep
