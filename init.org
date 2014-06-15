@@ -417,6 +417,12 @@
        (require 'gtags)
      #+end_src
 
+**** sort-imports
+
+     #+begin_src emacs-lisp
+       (require 'sort-imports)
+     #+end_src
+
 *** autoload'ed
 
     Helpers to do rectangle insert inline and mark multiple occurrences of
