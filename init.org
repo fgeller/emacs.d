@@ -1170,11 +1170,18 @@
 ** Lisp
 *** Clojure
 
-    Turn on eldoc mode for clojure buffers.
+    Customization of Clojure buffers.
 
     #+begin_src emacs-lisp
-      (add-hook 'cider-mode-hook 'cider-turn-on-eldoc-mode)
+      (defun c/customize-clojure-mode ()
+        (cider-turn-on-eldoc-mode)
+        (smartparens-strict-mode)
+        (nlinum-mode 1))
+
+      (add-hook 'clojure-mode-hook 'c/customize-clojure-mode)
     #+end_src
+
+**** Cider
 
     Syntax highlighting in REPL.
 
@@ -1182,16 +1189,33 @@
       (setq cider-repl-use-clojure-font-lock t)
     #+end_src
 
+    Customization of Cider buffers.
+
+    #+begin_src emacs-lisp
+      (defun c/customize-cider-mode ()
+        (rainbow-delimiters-mode 1)
+        (cider-turn-on-eldoc-mode))
+
+      (add-hook 'cider-mode-hook 'c/customize-cider-mode)
+    #+end_src
+
     Use smartparens for structured editing.
 
     #+begin_src emacs-lisp
       (add-hook 'cider-repl-mode-hook 'smartparens-strict-mode)
-      (add-hook 'clojure-mode-hook 'smartparens-strict-mode)
     #+end_src
 
+    Rainbow delimiters
+
     #+begin_src emacs-lisp
-      (add-hook 'clojure-mode-hook 'rainbow-delimiters-mode)
       (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
+    #+end_src
+
+    Error buffer config.
+
+    #+begin_src emacs-lisp
+      (setq cider-show-error-buffer t)
+      (setq cider-auto-select-error-buffer nil)
     #+end_src
 
 *** Emacs Lisp
@@ -3813,6 +3837,7 @@
     #+begin_src emacs-lisp
       (setq gnus-blocked-images nil)
     #+end_src
+
 **** Mail
 
     Searching mails via nnir.
