@@ -266,7 +266,6 @@
                              dired+
                              dired-details
                              dired-details+
-                             discover
                              elisp-slime-nav
                              expand-region
                              exec-path-from-shell
@@ -585,11 +584,6 @@
        (c/change-num-at-point '-))
    #+end_src
 
-   #+begin_src emacs-lisp
-     (global-set-key (kbd "C-c C-+") 'c/inc-num-at-point)
-     (global-set-key (kbd "C-c C--") 'c/dec-num-at-point)
-   #+end_src
-
    Goto the matching paren of when point is looking at one.
 
    #+begin_src emacs-lisp
@@ -598,8 +592,7 @@
      the character typed."
        (interactive "p")
        (cond ((looking-at "\\s\(") (forward-list 1) (backward-char 1))
-             ((looking-at "\\s\)") (forward-char 1) (backward-list 1))
-             (t                    (self-insert-command (or arg 1))) ))
+             ((looking-at "\\s\)") (forward-char 1) (backward-list 1))))
    #+end_src
 
 ** Settings
@@ -1643,7 +1636,59 @@
    #+end_src
 
 * Key Bindings
+** Unbind
+*** Globally
+
+    #+begin_src emacs-lisp
+      (define-key global-map (kbd "C-t") nil)
+    #+end_src
+
+*** Org mode
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'org
+        '(progn
+           (define-key org-mode-map (kbd "C-'") nil)))
+    #+end_src
+
+*** Flyspell
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'flyspell
+        '(progn
+           (define-key flyspell-mode-map (kbd "C-.") nil)
+           (define-key flyspell-mode-map (kbd "C-,") nil)))
+    #+end_src
+
 ** Helpers
+
+   Helper to zap backwards.
+
+   #+begin_src emacs-lisp
+     (defun c/zap-up-to-char-backwards ()
+       (interactive)
+       (let ((current-prefix-arg -1))
+         (call-interactively 'zap-up-to-char)))
+   #+end_src
+
+   Helper to kill entire word, not just forward part.
+
+   #+begin_src emacs-lisp
+     (defun c/subword-kill ()
+       (interactive)
+       (subword-backward)
+       (subword-kill 1))
+   #+end_src
+
+   Kill entire line, no matter where we are on the line.
+
+   #+begin_src emacs-lisp
+     (defun c/kill-whole-line ()
+       (interactive)
+       (beginning-of-line)
+       (let ((kill-whole-line t))
+         (kill-line)))
+   #+end_src
 
    Helper [3] to make any command repeatable analogously to =C-x e e e=
 
@@ -1671,121 +1716,6 @@
        (intern (concat (symbol-name cmd) "-repeat")))
    #+end_src
 
-** key-chord
-
-   Lower the delay for two-key chords.
-
-   #+begin_src emacs-lisp
-     (setq key-chord-two-keys-delay 0.075)
-   #+end_src
-
-** god-mode
-
-   One key to bind them all...
-
-   #+begin_src emacs-lisp
-     (key-chord-define-global "oe" 'god-mode-all)
-   #+end_src
-
-   Add some additional bindings so they are easier to access from god-mode.
-
-   #+begin_src emacs-lisp
-     (global-set-key (kbd "C-x C-1") 'delete-other-windows)
-     (global-set-key (kbd "C-x C-2") 'split-window-below)
-     (global-set-key (kbd "C-x C-3") 'split-window-right)
-     (global-set-key (kbd "C-x C-0") 'delete-window)
-     (global-set-key (kbd "C-x C-o") 'other-window)
-   #+end_src
-
-** ace-jump
-
-   Only use lower case keys.
-
-   #+begin_src emacs-lisp
-     (setq ace-jump-mode-move-keys
-           (loop for i from ?a to ?z collect i))
-   #+end_src
-
-   Ignore case.
-
-   #+begin_src emacs-lisp
-     (setq ace-jump-mode-case-fold t)
-   #+end_src
-
-   Only in current window.
-
-   #+begin_src emacs-lisp
-     (setq ace-jump-mode-scope 'window)
-   #+end_src
-
-   Helpers to zap via ace-jump.
-
-   #+begin_src emacs-lisp
-     (defvar c/ace-jump-zap-to-char-start nil)
-     (defun c/ace-jump-delete-region ()
-       (let* ((backwards-zap (< (point) c/ace-jump-zap-to-char-start))
-              (start c/ace-jump-zap-to-char-start)
-             (end (if backwards-zap  (+ 1 (point)) (point))))
-         (delete-region  start end)
-         (setq c/ace-jump-zap-to-char-start nil)
-         (remove-hook 'ace-jump-mode-end-hook 'c/ace-jump-delete-region)
-         (when backwards-zap  (forward-char 1))))
-
-     (defun c/ace-jump-zap-to-char (zap-char)
-       (interactive (list (read-char "Zap to char:")))
-       (setq c/ace-jump-zap-to-char-start (point))
-       (add-hook 'ace-jump-mode-end-hook 'c/ace-jump-delete-region)
-       (ace-jump-char-mode zap-char))
-   #+end_src
-
-** ace-window
-
-   Use home row keys to identify windows.
-
-   #+begin_src emacs-lisp
-    (setq aw-keys '(?n ?e ?o ?i ?a ?s ?h ?t ?y ?g))
-   #+end_src
-
-** Jumping
-
-   Use helm sources for fast jumping to buffers or files.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-'") 'c/helm-jump)
-   #+end_src
-
-   beginning and end of buffer.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-<") 'beginning-of-buffer)
-     (define-key global-map (kbd "C->") 'end-of-buffer)
-   #+end_src
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-l C-c C-l") 'goto-line)
-     (define-key global-map (kbd "C-l C-c C-c") 'ace-jump-mode)
-     (define-key global-map (kbd "C-l C-c C-m") 'back-button-local)
-     (define-key global-map (kbd "C-l C-c C-w") 'ace-window)
-   #+end_src
-
-** C-c Map
-
-   Enable / disable modes
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-l") nil)
-     (define-key global-map (kbd "C-l C-l") 'recenter-top-bottom)
-     (define-key global-map (kbd "C-l C-e") 'eshell)
-     (define-key global-map (kbd "C-l C-s") 'shell)
-     (define-key global-map (kbd "C-l C-c") 'erc)
-     (define-key global-map (kbd "C-l C-a C-q") 'ag-project-at-point)
-     (define-key global-map (kbd "C-l C-a C-d") 'ag)
-     (define-key global-map (kbd "C-l C-a C-s") 'c/helm-ag)
-     (define-key global-map (kbd "C-l C-a C-a") 'c/helm-ag-project)
-     (define-key global-map (kbd "C-l C-m") 'magit-status)
-     (define-key global-map (kbd "C-l C-w") 'whitespace-mode)
-   #+end_src
-
    Define helper to toggle between common mono-space font heights.
 
    #+begin_src emacs-lisp
@@ -1794,52 +1724,6 @@
        (setq c/mono-space-font-height (if (eq 170 c/mono-space-font-height) 140 170))
        (c/set-default-face-attributes))
    #+end_src
-
-   Toggle functions
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c C-/ C-d") 'toggle-debug-on-error)
-     (define-key global-map (kbd "C-c C-/ C-h") 'mode-line-in-header)
-     (define-key global-map (kbd "C-c C-/ C-l") 'toggle-truncate-lines)
-   #+end_src
-
-   Formatting helpers
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c C-f C-a") 'align-regexp)
-     (define-key global-map (kbd "C-c C-f C-s") 'sort-lines)
-
-   #+end_src
-
-   Compilation helpers.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c C-v") nil)
-     (define-key global-map (kbd "C-c C-v C-C") 'compile)
-     (define-key global-map (kbd "C-c C-v C-c") 'recompile)
-   #+end_src
-
-** C-x Map
-
-   Helpers for scrolling - move one line at a time, and scroll similar
-   to touch screens by adding and hiding one line at the same time.
-
-   #+begin_src emacs-lisp
-     (defun c/scroll-up ()
-       (interactive)
-       (scroll-down 1))
-     (defun c/scroll-down ()
-       (interactive)
-       (scroll-up 1))
-   #+end_src
-
-   Bind them to =C-x ↑= and =C-x ↓=.
-
-   #+begin_src emacs-lisp
-     (define-key ctl-x-map (kbd "<up>") (make-repeatable-command 'c/scroll-up))
-     (define-key ctl-x-map (kbd "<down>") (make-repeatable-command 'c/scroll-down))
-   #+end_src
-
 
    Helpers from [26] to change split windows.
 
@@ -1862,14 +1746,6 @@
        (save-excursion
          (delete-other-windows)
          (funcall (c/split-window-func-with-other-buffer 'split-window-vertically))))
-   #+end_src
-
-   Bind them to =C-x w |= and =C-x w _=
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-x C-w") nil)
-     (define-key global-map (kbd "C-x C-w C-|") 'c/split-window-horizontally-instead)
-     (define-key global-map (kbd "C-x C-w C--") 'c/split-window-vertically-instead)
    #+end_src
 
    Helper from [18] to rotate the windows clock-wise.
@@ -1899,48 +1775,262 @@
              (setq i (1+ i)))))))
    #+end_src
 
-   Bind it to =C-x wr=.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-x C-w C-r") 'c/rotate-windows)
-   #+end_src
-
-   Bindings for un/re-doing window layouts.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-x C-w C-w") 'winner-undo)
-     (define-key global-map (kbd "C-x C-w C-b") 'winner-redo)
-   #+end_src
-
-   Binding to kill buffer without mercy.
+   Kill buffer without mercy.
 
    #+begin_src emacs-lisp
      (defun c/kill-buffer-without-asking ()
        (interactive)
        (kill-buffer nil))
-
-     (define-key global-map (kbd "C-x C-k") 'c/kill-buffer-without-asking)
    #+end_src
 
-** goto Map (M-g)
+** Configuration
+*** key-chord
 
-   Alternatives to default =M->= and =M-<= to be consistent.
+    Lower the delay for two-key chords.
+
+    #+begin_src emacs-lisp
+      (setq key-chord-two-keys-delay 0.075)
+    #+end_src
+*** ace-jump
+
+    Only use lower case keys.
+
+    #+begin_src emacs-lisp
+      (setq ace-jump-mode-move-keys
+            (loop for i from ?a to ?z collect i))
+    #+end_src
+
+    Ignore case.
+
+    #+begin_src emacs-lisp
+      (setq ace-jump-mode-case-fold t)
+    #+end_src
+
+    Only in current window.
+
+    #+begin_src emacs-lisp
+      (setq ace-jump-mode-scope 'window)
+    #+end_src
+
+    Helpers to zap via ace-jump.
+
+    #+begin_src emacs-lisp
+      (defvar c/ace-jump-zap-to-char-start nil)
+      (defun c/ace-jump-delete-region ()
+        (let* ((backwards-zap (< (point) c/ace-jump-zap-to-char-start))
+               (start c/ace-jump-zap-to-char-start)
+              (end (if backwards-zap  (+ 1 (point)) (point))))
+          (delete-region  start end)
+          (setq c/ace-jump-zap-to-char-start nil)
+          (remove-hook 'ace-jump-mode-end-hook 'c/ace-jump-delete-region)
+          (when backwards-zap  (forward-char 1))))
+
+      (defun c/ace-jump-zap-to-char (zap-char)
+        (interactive (list (read-char "Zap to char:")))
+        (setq c/ace-jump-zap-to-char-start (point))
+        (add-hook 'ace-jump-mode-end-hook 'c/ace-jump-delete-region)
+        (ace-jump-char-mode zap-char))
+    #+end_src
+
+*** ace-window
+
+    Use home row keys to identify windows.
+
+    #+begin_src emacs-lisp
+     (setq aw-keys '(?n ?e ?o ?i ?a ?s ?h ?t ?y ?g))
+    #+end_src
+
+** god-mode
+
+   One key to bind them all...
 
    #+begin_src emacs-lisp
-     (define-key goto-map "<" 'beginning-of-buffer)
-     (define-key goto-map ">" 'end-of-buffer)
+     (key-chord-define-global "oe" 'god-mode-all)
    #+end_src
 
-   Quickly jump between matching parens.
+   Add some additional bindings so they are easier to access from god-mode.
 
    #+begin_src emacs-lisp
-     (define-key goto-map "%" (make-repeatable-command 'c/goto-match-paren))
+     (global-set-key (kbd "C-x C-1") 'delete-other-windows)
+     (global-set-key (kbd "C-x C-2") 'split-window-below)
+     (global-set-key (kbd "C-x C-3") 'split-window-right)
+     (global-set-key (kbd "C-x C-0") 'delete-window)
+     (global-set-key (kbd "C-x C-o") 'other-window)
+   #+end_src
+** Windows
+
+   Jumping.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-h C-w") 'ace-window)
    #+end_src
 
-   Jump to URL.
+   Control split.
 
    #+begin_src emacs-lisp
-     (define-key goto-map "u" 'browse-url-default-macosx-browser)
+     (define-key global-map (kbd "C-t C-w C-+") 'c/split-window-horizontally-instead)
+     (define-key global-map (kbd "C-t C-w C--") 'c/split-window-vertically-instead)
+   #+end_src
+
+   Rotate.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-w C-r") 'c/rotate-windows)
+   #+end_src
+
+   Bindings for un/re-doing window layouts.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-w C-w") 'winner-undo)
+     (define-key global-map (kbd "C-t C-w C-b") 'winner-redo)
+   #+end_src
+
+** Toggles
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-r C-l") 'toggle-truncate-lines)
+     (define-key global-map (kbd "C-t C-r C-d") 'toggle-debug-on-error)
+     (define-key global-map (kbd "C-t C-r C-h") 'mode-line-in-header)
+   #+end_src
+
+** Across buffers
+
+   Use helm sources for fast jumping to buffers or files.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-'") 'c/helm-jump)
+   #+end_src
+
+   Quick access to other occurrences.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-f C-o") 'c/helm-occur-all)
+   #+end_src
+
+** In-buffer navigation
+
+   Beginning and end of buffer.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-<") 'beginning-of-buffer)
+     (define-key global-map (kbd "C->") 'end-of-buffer)
+   #+end_src
+
+   Good old lines.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-h C-l") 'goto-line)
+   #+end_src
+
+   Exact jumping.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-h C-h") 'ace-jump-mode)
+   #+end_src
+
+   Marks.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-h C-y") 'back-button-local)
+   #+end_src
+
+   Matching parens.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-h C-n") 'c/goto-match-paren)
+   #+end_src
+
+   Browse URL.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-h C-o") 'browse-url-default-macosx-browser)
+   #+end_src
+
+   Beginning of line or end of indentation...
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-a") 'c/beginning-of-line-dwim)
+   #+end_src
+
+** Region
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-.") 'er/expand-region)
+     (define-key global-map (kbd "C-t C-/") 'er/contract-region)
+   #+end_src
+
+** Cursors
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-l") 'mc/edit-lines)
+     (define-key global-map (kbd "C-t C->") 'mc/mark-more-like-this-extended)
+   #+end_src
+
+** Editing text
+
+   Formatting.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-f C-a") 'align-regexp)
+   #+end_src
+
+   Replace strings and regexs.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-q C-q") 'anzu-query-replace)
+     (define-key global-map (kbd "C-t C-q C-d") 'anzu-query-replace-regexp)
+   #+end_src
+
+   Duplicating current line.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-n") 'c/duplicate-current-line-or-region)
+   #+end_src
+
+   Join this line to the previous.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-u") 'join-line)
+     (define-key global-map (kbd "C-t C-e") 'join-line)
+   #+end_src
+
+   Open a new line and indent it.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-o") 'c/open-new-line)
+   #+end_src
+
+   Deleting text
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-d") nil)
+     (define-key global-map (kbd "C-d C-d") 'delete-char)
+     (define-key global-map (kbd "C-d C-q") 'c/zap-up-to-char-backwards)
+     (define-key global-map (kbd "C-d C-r") 'c/ace-jump-zap-to-char)
+     (define-key global-map (kbd "C-d C-s") 'sp-kill-symbol)
+     (define-key global-map (kbd "C-d C-w") 'c/subword-kill)
+   #+end_src
+
+   Manipulating numbers.
+
+   #+begin_src emacs-lisp
+     (global-set-key (kbd "C-t C-+") 'c/inc-num-at-point)
+     (global-set-key (kbd "C-t C--") 'c/dec-num-at-point)
+   #+end_src
+
+** Access to major modes
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-m C-e") 'eshell)
+     (define-key global-map (kbd "C-t C-m C-s") 'shell)
+     (define-key global-map (kbd "C-t C-m C-c") 'erc)
+     (define-key global-map (kbd "C-t C-m C-a C-q") 'ag-project-at-point)
+     (define-key global-map (kbd "C-t C-m C-a C-d") 'ag)
+     (define-key global-map (kbd "C-t C-m C-a C-d") 'ag)
+     (define-key global-map (kbd "C-t C-m C-a C-s") 'c/helm-ag)
+     (define-key global-map (kbd "C-t C-m C-a C-a") 'c/helm-ag-project)
+     (define-key global-map (kbd "C-t C-m C-m") 'magit-status)
+     (define-key global-map (kbd "C-t C-m C-w") 'whitespace-mode)
    #+end_src
 
 ** Mac OS
@@ -1960,6 +2050,8 @@
    #+begin_src emacs-lisp
      (define-key dired-mode-map "o" 'c/dired-open-mac)
    #+end_src
+
+   Bind wdired comfortable for god-mode.
 
    #+begin_src emacs-lisp
      (define-key dired-mode-map (kbd "C-c C-p") 'wdired-change-to-wdired-mode)
@@ -1982,48 +2074,33 @@
    name "anything".
 
    #+begin_src emacs-lisp
-     (setq helm-command-prefix-key "C-c h")
-     (define-key global-map (kbd "C-c ha") 'helm-c-apropos)
-     (define-key global-map (kbd "C-c hc") 'c/helm-contact)
-     (define-key global-map (kbd "C-c hi") 'helm-imenu)
-     (define-key global-map (kbd "C-c hr") 'helm-regexp)
-     (define-key global-map (kbd "C-c hu") 'helm-ucs)
-     (define-key global-map (kbd "C-c hx") 'helm-M-x)
-     (define-key global-map (kbd "C-c hz") 'helm-resume)
+     (define-key global-map (kbd "C-t C-f C-i") 'helm-ucs)
+     (define-key global-map (kbd "C-t C-f C-n") 'helm-resume)
      (define-key global-map (kbd "M-x") 'helm-M-x)
      (define-key global-map (kbd "C-h a") 'helm-c-apropos)
    #+end_src
 
-   Quick access to other occurrences.
+   Use helm to show and search the kill-ring.
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c oo") 'c/helm-occur-all)
+     (define-key global-map (kbd "M-y") 'helm-show-kill-ring)
    #+end_src
 
 ** Evaluation
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c eb") 'eval-buffer)
-     (define-key global-map (kbd "C-c ed") 'eval-defun)
-     (define-key global-map (kbd "C-c ee") 'eval-last-sexp)
-     (define-key global-map (kbd "C-c er") 'eval-region)
-   #+end_src
-
-** Input Environment
-
-   Fast switch to a German environment.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c ii") 'c/set-german-environment)
+     (define-key global-map (kbd "C-t C-x C-b") 'eval-buffer)
+     (define-key global-map (kbd "C-t C-x C-d") 'eval-defun)
+     (define-key global-map (kbd "C-t C-x C-e") 'eval-last-sexp)
+     (define-key global-map (kbd "C-t C-x C-r") 'eval-region)
    #+end_src
 
 ** Buffers
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c br") 'rename-buffer)
-     (define-key global-map (kbd "C-c bR") 'revert-buffer)
-     (define-key global-map (kbd "C-c bs") 'c/switch-to-scratch-buffer)
-     (define-key global-map (kbd "C-c bT") 'c/tramp-cleanup)
+     (define-key global-map (kbd "C-t C-b C-k") 'c/kill-buffer-without-asking)
+     (define-key global-map (kbd "C-t C-b C-r") 'revert-buffer)
+     (define-key global-map (kbd "C-t C-b C-t") 'c/tramp-cleanup)
    #+end_src
 
 ** isearch
@@ -2057,134 +2134,29 @@
      (define-key global-map (kbd "M-o") 'sp-forward-slurp-sexp)
    #+end_src
 
-** Text editing
-
-   Beginning of line or end of indentation...
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-a") 'c/beginning-of-line-dwim)
-   #+end_src
-
-   Open a new line and indent it.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-o") 'c/open-new-line)
-   #+end_src
-
-   Duplicating current line.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c C-n") 'c/duplicate-current-line-or-region)
-   #+end_src
-
-   Join this line to the previous.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c C-e") 'join-line)
-   #+end_src
-
-   Replace strings and regexs.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c C-q") 'anzu-query-replace)
-     (define-key global-map (kbd "C-c C-Q") 'anzu-query-replace-regexp)
-   #+end_src
-
-   Use helm to show and search the kill-ring.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "M-y") 'helm-show-kill-ring)
-   #+end_src
-
-   Mini macros via multiple-cursors.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c C-;") 'mc/edit-lines)
-   #+end_src
-
-   Expanding and contracting current region.
-
-   #+begin_src emacs-lisp
-     (global-set-key (kbd "C-c C-.") 'er/expand-region)
-     (global-set-key (kbd "C-c C-?") 'er/contract-region)
-   #+end_src
-
-   Entry for multiple cursor editing.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c C->") 'mc/mark-more-like-this-extended)
-   #+end_src
-
-   Helper to kill entire word, not just forward part.
-
-   #+begin_src emacs-lisp
-     (defun c/subword-kill ()
-       (interactive)
-       (subword-backward)
-       (subword-kill 1))
-   #+end_src
-
-   Helper to zap backwards.
-
-   #+begin_src emacs-lisp
-     (defun c/zap-up-to-char-backwards ()
-       (interactive)
-       (let ((current-prefix-arg -1))
-         (call-interactively 'zap-up-to-char)))
-   #+end_src
-
-   Some helpers that are convenient on god-mode.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-d") nil)
-     (define-key global-map (kbd "C-d C-q") 'delete-char)
-     (define-key global-map (kbd "C-d C-r") 'c/zap-up-to-char-backwards)
-     (define-key global-map (kbd "C-d C-d") 'c/ace-jump-zap-to-char)
-     (define-key global-map (kbd "C-d C-s") 'sp-kill-symbol)
-     (define-key global-map (kbd "C-d C-w") 'c/subword-kill)
-   #+end_src
-
-   Kill entire line, no matter where we are on the line.
-
-   #+begin_src emacs-lisp
-     (defun c/kill-whole-line ()
-       (interactive)
-       (beginning-of-line)
-       (let ((kill-whole-line t))
-         (kill-line)))
-   #+end_src
-
-** Flyspell
-
-   #+begin_src emacs-lisp
-     (eval-after-load 'flyspell
-       '(progn
-          (define-key flyspell-mode-map (kbd "C-.") nil)
-          (define-key flyspell-mode-map (kbd "C-,") nil)))
-   #+end_src
-
 ** Org mode
 
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c C-o C-a") 'org-agenda)
-     (define-key global-map (kbd "C-c C-o C-c") 'org-capture)
-     (define-key global-map (kbd "C-c C-o C-l") 'org-store-link)
-     (define-key global-map (kbd "C-c C-o C-b") 'c/org-get-chrome-link)
-     (define-key global-map (kbd "C-c C-'") 'c/toggle-org-src-edit)
+   More convenient binding for source block editing with god-mode.
 
-     (eval-after-load 'org-agenda
-       '(define-key org-agenda-mode-map (kbd "C-c t") 'org-agenda-todo))
-     (eval-after-load 'org-clock
-       '(define-key global-map (kbd "C-c C-x C-j") 'org-clock-jump-to-current-clock))
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-c C-'") 'c/toggle-org-src-edit)
+   #+end_src
+
+   Globally accessible functionality.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-o C-a") 'org-agenda)
+     (define-key global-map (kbd "C-t C-o C-c") 'org-capture)
+     (define-key global-map (kbd "C-t C-o C-l") 'org-store-link)
+     (define-key global-map (kbd "C-t C-o C-b") 'c/org-get-chrome-link)
+   #+end_src
+
+   More convenient bindings for god-mode.
+
+   #+begin_src emacs-lisp
      (eval-after-load 'org
        '(progn
-          (define-key org-mode-map (kbd "C-'") nil)
-          (define-key org-mode-map (kbd "C-c C-q") nil)
           (define-key org-mode-map (kbd "C-c C-o") nil)
-          (define-key org-mode-map (kbd "C-c C-n") nil)
-          (define-key org-mode-map (kbd "C-c C-e") nil)
-          (define-key org-mode-map (kbd "C-c C-o C-q") 'org-set-tags-command)
-          (define-key org-mode-map (kbd "C-c C-o C-s") 'c/org-schedule-and-refile)
           (define-key org-mode-map (kbd "C-c C-o C-e") 'org-export-dispatch)
           (define-key org-mode-map (kbd "C-c C-o C-f") 'org-footnote-action)
           (define-key org-mode-map (kbd "C-c C-o C-o") 'org-clock-out)
@@ -2223,13 +2195,11 @@
           (define-key reb-mode-map (kbd "M-%") 'c/reb-query-replace)))
    #+end_src
 
-** discover
-
-   Mode to discover more options.
+** compile-mode
 
    #+begin_src emacs-lisp
-     (require 'discover)
-     (discover-mode 1)
+     (define-key global-map (kbd "C-t C-c C-t") 'compile)
+     (define-key global-map (kbd "C-t C-c C-c") 'recompile)
    #+end_src
 
 ** Programming modes
@@ -2327,11 +2297,11 @@
      #+begin_src emacs-lisp
        (eval-after-load 'scala-mode2
          '(progn
-            (define-key scala-mode-map (kbd "C-c C-t C-i") 'c/scala-ignore-all-tests)
-            (define-key scala-mode-map (kbd "C-c C-t C-e") 'c/scala-enable-all-tests)
-            (define-key scala-mode-map (kbd "C-c C-t C-o") 'helm-gtags-import-tag)
-            (define-key scala-mode-map (kbd "C-c C-t C-s") 'si-sort-imports)
-            (define-key scala-mode-map (kbd "C-c C-t C-a") 'c/find-unused-imports)))
+            (define-key scala-mode-map (kbd "C-t C-t C-t C-i") 'c/scala-ignore-all-tests)
+            (define-key scala-mode-map (kbd "C-t C-t C-t C-e") 'c/scala-enable-all-tests)
+            (define-key scala-mode-map (kbd "C-t C-t C-i") 'helm-gtags-import-tag)
+            (define-key scala-mode-map (kbd "C-t C-t C-s") 'si-sort-imports)
+            (define-key scala-mode-map (kbd "C-t C-t C-a") 'c/find-unused-imports)))
      #+end_src
 
      Bindings for sending actions to SBT process.
