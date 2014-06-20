@@ -4007,6 +4007,16 @@
        :cwd "~/blog/public_html")
    #+end_src
 
+   For sharing files.
+
+   #+begin_src emacs-lisp
+     (prodigy-define-service
+       :name "dropbox"
+       :command "python"
+       :args '("-m" "SimpleHTTPServer" "8383")
+       :cwd "~/drops")
+   #+end_src
+
 * Start buffer
 
   Load an org-file, rather than the =*scratch*= buffer, as most doodles
