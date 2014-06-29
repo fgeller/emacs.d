@@ -1174,6 +1174,7 @@
 
     #+begin_src emacs-lisp
       (defun c/customize-clojure-mode ()
+        (require 'cider-eldoc)
         (cider-turn-on-eldoc-mode)
         (smartparens-strict-mode)
         (nlinum-mode 1))
