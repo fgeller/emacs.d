@@ -1202,7 +1202,6 @@
 
     #+begin_src emacs-lisp
       (defun c/customize-cider-mode ()
-        (rainbow-delimiters-mode 1)
         (cider-turn-on-eldoc-mode))
 
       (add-hook 'cider-mode-hook 'c/customize-cider-mode)
@@ -1212,12 +1211,6 @@
 
     #+begin_src emacs-lisp
       (add-hook 'cider-repl-mode-hook 'smartparens-strict-mode)
-    #+end_src
-
-    Rainbow delimiters
-
-    #+begin_src emacs-lisp
-      (add-hook 'cider-repl-mode-hook 'rainbow-delimiters-mode)
     #+end_src
 
     Error buffer config.
@@ -1236,7 +1229,6 @@
         (setq tab-width 8)
         (eldoc-mode 1)
         (paredit-mode 1)
-        (rainbow-delimiters-mode)
         (elisp-slime-nav-mode 1))
 
       (add-hook 'emacs-lisp-mode-hook 'c/emacs-lisp-mode-initialization)
@@ -1255,8 +1247,7 @@
     #+begin_src emacs-lisp
       (defun c/scheme-mode-initialization ()
         (require 'xscheme)  ;; interaction with MIT Scheme
-        (paredit-mode 1)
-        (rainbow-delimiters-mode))
+        (paredit-mode 1))
 
       (add-hook 'scheme-mode-hook 'c/scheme-mode-initialization)
     #+end_src
@@ -1398,7 +1389,6 @@
        (subword-mode 1)
        (gtags-mode 1)
        (indent-guide-mode 1)
-       (rainbow-delimiters-mode)
        (nlinum-mode 1))
      (add-hook 'java-mode-hook 'c/java-mode-initialization)
    #+end_src
@@ -1486,7 +1476,6 @@
 
    #+begin_src emacs-lisp
      (defun c/scala-mode-initialization ()
-       (rainbow-delimiters-mode)
        (subword-mode 1)
        (setq tab-width 2)
        (nlinum-mode 1)
@@ -1650,7 +1639,6 @@
 
    #+begin_src emacs-lisp
      (defun c/go-mode-initialization ()
-       (rainbow-delimiters-mode)
        (subword-mode 1)
        (nlinum-mode 1)
        (add-hook 'before-save-hook 'gofmt-before-save nil 'make-it-local))
