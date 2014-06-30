@@ -292,6 +292,7 @@
                              paredit
                              php-mode
                              pointback
+                             popwin
                              pretty-symbols
                              prodigy
                              rainbow-mode
@@ -420,6 +421,13 @@
 
      #+begin_src emacs-lisp
        (require 'sort-imports)
+     #+end_src
+
+**** popwin
+
+     #+begin_src emacs-lisp
+       (require 'popwin)
+       (popwin-mode 1)
      #+end_src
 
 *** autoload'ed
@@ -2609,6 +2617,17 @@
    #+end_src
 
 ** Windows
+*** Popwin
+
+    #+begin_src emacs-lisp
+      (setq-default popwin:special-display-config
+                    '(("\\*.*helm.*\\*" :regexp t :height 20 :position bottom)
+                      ("*Miniedit Help*" :noselect t)
+                      help-mode
+                      (completion-list-mode :noselect t)
+                      (compilation-mode :noselect t)))
+    #+end_src
+
 *** Winner
 
    Let's change to winner-mode!
