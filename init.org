@@ -1806,6 +1806,15 @@
        (kill-buffer nil))
    #+end_src
 
+   Joining from the top [24].
+
+   #+begin_src emacs-lisp
+     (defun top-join-line ()
+       "Join the current line with the line beneath it."
+       (interactive)
+       (delete-indentation 1))
+   #+end_src
+
 ** Configuration
 *** key-chord
 
@@ -2013,7 +2022,7 @@
    Join this line to the previous.
 
    #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-t C-u") 'join-line)
+     (define-key global-map (kbd "C-t C-u") 'c/top-join-line)
      (define-key global-map (kbd "C-t C-e") 'join-line)
    #+end_src
 
@@ -4139,3 +4148,5 @@
 [34] https://github.com/magnars/.emacs.d/blob/master/defuns/editing-defuns.el
 
 [32] http://bzg.fr/emacs-hide-mode-line.html
+
+[24] http://emacsredux.com/blog/2013/05/30/joining-lines/
