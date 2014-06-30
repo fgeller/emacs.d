@@ -2624,12 +2624,6 @@
      (winner-mode 1)
    #+end_src
 
-   ... and configure it to ignore my Helm buffer.
-
-   #+begin_src emacs-lisp
-     (add-to-list 'winner-boring-buffers "*c/helm-jump*")
-   #+end_src
-
 * Buffers and sessions
 ** Settings
 
