@@ -710,6 +710,9 @@
 
    #+begin_src emacs-lisp
      (sp-pair "'" nil :actions :rem)
+     (sp-pair "`" nil :actions :rem)
+
+     (sp-local-pair '(clojure-mode emacs-lisp-mode) "`(" ")")
      (sp-local-pair '(scala-mode) "`" "`")
      (sp-local-pair '(scala-mode) "${" "}")
      (sp-local-pair '(scala-mode) "s\"" "\"")
