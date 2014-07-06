@@ -292,7 +292,6 @@
                              paredit
                              php-mode
                              pointback
-                             popwin
                              pretty-symbols
                              prodigy
                              rainbow-mode
@@ -425,7 +424,7 @@
 
 **** popwin
 
-     #+begin_src emacs-lisp
+     #+begin_src emacs-lisp :tangle no
        (require 'popwin)
        (popwin-mode 1)
      #+end_src
@@ -2617,7 +2616,7 @@
 ** Windows
 *** Popwin
 
-    #+begin_src emacs-lisp
+    #+begin_src emacs-lisp :tangle no
       (setq-default popwin:special-display-config
                     '(("\\*.*helm.*\\*" :regexp t :height 20 :position bottom)
                       ("*Miniedit Help*" :noselect t)
