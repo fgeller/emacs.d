@@ -967,6 +967,7 @@
     (defun c/prog-mode-initialization ()
       (pretty-symbols-mode 1)
       (hl-line-mode 1)
+      (nlinum-mode 1)
       (fic-mode 1)
       (setq show-trailing-whitespace t)
       (highlight-symbol-mode 1)
