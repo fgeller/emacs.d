@@ -2450,7 +2450,7 @@
    #+begin_src emacs-lisp
      (setq c/variable-width-font-family "Calibri")
      (setq c/variable-width-font-height 180)
-     (setq c/mono-space-font-family "Monaco")
+     (setq c/mono-space-font-family "Source Code Pro")
      (setq c/mono-space-font-height 150)
      (c/set-default-face-attributes)
    #+end_src
