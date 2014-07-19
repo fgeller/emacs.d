@@ -1298,6 +1298,7 @@
 
    #+begin_src emacs-lisp
      (defun c/python-mode-initialization ()
+       (gtags-mode 1)
        (subword-mode 1)
        (set-fill-column 79))
      (add-hook 'python-mode-hook 'c/python-mode-initialization)
