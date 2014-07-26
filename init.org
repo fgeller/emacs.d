@@ -1484,7 +1484,6 @@
        (setq tab-width 2)
        (nlinum-mode 1)
        (gtags-mode 1)
-       (indent-guide-mode 1)
        (add-hook 'after-save-hook 'c/scalariform-daemon-format-file nil 'make-it-local))
      (add-hook 'scala-mode-hook 'c/scala-mode-initialization)
    #+end_src
