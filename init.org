@@ -725,7 +725,7 @@
 
    Completion via company-mode
 
-   #+begin_src emacs-lisp
+   #+begin_src emacs-lisp :tangle no
      (add-hook 'after-init-hook 'global-company-mode)
    #+end_src
 
