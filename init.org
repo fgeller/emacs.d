@@ -1160,8 +1160,7 @@
      (defun c/json-mode-initialization ()
        (setq tab-width 2)
        (subword-mode 1)
-       (make-local-variable 'before-save-hook)
-       (add-hook 'before-save-hook 'c/beautify-json-with-jsonlint))
+       (make-local-variable 'before-save-hook))
      (add-hook 'json-mode-hook 'c/json-mode-initialization)
    #+end_src
 
