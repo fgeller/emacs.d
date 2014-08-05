@@ -3974,7 +3974,7 @@
   #+begin_src emacs-lisp
     (defun c/start-scalari ()
       (interactive)
-      (cd "~/Cloud/Devel/scala/scalariform-daemon")
+      (cd "~/code/scala/scalariform-daemon")
       (compile "sbt run"))
   #+end_src
 
@@ -4027,37 +4027,37 @@
          (compile cmd))))
   #+end_src
 
-** Prodigy
+* Prodigy
 
-   Daemon to format scala files.
+  Daemon to format scala files.
 
-   #+begin_src emacs-lisp
-     (prodigy-define-service
-       :name "Scalariform Daemon"
-       :command "sbt"
-       :args '("run")
-       :cwd "~/Cloud/Devel/scala/scalariform-daemon")
-   #+end_src
+  #+begin_src emacs-lisp
+    (prodigy-define-service
+      :name "Scalariform Daemon"
+      :command "sbt"
+      :args '("run")
+      :cwd "~/code/scala/scalariform-daemon")
+  #+end_src
 
-   Serve beltmogul files locally.
+  Serve beltmogul files locally.
 
-   #+begin_src emacs-lisp
-     (prodigy-define-service
-       :name "local beltmogul"
-       :command "python"
-       :args '("-m" "SimpleHTTPServer")
-       :cwd "~/blog/public_html")
-   #+end_src
+  #+begin_src emacs-lisp
+    (prodigy-define-service
+      :name "local beltmogul"
+      :command "python"
+      :args '("-m" "SimpleHTTPServer")
+      :cwd "~/blog/public_html")
+  #+end_src
 
-   For sharing files.
+  For sharing files.
 
-   #+begin_src emacs-lisp
-     (prodigy-define-service
-       :name "dropbox"
-       :command "python"
-       :args '("-m" "SimpleHTTPServer" "8383")
-       :cwd "~/drops")
-   #+end_src
+  #+begin_src emacs-lisp
+    (prodigy-define-service
+      :name "dropbox"
+      :command "python"
+      :args '("-m" "SimpleHTTPServer" "8383")
+      :cwd "~/drops")
+  #+end_src
 
 * Start buffer
 
