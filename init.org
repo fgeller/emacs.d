@@ -3210,7 +3210,7 @@
 
    =$ git config --global --add magit.extension wip-save=
 
-   #+begin_src emacs-lisp
+   #+begin_src emacs-lisp :tangle no
      (eval-after-load 'vc-git
        '(global-magit-wip-save-mode))
    #+end_src
