@@ -1375,6 +1375,15 @@
        '(setq sql-send-terminator t))
    #+end_src
 
+   Default to highlight MySQL keywords.
+
+   #+begin_src emacs-lisp
+     (add-hook 'sql-mode-hook
+               (lambda ()
+                 (sql-highlight-mysql-keywords)))
+   #+end_src
+
+
 ** Java
 
    Set environment variables specific to Java.
