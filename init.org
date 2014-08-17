@@ -3572,7 +3572,7 @@
                "* %?\n\n  %a\n  %i\n")
               ("s" "Scratch"
                entry (file+headline (expand-file-name "scratch.org" org-directory) "Scratch")
-               "* Scratch it %U\n\n%i\n")))
+               "* Scratch it %U\n%i\n   #+begin_src text\n%?\n   #+end_src\n")))
     #+end_src
 
     Helper based on @jwiegley's dot-emacs to get the URL of the
