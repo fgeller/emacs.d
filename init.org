@@ -851,7 +851,6 @@
    Spell-check emails and plain text files.
 
    #+begin_src emacs-lisp
-     (add-hook 'text-mode-hook 'c/enable-flyspell)
      (add-hook 'message-mode-hook 'c/enable-flyspell)
      (add-hook 'magit-log-edit-mode-hook 'c/enable-flyspell)
    #+end_src
