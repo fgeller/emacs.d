@@ -2468,7 +2468,7 @@
      (setq c/variable-width-font-family "Calibri")
      (setq c/variable-width-font-height 180)
      (setq c/mono-space-font-family "Droid Sans Mono")
-     (setq c/mono-space-font-height 130)
+     (setq c/mono-space-font-height 170)
      (c/set-default-face-attributes)
    #+end_src
 
