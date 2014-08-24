@@ -931,6 +931,7 @@
               (?↑ lambda "\\<return\\>" (js-mode js2-mode))
               (?∘ lambda "\\<map\\>" (scala-mode scala2-mode))
               (?∗ lambda "\\<flatMap\\>" (scala-mode scala2-mode))
+              (?∀ lambda "\\<forall\\>" (scala-mode scala2-mode))
               (?⇾ lambda "->" (php-mode))))
    #+end_src
 
