@@ -408,6 +408,13 @@
 
      #+begin_src emacs-lisp
        (require 'nlinum)
+       (global-nlinum-mode 1)
+     #+end_src
+
+**** hl-line
+
+     #+begin_src emacs-lisp
+       (global-hl-line-mode 1)
      #+end_src
 
 **** gtags
@@ -3364,6 +3371,7 @@
 
     #+begin_src emacs-lisp
         (defun c/org-mode-per-buffer-customization ()
+          (nlinum-mode -1)
           (add-hook 'before-save-hook 'c/maybe-cleanup-whitespace nil 'local)
           (turn-on-auto-fill))
 
