@@ -275,7 +275,7 @@
                              god-mode
                              haskell-mode
                              helm
-                             helm-git
+                             helm-ls-git
                              highlight-indentation
                              highlight-symbol
                              htmlize
@@ -2795,20 +2795,6 @@
    #+end_src
 
 ** Sources
-*** helm-git
-
-   Monkey-patch helm-git to work with non-git directories.
-
-   #+begin_src emacs-lisp
-     (eval-after-load 'helm-git
-       '(progn
-          (defadvice helm-c-git-files (around check-git-repo-p)
-            (when (and (boundp 'default-directory)
-                       (magit-get-top-dir default-directory))
-              ad-do-it))
-          (ad-activate 'helm-c-git-files)))
-   #+end_src
-
 *** ag
 
     Source for the silver searcher that re-uses much of helm-grep's
@@ -2852,7 +2838,7 @@
           helm-c-source-buffers-list
           helm-source-mark-ring
           helm-source-global-mark-ring
-          helm-c-source-git-files
+          helm-source-ls-git
           helm-c-source-recentf
           helm-c-source-buffer-not-found
           )))
