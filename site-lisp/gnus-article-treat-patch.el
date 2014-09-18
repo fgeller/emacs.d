@@ -1,6 +1,4 @@
-;; Gnus addon to beautify patch-like emails. This uses a "ft/" prefix for
-;; everything to avoid clashing with anything upstream. That prefix can be
-;; savely s,ft/,,'d - if this is to be submitted to the gnus developers.
+;; Gnus addon to beautify patch-like emails.
 
 (require 'diff-mode)
 
