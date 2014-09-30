@@ -1,6 +1,6 @@
 # -*- mode:snippet; coding: utf-8 -*-
 # name: Fundamental Source Code Block
-# key: srctxt
+# key: txt
 # --
 #+begin_src fundamental
 $0
