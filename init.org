@@ -1618,6 +1618,37 @@
          (replace-regexp "\\bignore(\\(s\\)?\"" "it(\\1\"" nil (point-min) (point-max))))
    #+end_src
 
+   Tweak expand-region
+
+   #+begin_src emacs-lisp
+     (defun er/add-scala-mode-expansions ()
+       (make-variable-buffer-local 'er/try-expand-list)
+       (setq er/try-expand-list (append
+                                 er/try-expand-list
+                                 '(er/mark-scala-type-parameter-or-application
+                                   er/mark-scala-scope-signature))))
+
+     (add-hook 'scala-mode-hook 'er/add-scala-mode-expansions)
+
+     (defun er/mark-scala-scope-signature ()
+       (interactive)
+       ;; (re-search-backward "class\\|object\\|trait\\|case")
+       )
+
+
+     (defun er/mark-scala-type-parameter-or-application ()
+       (interactive)
+       (let ((start-point (point)))
+         (exchange-point-and-mark)
+         (when (looking-at "\\[\\|(")
+           (forward-sexp)
+           (set-mark start-point)
+           (exchange-point-and-mark))))
+   #+end_src
+
+
+
+
 ** PHP
 
    Tell php-mode to leave my bindings alone.
