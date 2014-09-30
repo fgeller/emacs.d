@@ -1382,7 +1382,6 @@
                  (sql-highlight-mysql-keywords)))
    #+end_src
 
-
 ** Java
 
    Set environment variables specific to Java.
