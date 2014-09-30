@@ -1,0 +1,7 @@
+# -*- mode:snippet; coding: utf-8 -*-
+# name: Clojure Source Code Block
+# key: clj
+# --
+#+begin_src clojure
+$0
+#+end_src

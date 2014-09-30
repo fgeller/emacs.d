@@ -1,0 +1,19 @@
+# Author: Felix Geller <fgeller@gmail.com>
+# name: entry
+# key: entry
+# --
+<entry>
+  <title>$2</title>
+  <link type="text/html" href="http://www.beltmogul.me/2014/$3.html"/>
+  <id>urn:uuid:`(uuid-string)`</id>
+  <updated>`(c/iso-timestamp)`</updated>
+  <summary></summary>
+  <content type="xhtml">
+    <div xmlns="http://www.w3.org/1999/xhtml">
+    $0
+    </div>
+  </content>
+  <author>
+    <name>Felix Geller</name>
+  </author>
+</entry>

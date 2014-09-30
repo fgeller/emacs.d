@@ -1,0 +1,7 @@
+# -*- mode:snippet; coding: utf-8 -*-
+# name: Error handling if statement
+# key: ife
+# --
+if err != nil {
+    return $0, err
+}
