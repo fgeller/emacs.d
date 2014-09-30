@@ -254,7 +254,6 @@
    #+begin_src emacs-lisp
      (setq c/elpa-packages '(
                              ace-jump-mode
-                             ace-window
                              ag
                              anzu
                              back-button
@@ -262,7 +261,6 @@
                              coffee-mode
                              color-theme-approximate
                              company
-                             company-cider
                              diff-hl
                              dired+
                              dired-details
@@ -326,7 +324,7 @@
     Also load some add-ons.
 
     #+begin_src emacs-lisp
-      (require 'helm-git)
+      (require 'helm-ls-git)
       (require 'helm-gtags)
     #+end_src
 
@@ -438,13 +436,6 @@
      #+end_src
 
 *** autoload'ed
-
-    Helpers to do rectangle insert inline and mark multiple occurrences of
-    active region.
-
-    #+begin_src emacs-lisp
-      (require 'multiple-cursors-autoloads)
-    #+end_src
 
     Slime / tag like navigation for Emacs Lisp.
 
@@ -1884,14 +1875,6 @@
         (ace-jump-char-mode zap-char))
     #+end_src
 
-*** ace-window
-
-    Use home row keys to identify windows.
-
-    #+begin_src emacs-lisp
-     (setq aw-keys '(?n ?e ?o ?i ?a ?s ?h ?t ?y ?g))
-    #+end_src
-
 ** god-mode
 
    One key to bind them all...
@@ -1910,12 +1893,6 @@
      (global-set-key (kbd "C-x C-o") 'other-window)
    #+end_src
 ** Windows
-
-   Jumping.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-t C-h C-w") 'ace-window)
-   #+end_src
 
    Control split.
 
