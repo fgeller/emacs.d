@@ -260,6 +260,7 @@
                              back-button
                              cider
                              coffee-mode
+                             color-theme-approximate
                              company
                              company-cider
                              diff-hl
@@ -2446,6 +2447,14 @@
 
    #+begin_src emacs-lisp
      (setq-default fill-column 80)
+   #+end_src
+
+** Theme
+
+   Approximate theme colors in terminals automatically.
+
+   #+begin_src emacs-lisp
+     (color-theme-approximate-on)
    #+end_src
 
 ** Fonts
