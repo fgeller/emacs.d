@@ -1646,9 +1646,6 @@
            (exchange-point-and-mark))))
    #+end_src
 
-
-
-
 ** PHP
 
    Tell php-mode to leave my bindings alone.
