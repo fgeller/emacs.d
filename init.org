@@ -2969,8 +2969,8 @@
    #+begin_src emacs-lisp
      (defun c/god-mode-update-cursor ()
        (let ((faces-to-toggle '(fringe mode-line mode-line-inactive header-line linum))
-             (enabled-color (if (or terminal-p (not (boundp 'flatui-colors-alist))) "white" (cdr (assoc  "asbestos" flatui-colors-alist))))
-             (disabled-color (if (or terminal-p (not (boundp 'flatui-colors-alist))) "black" (cdr (assoc "sun-flower" flatui-colors-alist)))))
+             (enabled-color (if (or terminal-p (not (boundp 'flatui-colors-alist))) "gray" (cdr (assoc  "asbestos" flatui-colors-alist))))
+             (disabled-color (if (or terminal-p (not (boundp 'flatui-colors-alist))) "green" (cdr (assoc "sun-flower" flatui-colors-alist)))))
          (cond
           (god-local-mode
            (-each faces-to-toggle (lambda (face) (set-face-background face enabled-color))))
