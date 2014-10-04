@@ -2259,6 +2259,15 @@
      (define-key global-map (kbd "C-t C-c C-c") 'recompile)
    #+end_src
 
+** Email
+
+   #+begin_src emacs-lisp
+     (eval-after-load 'notmuch
+       '(progn
+          (define-key notmuch-search-mode-map (kbd "C-d") 'c/notmuch-search-archive)
+          (define-key notmuch-show-mode-map (kbd "C-d") 'c/notmuch-show-archive)))
+   #+end_src
+
 ** Programming modes
 *** Prog mode
 
@@ -3747,6 +3756,27 @@
       (defun c/message-mode-customization ()
         (turn-on-auto-fill))
       (add-hook 'message-mode-hook 'c/message-mode-customization)
+    #+end_src
+
+*** Notmuch
+
+    Helper to archive from notmuch's search view.
+
+    #+begin_src emacs-lisp
+      (defun c/notmuch-search-archive ()
+        (interactive)
+        (notmuch-search-tag '("-unread" "-inbox"))
+        (notmuch-search-refresh-view))
+    #+end_src
+
+    Helper to archive from notmuch's show view.
+
+    #+begin_src emacs-lisp
+      (defun c/notmuch-show-archive ()
+        (interactive)
+        (notmuch-show-tag '("-unread" "-inbox"))
+        (notmuch-kill-this-buffer)
+        (notmuch-search-refresh-view))
     #+end_src
 
 *** Gnus
