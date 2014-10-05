@@ -436,6 +436,12 @@
        (popwin-mode 1)
      #+end_src
 
+**** magit
+
+     #+begin_src emacs-lisp
+       (require 'magit)
+     #+end_src
+
 *** autoload'ed
 
     Slime / tag like navigation for Emacs Lisp.
