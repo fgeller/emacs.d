@@ -286,6 +286,7 @@
                              mic-paren
                              multiple-cursors
                              nlinum
+                             notmuch
                              org
                              org-plus-contrib
                              paredit
