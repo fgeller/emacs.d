@@ -3779,6 +3779,22 @@
         (notmuch-search-refresh-view))
     #+end_src
 
+    Setup helper to find addresses.
+
+    #+begin_src emacs-lisp
+      (require 'notmuch-address)
+      (setq notmuch-address-command "~/bin/addrlookup")
+      (notmuch-address-message-insinuate)
+    #+end_src
+
+    Tweak address completion to work with helm.
+
+    #+begin_src emacs-lisp
+      (setq notmuch-address-selection-function
+            (lambda (prompt collection initial-input)
+              (completing-read prompt (cons initial-input collection) nil t nil 'notmuch-address-history)))
+    #+end_src
+
 *** Gnus
 
     Let's try reading news the old fashioned way.
