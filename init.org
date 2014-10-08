@@ -274,6 +274,7 @@
                              god-mode
                              haskell-mode
                              helm
+                             helm-descbinds
                              helm-ls-git
                              highlight-indentation
                              highlight-symbol
@@ -2148,6 +2149,12 @@
 
    #+begin_src emacs-lisp
      (define-key global-map (kbd "M-y") 'helm-show-kill-ring)
+   #+end_src
+
+   Use helm to describe bindings.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-h b") 'helm-descbinds)
    #+end_src
 
 ** Evaluation
