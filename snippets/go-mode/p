@@ -1,0 +1,5 @@
+# -*- mode:snippet; coding: utf-8 -*-
+# name: Print
+# key: p
+# --
+fmt.Printf("$1\n", $0)
