@@ -995,6 +995,19 @@
       (paredit-mode 1))
   #+end_src
 
+** CoffeeScript
+
+   Hook coffee-mode into prog-mode specialization.
+
+   #+begin_src emacs-lisp
+     (defun c/coffee-mode-initialization ()
+       (setq tab-width 2)
+       (setq coffee-tab-width 2)
+       (subword-mode 1))
+     (add-hook 'coffee-mode-hook 'c/prog-mode-initialization)
+     (add-hook 'coffee-mode-hook 'c/coffee-mode-initialization)
+   #+end_src
+
 ** Compiling
 
    Settings for compilation mode.
@@ -1084,6 +1097,109 @@
      (add-hook 'gtags-mode-hook 'c/initialize-gtags-mode)
    #+end_src
 
+** Go
+
+   Per-buffer configuration.
+
+   #+begin_src emacs-lisp
+     (defun c/go-mode-initialization ()
+       (subword-mode 1)
+       (nlinum-mode 1)
+       (add-hook 'before-save-hook 'gofmt-before-save nil 'make-it-local))
+
+     (add-hook 'go-mode-hook 'c/go-mode-initialization)
+   #+end_src
+
+** Haskell
+
+   Basic setup.
+
+   #+begin_src emacs-lisp
+     (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+     (add-hook 'haskell-mode-hook 'turn-on-eldoc-mode)
+     (add-hook 'haskell-mode-hook 'turn-on-haskell-doc)
+   #+end_src
+
+** Java
+
+   Set environment variables specific to Java.
+
+   #+begin_src emacs-lisp
+     (when mac-p
+       (setenv "JAVA_HOME" "/Library/Java/JavaVirtualMachines/jdk1.7.0_45.jdk/Contents/Home"))
+     (when linux-p
+       (setenv "JAVA_HOME" "/usr/lib/jvm/java-7-openjdk-i386/jre"))
+   #+end_src
+
+   Configuration per-buffer.
+
+   #+begin_src emacs-lisp
+     (defun c/java-mode-initialization ()
+       (subword-mode 1)
+       (gtags-mode 1)
+       (indent-guide-mode 1)
+       (nlinum-mode 1))
+     (add-hook 'java-mode-hook 'c/java-mode-initialization)
+   #+end_src
+
+*** Tests
+
+    Assumes that it is only run only maven projects.
+
+**** Helpers
+
+     Run an individual test, by passing a restrictive predicate to
+     nosetest. Searches from =point= backward to find test method and
+     surrounding class name.
+
+     #+begin_src emacs-lisp
+       (defvar *c/last-java-test-compile-command* nil
+         "Is set by C/RUN-JAVA-TEST so that C/RERUN-JAVA-TEST knows
+         what to do.")
+       (defun c/run-java-test (arg)
+         (interactive "P")
+         (let* ((project-root (c/guess-project-root))
+                (class-name (c/find-backward "public class \\(.+Test\\)"))
+                (fun-name (c/find-backward "public void \\(test.+\\)("))
+                (cmd (format
+                      "cd %s && JAVA_HOME=%s mvn %s -Dtest=%s#%s test"
+                      project-root
+                      (getenv "JAVA_HOME")
+                      (if arg "-X" "")
+                      class-name
+                      fun-name)))
+           (setq *c/last-java-test-compile-command* cmd)
+           (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
+             (compile cmd t))))
+       (defun c/run-java-test-class ()
+         (interactive)
+         (let* ((project-root (c/guess-project-root))
+                (class-name (c/find-backward "public class \\(.+Test\\)"))
+                (cmd (format
+                      "cd %s && JAVA_HOME=%s mvn -Dtest=%s test"
+                      project-root
+                      (getenv "JAVA_HOME")
+                      class-name)))
+           (setq *c/last-java-test-compile-command* cmd)
+           (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
+             (compile cmd t))))
+       (defun c/run-java-tests-in-project ()
+         (interactive)
+         (let* ((project-root (c/guess-project-root))
+                (cmd (format
+                      "cd %s && JAVA_HOME=%s mvn test"
+                      project-root
+                      (getenv "JAVA_HOME"))))
+           (setq *c/last-java-test-compile-command* cmd)
+           (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
+             (compile cmd t))))
+       (defun c/rerun-java-test ()
+         (interactive)
+         (if *c/last-java-test-compile-command*
+             (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
+               (compile *c/last-java-test-compile-command* t))))
+     #+end_src
+
 ** Javascript
 
    Use =js2-mode= for editing Javascript.
@@ -1172,19 +1288,6 @@
      (add-hook 'json-mode-hook 'c/json-mode-initialization)
    #+end_src
 
-** CoffeeScript
-
-   Hook coffee-mode into prog-mode specialization.
-
-   #+begin_src emacs-lisp
-     (defun c/coffee-mode-initialization ()
-       (setq tab-width 2)
-       (setq coffee-tab-width 2)
-       (subword-mode 1))
-     (add-hook 'coffee-mode-hook 'c/prog-mode-initialization)
-     (add-hook 'coffee-mode-hook 'c/coffee-mode-initialization)
-   #+end_src
-
 ** Lisp
 *** Clojure
 
@@ -1261,6 +1364,24 @@
 
       (add-hook 'scheme-mode-hook 'c/scheme-mode-initialization)
     #+end_src
+
+** PHP
+
+   Tell php-mode to leave my bindings alone.
+
+   #+begin_src emacs-lisp
+     (eval-after-load 'php-mode
+       '(setq-default php-mode-map (make-sparse-keymap)))
+   #+end_src
+
+   Configuration per-buffer.
+
+   #+begin_src emacs-lisp
+     (defun c/php-mode-initialization ()
+       (flycheck-mode 1)
+       (gtags-mode 1))
+     (add-hook 'php-mode-hook 'c/php-mode-initialization)
+   #+end_src
 
 ** Python
 
@@ -1372,103 +1493,6 @@
         (insert "import ipdb; ipdb.set_trace()")
         (newline-and-indent))
     #+end_src
-
-** SQL
-
-   Send the terminator automatically
-
-   #+begin_src emacs-lisp
-     (eval-after-load 'sql
-       '(setq sql-send-terminator t))
-   #+end_src
-
-   Default to highlight MySQL keywords.
-
-   #+begin_src emacs-lisp
-     (add-hook 'sql-mode-hook
-               (lambda ()
-                 (sql-highlight-mysql-keywords)))
-   #+end_src
-
-** Java
-
-   Set environment variables specific to Java.
-
-   #+begin_src emacs-lisp
-     (when mac-p
-       (setenv "JAVA_HOME" "/Library/Java/JavaVirtualMachines/jdk1.7.0_45.jdk/Contents/Home"))
-     (when linux-p
-       (setenv "JAVA_HOME" "/usr/lib/jvm/java-7-openjdk-i386/jre"))
-   #+end_src
-
-   Configuration per-buffer.
-
-   #+begin_src emacs-lisp
-     (defun c/java-mode-initialization ()
-       (subword-mode 1)
-       (gtags-mode 1)
-       (indent-guide-mode 1)
-       (nlinum-mode 1))
-     (add-hook 'java-mode-hook 'c/java-mode-initialization)
-   #+end_src
-
-*** Tests
-
-    Assumes that it is only run only maven projects.
-
-**** Helpers
-
-     Run an individual test, by passing a restrictive predicate to
-     nosetest. Searches from =point= backward to find test method and
-     surrounding class name.
-
-     #+begin_src emacs-lisp
-       (defvar *c/last-java-test-compile-command* nil
-         "Is set by C/RUN-JAVA-TEST so that C/RERUN-JAVA-TEST knows
-         what to do.")
-       (defun c/run-java-test (arg)
-         (interactive "P")
-         (let* ((project-root (c/guess-project-root))
-                (class-name (c/find-backward "public class \\(.+Test\\)"))
-                (fun-name (c/find-backward "public void \\(test.+\\)("))
-                (cmd (format
-                      "cd %s && JAVA_HOME=%s mvn %s -Dtest=%s#%s test"
-                      project-root
-                      (getenv "JAVA_HOME")
-                      (if arg "-X" "")
-                      class-name
-                      fun-name)))
-           (setq *c/last-java-test-compile-command* cmd)
-           (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
-             (compile cmd t))))
-       (defun c/run-java-test-class ()
-         (interactive)
-         (let* ((project-root (c/guess-project-root))
-                (class-name (c/find-backward "public class \\(.+Test\\)"))
-                (cmd (format
-                      "cd %s && JAVA_HOME=%s mvn -Dtest=%s test"
-                      project-root
-                      (getenv "JAVA_HOME")
-                      class-name)))
-           (setq *c/last-java-test-compile-command* cmd)
-           (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
-             (compile cmd t))))
-       (defun c/run-java-tests-in-project ()
-         (interactive)
-         (let* ((project-root (c/guess-project-root))
-                (cmd (format
-                      "cd %s && JAVA_HOME=%s mvn test"
-                      project-root
-                      (getenv "JAVA_HOME"))))
-           (setq *c/last-java-test-compile-command* cmd)
-           (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
-             (compile cmd t))))
-       (defun c/rerun-java-test ()
-         (interactive)
-         (if *c/last-java-test-compile-command*
-             (let ((compilation-buffer-name-function (lambda (x) "*tests*")))
-               (compile *c/last-java-test-compile-command* t))))
-     #+end_src
 
 ** Scala
 
@@ -1654,22 +1678,21 @@
            (exchange-point-and-mark))))
    #+end_src
 
-** PHP
+** SQL
 
-   Tell php-mode to leave my bindings alone.
+   Send the terminator automatically
 
    #+begin_src emacs-lisp
-     (eval-after-load 'php-mode
-       '(setq-default php-mode-map (make-sparse-keymap)))
+     (eval-after-load 'sql
+       '(setq sql-send-terminator t))
    #+end_src
 
-   Configuration per-buffer.
+   Default to highlight MySQL keywords.
 
    #+begin_src emacs-lisp
-     (defun c/php-mode-initialization ()
-       (flycheck-mode 1)
-       (gtags-mode 1))
-     (add-hook 'php-mode-hook 'c/php-mode-initialization)
+     (add-hook 'sql-mode-hook
+               (lambda ()
+                 (sql-highlight-mysql-keywords)))
    #+end_src
 
 ** XML
@@ -1678,29 +1701,6 @@
 
    #+begin_src emacs-lisp
      (add-hook 'nxml-mode-hook 'c/prog-mode-initialization)
-   #+end_src
-
-** Go
-
-   Per-buffer configuration.
-
-   #+begin_src emacs-lisp
-     (defun c/go-mode-initialization ()
-       (subword-mode 1)
-       (nlinum-mode 1)
-       (add-hook 'before-save-hook 'gofmt-before-save nil 'make-it-local))
-
-     (add-hook 'go-mode-hook 'c/go-mode-initialization)
-   #+end_src
-
-** Haskell
-
-   Basic setup.
-
-   #+begin_src emacs-lisp
-     (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-     (add-hook 'haskell-mode-hook 'turn-on-eldoc-mode)
-     (add-hook 'haskell-mode-hook 'turn-on-haskell-doc)
    #+end_src
 
 * Key Bindings
