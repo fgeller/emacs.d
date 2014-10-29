@@ -58,7 +58,7 @@
    Default to custom shell installation.
 
    #+begin_src emacs-lisp
-     (setenv "SHELL" "/usr/local/bin/zsh")
+     (setenv "SHELL" (if mac-p "/usr/local/bin/zsh" "/usr/bin/zsh"))
    #+end_src
 
 ** Sources path
