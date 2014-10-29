@@ -92,6 +92,7 @@
 
    #+begin_src emacs-lisp
      (add-to-list 'load-path (expand-file-name "~/.emacs.d/src/emacs-helm-gtags"))
+     (add-to-list 'load-path (expand-file-name "~/.emacs.d/src/sort-imports"))
    #+end_src
 
 ** Themes path
