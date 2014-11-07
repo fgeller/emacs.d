@@ -2413,6 +2413,13 @@
         '(define-key clojure-mode-map (kbd "C-c C-e") nil))
     #+end_src
 
+*** nXML
+
+    #+begin_src emacs-lisp
+      (eval-after-load 'nxml-mode
+        '(define-key nxml-mode-map (kbd "C-c C-/") 'nxml-finish-element))
+    #+end_src
+
 * Appearance
 ** General GUI Settings
 
