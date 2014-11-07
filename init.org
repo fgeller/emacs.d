@@ -93,6 +93,9 @@
    #+begin_src emacs-lisp
      (add-to-list 'load-path (expand-file-name "~/.emacs.d/src/emacs-helm-gtags"))
      (add-to-list 'load-path (expand-file-name "~/.emacs.d/src/sort-imports"))
+     (add-to-list 'load-path (expand-file-name "~/.emacs.d/src/helm"))
+     (add-to-list 'load-path (expand-file-name "~/.emacs.d/src/helm-ls-git"))
+     (add-to-list 'load-path (expand-file-name "~/.emacs.d/src/async"))
    #+end_src
 
 ** Themes path
@@ -274,8 +277,6 @@
                              go-mode
                              god-mode
                              haskell-mode
-                             helm
-                             helm-ls-git
                              highlight-indentation
                              highlight-symbol
                              htmlize
