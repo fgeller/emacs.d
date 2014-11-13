@@ -1,0 +1,66 @@
+#+TITLE: Helm configuration
+#+STARTUP: hideblocks
+* Helm
+  
+  #+begin_src emacs-lisp
+    (add-to-list 'load-path (expand-file-name "~/site-lisp/helm"))
+    (add-to-list 'load-path (expand-file-name "~/site-lisp/helm-ls-git"))
+    (add-to-list 'load-path (expand-file-name "~/site-lisp/emacs-async"))
+    (require 'helm-config)
+    (require 'helm-ls-git)
+  #+end_src
+
+   Collection of sources that we want fast access to.
+
+   
+   #+begin_src emacs-lisp
+     (defun c/helm-jump ()
+       (interactive)
+       (helm :sources '(
+          helm-c-source-buffers-list
+          helm-source-ls-git
+          helm-c-source-recentf
+          helm-c-source-buffer-not-found
+          )))
+   #+end_src
+
+   Use helm sources for fast jumping to buffers or files.
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-'") 'c/helm-jump)
+     (define-key global-map (kbd "M-y") 'helm-show-kill-ring)
+     (define-key global-map (kbd "M-x") 'helm-M-x)
+(define-key global-map (kbd "C-x C-f") 'helm-find-files)
+   #+end_src
+
+   Quick, quiiiiick!
+
+   #+begin_src emacs-lisp
+     (setq helm-idle-delay 0.01)
+     (setq helm-input-idle-delay 0.01)
+   #+end_src
+
+   Don't fill in single matches when selecting files.
+
+   #+begin_src emacs-lisp
+     (setq helm-ff-auto-update-initial-value nil)
+   #+end_src
+
+   Show the full path to files.
+
+   #+begin_src emacs-lisp
+     (setq helm-ff-transformer-show-only-basename nil)
+   #+end_src
+
+   Longer names are ok.
+
+   #+begin_src emacs-lisp
+     (setq helm-buffer-max-length 50)
+   #+end_src
+
+   Remember follow-mode setting across helm sessions.
+
+   #+begin_src emacs-lisp
+     (setq helm-follow-mode-persistent t)
+   #+end_src
+

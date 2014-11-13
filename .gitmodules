@@ -1,42 +1,9 @@
 [submodule "src/emacs-flymake"]
 	path = src/emacs-flymake
 	url = https://github.com/illusori/emacs-flymake.git
-[submodule "src/jumper"]
-	path = src/jumper
-	url = https://github.com/fgeller/jumper.git
-[submodule "src/org-mode"]
-	path = src/org-mode
-	url = git://orgmode.org/org-mode.git
-[submodule "src/cedet"]
-	path = src/cedet
-	url = https://github.com/fgeller/cedet.git
 [submodule "snippets/java-mode"]
 	path = snippets/java-mode
 	url = https://github.com/fgeller/yasnippet-java-mode.git
 [submodule "src/scala-mode2"]
 	path = src/scala-mode2
 	url = git://github.com/hvesalai/scala-mode2.git
-[submodule "src/fic-mode"]
-	path = src/fic-mode
-	url = https://github.com/lewang/fic-mode.git
-[submodule "src/ensime"]
-	path = src/ensime
-	url = https://github.com/fgeller/ensime.git
-[submodule "emacs-sources"]
-	path = emacs-sources
-	url = https://github.com/emacsmirror/emacs.git
-[submodule "themes/noctilux-theme"]
-	path = themes/noctilux-theme
-	url = git@github.com:fgeller/noctilux-theme.git
-[submodule "themes/color-theme-sanityinc-solarized"]
-	path = themes/color-theme-sanityinc-solarized
-	url = https://github.com/fgeller/color-theme-sanityinc-solarized.git
-[submodule "src/sort-imports"]
-	path = src/sort-imports
-	url = git@github.com:fgeller/sort-imports.el.git
-[submodule "src/emacs-helm-gtags"]
-	path = src/emacs-helm-gtags
-	url = git@github.com:fgeller/emacs-helm-gtags.git
-[submodule "themes/flatui-theme.el"]
-	path = themes/flatui-theme.el
-	url = git@github.com:fgeller/flatui-theme.el.git

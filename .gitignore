@@ -29,3 +29,7 @@ auto-save-list
 /eshell/history
 /recentf
 /url
+appearance.el
+helm.el
+god-mode.el
+main.el
