@@ -14,7 +14,7 @@
 
   #+begin_src emacs-lisp
     (when mac-p
-      (set qsystem-name (car (split-string system-name "\\."))))
+      (setq system-name (car (split-string system-name "\\."))))
   #+end_src
 
   Set default editor in (e)shell to emacsclient.
