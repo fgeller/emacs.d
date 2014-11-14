@@ -111,21 +111,15 @@
 
 * Load modules
 
-  Helm
+  More configuration split into org files.
 
   #+begin_src emacs-lisp
     (org-babel-load-file (expand-file-name "~/.emacs.d/helm.org"))
-  #+end_src
-
-  god-mode
-
-  #+begin_src emacs-lisp
     (org-babel-load-file (expand-file-name "~/.emacs.d/god-mode.org"))
-  #+end_src
-
-  Appearance
-
-  #+begin_src emacs-lisp
     (org-babel-load-file (expand-file-name "~/.emacs.d/appearance.org"))
+    (org-babel-load-file (expand-file-name "~/.emacs.d/org.org"))
+    (org-babel-load-file (expand-file-name "~/.emacs.d/vc.org"))
+    (org-babel-load-file (expand-file-name "~/.emacs.d/search.org"))
+    (org-babel-load-file (expand-file-name "~/.emacs.d/navigation.org"))
   #+end_src
 

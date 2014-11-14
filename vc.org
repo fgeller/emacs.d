@@ -1,0 +1,14 @@
+#+TITLE: Version control
+#+STARTUP: hideblocks
+* Version control
+
+#+begin_src emacs-lisp
+  (use-package magit
+               :ensure magit
+               :commands magit-status
+               :bind ("C-t C-m C-m" . magit-status))
+#+end_src
+
+
+  
+

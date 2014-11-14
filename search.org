@@ -1,0 +1,16 @@
+#+TITLE: Search
+#+STARTUP: hideblocks
+* Search
+
+  #+begin_src emacs-lisp
+(use-package ag :ensure ag)
+(use-package wgrep :ensure wgrep)
+(use-package wgrep-ag :ensure wgrep-ag)
+  #+end_src
+
+   #+begin_src emacs-lisp
+     (define-key global-map (kbd "C-t C-m C-a C-q") 'ag-project-at-point)
+     (define-key global-map (kbd "C-t C-m C-a C-d") 'ag)
+   #+end_src
+
+  

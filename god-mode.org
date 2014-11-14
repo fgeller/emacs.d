@@ -56,17 +56,6 @@
     (add-hook 'god-mode-disabled-hook 'c/god-mode-remove-emulation-keymap)
   #+end_src
 
-  Helper for editing source code blocks.
-
-  #+begin_src emacs-lisp
-    (defun c/toggle-org-src-edit ()
-      (interactive)
-      (cond
-       ((eq major-mode 'org-mode) (call-interactively 'org-edit-src-code))
-       ((-contains? minor-mode-list 'org-src-mode) (org-edit-src-exit))
-       (t (message "Ignoring: Neither editing nor in org-mode"))))
-  #+end_src
-
    Visual feedback that god-mode is enabled.
 
    #+begin_src emacs-lisp

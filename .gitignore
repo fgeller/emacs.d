@@ -33,3 +33,7 @@ appearance.el
 helm.el
 god-mode.el
 main.el
+/vc.el
+/org.el
+/search.el
+/navigation.el
