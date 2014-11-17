@@ -9,7 +9,10 @@
 (setq highlight-symbol-idble-delay 0.2)))
   #+end_src
 
-  
+#+begin_src emacs-lisp
+(use-package elisp-slime-nav :ensure elisp-slime-nav)
+#+end_src
+
   #+begin_src emacs-lisp
 (defun c/enable-highlight-symbol ()
          (highlight-symbol-mode 1)

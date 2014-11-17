@@ -115,7 +115,7 @@
 
   #+begin_src emacs-lisp
     (org-babel-load-file (expand-file-name "~/.emacs.d/helm.org"))
-    (org-babel-load-file (expand-file-name "~/.emacs.d/god-mode.org"))
+    (org-babel-load-file (expand-file-name "~/.emacs.d/boon.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/appearance.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/org.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/vc.org"))

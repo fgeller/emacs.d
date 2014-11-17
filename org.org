@@ -340,7 +340,7 @@
     Fontify source code in "native" block.
 
     #+begin_src emacs-lisp
-      (setq org-src-fontify-natively t)
+      (setq org-src-fontify-natively nil)
     #+end_src
 
     Load language support.

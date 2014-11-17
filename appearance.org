@@ -2,13 +2,24 @@
 #+STARTUP: hideblocks
 * Appearance
 
+  #+begin_src emacs-lisp
+(defun turn-off-syntax-highlighting ()
+(interactive)
+(font-lock-mode -1))
+
+(add-hook 'prog-mode-hook 'turn-off-syntax-highlighting)
+(setq-default global-font-lock-mode nil)
+(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+(add-hook 'emacs-lisp-mode-hook 'turn-off-syntax-highlighting)
+  #+end_src
+
    #+begin_src emacs-lisp
      (set-scroll-bar-mode nil)
      (tool-bar-mode -1)
      (menu-bar-mode -1)  ;; shows full-screen button for mac port
      (setq-default
       blink-cursor-delay 0
-      blink-cursor-interval 0.2
+      blink-cursor-interval 1
       use-file-dialog nil
       use-dialog-box nil
       inhibit-startup-screen t
@@ -17,7 +28,7 @@
       truncate-partial-width-windows nil
       visible-bell 1
       transient-mark-mode t   ;; highlight the active region when mark is active
-      show-trailing-whitespace nil ;; don't show trailing whitespace globally
+      show-trailing-whitespace t ;; don't show trailing whitespace globally
       blink-matching-paren t
       initial-frame-alist '((left-fringe . 1) (right-fringe . 1) (scroll-bar-width . nil))
       default-frame-alist '((left-fringe . 1) (right-fringe . 1) (scroll-bar-width . nil))
@@ -66,4 +77,3 @@
 (load-theme 'flatui t)
    #+end_src
 
-  
