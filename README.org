@@ -1,0 +1,6 @@
+* emacs.d
+
+  My main emacs configuration.
+
+  Currently a work in progress as I kick out old things, split the
+  configuration into separate modules and try =use-package= and =boon=.
