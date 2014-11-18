@@ -13,4 +13,17 @@
      (define-key global-map (kbd "C-t C-m C-a C-d") 'ag)
    #+end_src
 
-  
+   #+begin_src emacs-lisp
+     (define-key isearch-mode-map (kbd "C-o") 'isearch-occur)
+   #+end_src
+
+   Add bindings to jump to next and previous match without pressing modifiers.
+
+   #+begin_src emacs-lisp
+     (define-key isearch-mode-map (kbd ".")
+       'isearch-repeat-forward)
+
+     (define-key isearch-mode-map (kbd "/")
+       'isearch-repeat-backward)
+   #+end_src
+
