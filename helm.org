@@ -1,7 +1,7 @@
 #+TITLE: Helm configuration
 #+STARTUP: hideblocks
 * Helm
-  
+
   #+begin_src emacs-lisp
     (add-to-list 'load-path (expand-file-name "~/site-lisp/helm"))
     (add-to-list 'load-path (expand-file-name "~/site-lisp/helm-ls-git"))
@@ -12,12 +12,12 @@
 
    Collection of sources that we want fast access to.
 
-   
    #+begin_src emacs-lisp
      (defun c/helm-jump ()
        (interactive)
-       (helm :sources '(
+       (helm :sources `(
           helm-c-source-buffers-list
+	  ,(helm-make-source "Git files" 'helm-ls-git-source)
           helm-source-ls-git
           helm-c-source-recentf
           helm-c-source-buffer-not-found
