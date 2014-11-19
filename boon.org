@@ -16,6 +16,6 @@
   #+end_src
 
   #+begin_src emacs-lisp
-(setq boon-special-mode-list '())
+(setq boon-special-mode-list '(magit-key-mode))
 (key-chord-define-global "oe" 'boon-set-command-state)
   #+end_src
