@@ -17,5 +17,11 @@
 
   #+begin_src emacs-lisp
 (setq boon-special-mode-list '(magit-key-mode))
-(key-chord-define-global "oe" 'boon-set-command-state)
+(key-chord-define-global "oe" 'boon-toggle-command-and-insert-state)
+
+(defun boon-toggle-command-and-insert-state ()
+  (interactive)
+  (cond (boon-command-state (boon-set-insert-state))
+        (boon-insert-state (boon-set-command-state))))
+
   #+end_src
