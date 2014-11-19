@@ -3,14 +3,15 @@
 * Appearance
 
   #+begin_src emacs-lisp
-(defun turn-off-syntax-highlighting ()
-(interactive)
-(font-lock-mode -1))
+    (defun turn-off-syntax-highlighting ()
+    (interactive)
+    (font-lock-mode 0))
 
-(add-hook 'prog-mode-hook 'turn-off-syntax-highlighting)
-(setq-default global-font-lock-mode nil)
-(add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-(add-hook 'emacs-lisp-mode-hook 'turn-off-syntax-highlighting)
+    (add-hook 'prog-mode-hook 'turn-off-syntax-highlighting)
+    (setq-default global-font-lock-mode nil)
+    (global-font-lock-mode 0)
+    (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+    (add-hook 'emacs-lisp-mode-hook 'turn-off-syntax-highlighting)
   #+end_src
 
    #+begin_src emacs-lisp
