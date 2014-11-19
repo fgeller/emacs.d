@@ -3,7 +3,7 @@
 * Environment
 
   Predicates for host operating system and windowing system.
-  
+
   #+begin_src emacs-lisp
     (setq mac-p (eq system-type 'darwin))
     (setq linux-p (eq system-type 'gnu/linux))
@@ -57,7 +57,7 @@
   #+end_src
 
   Set custom path for custom variables.
- 
+
   #+begin_src emacs-lisp
     (setq-default custom-file (expand-file-name "~/.emacs.d/custom.el"))
   #+end_src
@@ -107,6 +107,24 @@
 
   #+begin_src emacs-lisp
     (setq make-backup-files nil)
+  #+end_src
+
+  y should be enough.
+
+  #+begin_src emacs-lisp
+    (defalias 'yes-or-no-p 'y-or-n-p)
+  #+end_src
+
+  Show the key strokes while typing them.
+
+  #+begin_src emacs-lisp
+    (setq echo-keystrokes 0.01)
+  #+end_src
+
+  Set the fill column to 80 characters globally.
+
+  #+begin_src emacs-lisp
+    (setq-default fill-column 80)
   #+end_src
 
 * Load modules
