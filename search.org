@@ -20,10 +20,10 @@
    Add bindings to jump to next and previous match without pressing modifiers.
 
    #+begin_src emacs-lisp
-     (define-key isearch-mode-map (kbd ".")
+     (define-key isearch-mode-map (kbd "[")
        'isearch-repeat-forward)
 
-     (define-key isearch-mode-map (kbd "/")
+     (define-key isearch-mode-map (kbd "{")
        'isearch-repeat-backward)
    #+end_src
 
