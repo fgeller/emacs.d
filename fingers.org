@@ -1,0 +1,35 @@
+#+TITLE: Fingers
+#+STARTUP: hideblocks
+* Fingers
+
+  #+begin_src emacs-lisp
+    (use-package nlinum
+      :ensure nlinum
+      :init (global-nlinum-mode 1))
+    (use-package key-chord
+      :ensure key-chord
+      :init (key-chord-mode 1)
+      :config (setq key-chord-two-keys-delay 0.075))
+    (use-package anzu :ensure anzu)
+    (use-package fingers
+      :init
+      (fingers-mode-activate-globally)
+      (key-chord-define-global "oe" 'fingers-mode-toggle-globally)
+      (define-key fingers-mode-x-map (kbd "g") 'magit-status)
+      (define-key fingers-mode-map (kbd "r") 'anzu-query-replace)
+      (define-key fingers-mode-map (kbd "R") 'anzu-query-replace-regexp)
+      (define-key fingers-mode-map (kbd "H") 'helm-show-kill-ring)
+      (define-key fingers-mode-map (kbd "j") 'helm-apropos)
+      (define-key fingers-mode-map (kbd "k") 'ag-project)
+      (define-key fingers-mode-map (kbd "K") 'ag)
+      (define-key fingers-mode-map (kbd "l") 'ace-jump-mode)
+      (define-key fingers-mode-map (kbd "L") 'ace-jump-char-mode)
+      (define-key fingers-mode-map (kbd ">") 'helm-occur)
+      (define-key fingers-mode-map (kbd ".") 'c/helm-jump)
+      (define-key fingers-mode-x-map (kbd "f") 'helm-find-files)
+      (define-key fingers-mode-x-map (kbd "x") 'helm-M-x)
+      (define-key fingers-mode-x-map (kbd "mc") 'org-capture)
+      (define-key fingers-mode-x-map (kbd "ma") 'org-agenda)
+      )
+  #+end_src
+
