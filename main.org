@@ -67,12 +67,6 @@
   #+begin_src emacs-lisp
     (require 'cl)
     (require 'package)
-    (require 'repeat)
-    (require 'uniquify)
-    (require 'grep)
-    (require 'thingatpt)
-    (require 'server)
-    (require 'subword)
   #+end_src
 
   Custom path to install packages to.
@@ -86,8 +80,7 @@
   #+begin_src emacs-lisp
     (setq package-archives '(("melpa" . "http://melpa.milkbox.net/packages/")
                               ("gnu" . "http://elpa.gnu.org/packages/")))
-    ;; (when (not package-archive-contents)
-    ;;   (package-refresh-contents))
+    ;; (when (not package-archive-contents) (package-refresh-contents))
     (package-initialize)
    #+end_src
 
@@ -101,6 +94,14 @@
 
   #+begin_src emacs-lisp
     (setq auto-save-default nil)
+  #+end_src
+
+  Enable automatic reverting of buffers.
+
+  #+begin_src emacs-lisp
+    (global-auto-revert-mode 1)
+    (setq global-auto-revert-non-file-buffers t)
+    (setq auto-revert-verbose nil)
   #+end_src
 
   Don't make backup files when renaming files.
@@ -133,7 +134,7 @@
 
   #+begin_src emacs-lisp
     (org-babel-load-file (expand-file-name "~/.emacs.d/helm.org"))
-    (org-babel-load-file (expand-file-name "~/.emacs.d/boon.org"))
+    (org-babel-load-file (expand-file-name "~/.emacs.d/fingers.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/appearance.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/org.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/vc.org"))
