@@ -21,7 +21,7 @@
     (tool-bar-mode -1)
     (menu-bar-mode -1)  ;; shows full-screen button for mac port
     (setq-default
-     blink-cursor-delay 0
+     blink-cursor-delay 0.5
      blink-cursor-interval 1
      use-file-dialog nil
      use-dialog-box nil
