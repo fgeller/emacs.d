@@ -1,24 +1,7 @@
 #+TITLE: Navigation
 #+STARTUP: hideblocks
 * Navigation
-  
-  #+begin_src emacs-lisp
-(use-package highlight-symbol :ensure highlight-symbol
-:init (progn
-(setq highlight-symbol-on-navigation-p t)
-(setq highlight-symbol-idble-delay 0.2)))
-  #+end_src
-
-#+begin_src emacs-lisp
-(use-package elisp-slime-nav :ensure elisp-slime-nav)
-#+end_src
 
   #+begin_src emacs-lisp
-(defun c/enable-highlight-symbol ()
-         (highlight-symbol-mode 1)
-      (highlight-symbol-nav-mode 1)
-)
-(add-hook 'prog-mode-hook 'c/enable-highlight-symbol)
+    (use-package elisp-slime-nav :ensure elisp-slime-nav)
   #+end_src
-
-
