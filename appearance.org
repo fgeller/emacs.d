@@ -2,79 +2,82 @@
 #+STARTUP: hideblocks
 * Appearance
 
-  #+begin_src emacs-lisp
-    (defun turn-off-syntax-highlighting ()
-    (interactive)
-    (font-lock-mode 0))
+  Turn off font-lock.
 
-    (add-hook 'prog-mode-hook 'turn-off-syntax-highlighting)
+  #+begin_src emacs-lisp
     (setq-default global-font-lock-mode nil)
     (global-font-lock-mode 0)
+
+    ;; TODO: move into prog configuration.
     (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
-    (add-hook 'emacs-lisp-mode-hook 'turn-off-syntax-highlighting)
+
+    (use-package highlight-thing :init (highlight-thing-mode))
   #+end_src
 
-   #+begin_src emacs-lisp
-     (set-scroll-bar-mode nil)
-     (tool-bar-mode -1)
-     (menu-bar-mode -1)  ;; shows full-screen button for mac port
-     (setq-default
-      blink-cursor-delay 0
-      blink-cursor-interval 1
-      use-file-dialog nil
-      use-dialog-box nil
-      inhibit-startup-screen t
-      inhibit-startup-echo-area-message t
-      truncate-lines t
-      truncate-partial-width-windows nil
-      visible-bell 1
-      transient-mark-mode t   ;; highlight the active region when mark is active
-      show-trailing-whitespace t ;; don't show trailing whitespace globally
-      blink-matching-paren t
-      initial-frame-alist '((left-fringe . 1) (right-fringe . 1) (scroll-bar-width . nil))
-      default-frame-alist '((left-fringe . 1) (right-fringe . 1) (scroll-bar-width . nil))
-      scroll-bar-width 0
-      default-frame-scroll-bars nil)
-   #+end_src
+  Basic default settings.
 
-   Approximate theme colors in terminals automatically.
+  #+begin_src emacs-lisp
+    (set-scroll-bar-mode nil)
+    (tool-bar-mode -1)
+    (menu-bar-mode -1)  ;; shows full-screen button for mac port
+    (setq-default
+     blink-cursor-delay 0
+     blink-cursor-interval 1
+     use-file-dialog nil
+     use-dialog-box nil
+     inhibit-startup-screen t
+     inhibit-startup-echo-area-message t
+     truncate-lines t
+     truncate-partial-width-windows nil
+     visible-bell 1
+     transient-mark-mode t   ;; highlight the active region when mark is active
+     show-trailing-whitespace t ;; don't show trailing whitespace globally
+     blink-matching-paren t
+     initial-frame-alist '((left-fringe . 1) (right-fringe . 1) (scroll-bar-width . nil))
+     default-frame-alist '((left-fringe . 1) (right-fringe . 1) (scroll-bar-width . nil))
+     scroll-bar-width 0
+     default-frame-scroll-bars nil)
+  #+end_src
 
-   #+begin_src emacs-lisp
-(use-package color-theme-approximate :ensure color-theme-approximate
-:init
-     (color-theme-approximate-on))
-   #+end_src
+  Approximate theme colors in terminals automatically.
 
-   Helper to set default font face attributes.
+  #+begin_src emacs-lisp
+    (use-package color-theme-approximate
+      :ensure color-theme-approximate
+      :init (color-theme-approximate-on))
+  #+end_src
 
-   #+begin_src emacs-lisp
-     (defun c/set-default-face-attributes ()
-       (interactive)
-       (set-face-attribute 'default nil
-                           :family c/mono-space-font-family
-                           :height c/mono-space-font-height
-                           :weight 'normal))
-   #+end_src
+  Helper to set default font face attributes.
 
-   Set default fonts across frames.
+  #+begin_src emacs-lisp
+    (defun c/set-default-face-attributes ()
+      (interactive)
+      (set-face-attribute 'default nil
+                          :family c/mono-space-font-family
+                          :height c/mono-space-font-height
+                          :weight 'normal))
+  #+end_src
 
-   #+begin_src emacs-lisp
-     (setq c/mono-space-font-family "Droid Sans Mono")
-     (setq c/mono-space-font-height 140)
-     (c/set-default-face-attributes)
-   #+end_src
+  Set default fonts across frames.
 
-   Helper to set the font height interactively.
+  #+begin_src emacs-lisp
+    (setq c/mono-space-font-family "Droid Sans Mono")
+    (setq c/mono-space-font-height 140)
+    (c/set-default-face-attributes)
+  #+end_src
 
-   #+begin_src emacs-lisp
-     (defun c/set-font-height (height)
-       (interactive
-        (list (read-number "Height: " c/mono-space-font-height)))
-       (setq c/mono-space-font-height height)
-       (c/set-default-face-attributes))
-   #+end_src
+  Helper to set the font height interactively.
 
-   #+begin_src emacs-lisp
-(load-theme 'flatui t)
-   #+end_src
+  #+begin_src emacs-lisp
+    (defun c/set-font-height (height)
+      (interactive
+       (list (read-number "Height: " c/mono-space-font-height)))
+      (setq c/mono-space-font-height height)
+      (c/set-default-face-attributes))
+  #+end_src
 
+  Load a custom theme.
+
+  #+begin_src emacs-lisp
+    (load-theme 'minimal t)
+  #+end_src
