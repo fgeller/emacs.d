@@ -26,13 +26,6 @@
 
    Use helm sources for fast jumping to buffers or files.
 
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-'") 'c/helm-jump)
-     (define-key global-map (kbd "M-y") 'helm-show-kill-ring)
-     (define-key global-map (kbd "M-x") 'helm-M-x)
-(define-key global-map (kbd "C-x C-f") 'helm-find-files)
-   #+end_src
-
    Quick, quiiiiick!
 
    #+begin_src emacs-lisp
