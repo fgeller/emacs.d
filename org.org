@@ -1,48 +1,8 @@
 #+TITLE: Org-mode
 #+STARTUP: hideblocks
 * Org-mode
-  
-   Unbind
 
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-t") nil)
-     (define-key org-mode-map (kbd "C-'") nil)
-   #+end_src
-
-  Helper for editing source code blocks.
-
-  #+begin_src emacs-lisp
-    (defun c/toggle-org-src-edit ()
-      (interactive)
-      (cond
-       ((eq major-mode 'org-mode) (call-interactively 'org-edit-src-code))
-       ((-contains? minor-mode-list 'org-src-mode) (org-edit-src-exit))
-       (t (message "Ignoring: Neither editing nor in org-mode"))))
-  #+end_src
-
-   More convenient binding for source block editing with god-mode.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-c C-'") 'c/toggle-org-src-edit)
-   #+end_src
-
-   Globally accessible functionality.
-
-   #+begin_src emacs-lisp
-     (define-key global-map (kbd "C-t C-o C-a") 'org-agenda)
-     (define-key global-map (kbd "C-t C-o C-c") 'org-capture)
-     (define-key global-map (kbd "C-t C-o C-b") 'c/org-get-chrome-link)
-   #+end_src
-
-   More convenient bindings for god-mode.
-
-   #+begin_src emacs-lisp
-     (eval-after-load 'org
-       '(progn
-          (define-key org-mode-map (kbd "C-c C-o") nil)))
-   #+end_src
-
-    Log a timestamp when finishing a task.
+  Log a timestamp when finishing a task.
 
     #+begin_src emacs-lisp
       (setq org-log-done 'time)
@@ -53,8 +13,7 @@
     #+begin_src emacs-lisp
       (setq
        org-special-ctrl-k t
-       org-special-ctrl-a t
-       )
+       org-special-ctrl-a t)
     #+end_src
 
     For date selection, please start on Mondays.
@@ -68,8 +27,7 @@
     #+begin_src emacs-lisp
       (setq
        org-hide-emphasis-markers t
-       org-hide-leading-stars t
-      )
+       org-hide-leading-stars t)
     #+end_src
 
     Use =S-↑= and =S-↓= to modify timestamps.
