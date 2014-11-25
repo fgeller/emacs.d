@@ -11,10 +11,22 @@
       :init (key-chord-mode 1)
       :config (setq key-chord-two-keys-delay 0.075))
     (use-package anzu :ensure anzu)
+
+    (defun fingers-mode-visual-toggle ()
+      (interactive)
+      (fingers-mode-toggle-globally)
+      (let ((faces-to-toggle '(fringe mode-line mode-line-inactive header-line linum))
+            (enabled-color (if terminal-p "gray" "#e8e8e8"))
+            (disabled-color (if terminal-p "green" "#a1b56c")))
+        (cond (fingers-mode-active
+               (mapcar (lambda (face) (set-face-background face enabled-color)) faces-to-toggle))
+              (t
+               (mapcar (lambda (face) (set-face-background face disabled-color)) faces-to-toggle)))))
+
     (use-package fingers
       :init
       (fingers-mode-activate-globally)
-      (key-chord-define-global "oe" 'fingers-mode-toggle-globally)
+      (key-chord-define-global "oe" 'fingers-mode-visual-toggle)
       (define-key fingers-mode-x-map (kbd "g") 'magit-status)
       (define-key fingers-mode-map (kbd "r") 'anzu-query-replace)
       (define-key fingers-mode-map (kbd "R") 'anzu-query-replace-regexp)
@@ -32,4 +44,3 @@
       (define-key fingers-mode-x-map (kbd "ma") 'org-agenda)
       )
   #+end_src
-
