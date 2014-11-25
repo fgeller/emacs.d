@@ -157,5 +157,6 @@
     (org-babel-load-file (expand-file-name "~/.emacs.d/vc.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/search.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/navigation.org"))
+    (org-babel-load-file (expand-file-name "~/.emacs.d/scala.org"))
   #+end_src
 

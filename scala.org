@@ -1,0 +1,51 @@
+#+TITLE: Scala
+* Scala
+
+  Hook to call scalariform-daemon for formatting.
+
+  #+begin_src emacs-lisp
+    (use-package request :commands request :ensure request)
+    (defun scalariform-daemon-format-file ()
+      (when (and (boundp 'scalariform-preferences-file)
+                 scalariform-preferences-file)
+        (request
+         "http://127.0.0.1:5474/format"
+         :params `((fileName . ,buffer-file-name)
+                   (preferencesFile . ,scalariform-preferences-file)))))
+  #+end_src
+
+  Per-buffer customizations.
+
+  #+begin_src emacs-lisp
+    (defun scala-customizations ()
+      (setq tab-width 2)
+      (add-hook 'before-save-hook 'maybe-cleanup-whitespace nil 'local)
+      (add-hook 'after-save-hook 'scalariform-daemon-format-file nil 'make-it-local))
+  #+end_src
+
+  Hook in customizations.
+
+  #+begin_src emacs-lisp
+    (add-to-list 'auto-mode-alist '("\\.scala\\'" . (lambda () (scala-customizations))))
+    (add-to-list 'auto-mode-alist '("\\.sbt\\'" . (lambda () (scala-customizations))))
+  #+end_src
+
+  Scala test control
+
+  #+begin_src emacs-lisp
+    (defun scala-ignore-all-tests ()
+      (interactive)
+      (save-excursion
+        (replace-regexp "\\bit(\\(s\\)?\"" "ignore(\\1\"" nil (point-min) (point-max)))
+      (unless current-prefix-arg
+        (save-excursion
+          (search-backward "ignore(" nil)
+          (replace-match "it(" nil t))))
+
+    (defun scala-enable-all-tests ()
+      (interactive)
+      (save-excursion
+        (replace-regexp "\\bignore(\\(s\\)?\"" "it(\\1\"" nil (point-min) (point-max))))
+  #+end_src
+
+
