@@ -81,3 +81,11 @@
   #+begin_src emacs-lisp
     (load-theme 'minimal t)
   #+end_src
+
+  Show matching parenthesis.
+
+  #+begin_src emacs-lisp
+    (show-paren-mode 1)
+    (setq show-paren-delay 0)
+    (setq show-paren-style 'parenthesis)
+  #+end_src
