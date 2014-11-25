@@ -145,6 +145,12 @@
         (whitespace-cleanup)))
   #+end_src
 
+  Require a newline at the end of files.
+
+  #+begin_src emacs-lisp
+    (setq-default require-final-newline t)
+  #+end_src
+
 * Load modules
 
   More configuration split into org files.
