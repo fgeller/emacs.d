@@ -128,6 +128,23 @@
     (setq-default fill-column 80)
   #+end_src
 
+  Default whitespace visualization style.
+
+  #+begin_src emacs-lisp
+    (setq-default whitespace-style '(face tabs spaces trailing lines space-before-tab newline indentation::space empty space-after-tab space-mark tab-mark newline-mark))
+  #+end_src
+
+  Helper to guard whitespace-cleanup. Control it via variable in directory or
+  file local variable.
+
+  #+begin_src emacs-lisp
+    (defun maybe-cleanup-whitespace ()
+      (interactive)
+      (when (and (boundp 'should-cleanup-whitespace)
+                 should-cleanup-whitespace)
+        (whitespace-cleanup)))
+  #+end_src
+
 * Load modules
 
   More configuration split into org files.
