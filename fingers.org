@@ -11,6 +11,10 @@
       :init (key-chord-mode 1)
       :config (setq key-chord-two-keys-delay 0.075))
     (use-package anzu :ensure anzu)
+    (use-package ace-jump-mode
+      :config
+      (setq ace-jump-mode-scope 'window)
+      (setq ace-jump-mode-limit-window-scope 10))
 
     (defun fingers-mode-visual-toggle ()
       (interactive)
