@@ -67,6 +67,7 @@
   #+begin_src emacs-lisp
     (require 'cl)
     (require 'package)
+    (require 'uniquify)
   #+end_src
 
   Custom path to install packages to.
@@ -149,6 +150,14 @@
 
   #+begin_src emacs-lisp
     (setq-default require-final-newline t)
+  #+end_src
+
+  More descriptive unique names.
+
+  #+begin_src emacs-lisp
+    (setq uniquify-buffer-name-style 'post-forward-angle-brackets)
+    (setq uniquify-after-kill-buffer-p t)
+    (setq uniquify-ignore-buffers-re "^\\*")
   #+end_src
 
 * Load modules
