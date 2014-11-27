@@ -7,10 +7,11 @@
   #+begin_src emacs-lisp
     (setq-default global-font-lock-mode nil)
     (global-font-lock-mode 0)
+  #+end_src
 
-    ;; TODO: move into prog configuration.
-    (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+  Enable highlight-thing globally.
 
+  #+begin_src emacs-lisp
     (use-package highlight-thing :init (highlight-thing-mode))
   #+end_src
 
