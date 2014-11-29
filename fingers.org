@@ -11,6 +11,7 @@
       :init (key-chord-mode 1)
       :config (setq key-chord-two-keys-delay 0.075))
     (use-package anzu :ensure anzu)
+    (use-package multiple-cursors :ensure multiple-cursors)
     (use-package ace-jump-mode
       :config
       (setq ace-jump-mode-scope 'window)
@@ -44,7 +45,12 @@
       (define-key fingers-mode-map (kbd ".") 'c/helm-jump)
       (define-key fingers-mode-x-map (kbd "f") 'helm-find-files)
       (define-key fingers-mode-x-map (kbd "x") 'helm-M-x)
-      (define-key fingers-mode-x-map (kbd "mc") 'org-capture)
-      (define-key fingers-mode-x-map (kbd "ma") 'org-agenda)
+      (define-key fingers-mode-x-map (kbd "moc") 'org-capture)
+      (define-key fingers-mode-x-map (kbd "moa") 'org-agenda)
+      (define-key fingers-mode-x-map (kbd "vd") 'magit-diff)
+      (define-key fingers-mode-x-map (kbd "ve") 'vc-version-ediff)
+      (define-key fingers-mode-x-map (kbd "vl") 'magit-revision-file-log)
+      (define-key fingers-mode-x-map (kbd "vG") 'magit-blame-mode)
+      (define-key fingers-mode-map (kbd "|") 'mc/edit-lines)
       )
   #+end_src
