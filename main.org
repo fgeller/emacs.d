@@ -1,5 +1,4 @@
 #+TITLE: Emacs Initialization
-#+STARTUP: hideblocks
 * Environment
 
   Predicates for host operating system and windowing system.
@@ -183,4 +182,5 @@
     (org-babel-load-file (expand-file-name "~/.emacs.d/navigation.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/scala.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/emacs-lisp.org"))
+    (org-babel-load-file (expand-file-name "~/.emacs.d/eshell.org"))
   #+end_src

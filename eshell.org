@@ -1,0 +1,22 @@
+* eshell
+
+  Keep control files below =.emacs.d=.
+
+  #+begin_src emacs-lisp
+    (setq eshell-directory-name "~/.emacs.d/.eshell/")
+  #+end_src
+
+  Rename the buffer automatically.
+
+  #+begin_src emacs-lisp
+    (use-package s :ensure s)
+    (defun eshell-rename-buffer-before-command ()
+      (let* ((last-input (s-trim (buffer-substring eshell-last-input-start eshell-last-input-end))))
+        (rename-buffer (format "*%s$ %s..." default-directory last-input) t)))
+
+    (defun eshell-rename-buffer-after-command ()
+      (rename-buffer (format "*%s$ %s" default-directory (eshell-previous-input-string 0)) t))
+
+    (add-hook 'eshell-pre-command-hook  'eshell-rename-buffer-before-command)
+    (add-hook 'eshell-post-command-hook 'eshell-rename-buffer-after-command)
+  #+end_src

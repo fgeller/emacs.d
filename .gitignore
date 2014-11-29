@@ -42,3 +42,5 @@ main.el
 /custom.el
 /emacs-lisp.el
 /scala.el
+/eshell.el
+/eshell/
