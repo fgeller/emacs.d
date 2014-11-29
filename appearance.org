@@ -90,3 +90,20 @@
     (setq show-paren-delay 0)
     (setq show-paren-style 'parenthesis)
   #+end_src
+
+  Control those windows.
+
+  #+begin_src emacs-lisp
+    (use-package popwin
+      :ensure popwin
+      :init
+      (popwin-mode 1)
+      (setq-default popwin:special-display-config
+                    '(("\\*.*helm.*\\*" :regexp t :height 20 :position bottom)
+                      ("*Miniedit Help*" :noselect t)
+                      help-mode
+                      (completion-list-mode :noselect t)
+                      (compilation-mode :noselect t)
+                      ("*eshell*" :height 20 :position bottom)
+                      (eshell-mode :height 10 :position bottom))))
+  #+end_src
