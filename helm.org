@@ -48,12 +48,18 @@
    Longer names are ok.
 
    #+begin_src emacs-lisp
-     (setq helm-buffer-max-length 50)
+     (setq helm-buffer-max-length 40)
    #+end_src
 
    Remember follow-mode setting across helm sessions.
 
    #+begin_src emacs-lisp
      (setq helm-follow-mode-persistent t)
+   #+end_src
+
+   Truncate long-lines.
+
+   #+begin_src emacs-lisp
+     (setq helm-truncate-lines t)
    #+end_src
 
