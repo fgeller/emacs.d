@@ -91,6 +91,15 @@
     (require 'use-package)
   #+end_src
 
+  Use helper package to set environment variables.
+
+  #+begin_src emacs-lisp
+    (use-package exec-path-from-shell
+      :ensure exec-path-from-shell
+      :init (when (memq window-system '(mac ns))
+              (exec-path-from-shell-initialize)))
+  #+end_src
+
   Turn off automatic saving.
 
   #+begin_src emacs-lisp
