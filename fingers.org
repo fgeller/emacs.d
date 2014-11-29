@@ -19,19 +19,27 @@
 
     (defun fingers-mode-visual-toggle ()
       (interactive)
-      (fingers-mode-toggle-globally)
-      (let ((faces-to-toggle '(fringe mode-line mode-line-inactive header-line linum))
+      (let ((faces-to-toggle '(mode-line mode-line-inactive))
             (enabled-color (if terminal-p "gray" "#e8e8e8"))
             (disabled-color (if terminal-p "green" "#a1b56c")))
         (cond (fingers-mode-active
-               (mapcar (lambda (face) (set-face-background face enabled-color)) faces-to-toggle))
+               (mapcar (lambda (face)
+                         (set-face-background face enabled-color)
+                         (set-face-attribute face nil :height 20))
+                       faces-to-toggle))
               (t
-               (mapcar (lambda (face) (set-face-background face disabled-color)) faces-to-toggle)))))
+               (mapcar (lambda (face)
+                         (set-face-background face disabled-color)
+                         (set-face-attribute face nil :height (face-attribute 'default :height)))
+                       faces-to-toggle)))))
+
+    (add-hook 'fingers-mode-activated-hook 'fingers-mode-visual-toggle)
+    (add-hook 'fingers-mode-deactivated-hook 'fingers-mode-visual-toggle)
 
     (use-package fingers
       :init
       (fingers-mode-activate-globally)
-      (key-chord-define-global "oe" 'fingers-mode-visual-toggle)
+      (key-chord-define-global "oe" 'fingers-mode-toggle-globally)
       (define-key fingers-mode-x-map (kbd "g") 'magit-status)
       (define-key fingers-mode-map (kbd "r") 'anzu-query-replace)
       (define-key fingers-mode-map (kbd "R") 'anzu-query-replace-regexp)
