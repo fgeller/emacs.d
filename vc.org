@@ -1,9 +1,10 @@
-#+TITLE: Version control
-#+STARTUP: hideblocks
 * Version control
 
   #+begin_src emacs-lisp
-    (use-package magit :ensure magit :commands magit-status)
+    (use-package magit
+      :ensure magit
+      :commands magit-status
+      :config (define-key magit-status-mode-map (kbd "q") 'magit-quit-session))
 
     (defun magit-revision-file-log (revision file &optional use-graph)
       "Display the log for the currently visited file or another one for a specific revision.
@@ -21,3 +22,20 @@
                           "--follow")
                         file))
   #+end_src
+
+  @magnars magit window session tweaks: Start in fullscreen and restore previous
+  window configuration on quit.
+
+  #+begin_src emacs-lisp
+    (defadvice magit-status (around magit-fullscreen activate)
+      (window-configuration-to-register :magit-fullscreen)
+      ad-do-it
+      (delete-other-windows))
+
+    (defun magit-quit-session ()
+      "Restores the previous window configuration and kills the magit buffer"
+      (interactive)
+      (kill-buffer)
+      (jump-to-register :magit-fullscreen))
+  #+end_src
+
