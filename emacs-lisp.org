@@ -1,0 +1,16 @@
+* Emacs Lisp
+
+  Require elisp-slime-nav for easy jumping to definitions.
+
+  #+begin_src emacs-lisp
+    (use-package elisp-slime-nav
+      :ensure elisp-slime-nav
+      :config (add-hook 'emacs-lisp-mode-hook 'elisp-slime-nav-mode))
+  #+end_src
+
+  Hook in eldoc-mode.
+
+  #+begin_src emacs-lisp
+    (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+  #+end_src
+
