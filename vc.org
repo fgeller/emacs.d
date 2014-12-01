@@ -39,3 +39,7 @@
       (jump-to-register :magit-fullscreen))
   #+end_src
 
+  #+begin_src emacs-lisp
+    (add-hook 'vc-annotate-mode-hook (lambda () (setq show-trailing-whitespace nil)))
+  #+end_src
+
