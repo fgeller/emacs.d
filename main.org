@@ -184,4 +184,5 @@
     (org-babel-load-file (expand-file-name "~/.emacs.d/emacs-lisp.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/eshell.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/yasnippet.org"))
+    (org-babel-load-file (expand-file-name "~/.emacs.d/global.org"))
   #+end_src
