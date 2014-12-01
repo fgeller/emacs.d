@@ -100,8 +100,10 @@
                     '(("\\*.*helm.*\\*" :regexp t :height 20 :position bottom)
                       ("*Miniedit Help*" :noselect t)
                       help-mode
+                      (ag-mode :height 20 :position bottom)
                       (completion-list-mode :noselect t)
                       (compilation-mode :noselect t)
-                      ("*eshell*" :height 20 :position bottom)
-                      (eshell-mode :height 10 :position bottom))))
+                      ("COMMIT_EDITMSG" :height 20 :position bottom)
+                      (git-commit-mode :height 20 :position bottom)
+                      ("*eshell*" :height 20 :position bottom))))
   #+end_src
