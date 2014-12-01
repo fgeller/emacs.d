@@ -1,5 +1,3 @@
-#+TITLE: Fingers
-#+STARTUP: hideblocks
 * Fingers
 
   #+begin_src emacs-lisp

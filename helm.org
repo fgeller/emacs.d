@@ -1,5 +1,3 @@
-#+TITLE: Helm configuration
-#+STARTUP: hideblocks
 * Helm
 
   #+begin_src emacs-lisp

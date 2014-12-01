@@ -1,5 +1,3 @@
-#+TITLE: Appearance
-#+STARTUP: hideblocks
 * Appearance
 
   Turn off font-lock.
