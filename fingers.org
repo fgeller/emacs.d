@@ -20,7 +20,7 @@
       (let ((faces-to-toggle '(mode-line mode-line-inactive))
             (enabled-color (if terminal-p "gray" "#e8e8e8"))
             (disabled-color (if terminal-p "green" "#a1b56c")))
-        (cond (fingers-mode-active
+        (cond (fingers-mode
                (mapcar (lambda (face)
                          (set-face-background face enabled-color)
                          (set-face-attribute face nil :height 20))
@@ -31,14 +31,12 @@
                          (set-face-attribute face nil :height (face-attribute 'default :height)))
                        faces-to-toggle)))))
 
-    (add-hook 'fingers-mode-activated-hook 'fingers-mode-visual-toggle)
-    (add-hook 'fingers-mode-deactivated-hook 'fingers-mode-visual-toggle)
+    (add-hook 'fingers-mode-hook 'fingers-mode-visual-toggle)
 
     (use-package fingers
       :init
-      (fingers-mode-activate-globally)
-      (key-chord-define-global "oe" 'fingers-mode-toggle-globally)
-      (define-key fingers-mode-x-map (kbd "g") 'magit-status)
+      (global-fingers-mode 1)
+      (key-chord-define-global "oe" 'global-fingers-mode)
       (define-key fingers-mode-map (kbd "r") 'anzu-query-replace)
       (define-key fingers-mode-map (kbd "R") 'anzu-query-replace-regexp)
       (define-key fingers-mode-map (kbd "H") 'helm-show-kill-ring)
@@ -54,9 +52,9 @@
       (define-key fingers-mode-x-map (kbd "moc") 'org-capture)
       (define-key fingers-mode-x-map (kbd "moa") 'org-agenda)
       (define-key fingers-mode-x-map (kbd "vd") 'magit-diff)
-      (define-key fingers-mode-x-map (kbd "ve") 'vc-version-ediff)
       (define-key fingers-mode-x-map (kbd "vl") 'magit-revision-file-log)
       (define-key fingers-mode-x-map (kbd "vG") 'magit-blame-mode)
+      (define-key fingers-mode-x-map (kbd "vs") 'magit-status)
       (define-key fingers-mode-map (kbd "|") 'mc/edit-lines)
       )
   #+end_src
