@@ -1,5 +1,4 @@
-#+TITLE: Emacs Initialization
-* Environment
+* Emacs Initialization
 
   Predicates for host operating system and windowing system.
 

@@ -1,5 +1,3 @@
-#+TITLE: Org-mode
-#+STARTUP: hideblocks
 * Org-mode
 
   Log a timestamp when finishing a task.

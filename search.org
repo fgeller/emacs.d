@@ -1,5 +1,3 @@
-#+TITLE: Search
-#+STARTUP: hideblocks
 * Search
 
   #+begin_src emacs-lisp

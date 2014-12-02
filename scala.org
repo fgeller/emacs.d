@@ -1,4 +1,3 @@
-#+TITLE: Scala
 * Scala
 
   Hook to call scalariform-daemon for formatting.
