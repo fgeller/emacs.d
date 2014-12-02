@@ -38,14 +38,6 @@
      default-frame-scroll-bars nil)
   #+end_src
 
-  Approximate theme colors in terminals automatically.
-
-  #+begin_src emacs-lisp
-    (use-package color-theme-approximate
-      :ensure color-theme-approximate
-      :init (color-theme-approximate-on))
-  #+end_src
-
   Helper to set default font face attributes.
 
   #+begin_src emacs-lisp
@@ -78,7 +70,7 @@
   Load a custom theme.
 
   #+begin_src emacs-lisp
-    (load-theme 'minimal t)
+    (unless terminal-p (load-theme 'minimal t))
   #+end_src
 
   Show matching parenthesis.
