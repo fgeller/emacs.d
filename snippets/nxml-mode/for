@@ -1,0 +1,6 @@
+# Author: Felix Geller <fgeller@gmail.com>
+# name: for
+# key: for
+# --
+<xsl:for-each select="$0">
+</xsl:for-each>

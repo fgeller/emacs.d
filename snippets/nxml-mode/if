@@ -1,0 +1,6 @@
+# Author: Felix Geller <fgeller@gmail.com>
+# name: if
+# key: if
+# --
+<xsl:if test="$0">
+</xsl:if>
