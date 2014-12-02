@@ -2,307 +2,289 @@
 
   Log a timestamp when finishing a task.
 
-    #+begin_src emacs-lisp
-      (setq org-log-done 'time)
-    #+end_src
+  #+begin_src emacs-lisp
+    (setq org-log-done 'time)
+  #+end_src
 
-    Use the special / structure-aware =C-a= and =C-k=.
+  Use the special / structure-aware =C-a= and =C-k=.
 
-    #+begin_src emacs-lisp
-      (setq
-       org-special-ctrl-k t
-       org-special-ctrl-a t)
-    #+end_src
+  #+begin_src emacs-lisp
+    (setq
+     org-special-ctrl-k t
+     org-special-ctrl-a t)
+  #+end_src
 
-    For date selection, please start on Mondays.
+  For date selection, please start on Mondays.
 
-    #+begin_src emacs-lisp
-      (setq calendar-week-start-day 1)
-    #+end_src
+  #+begin_src emacs-lisp
+    (setq calendar-week-start-day 1)
+  #+end_src
 
-    Hide emphasis markers and leading *'s to reduce noise.
+  Hide emphasis markers and leading *'s to reduce noise.
 
-    #+begin_src emacs-lisp
-      (setq
-       org-hide-emphasis-markers t
-       org-hide-leading-stars t)
-    #+end_src
+  #+begin_src emacs-lisp
+    (setq
+     org-hide-emphasis-markers t
+     org-hide-leading-stars t)
+  #+end_src
 
-    Use =S-↑= and =S-↓= to modify timestamps.
+  Use =S-↑= and =S-↓= to modify timestamps.
 
-    #+begin_src emacs-lisp
-      (setq org-edit-timestamp-down-means-later t)
-    #+end_src
+  #+begin_src emacs-lisp
+    (setq org-edit-timestamp-down-means-later t)
+  #+end_src
 
-    Use simple numbered footnote format. Less confusing in emails.
+  Use simple numbered footnote format. Less confusing in emails.
 
-    #+begin_src emacs-lisp
-      (setq org-footnote-auto-label 'plain)
-    #+end_src
+  #+begin_src emacs-lisp
+    (setq org-footnote-auto-label 'plain)
+  #+end_src
 
-    Per-buffer configuration.
+  Per-buffer configuration.
 
-    #+begin_src emacs-lisp
-        (defun c/org-mode-per-buffer-customization ()
-;          (add-hook 'before-save-hook 'c/maybe-cleanup-whitespace nil 'local)
-          (turn-on-auto-fill))
+  #+begin_src emacs-lisp
+    (defun org-mode-per-buffer-customization ()
+      (turn-on-auto-fill))
 
-        (add-hook 'org-mode-hook 'c/org-mode-per-buffer-customization)
-    #+end_src
+    (add-hook 'org-mode-hook 'org-mode-per-buffer-customization)
+  #+end_src
 
-    Ensure that we check all boxes, before marking a parent DONE.
+  Ensure that we check all boxes, before marking a parent DONE.
 
-    #+begin_src emacs-lisp
-      (setq org-enforce-todo-checkbox-dependencies t)
-    #+end_src
+  #+begin_src emacs-lisp
+    (setq org-enforce-todo-checkbox-dependencies t)
+  #+end_src
 
-    Activate =org-todo= and =org-archive-*= for headlines in region.
+  Activate =org-todo= and =org-archive-*= for headlines in region.
 
-    #+begin_src emacs-lisp
-      (setq org-loop-over-headlines-in-active-region t)
-    #+end_src
+  #+begin_src emacs-lisp
+    (setq org-loop-over-headlines-in-active-region t)
+  #+end_src
 
-    Enable sticky agenda views.
+  Enable sticky agenda views.
 
-    #+begin_src emacs-lisp
-      (setq org-agenda-sticky t)
-    #+end_src
+  #+begin_src emacs-lisp
+    (setq org-agenda-sticky t)
+  #+end_src
 
-*** Folders and files
+** Folders and files
 
-    Where to find org-files.
+   Where to find org-files.
 
-    #+begin_src emacs-lisp
-      (setq
-       org-directory (expand-file-name "~/orgs")
-       org-default-notes-file (concat org-directory "/Tasks.org")
-       org-agenda-files `(,org-directory))
-    #+end_src
+   #+begin_src emacs-lisp
+     (setq
+      org-directory (expand-file-name "~/orgs")
+      org-default-notes-file (concat org-directory "/Tasks.org")
+      org-agenda-files `(,org-directory))
+   #+end_src
 
-*** Modules
+** Modules
 
-    Manually load org modules that should always be loaded with org.
+   Manually load org modules that should always be loaded with org.
 
-    #+begin_src emacs-lisp
-      (eval-after-load 'org
-        (dolist (org-mod '(org-crypt org-info org-eshell))
-          (require org-mod)))
-    #+end_src
+   #+begin_src emacs-lisp
+     (eval-after-load 'org
+       (dolist (org-mod '(org-crypt org-info org-eshell))
+         (require org-mod)))
+   #+end_src
 
-*** Scheduling
+** Scheduling
 
-    #+begin_src emacs-lisp
-      (defun c/org-schedule-and-refile ()
-        (interactive)
-        (call-interactively 'org-schedule)
-        (org-refile))
-    #+end_src
+   #+begin_src emacs-lisp
+     (defun org-schedule-and-refile ()
+       (interactive)
+       (call-interactively 'org-schedule)
+       (org-refile))
+   #+end_src
 
-*** Keywords
+** Keywords
 
-    Define the list of keywords to use for identifying the state of a
-    task.
+   Define the list of keywords to use for identifying the state of a
+   task.
 
-    #+begin_src emacs-lisp
-      (setq org-todo-keywords '(
-                          (sequence "TODO(t)" "STARTED(s)" "|" "DONE(d!/!)")
-                          (sequence "WAITING(w@/!)" "|" "SUPERSEDED(u!/!)" "CANCELLED(c@/!)")))
-    #+end_src
+   #+begin_src emacs-lisp
+     (setq org-todo-keywords '(
+                         (sequence "TODO(t)" "STARTED(s)" "|" "DONE(d!/!)")
+                         (sequence "WAITING(w@/!)" "|" "SUPERSEDED(u!/!)" "CANCELLED(c@/!)")))
+   #+end_src
 
-*** Agenda
+** Agenda
 
-    The agenda should include the diary.
+   The agenda should include the diary.
 
-    #+begin_src emacs-lisp
-      (setq org-agenda-include-diary t)
-    #+end_src
+   #+begin_src emacs-lisp
+     (setq org-agenda-include-diary t)
+   #+end_src
 
-    Define the time-span that the agenda covers.
+   Define the time-span that the agenda covers.
 
-    #+begin_src emacs-lisp
-      (setq org-agenda-span 'day)
-    #+end_src
+   #+begin_src emacs-lisp
+     (setq org-agenda-span 'day)
+   #+end_src
 
-    Show tags in the agenda?
+   Show tags in the agenda?
 
-    #+begin_src emacs-lisp
-      (setq org-agenda-remove-tags nil)
-    #+end_src
+   #+begin_src emacs-lisp
+     (setq org-agenda-remove-tags nil)
+   #+end_src
 
-    Flush them to the right.
+   Flush them to the right.
 
-    #+begin_src emacs-lisp
-      (setq org-agenda-tags-column -125)
-    #+end_src
+   #+begin_src emacs-lisp
+     (setq org-agenda-tags-column -125)
+   #+end_src
 
-    Start the week on a weekday (aka Monday).
+   Start the week on a weekday (aka Monday).
 
-    #+begin_src emacs-lisp
-      (setq org-agenda-start-on-weekday nil)
-    #+end_src
+   #+begin_src emacs-lisp
+     (setq org-agenda-start-on-weekday nil)
+   #+end_src
 
-    Use the current window for showing the agenda.
+   Use the current window for showing the agenda.
 
-    #+begin_src emacs-lisp
-      (setq org-agenda-window-setup 'current-window)
-    #+end_src
+   #+begin_src emacs-lisp
+     (setq org-agenda-window-setup 'current-window)
+   #+end_src
 
-    Define additional commands for agenda views.
+   Define additional commands for agenda views.
 
-    #+begin_src emacs-lisp
-      (setq org-agenda-custom-commands
-            `(;; match those tagged with :inbox:, are not scheduled, are not DONE.
-              ("ii" "[i]nbox tagged unscheduled tasks" tags "+inbox-SCHEDULED={.+}/!+TODO|+STARTED|+WAITING")
-              ("id" "[i]nbox tagged completed tasks" tags "+inbox+TODO=\"DONE\"|+TODO=\"CANCELLED\"")
-              ("wi" "[w]ork tasks that are not scheduled" tags "+inbox+work-SCHEDULED={.+}/!+TODO|+STARTED|+WAITING")
-              ("ww" "[w]ork tasks" tags "+work")
-              ("n" "Find a TAGged note" tags "" ((org-agenda-archives-mode t)))))
-    #+end_src
+   #+begin_src emacs-lisp
+     (setq org-agenda-custom-commands
+           `(;; match those tagged with :inbox:, are not scheduled, are not DONE.
+             ("ii" "[i]nbox tagged unscheduled tasks" tags "+inbox-SCHEDULED={.+}/!+TODO|+STARTED|+WAITING")
+             ("id" "[i]nbox tagged completed tasks" tags "+inbox+TODO=\"DONE\"|+TODO=\"CANCELLED\"")
+             ("wi" "[w]ork tasks that are not scheduled" tags "+inbox+work-SCHEDULED={.+}/!+TODO|+STARTED|+WAITING")
+             ("ww" "[w]ork tasks" tags "+work")
+             ("n" "Find a TAGged note" tags "" ((org-agenda-archives-mode t)))))
+   #+end_src
 
-    Define the sorting order
+   Define the sorting order
+
+   #+begin_src emacs-lisp
+     (setq org-agenda-sorting-strategy '((agenda habit-down time-up todo-state-down)))
+   #+end_src
+
+   Full screen for agenda.
 
-    #+begin_src emacs-lisp
-      (setq org-agenda-sorting-strategy '((agenda habit-down time-up todo-state-down)))
-    #+end_src
+   #+begin_src emacs-lisp
+     (defadvice org-agenda (around org-agenda-fullscreen activate)
+       (window-configuration-to-register :org-agenda-fullscreen)
+       ad-do-it
+       (delete-other-windows))
+
+     (defadvice org-agenda-quit (around org-agenda-quit-fullscreen activate)
+       ad-do-it
+       (jump-to-register :org-agenda-fullscreen))
+   #+end_src
+
+** Clock
 
-    Automatically jump to agenda when idle, based on [21]
+   Enable persisting the history and clock values across emacs sessions.
 
-    #+begin_src emacs-lisp
-      (defun c/jump-to-org-agenda ()
-        (interactive)
-        (let ((wind (get-buffer-window org-agenda-buffer-name t)))
-          (if wind (select-window wind)
-            (call-interactively 'org-agenda-list))
-          (delete-other-windows)))
+   #+begin_src emacs-lisp
+     (setq org-clock-persist t)
+     (org-clock-persistence-insinuate)
+   #+end_src
 
-      (defun c/schedule-jumping-to-agenda ()
-        (run-with-idle-timer 600 t 'c/jump-to-org-agenda))
-      (add-hook 'org-agenda-mode-hook 'c/schedule-jumping-to-agenda)
-    #+end_src
-
-    Full screen for agenda.
+   Enable the resuming of tasks when clocking in.
 
-    #+begin_src emacs-lisp
-      (defadvice org-agenda (around org-agenda-fullscreen activate)
-        (window-configuration-to-register :org-agenda-fullscreen)
-        ad-do-it
-        (delete-other-windows))
-
-      (defadvice org-agenda-quit (around org-agenda-quit-fullscreen activate)
-        ad-do-it
-        (jump-to-register :org-agenda-fullscreen))
-    #+end_src
-
-*** Clock
+   #+begin_src emacs-lisp
+     (setq org-clock-in-resume t)
+   #+end_src
 
-    Enable persisting the history and clock values across emacs sessions.
+   When clocking into a task, set to started state.
 
-    #+begin_src emacs-lisp
-      (setq org-clock-persist t)
-      (org-clock-persistence-insinuate)
-    #+end_src
+   #+begin_src emacs-lisp
+     (setq org-clock-in-switch-to-state "STARTED")
+   #+end_src
 
-    Enable the resuming of tasks when clocking in.
+   Always maintain a logbook.
 
-    #+begin_src emacs-lisp
-      (setq org-clock-in-resume t)
-    #+end_src
+   #+begin_src emacs-lisp
+     (setq org-clock-into-drawer t)
+   #+end_src
 
-    When clocking into a task, set to started state.
+   Cleanup empty clocking times.
 
-    #+begin_src emacs-lisp
-      (setq org-clock-in-switch-to-state "STARTED")
-    #+end_src
+   #+begin_src emacs-lisp
+     (setq org-clock-out-remove-zero-time-clocks t)
+   #+end_src
 
-    Always maintain a logbook.
+   Schedule tasks for now when clocking in.
 
-    #+begin_src emacs-lisp
-      (setq org-clock-into-drawer t)
-    #+end_src
+   #+begin_src emacs-lisp
+     (defun schedule-task-now ()
+       (interactive)
+       (let ((now (with-temp-buffer (org-time-stamp '(16)) (buffer-string))))
+         (org-schedule nil now)
+         (message "Scheduled started task for now")))
 
-    Cleanup empty clocking times.
+     (add-hook 'org-clock-in-hook 'schedule-task-now)
+   #+end_src
 
-    #+begin_src emacs-lisp
-      (setq org-clock-out-remove-zero-time-clocks t)
-    #+end_src
+** Capture
 
-    Schedule tasks for now when clocking in.
+   Define additional capture templates for personal and work tasks.
 
-    #+begin_src emacs-lisp
-      (defun c/schedule-task-now ()
-        (interactive)
-        (let ((now (with-temp-buffer (org-time-stamp '(16)) (buffer-string))))
-          (org-schedule nil now)
-          (message "Scheduled started task for now")))
+   #+begin_src emacs-lisp
+     (setq org-capture-templates
+           `(("t" "Task"
+              entry (file+olp ,org-default-notes-file "Inbox" "Personal")
+              "* TODO %?\n\n")
+             ("w" "Work task"
+              entry (file+olp ,org-default-notes-file "Inbox" "Work")
+              "* TODO %? :work:\n\n")
+             ("n" "Note"
+              entry (file+headline ,org-default-notes-file "Notes")
+              "* %?\n\n  %a\n  %i\n")
+             ("s" "Scratch"
+              entry (file+headline (expand-file-name "scratch.org" org-directory) "Scratch")
+              "* Scratch it %U\n%i\n   #+begin_src text\n%?\n   #+end_src\n")))
+   #+end_src
 
-      (add-hook 'org-clock-in-hook 'c/schedule-task-now)
-    #+end_src
+   Helper based on @jwiegley's dot-emacs to get the URL of the
+   currently active Google Chrome tab/window.
 
-*** Capture
+   #+begin_src emacs-lisp
+     (defun org-get-chrome-link ()
+       (interactive)
+       (let ((subject (do-applescript
+                       (string-to-multibyte "tell application \"Google Chrome\"
+             title of active tab of front window
+     end tell")))
+             (url (do-applescript
+                   (string-to-multibyte "tell application \"Google Chrome\"
+             URL of active tab of front window
+     end tell"))))
+         (insert (org-make-link-string (substring url 1 -1) (substring subject 1 -1)))
+         (do-applescript
+          (string-to-multibyte "tell application \"Google Chrome\"
+             close active tab of front window
+     end tell"))))
+   #+end_src
 
-    Define additional capture templates for personal and work tasks.
+** Refile
 
-    #+begin_src emacs-lisp
-      (setq org-capture-templates
-            `(("t" "Task"
-               entry (file+olp ,org-default-notes-file "Inbox" "Personal")
-               "* TODO %?\n\n")
-              ("w" "Work task"
-               entry (file+olp ,org-default-notes-file "Inbox" "Work")
-               "* TODO %? :work:\n\n")
-              ("n" "Note"
-               entry (file+headline ,org-default-notes-file "Notes")
-               "* %?\n\n  %a\n  %i\n")
-              ("s" "Scratch"
-               entry (file+headline (expand-file-name "scratch.org" org-directory) "Scratch")
-               "* Scratch it %U\n%i\n   #+begin_src text\n%?\n   #+end_src\n")))
-    #+end_src
+   Start refiling at file-level and set max nesting to 5 and go step-by-step.
 
-    Helper based on @jwiegley's dot-emacs to get the URL of the
-    currently active Google Chrome tab/window.
+   #+begin_src emacs-lisp
+     (setq
+      org-outline-path-complete-in-steps nil
+      org-refile-use-outline-path 'file
+      org-refile-targets  '((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5))
+      )
+   #+end_src
 
-    #+begin_src emacs-lisp
-      (defun c/org-get-chrome-link ()
-        (interactive)
-        (let ((subject (do-applescript
-                        (string-to-multibyte "tell application \"Google Chrome\"
-              title of active tab of front window
-      end tell")))
-              (url (do-applescript
-                    (string-to-multibyte "tell application \"Google Chrome\"
-              URL of active tab of front window
-      end tell"))))
-          (insert (org-make-link-string (substring url 1 -1) (substring subject 1 -1)))
-          (do-applescript
-           (string-to-multibyte "tell application \"Google Chrome\"
-              close active tab of front window
-      end tell"))))
-    #+end_src
+** Babel
 
-*** Refile
+   Fontify source code in "native" block.
 
-    Start refiling at file-level and set max nesting to 5 and go step-by-step.
+   #+begin_src emacs-lisp
+     (setq org-src-fontify-natively nil)
+   #+end_src
 
-    #+begin_src emacs-lisp
-      (setq
-       org-outline-path-complete-in-steps nil
-       org-refile-use-outline-path 'file
-       org-refile-targets  '((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5))
-       )
-    #+end_src
+   Load language support.
 
-*** Babel
-
-    Fontify source code in "native" block.
-
-    #+begin_src emacs-lisp
-      (setq org-src-fontify-natively nil)
-    #+end_src
-
-    Load language support.
-
-    #+begin_src emacs-lisp
-      (setq org-babel-load-languages '((emacs-lisp . t) (scala . t)))
-    #+end_src
-
-    
+   #+begin_src emacs-lisp
+     (setq org-babel-load-languages '((emacs-lisp . t) (scala . t)))
+   #+end_src
