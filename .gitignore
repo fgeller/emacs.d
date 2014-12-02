@@ -36,7 +36,6 @@ main.el
 /vc.el
 /org.el
 /search.el
-/navigation.el
 /boon.el
 /fingers.el
 /custom.el

@@ -179,7 +179,6 @@
     (org-babel-load-file (expand-file-name "~/.emacs.d/org.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/vc.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/search.org"))
-    (org-babel-load-file (expand-file-name "~/.emacs.d/navigation.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/scala.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/emacs-lisp.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/eshell.org"))

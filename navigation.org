@@ -1,7 +1,0 @@
-#+TITLE: Navigation
-#+STARTUP: hideblocks
-* Navigation
-
-  #+begin_src emacs-lisp
-    (use-package elisp-slime-nav :ensure elisp-slime-nav)
-  #+end_src
