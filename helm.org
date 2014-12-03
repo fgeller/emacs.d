@@ -1,9 +1,6 @@
 * Helm
 
   #+begin_src emacs-lisp
-    (add-to-list 'load-path (expand-file-name "~/site-lisp/helm"))
-    (add-to-list 'load-path (expand-file-name "~/site-lisp/helm-ls-git"))
-    (add-to-list 'load-path (expand-file-name "~/site-lisp/emacs-async"))
     (require 'helm-config)
     (require 'helm-ls-git)
   #+end_src
