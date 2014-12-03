@@ -41,30 +41,30 @@
   Helper to set default font face attributes.
 
   #+begin_src emacs-lisp
-    (defun c/set-default-face-attributes ()
+    (defun set-default-face-attributes ()
       (interactive)
       (set-face-attribute 'default nil
-                          :family c/mono-space-font-family
-                          :height c/mono-space-font-height
+                          :family mono-space-font-family
+                          :height mono-space-font-height
                           :weight 'normal))
   #+end_src
 
   Set default fonts across frames.
 
   #+begin_src emacs-lisp
-    (setq c/mono-space-font-family "Droid Sans Mono")
-    (setq c/mono-space-font-height 140)
-    (c/set-default-face-attributes)
+    (setq mono-space-font-family "Droid Sans Mono")
+    (setq mono-space-font-height 140)
+    (set-default-face-attributes)
   #+end_src
 
   Helper to set the font height interactively.
 
   #+begin_src emacs-lisp
-    (defun c/set-font-height (height)
+    (defun set-font-height (height)
       (interactive
-       (list (read-number "Height: " c/mono-space-font-height)))
-      (setq c/mono-space-font-height height)
-      (c/set-default-face-attributes))
+       (list (read-number "Height: " mono-space-font-height)))
+      (setq mono-space-font-height height)
+      (set-default-face-attributes))
   #+end_src
 
   Load a custom theme.
