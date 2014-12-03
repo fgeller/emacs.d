@@ -27,31 +27,39 @@
     (setenv "PAGER" "cat")
   #+end_src
 
+  Custom site-lisp directory.
+
+  #+begin_src emacs-lisp
+    (setq custom-site-lisp-directory (expand-file-name "~/.emacs.d/site-lisp"))
+  #+end_src
+
   Where to find Emacs' sources.
 
   #+begin_src emacs-lisp
     (setq find-function-C-source-directory
-          (expand-file-name "~/site-lisp/src/emacs-sources"))
+          (expand-file-name (concat custom-site-lisp-directory "emacs-sources")))
   #+end_src
 
-  The load path is augmented by =~/site-lisp= and all direct
+  The load path is augmented by the custom site-lisp directory and all direct
   children folders.
 
   #+begin_src emacs-lisp
-    (dolist (addition '("~/site-lisp"))
-      (add-to-list 'load-path addition)
-      (let ((default-directory addition))
-        (normal-top-level-add-subdirs-to-load-path)))
+    (mapcar (lambda (addition) 
+              (add-to-list 'load-path addition)
+              (let ((default-directory addition))
+                (normal-top-level-add-subdirs-to-load-path)))
+            `(,custom-site-lisp-directory))
   #+end_src
 
   Add a local themes directory.
 
   #+begin_src emacs-lisp
-    (let ((themes-directory (expand-file-name "~/site-lisp/themes")))
-      (dolist (file (directory-files themes-directory))
-        (let ((expanded-file (expand-file-name file themes-directory)))
-          (when (file-directory-p expanded-file)
-            (add-to-list 'custom-theme-load-path expanded-file)))))
+    (let ((themes-directory (expand-file-name (concat custom-site-lisp-directory "/themes"))))
+      (mapcar (lambda (file)
+                (let ((expanded-file (expand-file-name file themes-directory)))
+                  (when (file-directory-p expanded-file)
+                    (add-to-list 'custom-theme-load-path expanded-file))))
+              (directory-files themes-directory)))
   #+end_src
 
   Set custom path for custom variables.
@@ -71,7 +79,7 @@
   Custom path to install packages to.
 
   #+begin_src emacs-lisp
-    (setq package-user-dir (expand-file-name "~/site-lisp/elpa"))
+    (setq package-user-dir (expand-file-name (concat custom-site-lisp-directory "/elpa")))
   #+end_src
 
   Configure ELPA package handling.
