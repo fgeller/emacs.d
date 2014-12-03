@@ -20,3 +20,9 @@
     (add-hook 'eshell-pre-command-hook  'eshell-rename-buffer-before-command)
     (add-hook 'eshell-post-command-hook 'eshell-rename-buffer-after-command)
   #+end_src
+
+  Don't highlight trailing whitespace.
+
+  #+begin_src emacs-lisp
+    (add-hook 'eshell-mode-hook (lambda () (setq show-trailing-whitespace nil)))
+  #+end_src
