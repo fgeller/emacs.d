@@ -67,6 +67,15 @@
       (set-default-face-attributes))
   #+end_src
 
+  #+begin_src emacs-lisp
+    (defun increase-font-height ()
+       (interactive)
+       (set-font-height (+ (face-attribute 'default :height) 5)))
+    (defun decrease-font-height ()
+       (interactive)
+       (set-font-height (- (face-attribute 'default :height) 5)))
+  #+end_src
+
   Load a custom theme.
 
   #+begin_src emacs-lisp
