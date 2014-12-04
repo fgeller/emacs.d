@@ -1,0 +1,23 @@
+* PHP
+
+  Per-buffer customizations.
+
+  #+begin_src emacs-lisp
+    (defun php-customizations ()
+      (setq tab-width 4)
+      (gtags-mode 1)
+      (helm-gtags-mode 1)
+      (define-key gtags-mode-map (kbd "M-.") nil)
+      (define-key gtags-mode-map (kbd "M-/") nil)
+      (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-find-tag)
+      (define-key helm-gtags-mode-map (kbd "M-/") 'helm-gtags-pop-stack)
+      (add-hook 'before-save-hook 'maybe-cleanup-whitespace nil 'local))
+  #+end_src
+
+  Hook in customizations.
+
+  #+begin_src emacs-lisp
+    (add-to-list 'auto-mode-alist '("\\.php\\'" . (lambda () (php-customizations))))
+  #+end_src
+
+
