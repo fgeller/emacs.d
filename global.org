@@ -2,7 +2,7 @@
 
   #+begin_src emacs-lisp
     (use-package gtags)
-    (use-package helm-gtags :ensure helm-gtags)
+    (use-package helm-gtags)
   #+end_src
 
   Helpers to control gtags.
