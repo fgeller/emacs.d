@@ -549,6 +549,7 @@
     (ve . vc-version-ediff)
     (vg . vc-annotate)
     (vl . vc-print-log)
+    (vu . vc-revert)
     (v~ . vc-revision-other-window)
     (x . execute-extended-command)
     (0 . delete-window)
@@ -622,9 +623,9 @@ The c prefix has the following bindings:
 
 \\{fingers-mode-c-map}
 "
-  nil " fingers" fingers-mode-map :group 'fingers
-  (run-hooks 'fingers-mode-hook))
+  nil " fingers" fingers-mode-map :group 'fingers)
 
+;;;###autoload
 (define-globalized-minor-mode global-fingers-mode
   fingers-mode
   fingers-mode-maybe-activate
