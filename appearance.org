@@ -70,10 +70,10 @@
   #+begin_src emacs-lisp
     (defun increase-font-height ()
        (interactive)
-       (set-font-height (+ (face-attribute 'default :height) 5)))
+       (set-font-height (+ (face-attribute 'default :height) 10)))
     (defun decrease-font-height ()
        (interactive)
-       (set-font-height (- (face-attribute 'default :height) 5)))
+       (set-font-height (- (face-attribute 'default :height) 10)))
   #+end_src
 
   Load a custom theme.
