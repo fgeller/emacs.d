@@ -3,9 +3,13 @@
   Modal text editing for Emacs: A collection of key bindings for navigation and
   text manipulation.
 
+  [[http://melpa.milkbox.net:1337/#/fingers][file:http://melpa.milkbox.net:1337/packages/fingers-badge.svg]]
+
 ** Installation
 
-   Add this repository to your =load-path= and load it via:
+   You can install this package via [[http://melpa.milkbox.net:1337/#/][MELPA]]
+   or add this repository manually to your =load-path=. Load the library in your
+   preferred way, for example:
 
    #+begin_src emacs-lisp
      (require 'fingers)
@@ -93,17 +97,17 @@
 
     The following table lists the region specifiers on the left hand (Workman layout):
 
-    |------------------+-----------+-------------+---------------+------------------------|
-    | *1*:               | *2*:        | *3*:          | *4*:            | *5*:                     |
-    |------------------+-----------+-------------+---------------+------------------------|
-    | *q*:               | *d*:        | *r*:          | *w*:            | *b*:                     |
-    |------------------+-----------+-------------+---------------+------------------------|
-    | *a*:with pair *A*:+w | *s*:in pair | *h*:word *H*:+w | *t*:symbol *T*:+w | *g*:line *G*:till line end |
-    |------------------+-----------+-------------+---------------+------------------------|
-    | *z*:               | *x*:        | *m*:          | *c*:            | *v*:char *V*:+w            |
-    |------------------+-----------+-------------+---------------+------------------------|
+    |------------------+-----------+-------------+---------------------------+------------------------|
+    | *1*:               | *2*:        | *3*:          | *4*:                        | *5*:                     |
+    |------------------+-----------+-------------+---------------------------+------------------------|
+    | *q*:               | *d*:        | *r*:          | *w*:                        | *b*:                     |
+    |------------------+-----------+-------------+---------------------------+------------------------|
+    | *a*:with pair *A*:+w | *s*:in pair | *h*:word *H*:+w | *t*:symbol *T*:+w             | *g*:line *G*:till line end |
+    |------------------+-----------+-------------+---------------------------+------------------------|
+    | *z*:               | *x*:        | *m*:          | *c*:between whitespace *C*:+w | *v*:char *V*:+w            |
+    |------------------+-----------+-------------+---------------------------+------------------------|
 
-    The available pairs are currently =()=, ={}=, =[]=, =<>=, "", and
+    The available pairs are currently =()=, ={}=, =[]=, =<>=, "", `` and
     ''. Additionally, for pair selection you can double press the key for a
     command and =fingers-mode= will identify the next pair that starts left of
     point. For example, if =|= represents point:
