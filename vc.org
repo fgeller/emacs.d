@@ -43,3 +43,18 @@
     (add-hook 'vc-annotate-mode-hook (lambda () (setq show-trailing-whitespace nil)))
   #+end_src
 
+  We like word-based diffs.
+
+  #+begin_src emacs-lisp
+    (setq magit-diff-refine-hunk t)
+  #+end_src
+
+  Enable global magit support for git-wip on save. Don't forget to enable it
+  globally for all git repositories:
+
+  =$ git config --global --add magit.extension wip-save=
+
+  #+begin_src emacs-lisp
+    (eval-after-load 'vc-git
+      '(global-magit-wip-save-mode))
+  #+end_src
