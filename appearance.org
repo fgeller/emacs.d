@@ -5,6 +5,7 @@
   #+begin_src emacs-lisp
     (setq-default global-font-lock-mode nil)
     (global-font-lock-mode 0)
+    (remove-hook 'occur-mode-hook 'turn-on-font-lock)
   #+end_src
 
   Enable highlight-thing globally.
