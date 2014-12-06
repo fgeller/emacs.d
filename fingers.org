@@ -37,10 +37,9 @@
 
     (add-hook 'fingers-mode-hook 'fingers-mode-visual-toggle)
 
-    (use-package fingers
-      :init
-      (global-fingers-mode 1)
-      (key-chord-define-global "oe" 'global-fingers-mode)
+    (defun fingers-mode-custom-bindings ()
+      (interactive)
+     (key-chord-define-global "oe" 'global-fingers-mode)
       (define-key fingers-mode-map (kbd "r") 'anzu-query-replace)
       (define-key fingers-mode-map (kbd "R") 'anzu-query-replace-regexp)
       (define-key fingers-mode-map (kbd "H") 'helm-show-kill-ring)
@@ -63,4 +62,11 @@
       (global-set-key (kbd "s-<up>") 'increase-font-height)
       (global-set-key (kbd "s-<down>") 'decrease-font-height)
       )
+
+    (use-package fingers
+      :init
+      (global-fingers-mode 1)
+      (fingers-mode-custom-bindings))
+
   #+end_src
+
