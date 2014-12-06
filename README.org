@@ -1,6 +1,13 @@
-* emacs.d
+My Emacs configuration.
 
-  My main emacs configuration.
+=init.el= loads the basic configuration in =main.org= which in turn loads
+modules that are slpit into smaller org files. =customize= related settings
+(e.g., trusted local variables) are stored in =custom.el= and not under
+version control.
 
-  Currently a work in progress as I kick out old things, split the
-  configuration into separate modules and try =use-package= and =boon=.
+Dependencies are either included via git's subtree functionality or installed
+on start-up via regular ELPA functionality.
+
+#+attr_html: :width 500px
+[[https://www.gnu.org/software/emacs/][file:https://www.gnu.org/graphics/meditate.png]]
+[[https://www.gnu.org/graphics/meditate.html][Copyright (C) 2001 Free Software Foundation, Inc.]]
