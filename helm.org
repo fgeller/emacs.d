@@ -1,22 +1,33 @@
 * Helm
 
   #+begin_src emacs-lisp
-    (require 'helm-config)
-    (require 'helm-ls-git)
+    (use-package helm-config)
+    (use-package helm-ring)
+    (use-package helm-cmd-t)
   #+end_src
 
    Collection of sources that we want fast access to.
 
    #+begin_src emacs-lisp
-     (defun c/helm-jump ()
+     (setq helm-downloads-source (helm-cmd-t-get-create-source-dir "~/Downloads"))
+     (setq helm-desktop-source (helm-cmd-t-get-create-source-dir "~/Desktop"))
+
+     (defun helm-jump ()
        (interactive)
-       (helm :sources `(
-          helm-c-source-buffers-list
-	  ,(helm-make-source "Git files" 'helm-ls-git-source)
-          helm-source-ls-git
-          helm-c-source-recentf
-          helm-c-source-buffer-not-found
-          )))
+       (let ((cmd-t-root-data (helm-cmd-t-root-data))
+             (helm-cmd-t-ftime (float-time))) ; monkey patch
+         (helm :sources `(
+                          helm-source-buffers-list
+                          helm-source-mark-ring
+                          helm-source-global-mark-ring
+                          ,(if cmd-t-root-data (helm-cmd-t-get-create-source cmd-t-root-data) nil)
+                          helm-source-cmd-t-caches
+                          helm-source-recentf
+                          helm-source-files-in-current-dir
+                          helm-downloads-source
+                          helm-desktop-source
+                          helm-source-buffer-not-found
+                          ))))
    #+end_src
 
    Use helm sources for fast jumping to buffers or files.
