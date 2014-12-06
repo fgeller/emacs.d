@@ -19,7 +19,6 @@
          (helm :sources `(
                           helm-source-buffers-list
                           helm-source-mark-ring
-                          helm-source-global-mark-ring
                           ,(if cmd-t-root-data (helm-cmd-t-get-create-source cmd-t-root-data) nil)
                           helm-source-cmd-t-caches
                           helm-source-recentf
