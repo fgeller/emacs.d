@@ -55,7 +55,8 @@
     ("turquoise" . "#86c1b9")
     ("blue" . "#7cafc2")
     ("purple" . "#ba8baf")
-    ("brown" . "#a16046")))
+    ("brown" . "#a16046"))
+  "List of base16 colors.")
 
 (defmacro basic-with-color-variables (&rest body)
   (declare (indent 0))
@@ -139,6 +140,7 @@
    `(helm-prefarg ((t (:foreground ,red :background ,white :underline nil :italic nil))))
    `(helm-M-x-key ((t (:foreground ,blue :background ,white :underline nil :italic nil))))
 
+   `(magit-section-title ((t (:inherit default))))
    `(magit-item-highlight ((t (:foreground nil :background nil))))
    `(magit-process-ok ((t (:foreground nil :background nil))))
    `(magit-process-ng ((t (:foreground nil :background ,orange))))
@@ -198,6 +200,17 @@
        (350 . ,gray3)))
    ))
 
+;;;###autoload
+(and load-file-name
+     (boundp 'custom-theme-load-path)
+     (add-to-list 'custom-theme-load-path
+                  (file-name-as-directory
+                   (file-name-directory load-file-name))))
+
 (provide-theme 'basic)
 
+;; Local Variables:
+;; no-byte-compile: t
+;; indent-tabs-mode: nil
+;; End:
 ;;; basic-theme.el ends here
