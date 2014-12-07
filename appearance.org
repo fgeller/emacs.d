@@ -80,7 +80,7 @@
   Load a custom theme.
 
   #+begin_src emacs-lisp
-    (unless terminal-p (load-theme 'minimal t))
+    (load-theme 'basic t)
   #+end_src
 
   Show matching parenthesis.
