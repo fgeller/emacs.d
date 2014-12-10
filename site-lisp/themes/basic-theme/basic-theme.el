@@ -1,10 +1,11 @@
-;;; basic-theme.el --- Minimalistic light color theme for GNU Emacs.
+;;; basic-theme.el --- Minimalistic light color theme
 
 ;; Copyright (c) 2014 Felix Geller
 
 ;; Author: Felix Geller <fgeller@gmail.com>
 ;; Keywords: fingers modal editing workman
 ;; URL: http://github.com/fgeller/basic-theme.el
+;; Package-Requires: ((emacs "24"))
 
 ;; This file is not part of GNU Emacs.
 
@@ -113,7 +114,9 @@
 
    `(eldoc-highlight-function-argument ((t (:weight normal :background ,gray6))))
 
-   `(eshell-prompt ((t (:foreground ,gray4 :background nil))))
+   `(eshell-prompt ((t (:foreground ,gray4 :background nil :weight normal))))
+   `(eshell-ls-directory ((t (:foreground nil :background nil :weight normal))))
+   `(eshell-ls-executable ((t (:foreground nil :background nil :weight normal))))
 
    `(font-lock-function-name-face ((t (:foreground ,red :background nil))))
 
@@ -121,7 +124,7 @@
    `(helm-candidate-number ((t (:foreground ,gray6 :background ,gray6))))
    `(helm-header ((t (:inherit mode-line))))
    `(helm-selection ((t (:foreground ,black :background ,gray6 :underline nil))))
-   `(helm-source-header ((t (:inherit default :foreground ,black :background ,white :underline nil :weight normal :family ,(face-attribute 'default :family)))))
+   `(helm-source-header ((t (:inherit default :foreground ,black :background ,white :underline nil :weight normal :family ,(face-attribute 'default :family) :height ,(face-attribute 'default :height)))))
    `(helm-buffer-file ((t (:foreground ,black :background ,white :underline nil :italic nil))))
    `(helm-buffer-directory ((t (:foreground ,black :background ,white :underline nil :italic nil))))
    `(helm-buffer-process ((t (:foreground ,black :background ,white :underline nil :italic nil))))
@@ -158,8 +161,8 @@
    `(magit-diff-merge-current ((t (:foreground ,black :background nil))))
    `(magit-tag ((t (:foreground ,black :background nil))))
 
-   `(org-done ((t (:foreground ,black :background ,white))))
-   `(org-todo ((t (:foreground ,black :background ,white))))
+   `(org-done ((t (:foreground ,black :background ,white :weight normal))))
+   `(org-todo ((t (:foreground ,black :background ,white :weight normal))))
 
    `(rng-error ((t (:foreground nil :background ,orange))))
 
