@@ -1,5 +1,11 @@
 * PHP
 
+  Major mode.
+
+  #+begin_src emacs-lisp
+    (use-package php-mode :ensure php-mode)
+  #+end_src
+
   Per-buffer customizations.
 
   #+begin_src emacs-lisp
@@ -17,7 +23,7 @@
   Hook in customizations.
 
   #+begin_src emacs-lisp
-    (add-to-list 'auto-mode-alist '("\\.php\\'" . (lambda () (php-customizations))))
+    (add-hook 'php-mode-hook 'php-customizations)
   #+end_src
 
 
