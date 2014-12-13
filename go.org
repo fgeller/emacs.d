@@ -1,0 +1,7 @@
+* Go
+
+  Install go-mode.
+
+  #+begin_src emacs-lisp
+    (use-package go-mode :ensure go-mode)
+  #+end_src
