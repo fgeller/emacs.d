@@ -9,9 +9,8 @@
   Rename the buffer automatically.
 
   #+begin_src emacs-lisp
-    (use-package s :ensure s)
     (defun eshell-rename-buffer-before-command ()
-      (let* ((last-input (s-trim (buffer-substring eshell-last-input-start eshell-last-input-end))))
+      (let* ((last-input (buffer-substring eshell-last-input-start eshell-last-input-end)))
         (rename-buffer (format "*%s$ %s..." default-directory last-input) t)))
 
     (defun eshell-rename-buffer-after-command ()
