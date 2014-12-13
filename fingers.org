@@ -1,24 +1,46 @@
 * Fingers
 
+  Load key-chord for toggle key.
+
   #+begin_src emacs-lisp
-    (use-package nlinum
-      :ensure nlinum
-      :init (global-nlinum-mode 1))
     (use-package key-chord
       :ensure key-chord
       :init (key-chord-mode 1)
       :config (setq key-chord-two-keys-delay 0.075))
+  #+end_src
+
+  Load anzu for visual feedback when replacing text.
+
+  #+begin_src emacs-lisp
     (use-package anzu :ensure anzu)
+  #+end_src
+
+  Load multiple-cursors for light-weight macros.
+
+  #+begin_src emacs-lisp
     (use-package multiple-cursors :ensure multiple-cursors)
+  #+end_src
+
+  Load ace-jump-mode for fine-grained in-buffer jumping.
+
+  #+begin_src emacs-lisp
     (use-package ace-jump-mode
       :config
       (setq ace-jump-mode-scope 'window))
+  #+end_src
 
+  Helper to limite candidates for =ace-jump-char-mode=.
+
+  #+begin_src emacs-lisp
     (defun ace-jump-mode-char-limited-mode ()
       (interactive)
       (let ((ace-jump-mode-limit-window-scope 10))
         (call-interactively 'ace-jump-char-mode)))
+  #+end_src
 
+  Helper to visualize fingers-mode's state and make mode-line visible.
+
+  #+begin_src emacs-lisp
     (defun fingers-mode-visual-toggle ()
       (interactive)
       (let ((faces-to-toggle '(mode-line mode-line-inactive))
@@ -36,10 +58,14 @@
                        faces-to-toggle)))))
 
     (add-hook 'fingers-mode-hook 'fingers-mode-visual-toggle)
+  #+end_src
 
+  My custom bindings for fingers-mode.
+
+  #+begin_src emacs-lisp
     (defun fingers-mode-custom-bindings ()
       (interactive)
-     (key-chord-define-global "oe" 'global-fingers-mode)
+      (key-chord-define-global "oe" 'global-fingers-mode)
       (define-key fingers-mode-map (kbd "r") 'anzu-query-replace)
       (define-key fingers-mode-map (kbd "R") 'anzu-query-replace-regexp)
       (define-key fingers-mode-map (kbd "H") 'helm-show-kill-ring)
@@ -52,8 +78,6 @@
       (define-key fingers-mode-map (kbd ".") 'helm-jump)
       (define-key fingers-mode-x-map (kbd "f") 'helm-find-files)
       (define-key fingers-mode-x-map (kbd "x") 'helm-M-x)
-      (define-key fingers-mode-x-map (kbd "moc") 'org-capture)
-      (define-key fingers-mode-x-map (kbd "moa") 'org-agenda)
       (define-key fingers-mode-x-map (kbd "vd") 'magit-diff)
       (define-key fingers-mode-x-map (kbd "vl") 'magit-revision-file-log)
       (define-key fingers-mode-x-map (kbd "vG") 'magit-blame-mode)
@@ -62,11 +86,14 @@
       (global-set-key (kbd "s-<up>") 'increase-font-height)
       (global-set-key (kbd "s-<down>") 'decrease-font-height)
       )
+  #+end_src
 
+  Load and activate it!
+
+  #+begin_src emacs-lisp
     (use-package fingers
+      :ensure fingers
       :init
       (global-fingers-mode 1)
       (fingers-mode-custom-bindings))
-
   #+end_src
-
