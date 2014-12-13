@@ -11,7 +11,9 @@
   Enable highlight-thing globally.
 
   #+begin_src emacs-lisp
-    (use-package highlight-thing :init (highlight-thing-mode))
+    (use-package highlight-thing
+      :ensure highlight-thing
+      :init (highlight-thing-mode))
   #+end_src
 
   Basic default settings.
