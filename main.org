@@ -192,4 +192,5 @@
     (org-babel-load-file (expand-file-name "~/.emacs.d/global.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/scala.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/php.org"))
+    (org-babel-load-file (expand-file-name "~/.emacs.d/go.org"))
   #+end_src
