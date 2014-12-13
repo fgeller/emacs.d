@@ -3,5 +3,7 @@
   Install go-mode.
 
   #+begin_src emacs-lisp
-    (use-package go-mode :ensure go-mode)
+    (use-package go-mode
+      :ensure go-mode
+      :commands go-mode)
   #+end_src

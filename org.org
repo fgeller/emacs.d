@@ -44,7 +44,7 @@
 
   #+begin_src emacs-lisp
     (defun org-mode-per-buffer-customization ()
-      (nlinum-mode -1)
+      (yas-minor-mode)
       (turn-on-auto-fill))
 
     (add-hook 'org-mode-hook 'org-mode-per-buffer-customization)

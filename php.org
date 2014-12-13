@@ -3,7 +3,9 @@
   Major mode.
 
   #+begin_src emacs-lisp
-    (use-package php-mode :ensure php-mode)
+    (use-package php-mode
+      :ensure php-mode
+      :commands php-mode)
   #+end_src
 
   Per-buffer customizations.

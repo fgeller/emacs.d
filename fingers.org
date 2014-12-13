@@ -12,19 +12,24 @@
   Load anzu for visual feedback when replacing text.
 
   #+begin_src emacs-lisp
-    (use-package anzu :ensure anzu)
+    (use-package anzu
+      :ensure anzu
+      :commands (anzu-query-replace anzu-query-replace-regexp))
   #+end_src
 
   Load multiple-cursors for light-weight macros.
 
   #+begin_src emacs-lisp
-    (use-package multiple-cursors :ensure multiple-cursors)
+    (use-package multiple-cursors
+      :ensure multiple-cursors
+      :commands mc/edit-lines)
   #+end_src
 
   Load ace-jump-mode for fine-grained in-buffer jumping.
 
   #+begin_src emacs-lisp
     (use-package ace-jump-mode
+      :commands (ace-jump-char-mode ace-jump-mode)
       :config
       (setq ace-jump-mode-scope 'window))
   #+end_src

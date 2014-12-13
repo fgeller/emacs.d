@@ -119,8 +119,8 @@
   #+begin_src emacs-lisp
     (use-package nlinum
       :ensure nlinum
+      :commands linum-mode
       :init
-      (global-nlinum-mode -1)
       (add-hook 'emacs-lisp-mode-hook (lambda () (nlinum-mode 1)))
       (add-hook 'go-mode-hook (lambda () (nlinum-mode 1)))
       (add-hook 'php-mode-hook (lambda () (nlinum-mode 1))))

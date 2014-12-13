@@ -3,8 +3,9 @@
   #+begin_src emacs-lisp
     (use-package yasnippet
       :ensure yasnippet
-      :init
-      (add-to-list 'yas/snippet-dirs (expand-file-name "~/.emacs.d/snippets"))
+      :commands yas-minor-mode
+      :config
+      (add-to-list 'yas-snippet-dirs (expand-file-name "~/.emacs.d/snippets"))
       (setq-default yas-prompt-functions (delete 'yas-x-prompt yas-prompt-functions))
-      (yas/global-mode 1))
+      (yas-reload-all))
   #+end_src

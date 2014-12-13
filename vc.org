@@ -3,7 +3,7 @@
   #+begin_src emacs-lisp
     (use-package magit
       :ensure magit
-      :commands magit-status
+      :commands (magit-status magit-diff magit-revision-file-log magit-blame-mode)
       :config (define-key magit-status-mode-map (kbd "q") 'magit-quit-session))
 
     (defun magit-revision-file-log (revision file &optional use-graph)
