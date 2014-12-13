@@ -48,3 +48,4 @@ main.el
 /global.el
 /etc/
 /php.el
+/go.el
