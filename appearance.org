@@ -125,3 +125,15 @@
       (add-hook 'go-mode-hook (lambda () (nlinum-mode 1)))
       (add-hook 'php-mode-hook (lambda () (nlinum-mode 1))))
   #+end_src
+
+  Split the ediff windows horizontally, rather than vertically.
+
+  #+begin_src emacs-lisp
+    (setq ediff-split-window-function 'split-window-horizontally)
+  #+end_src
+
+  Don't use multiple frames for ediff. One is confusing enough.
+
+  #+begin_src emacs-lisp
+    (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+  #+end_src
