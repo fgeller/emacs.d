@@ -175,6 +175,12 @@
     (setq uniquify-ignore-buffers-re "^\\*")
   #+end_src
 
+  Try to be smart about target directory for dired operations.
+
+  #+begin_src emacs-lisp
+    (setq dired-dwim-target t)
+  #+end_src
+
 * Load modules
 
   More configuration split into org files.
