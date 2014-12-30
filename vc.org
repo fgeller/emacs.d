@@ -2,17 +2,21 @@
 
   #+begin_src emacs-lisp
     (use-package magit
-      :ensure magit
       :commands (magit-status magit-diff magit-revision-file-log magit-blame-mode)
       :config (define-key magit-status-mode-map (kbd "q") 'magit-quit-session))
+  #+end_src
 
+  Helper to get log for a file for a given revision.
+
+  #+begin_src emacs-lisp
     (defun magit-revision-file-log (revision file &optional use-graph)
-      "Display the log for the currently visited file or another one for a specific revision.
+      "Display the log for the currently visited file or another one from a specific revision.
     With a prefix argument show the log graph."
       (interactive
-       (let* ((rev (magit-read-rev "Revision" (or (magit-guess-branch) "HEAD")))
+       (let* ((rev (magit-read-rev "Revision" (or (magit-get-current-branch) "HEAD")))
               (file (magit-read-file-from-rev rev (magit-buffer-file-name t))))
-         (list rev file)))
+         (list rev file current-prefix-arg)))
+
       (magit-mode-setup magit-log-buffer-name nil
                         #'magit-log-mode
                         #'magit-refresh-log-buffer
