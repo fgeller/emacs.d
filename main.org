@@ -87,7 +87,17 @@
   #+begin_src emacs-lisp
     (setq package-archives '(("melpa" . "http://melpa.milkbox.net/packages/")
                               ("gnu" . "http://elpa.gnu.org/packages/")))
+   #+end_src
+
+   Sometime we need to refresh the metadata.
+
+   #+begin_src emacs-lisp :tangle no
     (when (not package-archive-contents) (package-refresh-contents))
+   #+end_src
+
+   Initialize package!
+
+   #+begin_src emacs-lisp
     (package-initialize)
    #+end_src
 
