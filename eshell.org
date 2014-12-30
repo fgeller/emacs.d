@@ -25,3 +25,16 @@
   #+begin_src emacs-lisp
     (add-hook 'eshell-mode-hook (lambda () (setq show-trailing-whitespace nil)))
   #+end_src
+
+  Custom prompt function.
+
+  #+begin_src emacs-lisp
+    (defun eshell-simple-prompt-function () "$ ")
+    (setq eshell-prompt-function #'eshell-simple-prompt-function)
+  #+end_src
+
+  Tell eshell what the prompt looks like after we change it.
+
+  #+begin_src emacs-lisp
+    (setq eshell-prompt-regexp "\$ ")
+  #+end_src
