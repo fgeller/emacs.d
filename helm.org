@@ -2,29 +2,21 @@
 
   #+begin_src emacs-lisp
     (use-package helm-config)
-    (use-package helm-cmd-t)
+    (use-package helm-ls-git)
   #+end_src
 
    Collection of sources that we want fast access to.
 
    #+begin_src emacs-lisp
-     (setq helm-downloads-source (helm-cmd-t-get-create-source-dir "~/Downloads"))
-     (setq helm-desktop-source (helm-cmd-t-get-create-source-dir "~/Desktop"))
-
      (defun helm-jump ()
        (interactive)
-       (let ((cmd-t-root-data (helm-cmd-t-root-data))
-             (helm-cmd-t-ftime (float-time))) ; monkey patch
          (helm :sources `(
                           helm-source-buffers-list
-                          ,(if cmd-t-root-data (helm-cmd-t-get-create-source cmd-t-root-data) nil)
-                          helm-source-cmd-t-caches
+			  ,(helm-make-source "Git files" 'helm-ls-git-source)
                           helm-source-recentf
                           helm-source-files-in-current-dir
-                          helm-downloads-source
-                          helm-desktop-source
                           helm-source-buffer-not-found
-                          ))))
+                          )))
    #+end_src
 
    Use helm sources for fast jumping to buffers or files.
