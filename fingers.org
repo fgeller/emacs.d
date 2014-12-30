@@ -97,7 +97,6 @@
 
   #+begin_src emacs-lisp
     (use-package fingers
-      :ensure fingers
       :init
       (global-fingers-mode 1)
       (fingers-mode-custom-bindings))
