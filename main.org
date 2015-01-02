@@ -44,7 +44,7 @@
   children folders.
 
   #+begin_src emacs-lisp
-    (mapcar (lambda (addition) 
+    (mapcar (lambda (addition)
               (add-to-list 'load-path addition)
               (let ((default-directory addition))
                 (normal-top-level-add-subdirs-to-load-path)))
