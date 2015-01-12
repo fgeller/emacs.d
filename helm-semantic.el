@@ -28,9 +28,13 @@
 
 (declare-function pulse-momentary-highlight-one-line "pulse.el" (point &optional face))
 
+(defgroup helm-semantic nil
+  "Semantic tags related libraries and applications for helm."
+  :group 'helm)
+
 (defcustom helm-semantic-lynx-style-map t
   "Use Arrow keys to jump to occurences."
-  :group 'helm-imenu
+  :group 'helm-semantic
   :type  'boolean)
 
 ;;; keymap
@@ -94,12 +98,6 @@
       (unless persistent
         (pulse-momentary-highlight-one-line (point))))))
 
-(defun helm-semantic-get-candidates ()
-  "Get a list of candidates in the current buffer."
-  (split-string (with-temp-buffer
-                  (helm-semantic--fetch-candidates helm-semantic--tags-cache 0)
-                  (buffer-string)) "\n"))
-
 (defun helm-semantic--maybe-set-needs-update ()
   (with-helm-current-buffer
     (let ((tick (buffer-modified-tick)))
@@ -107,22 +105,33 @@
         (setq helm-cached-imenu-tick tick)
         (semantic-parse-tree-set-needs-update)))))
 
-(defvar helm-source-semantic
-  (helm-make-source "Semantic Tags" 'helm-source-sync
-                    :header-name "Semantic Tags"
-                    :init (lambda ()
-                            (helm-semantic--maybe-set-needs-update)
-                            (setq helm-semantic--tags-cache (semantic-fetch-tags))
-                            (with-current-buffer (helm-candidate-buffer 'global)
-                              (helm-semantic--fetch-candidates helm-semantic--tags-cache 0)))
-                    :candidates 'helm-semantic-get-candidates
-                    :persistent-help "Show this entry"
-                    :keymap 'helm-semantic-map
-                    :mode-line helm-semantic-mode-line
-                    :persistent-action (lambda (elm)
-                                         (helm-semantic-default-action elm t)
-                                         (helm-highlight-current-line))
-                    :action 'helm-semantic-default-action))
+(defvar helm-source-semantic nil)
+
+(defclass helm-semantic-source (helm-source-in-buffer)
+  ((init :initform (lambda ()
+                     (helm-semantic--maybe-set-needs-update)
+                     (setq helm-semantic--tags-cache (semantic-fetch-tags))
+                     (with-current-buffer (helm-candidate-buffer 'global)
+                       (let ((major-mode (with-helm-current-buffer major-mode)))
+                         (helm-semantic--fetch-candidates helm-semantic--tags-cache 0)))))
+   (get-line :initform 'buffer-substring)
+   (persistent-help :initform "Show this entry")
+   (keymap :initform 'helm-semantic-map)
+   (mode-line :initform helm-semantic-mode-line)
+   (persistent-action :initform (lambda (elm)
+                                  (helm-semantic-default-action elm t)
+                                  (helm-highlight-current-line)))
+   (action :initform 'helm-semantic-default-action)))
+
+(defcustom helm-semantic-fuzzy-match nil
+  "Enable fuzzy matching in `helm-source-semantic'."
+  :group 'helm-semantic
+  :type  'boolean
+  :set (lambda (var val)
+         (set var val)
+         (setq helm-source-semantic
+               (helm-make-source "Semantic Tags" 'helm-semantic-source
+                 :fuzzy-match helm-semantic-fuzzy-match))))
 
 ;;;###autoload
 (defun helm-semantic (arg)
@@ -133,6 +142,10 @@ If ARG is supplied, pre-select symbol at point instead of current"
                   (cons (format "\\_<%s\\_>" (car it))
                         (format "\\_<%s\\_>" (car (semantic-current-tag))))
                 (format "\\_<%s\\_>" (car (semantic-current-tag))))))
+    (unless helm-source-semantic
+      (setq helm-source-semantic
+            (helm-make-source "Semantic Tags" 'helm-semantic-source
+              :fuzzy-match helm-semantic-fuzzy-match)))
     (helm :sources 'helm-source-semantic
           :candidate-number-limit 9999
           :preselect (if arg
@@ -150,9 +163,17 @@ If `semantic-mode' is active in the current buffer, then use
 semantic for generating tags, otherwise fall back to `imenu'.
 Fill in the symbol at point by default."
   (interactive "P")
+  (unless helm-source-semantic
+    (setq helm-source-semantic
+          (helm-make-source "Semantic Tags" 'helm-semantic-source
+            :fuzzy-match helm-semantic-fuzzy-match)))
+  (unless helm-source-imenu
+    (setq helm-source-imenu
+          (helm-make-source "Imenu" 'helm-imenu-source
+            :fuzzy-match helm-imenu-fuzzy-match)))
   (let* ((source (if (semantic-active-p)
                      'helm-source-semantic
-                   'helm-source-imenu))
+                     'helm-source-imenu))
          (imenu-p (eq source 'helm-source-imenu))
          (imenu-auto-rescan imenu-p)
          (helm-execute-action-at-once-if-one
@@ -166,7 +187,7 @@ Fill in the symbol at point by default."
           :candidate-number-limit 9999
           :preselect (if (or arg imenu-p)
                          (thing-at-point 'symbol)
-                       tag)
+                         tag)
           :buffer "*helm semantic/imenu*")))
 
 (provide 'helm-semantic)
