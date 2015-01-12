@@ -6,17 +6,19 @@
   #+end_src
 
    Collection of sources that we want fast access to.
-
    #+begin_src emacs-lisp
      (defun helm-jump ()
        (interactive)
-         (helm :sources `(
-                          helm-source-buffers-list
-			  ,(helm-make-source "Git files" 'helm-ls-git-source)
-                          helm-source-recentf
-                          helm-source-files-in-current-dir
-                          helm-source-buffer-not-found
-                          )))
+       (unless helm-source-buffers-list
+         (setq helm-source-buffers-list
+               (helm-make-source "Buffers" 'helm-source-buffers)))
+       (helm :sources `(
+                        helm-source-buffers-list
+                        ,(helm-make-source "Git files" 'helm-ls-git-source)
+                        helm-source-recentf
+                        helm-source-files-in-current-dir
+                        helm-source-buffer-not-found
+                        )))
    #+end_src
 
    Use helm sources for fast jumping to buffers or files.
