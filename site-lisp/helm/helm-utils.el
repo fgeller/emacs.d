@@ -316,23 +316,6 @@ With a numeric prefix arg show only the ARG number of candidates."
           collect (buffer-substring-no-properties (point-at-bol)(point-at-eol))
           do (forward-line 1))))
 
-(defun helm-files-match-only-basename (candidate)
-  "Allow matching only basename of file when \" -b\" is added at end of pattern.
-If pattern contain one or more spaces, fallback to match-plugin
-even is \" -b\" is specified."
-  (let ((source (helm-get-current-source)))
-    (if (string-match "\\([^ ]*\\) -b\\'" helm-pattern)
-        (progn
-          (helm-attrset 'no-matchplugin nil source)
-          (string-match (match-string 1 helm-pattern)
-                        (helm-basename candidate)))
-      ;; Disable no-matchplugin by side effect.
-      (helm-aif (assq 'no-matchplugin source)
-          (setq source (delete it source)))
-      (string-match
-       (replace-regexp-in-string " -b\\'" "" helm-pattern)
-       candidate))))
-
 (defun helm-skip-entries (seq regexp-list)
   "Remove entries which matches one of REGEXP-LIST from SEQ."
   (cl-loop for i in seq
@@ -447,50 +430,61 @@ from its directory."
 ;; Same as `vc-directory-exclusion-list'.
 (defvar helm-walk-ignore-directories
   '("SCCS" "RCS" "CVS" "MCVS" ".svn" ".git" ".hg" ".bzr"
-    "_MTN" "_darcs" "{arch}"))
+    "_MTN" "_darcs" "{arch}" ".gvfs"))
 
-(cl-defun helm-walk-directory (directory &key path (directories t) match skip-subdirs)
+(cl-defun helm-walk-directory (directory &key (path 'basename)
+                                           (directories t)
+                                           match skip-subdirs)
   "Walk through DIRECTORY tree.
-Argument PATH can be one of basename, relative, or full, default to basename.
+Argument PATH can be one of basename, relative, full, or a function
+called on file name, default to basename.
 Argument DIRECTORIES when non--nil (default) return also directories names,
 otherwise skip directories names.
 Argument MATCH can be a predicate or a regexp.
 Argument SKIP-SUBDIRS when non--nil will skip `helm-walk-ignore-directories'
 unless it is given as a list of directories, in this case this list will be used
 instead of `helm-walk-ignore-directories'."
-  (let* (result
+  (let* ((result '())
          (fn (cl-case path
                (basename 'file-name-nondirectory)
                (relative 'file-relative-name)
                (full     'identity)
-               (t        'file-name-nondirectory)))
-         ls-R)
-    (setq ls-R (lambda (dir)
-                 (unless (and skip-subdirs
-                              (member (helm-basename dir)
-                                      (if (listp skip-subdirs)
-                                          skip-subdirs
-                                        helm-walk-ignore-directories)))
-                   (cl-loop with ls = (directory-files
-                                       dir t directory-files-no-dot-files-regexp)
-                         for f in ls
-                         if (file-directory-p f)
-                         do (progn (when directories
-                                     (push (funcall fn f) result))
-                                   ;; Don't recurse in directory symlink.
-                                   (unless (file-symlink-p f)
-                                     (funcall ls-R f)))
-                         else do
-                         (if match
-                             (and (if (functionp match)
-                                      (funcall match f)
-                                    (and (stringp match)
-                                         (string-match
-                                          match (file-name-nondirectory f))))
-                                  (push (funcall fn f) result))
-                           (push (funcall fn f) result))))))
-    (funcall ls-R directory)
-    (nreverse result)))
+               (t        path))))
+    (cl-labels ((ls-rec (dir)
+                  (unless (and skip-subdirs
+                               (member (helm-basename dir)
+                                       (if (listp skip-subdirs)
+                                           skip-subdirs
+                                         helm-walk-ignore-directories)))
+                    (cl-loop with ls = (sort (file-name-all-completions "" dir)
+                                             'string-lessp)
+                          for f in ls
+                          ;; Use `directory-file-name' to remove the final slash.
+                          ;; Needed to avoid infloop on symlinks symlinking
+                          ;; a directory inside it [1].
+                          for file = (directory-file-name
+                                      (expand-file-name f dir))
+                          unless (member f '("./" "../"))
+                          ;; A directory.
+                          if (char-equal (aref f (1- (length f))) ?/)
+                          do (progn (when directories
+                                      (push (funcall fn file) result))
+                                    ;; Don't recurse in symlinks.
+                                    ;; `file-symlink-p' have to be called
+                                    ;; on the directory with its final
+                                    ;; slash removed [1].
+                                    (and (not (file-symlink-p file))
+                                         (ls-rec file)))
+                          else do
+                          (if match
+                              (and (if (functionp match)
+                                       (funcall match f)
+                                     (and (stringp match)
+                                          (string-match match f)))
+                                   (push (funcall fn file) result))
+                            (push (funcall fn file) result))))))
+      (ls-rec directory)
+      (nreverse result))))
 
 (defun helm-generic-sort-fn (s1 s2)
   "Sort predicate function for helm candidates.
