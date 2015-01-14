@@ -191,6 +191,12 @@
     (setq dired-dwim-target t)
   #+end_src
 
+  Control the switches to ls that dired is using.
+
+  #+begin_src emacs-lisp
+    (setq dired-listing-switches "-laGh")
+  #+end_src
+
 * Load modules
 
   More configuration split into org files.
