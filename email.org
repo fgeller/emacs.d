@@ -19,5 +19,7 @@
   #+end_src
 
   #+begin_src emacs-lisp
-    (use-package notmuch :ensure notmuch)
+    (use-package notmuch
+      :ensure notmuch
+      :init (add-hook 'notmuch-show-hook (lambda () (setq show-trailing-whitespace nil))))
   #+end_src
