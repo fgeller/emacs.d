@@ -43,7 +43,6 @@ ORGWEBPAGE/Changes.txt
 local*.mk
 .gitattributes
 mk/x11idle
-ChangeLog
 
 # texi2pdf --tidy
 

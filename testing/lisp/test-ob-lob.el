@@ -83,7 +83,8 @@
       (with-temp-buffer
 	(org-mode)
 	(insert string)
-	(org-babel-exp-process-buffer buf)
+	(let ((org-current-export-file buf))
+	  (org-babel-exp-process-buffer))
 	(message (buffer-string))
 	(goto-char (point-min))
 	(should (re-search-forward "^: 0" nil t))
@@ -103,52 +104,6 @@ for export
 #+end_example"
     (should (progn (org-export-execute-babel-code) t))))
 
-(ert-deftest test-ob-lob/caching-call-line ()
-  (let ((temporary-value-for-test 0))
-    (org-test-with-temp-text "
-#+name: call-line-caching-example
-#+begin_src emacs-lisp :var bar=\"baz\"
-  (setq temporary-value-for-test (+ 1 temporary-value-for-test))
-#+end_src
-
-#+call: call-line-caching-example(\"qux\") :cache yes
-"
-      (goto-char (point-max)) (forward-line -1)
-      ;; first execution should flip value to t
-      (should (equal (org-babel-lob-execute (org-babel-lob-get-info)) 1))
-      ;; if cached, second evaluation will retain the t value
-      ;;
-      ;; Note: This instance tests for equality with "1".  We would
-      ;; prefer if the cached result returned was actually 1, however
-      ;; this is not the current behavior so this test is encoding
-      ;; undesired behavior (because the current goal is simply to see
-      ;; that caching is used on call lines).
-      ;;
-      (should (equal (org-babel-lob-execute (org-babel-lob-get-info)) "1")))))
-
-(ert-deftest test-ob-lob/named-caching-call-line ()
-  (let ((temporary-value-for-test 0))
-    (org-test-with-temp-text "
-#+name: call-line-caching-example
-#+begin_src emacs-lisp :var bar=\"baz\"
-  (setq temporary-value-for-test (+ 1 temporary-value-for-test))
-#+end_src
-
-#+name: call-line-caching-called
-#+call: call-line-caching-example(\"qux\") :cache yes
-"
-      (goto-char (point-max)) (forward-line -1)
-      ;; first execution should flip value to t
-      (should (equal (org-babel-lob-execute (org-babel-lob-get-info)) 1))
-      ;; if cached, second evaluation will retain the t value
-      ;;
-      ;; Note: This instance tests for equality with "1".  We would
-      ;; prefer if the cached result returned was actually 1, however
-      ;; this is not the current behavior so this test is encoding
-      ;; undesired behavior (because the current goal is simply to see
-      ;; that caching is used on call lines).
-      ;;
-      (should (equal (org-babel-lob-execute (org-babel-lob-get-info)) "1")))))
 
 (provide 'test-ob-lob)
 

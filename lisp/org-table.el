@@ -40,11 +40,7 @@
 
 (declare-function org-export-string-as "ox"
 		  (string backend &optional body-only ext-plist))
-(declare-function org-export-create-backend "ox")
-(declare-function org-export-get-backend "ox" (name))
-
-(declare-function calc-eval "calc" (str &optional separator &rest args))
-
+(declare-function aa2u "ext:ascii-art-to-unicode" ())
 (defvar orgtbl-mode) ; defined below
 (defvar orgtbl-mode-menu) ; defined when orgtbl mode get initialized
 (defvar constants-unit-system)
@@ -242,12 +238,7 @@ t       accept as input and present for editing"
 (defcustom org-table-copy-increment t
   "Non-nil means increment when copying current field with \\[org-table-copy-down]."
   :group 'org-table-calculation
-  :version "25.1"
-  :package-version '(Org . "8.3")
-  :type '(choice
-	  (const :tag "Use the difference between the current and the above fields" t)
-	  (integer :tag "Use a number" 1)
-	  (const :tag "Don't increment the value when copying a field" nil)))
+  :type 'boolean)
 
 (defcustom org-calc-default-modes
   '(calc-internal-prec 12
@@ -354,18 +345,6 @@ portability of tables."
 	  (const :tag "Stick to hline" nil)
 	  (const :tag "Error on attempt to cross" error)))
 
-(defcustom org-table-formula-create-columns nil
-  "Non-nil means that evaluation of a field formula can add new
-columns if an out-of-bounds field is being set."
-  :group 'org-table-calculation
-  :version "25.1"
-  :package-version '(Org . "8.3")
-  :type '(choice
-	  (const :tag "Setting an out-of-bounds field generates an error (default)" nil)
-	  (const :tag "Setting an out-of-bounds field silently adds columns as needed" t)
-	  (const :tag "Setting an out-of-bounds field adds columns as needed, but issues a warning message" warn)
-	  (const :tag "When setting an out-of-bounds field, the user is prompted" prompt)))
-
 (defgroup org-table-import-export nil
   "Options concerning table import and export in Org-mode."
   :tag "Org Table Import Export"
@@ -456,6 +435,40 @@ available parameters."
 			 (org-split-string (match-string 1 line)
 					   "[ \t]*|[ \t]*")))))))
 
+(defvar org-table-clean-did-remove-column nil) ; dynamically scoped
+(defun org-table-clean-before-export (lines &optional maybe-quoted)
+  "Check if the table has a marking column.
+If yes remove the column and the special lines."
+  (let ((special (if maybe-quoted
+		     "^[ \t]*| *\\\\?[\#!$*_^/ ] *|"
+		   "^[ \t]*| *[\#!$*_^/ ] *|"))
+	(ignore  (if maybe-quoted
+		     "^[ \t]*| *\\\\?[!$_^/] *|"
+		   "^[ \t]*| *[!$_^/] *|")))
+    (setq org-table-clean-did-remove-column
+	  (not (memq nil
+		     (mapcar
+		      (lambda (line)
+			(or (string-match org-table-hline-regexp line)
+			    (string-match special                line)))
+		      lines))))
+    (delq nil
+	  (mapcar
+	   (lambda (line)
+	     (cond
+	      ((or (org-table-colgroup-line-p line)  ;; colgroup info
+		   (org-table-cookie-line-p line)    ;; formatting cookies
+		   (and org-table-clean-did-remove-column
+			(string-match ignore line))) ;; non-exportable data
+	       nil)
+	      ((and org-table-clean-did-remove-column
+		    (or (string-match "^\\([ \t]*\\)|-+\\+" line)
+			(string-match "^\\([ \t]*\\)|[^|]*|" line)))
+	       ;; remove the first column
+	       (replace-match "\\1|" t nil line))
+	      (t line)))
+	   lines))))
+
 (defconst org-table-translate-regexp
   (concat "\\(" "@[-0-9I$]+" "\\|" "[a-zA-Z]\\{1,2\\}\\([0-9]+\\|&\\)" "\\)")
   "Match a reference that needs translation, for reference display.")
@@ -534,9 +547,7 @@ following values:
 
 '(4)     Use the comma as a field separator
 '(16)    Use a TAB as field separator
-'(64)    Prompt for a regular expression as field separator
 integer  When a number, use that many spaces as field separator
-regexp   When a regular expression, use it to match the separator
 nil      When nil, the command tries to be smart and figure out the
          separator in the following way:
          - when each line contains a TAB, assume TAB-separated material
@@ -546,8 +557,6 @@ nil      When nil, the command tries to be smart and figure out the
   (let* ((beg (min beg0 end0))
 	 (end (max beg0 end0))
 	 re)
-    (if (equal separator '(64))
-	(setq separator (read-regexp "Regexp for field separator")))
     (goto-char beg)
     (beginning-of-line 1)
     (setq beg (point-marker))
@@ -582,8 +591,6 @@ nil      When nil, the command tries to be smart and figure out the
 		 (if (< separator 1)
 		     (user-error "Number of spaces in separator must be >= 1")
 		   (format "^ *\\| *\t *\\| \\{%d,\\}" separator)))
-		((stringp separator)
-		 (format "^ *\\|%s" separator))
 		(t (error "This should not happen"))))
       (while (re-search-forward re end t)
 	(replace-match "| " t t)))
@@ -604,6 +611,8 @@ are found, lines will be split on whitespace into fields."
     (org-table-convert-region beg (+ (point) (- (point-max) pm)) arg)))
 
 
+(defvar org-table-last-alignment)
+(defvar org-table-last-column-widths)
 ;;;###autoload
 (defun org-table-export (&optional file format)
   "Export table to a file, with configurable format.
@@ -621,61 +630,77 @@ extension of the given file name, and finally on the variable
 `org-table-export-default-format'."
   (interactive)
   (unless (org-at-table-p) (user-error "No table at point"))
-  (org-table-align)	       ; Make sure we have everything we need.
-  (let ((file (or file (org-entry-get (point) "TABLE_EXPORT_FILE" t))))
+  (org-table-align) ;; make sure we have everything we need
+  (let* ((beg (org-table-begin))
+	 (end (org-table-end))
+	 (txt (buffer-substring-no-properties beg end))
+	 (file (or file (org-entry-get beg "TABLE_EXPORT_FILE" t)))
+	 (formats '("orgtbl-to-tsv" "orgtbl-to-csv"
+		    "orgtbl-to-latex" "orgtbl-to-html"
+		    "orgtbl-to-generic" "orgtbl-to-texinfo"
+		    "orgtbl-to-orgtbl"))
+	 (format (or format
+		     (org-entry-get beg "TABLE_EXPORT_FORMAT" t)))
+	 buf deffmt-readable fileext)
     (unless file
       (setq file (read-file-name "Export table to: "))
       (unless (or (not (file-exists-p file))
 		  (y-or-n-p (format "Overwrite file %s? " file)))
 	(user-error "File not written")))
-    (when (file-directory-p file)
-      (user-error "This is a directory path, not a file"))
-    (when (and (buffer-file-name (buffer-base-buffer))
-	       (org-file-equal-p
-		(file-truename file)
-		(file-truename (buffer-file-name (buffer-base-buffer)))))
-      (user-error "Please specify a file name that is different from current"))
-    (let ((fileext (concat (file-name-extension file) "$"))
-	  (format (or format (org-entry-get (point) "TABLE_EXPORT_FORMAT" t))))
-      (unless format
-	(let* ((formats '("orgtbl-to-tsv" "orgtbl-to-csv" "orgtbl-to-latex"
-			  "orgtbl-to-html" "orgtbl-to-generic"
-			  "orgtbl-to-texinfo" "orgtbl-to-orgtbl"
-			  "orgtbl-to-unicode"))
-	       (deffmt-readable
-		 (replace-regexp-in-string
-		  "\t" "\\t"
-		  (replace-regexp-in-string
-		   "\n" "\\n"
-		   (or (car (delq nil
-				  (mapcar
-				   (lambda (f)
-				     (and (org-string-match-p fileext f) f))
-				   formats)))
-		       org-table-export-default-format)
-		   t t) t t)))
-	  (setq format
-		(org-completing-read
-		 "Format: " formats nil nil deffmt-readable))))
-      (if (string-match "\\([^ \t\r\n]+\\)\\( +.*\\)?" format)
-	  (let ((transform (intern (match-string 1 format)))
-		(params (and (match-end 2)
-			     (read (concat "(" (match-string 2 format) ")"))))
-		(table (org-table-to-lisp
-			(buffer-substring-no-properties
-			 (org-table-begin) (org-table-end)))))
-	    (unless (fboundp transform)
-	      (user-error "No such transformation function %s" transform))
-	    (let (buf)
-	      (with-current-buffer (find-file-noselect file)
-		(setq buf (current-buffer))
-		(erase-buffer)
-		(fundamental-mode)
-		(insert (funcall transform table params) "\n")
-		(save-buffer))
-	      (kill-buffer buf))
-	    (message "Export done."))
-	(user-error "TABLE_EXPORT_FORMAT invalid")))))
+    (if (file-directory-p file)
+	(user-error "This is a directory path, not a file"))
+    (if (and (buffer-file-name)
+	     (equal (file-truename file)
+		    (file-truename (buffer-file-name))))
+	(user-error "Please specify a file name that is different from current"))
+    (setq fileext (concat (file-name-extension file) "$"))
+    (unless format
+      (setq deffmt-readable
+	    (or (car (delq nil (mapcar (lambda(f) (if (string-match fileext f) f)) formats)))
+		org-table-export-default-format))
+      (while (string-match "\t" deffmt-readable)
+	(setq deffmt-readable (replace-match "\\t" t t deffmt-readable)))
+      (while (string-match "\n" deffmt-readable)
+	(setq deffmt-readable (replace-match "\\n" t t deffmt-readable)))
+      (setq format (org-completing-read "Format: " formats nil nil deffmt-readable)))
+    (if (string-match "\\([^ \t\r\n]+\\)\\( +.*\\)?" format)
+	(let* ((transform (intern (match-string 1 format)))
+	       (params (if (match-end 2)
+			   (read (concat "(" (match-string 2 format) ")"))))
+	       (skip (plist-get params :skip))
+	       (skipcols (plist-get params :skipcols))
+	       (lines (nthcdr (or skip 0) (org-split-string txt "[ \t]*\n[ \t]*")))
+	       (lines (org-table-clean-before-export lines))
+	       (i0 (if org-table-clean-did-remove-column 2 1))
+	       (table (mapcar
+		       (lambda (x)
+			 (if (string-match org-table-hline-regexp x)
+			     'hline
+			   (org-remove-by-index
+			    (org-split-string (org-trim x) "\\s-*|\\s-*")
+			    skipcols i0)))
+		       lines))
+	       (fun (if (= i0 2) 'cdr 'identity))
+	       (org-table-last-alignment
+		(org-remove-by-index (funcall fun org-table-last-alignment)
+				     skipcols i0))
+	       (org-table-last-column-widths
+		(org-remove-by-index (funcall fun org-table-last-column-widths)
+				     skipcols i0)))
+
+	  (unless (fboundp transform)
+	    (user-error "No such transformation function %s" transform))
+	  (setq txt (funcall transform table params))
+
+	  (with-current-buffer (find-file-noselect file)
+	    (setq buf (current-buffer))
+	    (erase-buffer)
+	    (fundamental-mode)
+	    (insert txt "\n")
+	    (save-buffer))
+	  (kill-buffer buf)
+	  (message "Export done."))
+      (user-error "TABLE_EXPORT_FORMAT invalid"))))
 
 (defvar org-table-aligned-begin-marker (make-marker)
   "Marker at the beginning of the table last aligned.
@@ -727,7 +752,7 @@ When nil, simply write \"#ERROR\" in corrupted fields.")
 	 (hfmt1 (concat
 		 (make-string sp2 ?-) "%s" (make-string sp1 ?-) "+"))
 	 emptystrings links dates emph raise narrow
-	 falign falign1 fmax f1 f2 len c e space)
+	 falign falign1 fmax f1 len c e space)
     (untabify beg end)
     (remove-text-properties beg end '(org-cwidth t org-dwidth t display t))
     ;; Check if we have links or dates
@@ -807,25 +832,15 @@ When nil, simply write \"#ERROR\" in corrupted fields.")
 			   (> (org-string-width xx) fmax))
 		  (org-add-props xx nil
 		    'help-echo
-		    (concat "Clipped table field, use C-c ` to edit.  Full value is:\n"
-			    (org-no-properties (copy-sequence xx))))
+		    (concat "Clipped table field, use C-c ` to edit.  Full value is:\n" (org-no-properties (copy-sequence xx))))
 		  (setq f1 (min fmax (or (string-match org-bracket-link-regexp xx) fmax)))
 		  (unless (> f1 1)
 		    (user-error "Cannot narrow field starting with wide link \"%s\""
 			   (match-string 0 xx)))
-		  (setq f2 (length xx))
-		  (if (= (org-string-width xx)
-			 f2)
-		      (setq f2 f1)
-		    (setq f2 1)
-		    (while (< (org-string-width (substring xx 0 f2))
-			      f1)
-		      (setq f2 (1+ f2))))
-		  (add-text-properties f2 (length xx) (list 'org-cwidth t) xx)
-		  (add-text-properties (if (>= (string-width (substring xx (1- f2) f2)) 2)
-					   (1- f2) (- f2 2)) f2
-					   (list 'display org-narrow-column-arrow)
-					   xx)))))
+		  (add-text-properties f1 (length xx) (list 'org-cwidth t) xx)
+		  (add-text-properties (- f1 2) f1
+				       (list 'display org-narrow-column-arrow)
+				       xx)))))
       ;; Get the maximum width for each column
       (push (apply 'max (or fmax 1) 1 (mapcar 'org-string-width column))
 	    lengths)
@@ -952,16 +967,13 @@ Optional argument NEW may specify text to replace the current field content."
 	    (progn
 	      (setq s (match-string 1)
 		    o (match-string 0)
-		    l (max 1
-			   (- (org-string-width
-			       (buffer-substring-no-properties
-				(match-end 0) (match-beginning 0))) 3))
+		    l (max 1 (- (match-end 0) (match-beginning 0) 3))
 		    e (not (= (match-beginning 2) (match-end 2))))
 	      (setq f (format (if num " %%%ds %s" " %%-%ds %s")
 			      l (if e "|" (setq org-table-may-need-update t) ""))
 		    n (format f s))
 	      (if new
-		  (if (<= (org-string-width new) l)
+		  (if (<= (length new) l)      ;; FIXME: length -> str-width?
 		      (setq n (format f new))
 		    (setq n (concat new "|") org-table-may-need-update t)))
 	      (if (equal (string-to-char n) ?-) (setq n (concat " " n)))
@@ -1081,36 +1093,30 @@ Before doing so, re-align the table if necessary."
 
 ;;;###autoload
 (defun org-table-copy-down (n)
-  "Copy the value of the current field one row below.
-
-If the field at the cursor is empty, copy the content of the
-nearest non-empty field above.  With argument N, use the Nth
-non-empty field.
-
-If the current field is not empty, it is copied down to the next
-row, and the cursor is moved with it.  Therefore, repeating this
-command causes the column to be filled row-by-row.
-
+  "Copy a field down in the current column.
+If the field at the cursor is empty, copy into it the content of
+the nearest non-empty field above.  With argument N, use the Nth
+non-empty field.  If the current field is not empty, it is copied
+down to the next row, and the cursor is moved with it.
+Therefore, repeating this command causes the column to be filled
+row-by-row.
 If the variable `org-table-copy-increment' is non-nil and the
 field is an integer or a timestamp, it will be incremented while
-copying.  By default, increment by the difference between the
-value in the current field and the one in the field above.  To
-increment using a fixed integer, set `org-table-copy-increment'
-to a number.  In the case of a timestamp, increment by days."
+copying.  In the case of a timestamp, increment by one day."
   (interactive "p")
   (let* ((colpos (org-table-current-column))
 	 (col (current-column))
 	 (field (save-excursion (org-table-get-field)))
-	 (field-up (or (save-excursion
-			 (org-table-get (1- (org-table-current-line))
-					(org-table-current-column))) ""))
 	 (non-empty (string-match "[^ \t]" field))
-	 (non-empty-up (string-match "[^ \t]" field-up))
 	 (beg (org-table-begin))
 	 (orig-n n)
-	 txt txt-up inc)
+	 txt)
     (org-table-check-inside-data-field)
-    (if (not non-empty)
+    (if non-empty
+	(progn
+	  (setq txt (org-trim field))
+	  (org-table-next-row)
+	  (org-table-blank-field))
       (save-excursion
 	(setq txt
 	      (catch 'exit
@@ -1121,49 +1127,22 @@ to a number.  In the case of a timestamp, increment by days."
 		  (if (and (looking-at
 			    "|[ \t]*\\([^| \t][^|]*?\\)[ \t]*|")
 			   (<= (setq n (1- n)) 0))
-		      (throw 'exit (match-string 1))))))
-	(setq field-up
-	      (catch 'exit
-		(while (progn (beginning-of-line 1)
-			      (re-search-backward org-table-dataline-regexp
-						  beg t))
-		  (org-table-goto-column colpos t)
-		  (if (and (looking-at
-			    "|[ \t]*\\([^| \t][^|]*?\\)[ \t]*|")
-			   (<= (setq n (1- n)) 0))
-		      (throw 'exit (match-string 1))))))
-	(setq non-empty-up (and field-up (string-match "[^ \t]" field-up))))
-      ;; Above field was not empty, go down to the next row
-      (setq txt (org-trim field))
-      (org-table-next-row)
-      (org-table-blank-field))
-    (if non-empty-up (setq txt-up (org-trim field-up)))
-    (setq inc (cond
-	       ((numberp org-table-copy-increment) org-table-copy-increment)
-	       (txt-up (cond ((and (string-match org-ts-regexp3 txt-up)
-				   (string-match org-ts-regexp3 txt))
-			      (- (org-time-string-to-absolute txt)
-				 (org-time-string-to-absolute txt-up)))
-			     ((string-match org-ts-regexp3 txt) 1)
-			     ((string-match "^[0-9]+\\(\.[0-9]+\\)?" txt-up)
-			      (- (string-to-number txt)
-				 (string-to-number (match-string 0 txt-up))))
-			     (t 1)))
-	       (t 1)))
-    (if (not txt)
-	(user-error "No non-empty field found")
-      (if (and org-table-copy-increment
-	       (not (equal orig-n 0))
-	       (string-match "^[-+^/*0-9eE.]+$" txt)
-	       (< (string-to-number txt) 100000000))
-	  (setq txt (calc-eval (concat txt "+" (number-to-string inc)))))
-      (insert txt)
-      (org-move-to-column col)
-      (if (and org-table-copy-increment (org-at-timestamp-p t))
-	  (org-timestamp-up-day inc)
-	(org-table-maybe-recalculate-line))
-      (org-table-align)
-      (org-move-to-column col))))
+		      (throw 'exit (match-string 1))))))))
+    (if txt
+	(progn
+	  (if (and org-table-copy-increment
+		   (not (equal orig-n 0))
+		   (string-match "^[0-9]+$" txt)
+		   (< (string-to-number txt) 100000000))
+	      (setq txt (format "%d" (+ (string-to-number txt) 1))))
+	  (insert txt)
+	  (org-move-to-column col)
+	  (if (and org-table-copy-increment (org-at-timestamp-p t))
+	      (org-timestamp-up-day)
+	    (org-table-maybe-recalculate-line))
+	  (org-table-align)
+	  (org-move-to-column col))
+      (user-error "No non-empty field found"))))
 
 (defun org-table-check-inside-data-field (&optional noerror)
   "Is point inside a table data field?
@@ -1187,7 +1166,7 @@ If LINE is larger than the number of data lines in the table, the function
 returns nil.  However, if COLUMN is too large, we will simply return an
 empty string.
 If LINE is nil, use the current line.
-If COLUMN is nil, use the current column."
+If column is nil, use the current column."
   (setq column (or column (org-table-current-column)))
   (save-excursion
     (and (or (not line) (org-table-goto-line line))
@@ -1657,8 +1636,7 @@ should be in the last line to be included into the sorting.
 
 The command then prompts for the sorting type which can be
 alphabetically, numerically, or by time (as given in a time stamp
-in the field, or as a HH:MM value).  Sorting in reverse order is
-also possible.
+in the field).  Sorting in reverse order is also possible.
 
 With prefix argument WITH-CASE, alphabetic sorting will be case-sensitive.
 
@@ -1854,7 +1832,7 @@ blindly applies a recipe that works for simple tables."
 	  (goto-char beg)))))
 
 (defun org-table-transpose-table-at-point ()
-  "Transpose Org table at point and eliminate hlines.
+  "Transpose orgmode table at point and eliminate hlines.
 So a table like
 
 | 1 | 2 | 4 | 5 |
@@ -1869,11 +1847,9 @@ will be transposed as
 | 4 | c | g |
 | 5 | d | h |
 
-Note that horizontal lines disappear."
+Note that horizontal lines disappeared."
   (interactive)
   (let* ((table (delete 'hline (org-table-to-lisp)))
-	 (dline_old (org-table-current-line))
-	 (col_old (org-table-current-column))
 	 (contents (mapcar (lambda (p)
 			     (let ((tp table))
 			       (mapcar
@@ -1883,17 +1859,10 @@ Note that horizontal lines disappear."
 				    (setq tp (cdr tp))))
 				table)))
 			   (car table))))
-    (goto-char (org-table-begin))
-    (re-search-forward "|")
-    (backward-char)
-    (delete-region (point) (org-table-end))
-    (insert (mapconcat
-	     (lambda(x)
-	       (concat "| " (mapconcat 'identity x " | " ) "  |\n" ))
-	     contents ""))
-    (org-table-goto-line col_old)
-    (org-table-goto-column dline_old))
-  (org-table-align))
+    (delete-region (org-table-begin) (org-table-end))
+    (insert (mapconcat (lambda(x) (concat "| " (mapconcat 'identity x " | " ) "  |\n" ))
+                       contents ""))
+    (org-table-align)))
 
 ;;;###autoload
 (defun org-table-wrap-region (arg)
@@ -2674,7 +2643,6 @@ not overwrite the stored one."
 	;; Check for old vertical references
 	(setq form (org-table-rewrite-old-row-references form))
 	;; Insert remote references
-	(setq form (org-table-remote-reference-indirection form))
 	(while (string-match "\\<remote([ \t]*\\([-_a-zA-Z0-9]+\\)[ \t]*,[ \t]*\\([^\n)]+\\))" form)
 	  (setq form
 		(replace-match
@@ -2724,16 +2692,14 @@ not overwrite the stored one."
 	(while (string-match "\\$\\(\\([-+]\\)?[0-9]+\\)" form)
 	  (setq n (+ (string-to-number (match-string 1 form))
 		     (if (match-end 2) n0 0))
-		x (nth (1- (if (= n 0) n0 (max n 1))) fields)
-		formrpl (save-match-data
-			  (org-table-make-reference
-			   x keep-empty numbers lispp)))
-	  (when (or (not x)
-		    (save-match-data
-		      (string-match (regexp-quote formula) formrpl)))
-	    (user-error "Invalid field specifier \"%s\""
-			(match-string 0 form)))
-	  (setq form (replace-match formrpl t t form)))
+		x (nth (1- (if (= n 0) n0 (max n 1))) fields))
+	  (unless x (user-error "Invalid field specifier \"%s\""
+			   (match-string 0 form)))
+	  (setq form (replace-match
+		      (save-match-data
+			(org-table-make-reference
+			 x keep-empty numbers lispp))
+		      t t form)))
 
 	(if lispp
 	    (setq ev (condition-case nil
@@ -2776,7 +2742,7 @@ Orig:   %s
 $xyz->  %s
 @r$c->  %s
 $1->    %s\n" orig formula form0 form))
-	    (if (consp ev)
+	    (if (listp ev)
 		(princ (format "        %s^\nError:  %s"
 			       (make-string (car ev) ?\-) (nth 1 ev)))
 	      (princ (format "Result: %s\nFormat: %s\nFinal:  %s"
@@ -2791,7 +2757,7 @@ $1->    %s\n" orig formula form0 form))
 	      (user-error "Abort"))
 	    (delete-window bw)
 	    (message "")))
-	(when (consp ev) (setq fmt nil ev "#ERROR"))
+	(if (listp ev) (setq fmt nil ev "#ERROR"))
 	(org-table-justify-field-maybe
 	 (format org-table-formula-field-format
 		 (if fmt (format fmt (string-to-number ev)) ev)))
@@ -2996,6 +2962,24 @@ list, 'literal is for the format specifier L."
 		   ",") "]"))))
 
 ;;;###autoload
+(defun org-table-set-constants ()
+  "Set `org-table-formula-constants-local' in the current buffer."
+  (let (cst consts const-str)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward "^[ \t]*#\\+CONSTANTS: \\(.*\\)" nil t)
+	(setq const-str (substring-no-properties (match-string 1)))
+	(setq consts (append consts (org-split-string const-str "[ \t]+")))
+	(when consts
+	  (let (e)
+	    (while (setq e (pop consts))
+	      (when (string-match "^\\([a-zA-Z0][_a-zA-Z0-9]*\\)=\\(.*\\)" e)
+		(if (assoc-string (match-string 1 e) cst)
+		    (setq cst (delete (assoc-string (match-string 1 e) cst) cst)))
+		(push (cons (match-string 1 e) (match-string 2 e)) cst)))
+	    (setq org-table-formula-constants-local cst)))))))
+
+;;;###autoload
 (defun org-table-recalculate (&optional all noalign)
   "Recalculate the current table line by applying all stored formulas.
 With prefix arg ALL, do this for all lines in the table.
@@ -3024,8 +3008,6 @@ known that the table will be realigned a little later anyway."
       ;; Insert constants in all formulas
       (setq eqlist
 	    (mapcar (lambda (x)
-		      (if (string-match "^@-?I+" (car x))
-			  (user-error "Can't assign to hline relative reference"))
 		      (when (string-match "\\`$[<>]" (car x))
 			(setq lhs1 (car x))
 			(setq x (cons (substring
@@ -3119,26 +3101,9 @@ known that the table will be realigned a little later anyway."
       (while (setq eq (pop eqlname1))
 	(message "Re-applying formula to field: %s" (car eq))
 	(org-goto-line (nth 1 eq))
-	(let ((column-target (nth 2 eq)))
-	  (when (> column-target 1000)
-	    (user-error "Formula column target too large"))
-	  (let* ((column-count (progn (end-of-line)
-				      (1- (org-table-current-column))))
-		 (create-new-column
-		  (and (> column-target column-count)
-		       (or (eq org-table-formula-create-columns t)
-			   (and
-			    (eq org-table-formula-create-columns 'warn)
-			    (progn
-			      (org-display-warning "Out-of-bounds formula added columns")
-			      t))
-			   (and
-			    (eq org-table-formula-create-columns 'prompt)
-			    (yes-or-no-p "Out-of-bounds formula. Add columns?"))))))
-	    (org-table-goto-column column-target nil create-new-column))
-
-	  (org-table-eval-formula nil (nth 3 eq) 'noalign 'nocst
-				  'nostore 'noanalysis)))
+	(org-table-goto-column (nth 2 eq))
+	(org-table-eval-formula nil (nth 3 eq) 'noalign 'nocst
+				'nostore 'noanalysis))
 
       (org-goto-line thisline)
       (org-table-goto-column thiscol)
@@ -4325,10 +4290,7 @@ to execute outside of tables."
 	 org-table-toggle-coordinate-overlays :active (org-at-table-p)
 	 :keys "C-c }"
 	 :style toggle :selected org-table-overlay-coordinates]
-	"--"
-	("Plot"
-	 ["Ascii plot" orgtbl-ascii-plot :active (org-at-table-p) :keys "C-c \" a"]
-	 ["Gnuplot" org-plot/gnuplot :active (org-at-table-p) :keys "C-c \" g"])))
+	))
     t))
 
 (defun orgtbl-ctrl-c-ctrl-c (arg)
@@ -4354,6 +4316,7 @@ With prefix arg, also recompute table."
       (when (orgtbl-send-table 'maybe)
 	(run-hooks 'orgtbl-after-send-table-hook)))
      ((eq action 'recalc)
+      (org-table-set-constants)
       (save-excursion
 	(beginning-of-line 1)
 	(skip-chars-backward " \r\n\t")
@@ -4462,12 +4425,15 @@ a radio table."
     (unless (re-search-forward
 	     (concat "BEGIN +RECEIVE +ORGTBL +" name "\\([ \t]\\|$\\)") nil t)
       (user-error "Don't know where to insert translated table"))
-    (let ((beg (line-beginning-position 2)))
-      (unless (re-search-forward
-	       (concat "END +RECEIVE +ORGTBL +" name) nil t)
-	(user-error "Cannot find end of insertion region"))
-      (beginning-of-line)
-      (delete-region beg (point)))
+    (goto-char (match-beginning 0))
+    (beginning-of-line 2)
+    (save-excursion
+      (let ((beg (point)))
+	(unless (re-search-forward
+		 (concat "END +RECEIVE +ORGTBL +" name) nil t)
+	  (user-error "Cannot find end of insertion region"))
+	(beginning-of-line 1)
+	(delete-region beg (point))))
     (insert txt "\n")))
 
 ;;;###autoload
@@ -4476,43 +4442,76 @@ a radio table."
 The structure will be a list.  Each item is either the symbol `hline'
 for a horizontal separator line, or a list of field values as strings.
 The table is taken from the parameter TXT, or from the buffer at point."
-  (unless (or txt (org-at-table-p)) (user-error "No table at point"))
-  (let ((txt (or txt
-		 (buffer-substring-no-properties (org-table-begin)
-						 (org-table-end)))))
-    (mapcar (lambda (x)
-	      (if (string-match org-table-hline-regexp x) 'hline
-		(org-split-string (org-trim x) "\\s-*|\\s-*")))
-	    (org-split-string txt "[ \t]*\n[ \t]*"))))
+  (unless txt
+    (unless (org-at-table-p)
+      (user-error "No table at point")))
+  (let* ((txt (or txt
+		  (buffer-substring-no-properties (org-table-begin)
+						  (org-table-end))))
+	 (lines (org-split-string txt "[ \t]*\n[ \t]*")))
+
+    (mapcar
+     (lambda (x)
+       (if (string-match org-table-hline-regexp x)
+	   'hline
+	 (org-split-string (org-trim x) "\\s-*|\\s-*")))
+     lines)))
 
 (defun orgtbl-send-table (&optional maybe)
-  "Send a transformed version of table at point to the receiver position.
-With argument MAYBE, fail quietly if no transformation is defined
-for this table."
+  "Send a transformed version of this table to the receiver position.
+With argument MAYBE, fail quietly if no transformation is defined for
+this table."
   (interactive)
   (catch 'exit
     (unless (org-at-table-p) (user-error "Not at a table"))
     ;; when non-interactive, we assume align has just happened.
     (when (org-called-interactively-p 'any) (org-table-align))
     (let ((dests (orgtbl-gather-send-defs))
-	  (table (org-table-to-lisp
-		  (buffer-substring-no-properties (org-table-begin)
-						  (org-table-end))))
+	  (txt (buffer-substring-no-properties (org-table-begin)
+					       (org-table-end)))
 	  (ntbl 0))
-      (unless dests
-	(if maybe (throw 'exit nil)
-	  (user-error "Don't know how to transform this table")))
+      (unless dests (if maybe (throw 'exit nil)
+		      (user-error "Don't know how to transform this table")))
       (dolist (dest dests)
-	(let ((name (plist-get dest :name))
-	      (transform (plist-get dest :transform))
-	      (params (plist-get dest :params)))
-	  (unless (fboundp transform)
-	    (user-error "No such transformation function %s" transform))
-	  (orgtbl-send-replace-tbl name (funcall transform table params)))
-	(incf ntbl))
+	(let* ((name (plist-get dest :name))
+	       (transform (plist-get dest :transform))
+	       (params (plist-get dest :params))
+	       (skip (plist-get params :skip))
+	       (skipcols (plist-get params :skipcols))
+	       (no-escape (plist-get params :no-escape))
+	       beg
+	       (lines (org-table-clean-before-export
+		       (nthcdr (or skip 0)
+			       (org-split-string txt "[ \t]*\n[ \t]*"))))
+	       (i0 (if org-table-clean-did-remove-column 2 1))
+	       (lines (if no-escape lines
+			(mapcar (lambda(l) (replace-regexp-in-string
+					    "\\([&%#_^]\\)" "\\\\\\1{}" l)) lines)))
+	       (table (mapcar
+		       (lambda (x)
+			 (if (string-match org-table-hline-regexp x)
+			     'hline
+			   (org-remove-by-index
+			    (org-split-string (org-trim x) "\\s-*|\\s-*")
+			    skipcols i0)))
+		       lines))
+	       (fun (if (= i0 2) 'cdr 'identity))
+	       (org-table-last-alignment
+		(org-remove-by-index (funcall fun org-table-last-alignment)
+				     skipcols i0))
+	       (org-table-last-column-widths
+		(org-remove-by-index (funcall fun org-table-last-column-widths)
+				     skipcols i0))
+	       (txt (if (fboundp transform)
+			(funcall transform table params)
+		      (user-error "No such transformation function %s" transform))))
+	  (orgtbl-send-replace-tbl name txt))
+	(setq ntbl (1+ ntbl)))
       (message "Table converted and installed at %d receiver location%s"
 	       ntbl (if (> ntbl 1) "s" ""))
-      (and (> ntbl 0) ntbl))))
+      (if (> ntbl 0)
+	  ntbl
+	nil))))
 
 (defun org-remove-by-index (list indices &optional i0)
   "Remove the elements in LIST with indices in INDICES.
@@ -4562,480 +4561,356 @@ First element has index 0, or I0 if given."
     (insert txt)
     (goto-char pos)))
 
+;; Dynamically bound input and output for table formatting.
+(defvar *orgtbl-table* nil
+  "Carries the current table through formatting routines.")
+(defvar *orgtbl-rtn* nil
+  "Formatting routines push the output lines here.")
+;; Formatting parameters for the current table section.
+(defvar *orgtbl-hline* nil "Text used for horizontal lines.")
+(defvar *orgtbl-sep* nil "Text used as a column separator.")
+(defvar *orgtbl-default-fmt* nil "Default format for each entry.")
+(defvar *orgtbl-fmt* nil "Format for each entry.")
+(defvar *orgtbl-efmt* nil "Format for numbers.")
+(defvar *orgtbl-lfmt* nil "Format for an entire line, overrides fmt.")
+(defvar *orgtbl-llfmt* nil "Specializes lfmt for the last row.")
+(defvar *orgtbl-lstart* nil "Text starting a row.")
+(defvar *orgtbl-llstart* nil "Specializes lstart for the last row.")
+(defvar *orgtbl-lend* nil "Text ending a row.")
+(defvar *orgtbl-llend* nil "Specializes lend for the last row.")
+
+(defsubst orgtbl-get-fmt (fmt i)
+  "Retrieve the format from FMT corresponding to the Ith column."
+  (if (and (not (functionp fmt)) (consp fmt))
+      (plist-get fmt i)
+    fmt))
+
+(defsubst orgtbl-apply-fmt (fmt &rest args)
+  "Apply format FMT to arguments ARGS.
+When FMT is nil, return the first argument from ARGS."
+  (cond ((functionp fmt) (apply fmt args))
+	(fmt (apply 'format fmt args))
+	(args (car args))
+	(t args)))
+
+(defsubst orgtbl-eval-str (str)
+  "If STR is a function, evaluate it with no arguments."
+  (if (functionp str)
+      (funcall str)
+    str))
+
+(defun orgtbl-format-line (line)
+  "Format LINE as a table row."
+  (if (eq line 'hline) (if *orgtbl-hline* (push *orgtbl-hline* *orgtbl-rtn*))
+    (let* ((i 0)
+	   (line
+	    (mapcar
+	     (lambda (f)
+	       (setq i (1+ i))
+	       (let* ((efmt (orgtbl-get-fmt *orgtbl-efmt* i))
+		      (f (if (and efmt (string-match orgtbl-exp-regexp f))
+			     (orgtbl-apply-fmt efmt (match-string 1 f)
+					       (match-string 2 f))
+			   f)))
+		 (orgtbl-apply-fmt (or (orgtbl-get-fmt *orgtbl-fmt* i)
+				       *orgtbl-default-fmt*)
+				   f)))
+	     line)))
+      (push (if *orgtbl-lfmt*
+		(apply #'orgtbl-apply-fmt *orgtbl-lfmt* line)
+	      (concat (orgtbl-eval-str *orgtbl-lstart*)
+		      (mapconcat 'identity line *orgtbl-sep*)
+		      (orgtbl-eval-str *orgtbl-lend*)))
+	    *orgtbl-rtn*))))
+
+(defun orgtbl-format-section (section-stopper)
+  "Format lines until the first occurrence of SECTION-STOPPER."
+  (let (prevline)
+    (progn
+      (while (not (eq (car *orgtbl-table*) section-stopper))
+	(if prevline (orgtbl-format-line prevline))
+	(setq prevline (pop *orgtbl-table*)))
+      (if prevline (let ((*orgtbl-lstart* *orgtbl-llstart*)
+			 (*orgtbl-lend* *orgtbl-llend*)
+			 (*orgtbl-lfmt* *orgtbl-llfmt*))
+		     (orgtbl-format-line prevline))))))
+
 ;;;###autoload
-(defun orgtbl-to-generic (table params)
+(defun orgtbl-to-generic (table params &optional backend)
   "Convert the orgtbl-mode TABLE to some other format.
-
 This generic routine can be used for many standard cases.
+TABLE is a list, each entry either the symbol `hline' for a horizontal
+separator line, or a list of fields for that line.
+PARAMS is a property list of parameters that can influence the conversion.
+A third optional argument BACKEND can be used to convert the content of
+the cells using a specific export back-end.
 
-TABLE is a list, each entry either the symbol `hline' for
-a horizontal separator line, or a list of fields for that
-line.  PARAMS is a property list of parameters that can
-influence the conversion.
+For the generic converter, some parameters are obligatory: you need to
+specify either :lfmt, or all of (:lstart :lend :sep).
 
 Valid parameters are:
 
-:backend, :raw
+:splice     When set to t, return only table body lines, don't wrap
+            them into :tstart and :tend.  Default is nil.  When :splice
+            is non-nil, this also means that the exporter should not look
+            for and interpret header and footer sections.
 
-  Export back-end used as a basis to transcode elements of the
-  table, when no specific parameter applies to it.  It is also
-  used to translate cells contents.  You can prevent this by
-  setting :raw property to a non-nil value.
+:hline      String to be inserted on horizontal separation lines.
+            May be nil to ignore hlines.
 
-:splice
-
-  When non-nil, only convert rows, not the table itself.  This is
-  equivalent to setting to the empty string both :tstart
-  and :tend, which see.
-
-:skip
-
-  When set to an integer N, skip the first N lines of the table.
-  Horizontal separation lines do count for this parameter!
-
-:skipcols
-
-  List of columns that should be skipped.  If the table has
-  a column with calculation marks, that column is automatically
-  discarded beforehand.
-
-:hline
-
-  String to be inserted on horizontal separation lines.  May be
-  nil to ignore these lines altogether.
-
-:sep
-
-  Separator between two fields, as a string.
+:sep        Separator between two fields
+:remove-nil-lines Do not include lines that evaluate to nil.
 
 Each in the following group may be either a string or a function
 of no arguments returning a string:
 
-:tstart, :tend
+:tstart     String to start the table.  Ignored when :splice is t.
+:tend       String to end the table.  Ignored when :splice is t.
+:lstart     String to start a new table line.
+:llstart    String to start the last table line, defaults to :lstart.
+:lend       String to end a table line
+:llend      String to end the last table line, defaults to :lend.
 
-  Strings to start and end the table.  Ignored when :splice is t.
+Each in the following group may be a string, a function of one
+argument (the field or line) returning a string, or a plist
+mapping columns to either of the above:
 
-:lstart, :lend
-
-  Strings to start and end a new table line.
-
-:llstart, :llend
-
-  Strings to start and end the last table line.  Default,
-  respectively, to :lstart and :lend.
-
-Each in the following group may be a string or a function of one
-argument (either the cells in the current row, as a list of
-strings, or the current cell) returning a string:
-
-:lfmt
-
-  Format string for an entire row, with enough %s to capture all
-  fields.  When non-nil, :lstart, :lend, and :sep are ignored.
-
-:llfmt
-
-  Format for the entire last line, defaults to :lfmt.
-
-:fmt
-
-  A format to be used to wrap the field, should contain %s for
-  the original field value.  For example, to wrap everything in
-  dollars, you could use :fmt \"$%s$\".  This may also be
-  a property list with column numbers and format strings, or
-  functions, e.g.,
-
-    \(:fmt (2 \"$%s$\" 4 (lambda (c) (format \"$%s$\" c))))
-
-:hlstart :hllstart :hlend :hllend :hsep :hlfmt :hllfmt :hfmt
-
- Same as above, specific for the header lines in the table.
- All lines before the first hline are treated as header.  If
- any of these is not present, the data line value is used.
+:lfmt       Format for entire line, with enough %s to capture all fields.
+            If this is present, :lstart, :lend, and :sep are ignored.
+:llfmt      Format for the entire last line, defaults to :lfmt.
+:fmt        A format to be used to wrap the field, should contain
+            %s for the original field value.  For example, to wrap
+            everything in dollars, you could use :fmt \"$%s$\".
+            This may also be a property list with column numbers and
+            formats.  For example :fmt (2 \"$%s$\" 4 \"%s%%\")
+:hlstart :hllstart :hlend :hllend :hlsep :hlfmt :hllfmt :hfmt
+            Same as above, specific for the header lines in the table.
+            All lines before the first hline are treated as header.
+            If any of these is not present, the data line value is used.
 
 This may be either a string or a function of two arguments:
 
-:efmt
+:efmt       Use this format to print numbers with exponentials.
+            The format should have %s twice for inserting mantissa
+            and exponent, for example \"%s\\\\times10^{%s}\".  This
+            may also be a property list with column numbers and
+            formats.  :fmt will still be applied after :efmt.
 
-  Use this format to print numbers with exponential.  The format
-  should have %s twice for inserting mantissa and exponent, for
-  example \"%s\\\\times10^{%s}\".  This may also be a property
-  list with column numbers and format strings or functions.
-  :fmt will still be applied after :efmt."
-  (let ((backend (plist-get params :backend)))
-    (when (and backend (symbolp backend) (not (org-export-get-backend backend)))
-      (user-error "Unknown :backend value"))
-    (when (or (not backend) (plist-get params :raw)) (require 'ox-org))
-    (org-trim
-     (org-export-string-as
-      ;; Return TABLE as Org syntax.  Tolerate non-string cells.
-      (with-output-to-string
-	(dolist (e table)
-	  (cond ((eq e 'hline) (princ "|--\n"))
-		((consp e)
-		 (princ "| ") (dolist (c e) (princ c) (princ " |"))
-		 (princ "\n")))))
-      ;; Build a custom back-end according to PARAMS.  Before defining
-      ;; a translator, check if there is anything to do.  When there
-      ;; isn't, let BACKEND handle the element.
-      (org-export-create-backend
-       :parent (or backend 'org)
-       :filters
-       '((:filter-parse-tree
-	  ;; Handle :skip parameter.
-	  (lambda (tree backend info)
-	    (let ((skip (plist-get info :skip)))
-	      (when skip
-		(unless (wholenump skip) (user-error "Wrong :skip value"))
-		(let ((n 0))
-		  (org-element-map tree 'table-row
-		    (lambda (row)
-		      (if (>= n skip) t
-			(org-element-extract-element row)
-			(incf n)
-			nil))
-		    info t))
-		tree)))
-	  ;; Handle :skipcols parameter.
-	  (lambda (tree backend info)
-	    (let ((skipcols (plist-get info :skipcols)))
-	      (when skipcols
-		(unless (consp skipcols) (user-error "Wrong :skipcols value"))
-		(org-element-map tree 'table
-		  (lambda (table)
-		    (let ((specialp
-			   (org-export-table-has-special-column-p table)))
-		      (dolist (row (org-element-contents table))
-			(when (eq (org-element-property :type row) 'standard)
-			  (let ((c 1))
-			    (dolist (cell (nthcdr (if specialp 1 0)
-						  (org-element-contents row)))
-			      (when (memq c skipcols)
-				(org-element-extract-element cell))
-			      (incf c)))))))
-		  info)
-		tree)))))
-       :transcoders
-       `((table . ,(org-table--to-generic-table params))
-	 (table-row . ,(org-table--to-generic-row params))
-	 (table-cell . ,(org-table--to-generic-cell params))
-	 ;; Section.  Return contents to avoid garbage around table.
-	 (section . (lambda (s c i) c))))
-      'body-only (org-combine-plists params '(:with-tables t))))))
-
-(defun org-table--generic-apply (value name &optional with-cons &rest args)
-  (cond ((null value) nil)
-        ((functionp value) `(funcall ',value ,@args))
-        ((stringp value)
-	 (cond ((consp (car args)) `(apply #'format ,value ,@args))
-	       (args `(format ,value ,@args))
-	       (t value)))
-	((and with-cons (consp value))
-	 `(let ((val (cadr (memq column ',value))))
-	    (cond ((null val) contents)
-		  ((stringp val) (format val ,@args))
-		  ((functionp val) (funcall val ,@args))
-		  (t (user-error "Wrong %s value" ,name)))))
-        (t (user-error "Wrong %s value" name))))
-
-(defun org-table--to-generic-table (params)
-  "Return custom table transcoder according to PARAMS.
-PARAMS is a plist.  See `orgtbl-to-generic' for more
-information."
-  (let ((backend (plist-get params :backend))
-	(splice (plist-get params :splice))
-	(tstart (plist-get params :tstart))
-	(tend (plist-get params :tend)))
-    `(lambda (table contents info)
-       (concat
-	,(and tstart (not splice)
-	      `(concat ,(org-table--generic-apply tstart ":tstart") "\n"))
-	,(if (or (not backend) tstart tend splice) 'contents
-	   `(org-export-with-backend ',backend table contents info))
-	,(org-table--generic-apply (and (not splice) tend) ":tend")))))
-
-(defun org-table--to-generic-row (params)
-  "Return custom table row transcoder according to PARAMS.
-PARAMS is a plist.  See `orgtbl-to-generic' for more
-information."
-  (let* ((backend (plist-get params :backend))
-	 (lstart (plist-get params :lstart))
-	 (llstart (plist-get params :llstart))
-	 (hlstart (plist-get params :hlstart))
-	 (hllstart (plist-get params :hllstart))
-	 (lend (plist-get params :lend))
-	 (llend (plist-get params :llend))
-	 (hlend (plist-get params :hlend))
-	 (hllend (plist-get params :hllend))
-	 (lfmt (plist-get params :lfmt))
-	 (llfmt (plist-get params :llfmt))
-	 (hlfmt (plist-get params :hlfmt))
-	 (hllfmt (plist-get params :hllfmt)))
-    `(lambda (row contents info)
-       (if (eq (org-element-property :type row) 'rule)
-	   ,(cond
-	     ((plist-member params :hline)
-	      (org-table--generic-apply (plist-get params :hline) ":hline"))
-	     (backend `(org-export-with-backend ',backend row nil info)))
-	 (let ((headerp (org-export-table-row-in-header-p row info))
-	       (lastp (not (org-export-get-next-element row info)))
-	       (last-header-p (org-export-table-row-ends-header-p row info)))
-	   (when contents
-	     ;; Check if we can apply `:lfmt', `:llfmt', `:hlfmt', or
-	     ;; `:hllfmt' to CONTENTS.  Otherwise, fallback on
-	     ;; `:lstart', `:lend' and their relatives.
-	     ,(let ((cells
-		     '(org-element-map row 'table-cell
-			(lambda (cell)
-			  ;; Export all cells, without separators.
-			  ;;
-			  ;; Use `org-export-data-with-backend'
-			  ;; instead of `org-export-data' to eschew
-			  ;; cached values, which
-			  ;; ignore :orgtbl-ignore-sep parameter.
-			  (org-export-data-with-backend
-			   cell
-			   (plist-get info :back-end)
-			   (org-combine-plists info '(:orgtbl-ignore-sep t))))
-			info)))
-		`(cond
-		  ,(and hllfmt
-			`(last-header-p ,(org-table--generic-apply
-					  hllfmt ":hllfmt" nil cells)))
-		  ,(and hlfmt
-			`(headerp ,(org-table--generic-apply
-				    hlfmt ":hlfmt" nil cells)))
-		  ,(and llfmt
-			`(lastp ,(org-table--generic-apply
-				  llfmt ":llfmt" nil cells)))
-		  (t
-		   ,(if lfmt (org-table--generic-apply lfmt ":lfmt" nil cells)
-		      `(concat
-			(cond
-			 ,(and
-			   (or hllstart hllend)
-			   `(last-header-p
-			     (concat
-			      ,(org-table--generic-apply hllstart ":hllstart")
-			      contents
-			      ,(org-table--generic-apply hllend ":hllend"))))
-			 ,(and
-			   (or hlstart hlend)
-			   `(headerp
-			     (concat
-			      ,(org-table--generic-apply hlstart ":hlstart")
-			      contents
-			      ,(org-table--generic-apply hlend ":hlend"))))
-			 ,(and
-			   (or llstart llend)
-			   `(lastp
-			     (concat
-			      ,(org-table--generic-apply llstart ":llstart")
-			      contents
-			      ,(org-table--generic-apply llend ":llend"))))
-			 (t
-			  ,(cond
-			    ((or lstart lend)
-			     `(concat
-			       ,(org-table--generic-apply lstart ":lstart")
-			       contents
-			       ,(org-table--generic-apply lend ":lend")))
-			    (backend
-			     `(org-export-with-backend
-			       ',backend row contents info))
-			    (t 'contents)))))))))))))))
-
-(defun org-table--to-generic-cell (params)
-  "Return custom table cell transcoder according to PARAMS.
-PARAMS is a plist.  See `orgtbl-to-generic' for more
-information."
-  (let* ((backend (plist-get params :backend))
-	 (efmt (plist-get params :efmt))
-	 (fmt (plist-get params :fmt))
-	 (hfmt (plist-get params :hfmt))
-	 (sep (plist-get params :sep))
-	 (hsep (plist-get params :hsep)))
-    `(lambda (cell contents info)
-       (let ((headerp (org-export-table-row-in-header-p
-		       (org-export-get-parent-element cell) info))
-	     (column (1+ (cdr (org-export-table-cell-address cell info)))))
-	 ;; Make sure that contents are exported as Org data when :raw
-	 ;; parameter is non-nil.
-	 ,(when (and backend (plist-get params :raw))
-	    `(setq contents
-		   ;; Since we don't know what are the pseudo object
-		   ;; types defined in backend, we cannot pass them to
-		   ;; `org-element-interpret-data'.  As a consequence,
-		   ;; they will be treated as pseudo elements, and
-		   ;; will have newlines appended instead of spaces.
-		   ;; Therefore, we must make sure :post-blank value
-		   ;; is really turned into spaces.
-		   (replace-regexp-in-string
-		    "\n" " "
-		    (org-trim
-		     (org-element-interpret-data
-		      (org-element-contents cell))))))
-	 (when contents
-	   ;; Check if we can apply `:efmt' on CONTENTS.
-	   ,(when efmt
-	      `(when (string-match orgtbl-exp-regexp contents)
-		 (let ((mantissa (match-string 1 contents))
-		       (exponent (match-string 2 contents)))
-		   (setq contents ,(org-table--generic-apply
-				    efmt ":efmt" t 'mantissa 'exponent)))))
-	   ;; Check if we can apply FMT (or HFMT) on CONTENTS.
-	   (cond
-	    ,(and hfmt `(headerp (setq contents ,(org-table--generic-apply
-						  hfmt ":hfmt" t 'contents))))
-	    ,(and fmt `(t (setq contents ,(org-table--generic-apply
-					   fmt ":hfmt" t 'contents))))))
-	 ;; If a separator is provided, use it instead of BACKEND's.
-	 ;; Separators are ignored when LFMT (or equivalent) is
-	 ;; provided.
-	 ,(cond
-	   ((or hsep sep)
-	    `(if (or ,(and (not sep) '(not headerp))
-		     (plist-get info :orgtbl-ignore-sep)
-		     (not (org-export-get-next-element cell info)))
-		 ,(if (not backend) 'contents
-		    `(org-export-with-backend ',backend cell contents info))
-	       (concat contents
-		       ,(if (and sep hsep) `(if headerp ,hsep ,sep)
-			  (or hsep sep)))))
-	   (backend `(org-export-with-backend ',backend cell contents info))
-	   (t 'contents))))))
+In addition to this, the parameters :skip and :skipcols are always handled
+directly by `orgtbl-send-table'.  See manual."
+  (let* ((splicep (plist-get params :splice))
+	 (hline (plist-get params :hline))
+	 (skipheadrule (plist-get params :skipheadrule))
+	 (remove-nil-linesp (plist-get params :remove-nil-lines))
+	 (remove-newlines (plist-get params :remove-newlines))
+	 (*orgtbl-hline* hline)
+	 (*orgtbl-table* table)
+	 (*orgtbl-sep* (plist-get params :sep))
+	 (*orgtbl-efmt* (plist-get params :efmt))
+	 (*orgtbl-lstart* (plist-get params :lstart))
+	 (*orgtbl-llstart* (or (plist-get params :llstart) *orgtbl-lstart*))
+	 (*orgtbl-lend* (plist-get params :lend))
+	 (*orgtbl-llend* (or (plist-get params :llend) *orgtbl-lend*))
+	 (*orgtbl-lfmt* (plist-get params :lfmt))
+	 (*orgtbl-llfmt* (or (plist-get params :llfmt) *orgtbl-lfmt*))
+	 (*orgtbl-fmt* (plist-get params :fmt))
+	 *orgtbl-rtn*)
+    ;; Convert cells content to backend BACKEND
+    (when backend
+      (setq *orgtbl-table*
+	    (mapcar
+	     (lambda(r)
+	       (if (listp r)
+		   (mapcar
+		    (lambda (c)
+		      (org-trim (org-export-string-as c backend t '(:with-tables t))))
+		    r)
+		 r))
+	     *orgtbl-table*)))
+    ;; Put header
+    (unless splicep
+      (when (plist-member params :tstart)
+	(let ((tstart (orgtbl-eval-str (plist-get params :tstart))))
+	  (if tstart (push tstart *orgtbl-rtn*)))))
+    ;; If we have a heading, format it and handle the trailing hline.
+    (if (and (not splicep)
+	     (or (consp (car *orgtbl-table*))
+		 (consp (nth 1 *orgtbl-table*)))
+	     (memq 'hline (cdr *orgtbl-table*)))
+	(progn
+	  (when (eq 'hline (car *orgtbl-table*))
+	    ;; There is a hline before the first data line
+	    (and hline (push hline *orgtbl-rtn*))
+	    (pop *orgtbl-table*))
+	  (let* ((*orgtbl-lstart* (or (plist-get params :hlstart)
+				      *orgtbl-lstart*))
+		 (*orgtbl-llstart* (or (plist-get params :hllstart)
+				       *orgtbl-llstart*))
+		 (*orgtbl-lend* (or (plist-get params :hlend) *orgtbl-lend*))
+		 (*orgtbl-llend* (or (plist-get params :hllend)
+				     (plist-get params :hlend) *orgtbl-llend*))
+		 (*orgtbl-lfmt* (or (plist-get params :hlfmt) *orgtbl-lfmt*))
+		 (*orgtbl-llfmt* (or (plist-get params :hllfmt)
+				     (plist-get params :hlfmt) *orgtbl-llfmt*))
+		 (*orgtbl-sep* (or (plist-get params :hlsep) *orgtbl-sep*))
+		 (*orgtbl-fmt* (or (plist-get params :hfmt) *orgtbl-fmt*)))
+	    (orgtbl-format-section 'hline))
+	  (if (and hline (not skipheadrule)) (push hline *orgtbl-rtn*))
+	  (pop *orgtbl-table*)))
+    ;; Now format the main section.
+    (orgtbl-format-section nil)
+    (unless splicep
+      (when (plist-member params :tend)
+	(let ((tend (orgtbl-eval-str (plist-get params :tend))))
+	  (if tend (push tend *orgtbl-rtn*)))))
+    (mapconcat (if remove-newlines
+		   (lambda (tend)
+		     (replace-regexp-in-string "[\n\r\t\f]" "\\\\n" tend))
+		 'identity)
+	       (nreverse (if remove-nil-linesp
+			     (remq nil *orgtbl-rtn*)
+			   *orgtbl-rtn*)) "\n")))
 
 ;;;###autoload
 (defun orgtbl-to-tsv (table params)
   "Convert the orgtbl-mode table to TAB separated material."
   (orgtbl-to-generic table (org-combine-plists '(:sep "\t") params)))
-
 ;;;###autoload
 (defun orgtbl-to-csv (table params)
   "Convert the orgtbl-mode table to CSV material.
 This does take care of the proper quoting of fields with comma or quotes."
-  (orgtbl-to-generic table
-		     (org-combine-plists '(:sep "," :fmt org-quote-csv-field)
-					 params)))
+  (orgtbl-to-generic table (org-combine-plists
+			    '(:sep "," :fmt org-quote-csv-field)
+			    params)))
 
 ;;;###autoload
 (defun orgtbl-to-latex (table params)
   "Convert the orgtbl-mode TABLE to LaTeX.
+TABLE is a list, each entry either the symbol `hline' for a horizontal
+separator line, or a list of fields for that line.
+PARAMS is a property list of parameters that can influence the conversion.
+Supports all parameters from `orgtbl-to-generic'.  Most important for
+LaTeX are:
 
-TABLE is a list, each entry either the symbol `hline' for
-a horizontal separator line, or a list of fields for that line.
-PARAMS is a property list of parameters that can influence the
-conversion.  All parameters from `orgtbl-to-generic' are
-supported.  It is also possible to use the following ones:
+:splice    When set to t, return only table body lines, don't wrap
+           them into a tabular environment.  Default is nil.
 
-:booktabs
+:fmt       A format to be used to wrap the field, should contain %s for the
+           original field value.  For example, to wrap everything in dollars,
+           use :fmt \"$%s$\".  This may also be a property list with column
+           numbers and formats.  For example :fmt (2 \"$%s$\" 4 \"%s%%\")
+           The format may also be a function that formats its one argument.
 
-  When non-nil, use formal \"booktabs\" style.
+:efmt      Format for transforming numbers with exponentials.  The format
+           should have %s twice for inserting mantissa and exponent, for
+           example \"%s\\\\times10^{%s}\".  LaTeX default is \"%s\\\\,(%s)\".
+           This may also be a property list with column numbers and formats.
+           The format may also be a function that formats its two arguments.
 
-:environment
+:llend     If you find too much space below the last line of a table,
+           pass a value of \"\" for :llend to suppress the final \\\\.
 
-  Specify environment to use, as a string.  If you use
-  \"longtable\", you may also want to specify :language property,
-  as a string, to get proper continuation strings."
-  (require 'ox-latex)
-  (orgtbl-to-generic
-   table
-   (org-combine-plists
-    ;; Provide sane default values.
-    (list :backend 'latex
-	  :latex-default-table-mode 'table
-	  :latex-tables-centered nil
-	  :latex-tables-booktabs (plist-get params :booktabs)
-	  :latex-table-scientific-notation nil
-	  :latex-default-table-environment
-	  (or (plist-get params :environment) "tabular"))
-    params)))
+The general parameters :skip and :skipcols have already been applied when
+this function is called."
+  (let* ((alignment (mapconcat (lambda (x) (if x "r" "l"))
+			       org-table-last-alignment ""))
+	 (params2
+	  (list
+	   :tstart (concat "\\begin{tabular}{" alignment "}")
+	   :tend "\\end{tabular}"
+	   :lstart "" :lend " \\\\" :sep " & "
+	   :efmt "%s\\,(%s)" :hline "\\hline")))
+    (require 'ox-latex)
+    (orgtbl-to-generic table (org-combine-plists params2 params) 'latex)))
 
 ;;;###autoload
 (defun orgtbl-to-html (table params)
   "Convert the orgtbl-mode TABLE to HTML.
+TABLE is a list, each entry either the symbol `hline' for a horizontal
+separator line, or a list of fields for that line.
+PARAMS is a property list of parameters that can influence the conversion.
+Currently this function recognizes the following parameters:
 
-TABLE is a list, each entry either the symbol `hline' for
-a horizontal separator line, or a list of fields for that line.
-PARAMS is a property list of parameters that can influence the
-conversion.  All parameters from `orgtbl-to-generic' are
-supported.  It is also possible to use the following one:
+:splice    When set to t, return only table body lines, don't wrap
+           them into a <table> environment.  Default is nil.
 
-:attributes
-
-  Attributes and values, as a plist, which will be used in
-  <table> tag."
+The general parameters :skip and :skipcols have already been applied when
+this function is called.  The function does *not* use `orgtbl-to-generic',
+so you cannot specify parameters for it."
   (require 'ox-html)
-  (orgtbl-to-generic
-   table
-   (org-combine-plists
-    ;; Provide sane default values.
-    (list :backend 'html
-	  :html-table-data-tags '("<td%s>" . "</td>")
-	  :html-table-use-header-tags-for-first-column nil
-	  :html-table-align-individual-fields t
-	  :html-table-row-tags '("<tr>" . "</tr>")
-	  :html-table-attributes
-	  (if (plist-member params :attributes)
-	      (plist-get params :attributes)
-	    '(:border "2" :cellspacing "0" :cellpadding "6" :rules "groups"
-		      :frame "hsides")))
-    params)))
+  (let ((output (org-export-string-as
+		 (orgtbl-to-orgtbl table nil) 'html t '(:with-tables t))))
+    (if (not (plist-get params :splice)) output
+      (org-trim
+       (replace-regexp-in-string
+	"\\`<table .*>\n" ""
+	(replace-regexp-in-string "</table>\n*\\'" "" output))))))
 
 ;;;###autoload
 (defun orgtbl-to-texinfo (table params)
-  "Convert the orgtbl-mode TABLE to Texinfo.
+  "Convert the orgtbl-mode TABLE to TeXInfo.
+TABLE is a list, each entry either the symbol `hline' for a horizontal
+separator line, or a list of fields for that line.
+PARAMS is a property list of parameters that can influence the conversion.
+Supports all parameters from `orgtbl-to-generic'.  Most important for
+TeXInfo are:
 
-TABLE is a list, each entry either the symbol `hline' for
-a horizontal separator line, or a list of fields for that line.
-PARAMS is a property list of parameters that can influence the
-conversion.  All parameters from `orgtbl-to-generic' are
-supported.  It is also possible to use the following one:
+:splice nil/t      When set to t, return only table body lines, don't wrap
+                   them into a multitable environment.  Default is nil.
 
-:columns
+:fmt fmt           A format to be used to wrap the field, should contain
+                   %s for the original field value.  For example, to wrap
+                   everything in @kbd{}, you could use :fmt \"@kbd{%s}\".
+                   This may also be a property list with column numbers and
+                   formats.  For example :fmt (2 \"@kbd{%s}\" 4 \"@code{%s}\").
+                   Each format also may be a function that formats its one
+                   argument.
 
-  Column widths, as a string.  When providing column fractions,
-  \"@columnfractions\" command can be omitted."
-  (require 'ox-texinfo)
-  (let ((output
-	 (orgtbl-to-generic
-	  table
-	  (org-combine-plists
-	   (list :backend 'texinfo
-		 :texinfo-tables-verbatim nil
-		 :texinfo-table-scientific-notation nil)
-	   params)))
-	(columns (let ((w (plist-get params :columns)))
-		   (cond ((not w) nil)
-			 ((org-string-match-p "{\\|@columnfractions " w) w)
-			 (t (concat "@columnfractions " w))))))
-    (if (not columns) output
-      (replace-regexp-in-string
-       "@multitable \\(.*\\)" columns output t nil 1))))
+:cf \"f1 f2..\"    The column fractions for the table.  By default these
+                   are computed automatically from the width of the columns
+                   under org-mode.
+
+The general parameters :skip and :skipcols have already been applied when
+this function is called."
+  (let* ((total (float (apply '+ org-table-last-column-widths)))
+	 (colfrac (or (plist-get params :cf)
+		      (mapconcat
+		       (lambda (x) (format "%.3f" (/ (float x) total)))
+		       org-table-last-column-widths " ")))
+	 (params2
+	  (list
+	   :tstart (concat "@multitable @columnfractions " colfrac)
+	   :tend "@end multitable"
+	   :lstart "@item " :lend "" :sep " @tab "
+	   :hlstart "@headitem ")))
+    (require 'ox-texinfo)
+    (orgtbl-to-generic table (org-combine-plists params2 params) 'texinfo)))
 
 ;;;###autoload
 (defun orgtbl-to-orgtbl (table params)
   "Convert the orgtbl-mode TABLE into another orgtbl-mode table.
-
-TABLE is a list, each entry either the symbol `hline' for
-a horizontal separator line, or a list of fields for that line.
-PARAMS is a property list of parameters that can influence the
-conversion.  All parameters from `orgtbl-to-generic' are
-supported.
-
 Useful when slicing one table into many.  The :hline, :sep,
-:lstart, and :lend provide orgtbl framing.  :tstart and :tend can
-be set to provide ORGTBL directives for the generated table."
-  (require 'ox-org)
-  (orgtbl-to-generic table (org-combine-plists (list :backend 'org))))
+:lstart, and :lend provide orgtbl framing.  The default nil :tstart
+and :tend suppress strings without splicing; they can be set to
+provide ORGTBL directives for the generated table."
+  (let* ((params2
+	  (list
+	   :remove-newlines t
+	   :tstart nil :tend nil
+	   :hline "|---"
+	   :sep " | "
+	   :lstart "| "
+	   :lend " |"))
+	 (params (org-combine-plists params2 params)))
+    (with-temp-buffer
+      (insert (orgtbl-to-generic table params))
+      (goto-char (point-min))
+      (while (re-search-forward org-table-hline-regexp nil t)
+	(org-table-align))
+      (buffer-substring 1 (buffer-size)))))
 
 (defun orgtbl-to-table.el (table params)
-  "Convert the orgtbl-mode TABLE into a table.el table.
-TABLE is a list, each entry either the symbol `hline' for
-a horizontal separator line, or a list of fields for that line.
-PARAMS is a property list of parameters that can influence the
-conversion.  All parameters from `orgtbl-to-generic' are
-supported."
+  "Convert the orgtbl-mode TABLE into a table.el table."
   (with-temp-buffer
     (insert (orgtbl-to-orgtbl table params))
     (org-table-align)
@@ -5045,135 +4920,19 @@ supported."
 
 (defun orgtbl-to-unicode (table params)
   "Convert the orgtbl-mode TABLE into a table with unicode characters.
-
-TABLE is a list, each entry either the symbol `hline' for
-a horizontal separator line, or a list of fields for that line.
-PARAMS is a property list of parameters that can influence the
-conversion.  All parameters from `orgtbl-to-generic' are
-supported.  It is also possible to use the following ones:
-
-:ascii-art
-
-  When non-nil, use \"ascii-art-to-unicode\" package to translate
-  the table.  You can download it here:
-  http://gnuvola.org/software/j/aa2u/ascii-art-to-unicode.el.
-
-:narrow
-
-  When non-nil, narrow columns width than provided width cookie,
-  using \"=>\" as an ellipsis, just like in an Org mode buffer."
-  (require 'ox-ascii)
-  (orgtbl-to-generic
-   table
-   (org-combine-plists
-    (list :backend 'ascii
-	  :ascii-charset 'utf-8
-	  :ascii-table-keep-all-vertical-lines (plist-get params :)
-	  :ascii-table-widen-columns (not (plist-get params :narrow))
-	  :ascii-table-use-ascii-art (plist-get params :ascii-art))
-    params)))
-
-;; Put the cursor in a column containing numerical values
-;; of an Org-Mode table,
-;; type C-c " a
-;; A new column is added with a bar plot.
-;; When the table is refreshed (C-u C-c *),
-;; the plot is updated to reflect the new values.
-
-(defun orgtbl-ascii-draw (value min max &optional width characters)
-  "Draw an ascii bar in a table.
-VALUE is a the value to plot, the width of the bar to draw.  A
-value equal to MIN will be displayed as empty (zero width bar).
-A value equal to MAX will draw a bar filling all the WIDTH.
-WIDTH is the expected width in characters of the column.
-CHARACTERS is a string that will compose the bar, with shades of
-grey from pure white to pure black.  It defaults to a 10
-characters string of regular ascii characters."
-  (let* ((characters (or characters " .:;c!lhVHW"))
-	 (width (or width 12))
-	 (value (if (numberp value) value (string-to-number value)))
-	 (value (* (/ (- (+ value 0.0) min) (- max min)) width)))
-    (cond
-     ((< value     0) "too small")
-     ((> value width) "too large")
-     (t
-      (let ((len (1- (length characters))))
-	(concat
-	 (make-string (floor value) (elt characters len))
-	 (string (elt characters
-		      (floor (* (- value (floor value)) len))))))))))
-
-;;;###autoload
-(defun orgtbl-ascii-plot (&optional ask)
-  "Draw an ascii bar plot in a column.
-With cursor in a column containing numerical values, this
-function will draw a plot in a new column.
-ASK, if given, is a numeric prefix to override the default 12
-characters width of the plot.  ASK may also be the
-\\[universal-argument] prefix, which will prompt for the width."
-  (interactive "P")
-  (let ((col (org-table-current-column))
-	(min  1e999)		 ; 1e999 will be converted to infinity
-	(max -1e999)		 ; which is the desired result
-	(table (org-table-to-lisp))
-	(length
-	 (cond ((consp ask)
-		(read-number "Length of column " 12))
-	       ((numberp ask) ask)
-	       (t 12))))
-    ;; Skip any hline a the top of table.
-    (while (eq (car table) 'hline) (setq table (cdr table)))
-    ;; Skip table header if any.
-    (dolist (x (or (cdr (memq 'hline table)) table))
-      (when (consp x)
-	(setq x (nth (1- col) x))
-	(when (string-match
-	       "^[-+]?\\([0-9]*[.]\\)?[0-9]*\\([eE][+-]?[0-9]+\\)?$"
-	       x)
-	  (setq x (string-to-number x))
-	  (when (> min x) (setq min x))
-	  (when (< max x) (setq max x)))))
-    (org-table-insert-column)
-    (org-table-move-column-right)
-    (org-table-store-formulas
-     (cons
-      (cons
-       (number-to-string (1+ col))
-       (format "'(%s $%s %s %s %s)"
-	       "orgtbl-ascii-draw" col min max length))
-      (org-table-get-stored-formulas)))
-    (org-table-recalculate t)))
-
-;; Example of extension: unicode characters
-;; Here are two examples of different styles.
-
-;; Unicode block characters are used to give a smooth effect.
-;; See http://en.wikipedia.org/wiki/Block_Elements
-;; Use one of those drawing functions
-;; - orgtbl-ascii-draw   (the default ascii)
-;; - orgtbl-uc-draw-grid (unicode with a grid effect)
-;; - orgtbl-uc-draw-cont (smooth unicode)
-
-;; This is best viewed with the "DejaVu Sans Mono" font
-;; (use M-x set-default-font).
-
-(defun orgtbl-uc-draw-grid (value min max &optional width)
-  "Draw a bar in a table using block unicode characters.
-It is a variant of orgtbl-ascii-draw with Unicode block
-characters, for a smooth display.  Bars appear as grids (to the
-extent the font allows)."
-  ;; http://en.wikipedia.org/wiki/Block_Elements
-  ;; best viewed with the "DejaVu Sans Mono" font.
-  (orgtbl-ascii-draw value min max width
-		     " \u258F\u258E\u258D\u258C\u258B\u258A\u2589"))
-
-(defun orgtbl-uc-draw-cont (value min max &optional width)
-  "Draw a bar in a table using block unicode characters.
-It is a variant of orgtbl-ascii-draw with Unicode block
-characters, for a smooth display.  Bars are solid (to the extent
-the font allows)."
-  (orgtbl-ascii-draw value min max width
-		     " \u258F\u258E\u258D\u258C\u258B\u258A\u2589\u2588"))
+You need the ascii-art-to-unicode.el package for this.  You can download
+it here: http://gnuvola.org/software/j/aa2u/ascii-art-to-unicode.el."
+  (with-temp-buffer
+    (insert (orgtbl-to-table.el table params))
+    (goto-char (point-min))
+    (if (or (featurep 'ascii-art-to-unicode)
+	    (require 'ascii-art-to-unicode nil t))
+	(aa2u)
+      (unless (delq nil (mapcar (lambda (l) (string-match "aa2u" (car l))) org-stored-links))
+	(push '("http://gnuvola.org/software/j/aa2u/ascii-art-to-unicode.el"
+		"Link to ascii-art-to-unicode.el") org-stored-links))
+      (user-error "Please download ascii-art-to-unicode.el (use C-c C-l to insert the link to it)"))
+    (buffer-string)))
 
 (defun org-table-get-remote-range (name-or-id form)
   "Get a field value or a list of values in a range from table at ID.
@@ -5224,7 +4983,7 @@ list of the fields in the rectangle."
 		(widen)
 		(goto-char loc)
 		(forward-char 1)
-		(unless (and (re-search-forward "^\\(\\*+ \\)\\|^[ \t]*|" nil t)
+		(unless (and (re-search-forward "^\\(\\*+ \\)\\|[ \t]*|" nil t)
 			     (not (match-beginning 1)))
 		  (user-error "Cannot find a table at NAME or ID %s" name-or-id))
 		(setq tbeg (point-at-bol))
@@ -5236,36 +4995,6 @@ list of the fields in the rectangle."
 		    (save-match-data
 		      (org-table-get-range (match-string 0 form) tbeg 1))
 		  form)))))))))
-
-(defun org-table-remote-reference-indirection (form)
-  "Return formula with table remote references substituted by indirection.
-For example \"remote($1, @>$2)\" => \"remote(year_2013, @>$1)\".
-This indirection works only with the format @ROW$COLUMN.  The
-format \"B3\" is not supported because it can not be
-distinguished from a plain table name or ID."
-  (let ((start 0))
-    (while (string-match (concat
-			  ;; Same as in `org-table-eval-formula'.
-			  "\\<remote([ \t]*\\("
-			  ;; Allow "$1", "@<", "$-1", "@<<$1" etc.
-			  "[@$][^ \t,]+"
-			  ;; Same as in `org-table-eval-formula'.
-			  "\\)[ \t]*,[ \t]*\\([^\n)]+\\))")
-			 form
-			 start)
-      ;; The position of the character as far as possible to the right
-      ;; that will not be replaced and particularly not be shifted by
-      ;; `replace-match'.
-      (setq start (match-beginning 1))
-      ;; Substitute the remote reference with the value found in the
-      ;; field.
-      (setq form
-	    (replace-match
-	     (save-match-data
-	       (org-table-get-range (org-table-formula-handle-first/last-rc
-				     (match-string 1 form))))
-	     t t form 1))))
-  form)
 
 (defmacro org-define-lookup-function (mode)
   (let ((mode-str (symbol-name mode))

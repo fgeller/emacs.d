@@ -31,6 +31,19 @@
 (require 'org-macs)
 (require 'org-compat)
 
+(defun org-copy-face (old-face new-face docstring &rest attributes)
+  (unless (facep new-face)
+    (if (fboundp 'set-face-attribute)
+	(progn
+	  (make-face new-face)
+	  (set-face-attribute new-face nil :inherit old-face)
+	  (apply 'set-face-attribute new-face nil attributes)
+	  (set-face-doc-string new-face docstring))
+      (copy-face old-face new-face)
+      (if (fboundp 'set-face-doc-string)
+	  (set-face-doc-string new-face docstring)))))
+(put 'org-copy-face 'lisp-indent-function 2)
+
 (when (featurep 'xemacs)
   (put 'mode-line 'face-alias 'modeline))
 
@@ -414,15 +427,12 @@ determines if it is a foreground or a background color."
   "Face for checkboxes."
   :group 'org-faces)
 
-(defface org-checkbox-statistics-todo
-  '((t (:inherit org-todo)))
-  "Face used for unfinished checkbox statistics."
-  :group 'org-faces)
 
-(defface org-checkbox-statistics-done
-  '((t (:inherit org-done)))
-  "Face used for finished checkbox statistics."
-  :group 'org-faces)
+(org-copy-face 'org-todo 'org-checkbox-statistics-todo
+  "Face used for unfinished checkbox statistics.")
+
+(org-copy-face 'org-done 'org-checkbox-statistics-done
+  "Face used for finished checkbox statistics.")
 
 (defcustom org-tag-faces nil
   "Faces for specific tags.
@@ -481,7 +491,7 @@ changes."
 
 (defface org-meta-line
   (org-compatible-face 'font-lock-comment-face nil)
-  "Face for meta lines starting with \"#+\"."
+  "Face for meta lines startin with \"#+\"."
   :group 'org-faces
   :version "22.1")
 
@@ -527,15 +537,14 @@ follows a #+DATE:, #+AUTHOR: or #+EMAIL: keyword."
   :group 'org-faces
   :version "22.1")
 
-(defface org-block-begin-line
-  '((t (:inherit org-meta-line)))
-  "Face used for the line delimiting the begin of source blocks."
-  :group 'org-faces)
+(defface org-block-background '((t ()))
+  "Face used for the source block background.")
 
-(defface org-block-end-line
-  '((t (:inherit org-block-begin-line)))
-  "Face used for the line delimiting the end of source blocks."
-  :group 'org-faces)
+(org-copy-face 'org-meta-line 'org-block-begin-line
+  "Face used for the line delimiting the begin of source blocks.")
+
+(org-copy-face 'org-meta-line 'org-block-end-line
+  "Face used for the line delimiting the end of source blocks.")
 
 (defface org-verbatim
   (org-compatible-face 'shadow
@@ -551,15 +560,10 @@ follows a #+DATE:, #+AUTHOR: or #+EMAIL: keyword."
   :group 'org-faces
   :version "22.1")
 
-(defface org-quote
-  '((t (:inherit org-block)))
-  "Face for #+BEGIN_QUOTE ... #+END_QUOTE blocks."
-  :group 'org-faces)
-
-(defface org-verse
-  '((t (:inherit org-block)))
-  "Face for #+BEGIN_VERSE ... #+END_VERSE blocks."
-  :group 'org-faces)
+(org-copy-face 'org-block 'org-quote
+  "Face for #+BEGIN_QUOTE ... #+END_QUOTE blocks.")
+(org-copy-face 'org-block 'org-verse
+  "Face for #+BEGIN_VERSE ... #+END_VERSE blocks.")
 
 (defcustom org-fontify-quote-and-verse-blocks nil
   "Non-nil means, add a special face to #+begin_quote and #+begin_verse block.
@@ -572,13 +576,13 @@ content of these blocks will still be treated as Org syntax."
 (defface org-clock-overlay ;; copied from secondary-selection
   (org-compatible-face nil
     '((((class color) (min-colors 88) (background light))
-       (:background "LightGray" :foreground "black"))
+       (:background "yellow1"))
       (((class color) (min-colors 88) (background dark))
-       (:background "SkyBlue4" :foreground "white"))
+       (:background "SkyBlue4"))
       (((class color) (min-colors 16) (background light))
-       (:background "gray" :foreground "black"))
+       (:background "yellow"))
       (((class color) (min-colors 16) (background dark))
-       (:background "SkyBlue4" :foreground "white"))
+       (:background "SkyBlue4"))
       (((class color) (min-colors 8))
        (:background "cyan" :foreground "black"))
       (t (:inverse-video t))))
@@ -596,28 +600,21 @@ content of these blocks will still be treated as Org syntax."
   "Face used in agenda for captions and dates."
   :group 'org-faces)
 
-(defface org-agenda-date
-  '((t (:inherit org-agenda-structure)))
-  "Face used in agenda for normal days."
-  :group 'org-faces)
+(org-copy-face 'org-agenda-structure 'org-agenda-date
+  "Face used in agenda for normal days.")
 
-(defface org-agenda-date-today
-  '((t (:inherit org-agenda-date :weight bold :italic t)))
+(org-copy-face 'org-agenda-date 'org-agenda-date-today
   "Face used in agenda for today."
-  :group 'org-faces)
+  :weight 'bold :italic 't)
 
-(defface org-agenda-clocking
-  '((t (:inherit secondary-selection)))
-  "Face marking the current clock item in the agenda."
-  :group 'org-faces)
+(org-copy-face 'secondary-selection 'org-agenda-clocking
+  "Face marking the current clock item in the agenda.")
 
-(defface org-agenda-date-weekend
-  '((t (:inherit org-agenda-date :weight bold)))
+(org-copy-face 'org-agenda-date 'org-agenda-date-weekend
   "Face used in agenda for weekend days.
-
-See the variable `org-agenda-weekend-days' for a definition of
-which days belong to the weekend."
-  :group 'org-faces)
+See the variable `org-agenda-weekend-days' for a definition of which days
+belong to the weekend."
+  :weight 'bold)
 
 (defface org-scheduled
   (org-compatible-face nil
@@ -722,10 +719,8 @@ month and 365.24 days for a year)."
   "Face used for time grids."
   :group 'org-faces)
 
-(defface org-agenda-current-time
-  '((t (:inherit org-time-grid)))
-  "Face used to show the current time in the time grid."
-  :group 'org-faces)
+(org-copy-face 'org-time-grid 'org-agenda-current-time
+  "Face used to show the current time in the time grid.")
 
 (defface org-agenda-diary
   (org-compatible-face 'default nil)
@@ -796,15 +791,11 @@ level org-n-level-faces"
   :version "24.4"
   :package-version '(Org . "8.0"))
 
-(defface org-mode-line-clock
-  '((t (:inherit mode-line)))
-  "Face used for clock display in mode line."
-  :group 'org-faces)
-
-(defface org-mode-line-clock-overrun
-  '((t (:inherit mode-line :background "red")))
+(org-copy-face 'mode-line 'org-mode-line-clock
+  "Face used for clock display in mode line.")
+(org-copy-face 'mode-line 'org-mode-line-clock-overrun
   "Face used for clock display for overrun tasks in mode line."
-  :group 'org-faces)
+  :background "red")
 
 (provide 'org-faces)
 

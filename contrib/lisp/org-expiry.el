@@ -218,12 +218,11 @@ Return nil if the entry is not expired.  Otherwise return the
 amount of time between today and the expiry date.
 
 If there is no creation date, use `org-expiry-created-date'.
-If there is no expiry date, use `org-expiry-wait'."
+If there is no expiry date, use `org-expiry-expiry-date'."
   (let* ((ex-prop org-expiry-expiry-property-name)
 	 (cr-prop org-expiry-created-property-name)
 	 (ct (current-time))
-	 (cr (org-read-date nil t (or (org-entry-get (point) cr-prop t)
-				      org-expiry-created-date)))
+	 (cr (org-read-date nil t (or (org-entry-get (point) cr-prop t) "+0d")))
 	 (ex-field (or (org-entry-get (point) ex-prop t) org-expiry-wait))
 	 (ex (if (string-match "^[ \t]?[+-]" ex-field)
 		 (time-add cr (time-subtract (org-read-date nil t ex-field) ct))

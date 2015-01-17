@@ -32,7 +32,8 @@ Current buffer is a copy of the original buffer."
      (with-temp-buffer
        (org-mode)
        (insert string)
-       (org-babel-exp-process-buffer buf)
+       (let ((org-current-export-file buf))
+	 (org-babel-exp-process-buffer))
        (goto-char (point-min))
        (progn ,@body))))
 
@@ -197,90 +198,6 @@ Here is one at the end of a line. =2=
       (org-narrow-to-subtree)
       (org-test-with-expanded-babel-code (buffer-string))))))
 
-(ert-deftest ob-exp/exports-inline-code ()
-  (should
-   (string-match "\\`src_emacs-lisp\\(?:\\[]\\)?{(\\+ 1 1)}$"
-		 (org-test-with-temp-text
-		  "src_emacs-lisp[:exports code]{(+ 1 1)}"
-		  (org-export-execute-babel-code)
-		  (buffer-string))))
-  (should
-   (string-match "\\`src_emacs-lisp\\(?:\\[]\\)?{(\\+ 1 1)}$"
-		 (org-test-with-temp-text
-		  "src_emacs-lisp[ :exports code ]{(+ 1 1)}"
-		  (org-export-execute-babel-code)
-		  (buffer-string))))
-  (should
-   (string-match "\\`src_emacs-lisp\\(?:\\[]\\)?{(\\+ 1 1)} =2=$"
-		 (org-test-with-temp-text
-		  "src_emacs-lisp[:exports both]{(+ 1 1)}"
-		  (org-export-execute-babel-code)
-		  (buffer-string))))
-  (should
-   (string-match "\\`=2=$"
-		 (org-test-with-temp-text
-		  "src_emacs-lisp[:exports results :results scalar]{(+ 1 1)}"
-		  (org-export-execute-babel-code)
-		  (buffer-string))))
-  (should
-   (let ((text "foosrc_emacs-lisp[:exports code]{(+ 1 1)}"))
-     (string-match (regexp-quote text)
-		   (org-test-with-temp-text
-		    text
-		    (org-export-execute-babel-code)
-		    (buffer-string)))))
-  (should
-   (let ((text "src_emacs lisp{(+ 1 1)}"))
-     (string-match (regexp-quote text)
-		   (org-test-with-temp-text
-		    text
-		    (org-export-execute-babel-code)
-		    (buffer-string)))))
-  (should
-   (string-match
-    (replace-regexp-in-string
-     "\\\\\\[]{" "\\(?:\\[]\\)?{" ;accept both src_sh[]{...} or src_sh{...}
-     (regexp-quote "Here is one in the middle src_sh[]{echo 1} of a line.
-Here is one at the end of a line. src_sh[]{echo 2}
-src_sh[]{echo 3} Here is one at the beginning of a line.
-Here is one that is also evaluated: src_sh[]{echo 4} =4=")
-     nil t)
-    (org-test-at-id "cd54fc88-1b6b-45b6-8511-4d8fa7fc8076"
-      (org-narrow-to-subtree)
-      (org-test-with-expanded-babel-code (buffer-string))))))
-
-(ert-deftest ob-exp/exports-inline-code-double-eval ()
-  "Based on default header arguments for inline code blocks (:exports
-results), the resulting code block `src_emacs-lisp{2}' should also be
-evaluated."
-  (should
-   (string-match "\\`=2=$"
-  		 (org-test-with-temp-text
-  		  "src_emacs-lisp[:exports results :results code]{(+ 1 1)}"
-  		  (org-export-execute-babel-code)
-  		  (buffer-string)))))
-
-(ert-deftest ob-exp/exports-inline-code-eval-code-once ()
-  "Ibid above, except that the resulting inline code block should not
-be evaluated."
-  (should
-   (string-match "\\`src_emacs-lisp\\(?:\\[]\\)?{2}$"
-  		 (org-test-with-temp-text
-  		  (concat "src_emacs-lisp[:exports results :results code "
-			  ":results_switches \":exports code\"]{(+ 1 1)}")
-  		  (org-export-execute-babel-code)
-  		  (buffer-string)))))
-
-(ert-deftest ob-exp/exports-inline-code-double-eval-exports-both ()
-  (should
-   (string-match (concat "\\`src_emacs-lisp\\(?:\\[]\\)?{(\\+ 1 1)} "
-  			 "src_emacs-lisp\\(?:\\[]\\)?{2}$")
-  		 (org-test-with-temp-text
-  		  (concat "src_emacs-lisp[:exports both :results code "
-			  ":results_switches \":exports code\"]{(+ 1 1)}")
-  		  (org-export-execute-babel-code)
-  		  (buffer-string)))))
-
 (ert-deftest ob-exp/export-call-line-information ()
   (org-test-at-id "bec63a04-491e-4caa-97f5-108f3020365c"
     (org-narrow-to-subtree)
@@ -438,70 +355,6 @@ be evaluated."
 	    (org-src-preserve-indentation t))
 	(org-export-execute-babel-code)
 	(buffer-string))))))
-
-(ert-deftest ob-export/export-under-commented-headline ()
-  "Test evaluation of code blocks under COMMENT headings."
-  ;; Do not eval block in a commented headline.
-  (should
-   (string-match
-    ": 2"
-    (org-test-with-temp-text "* Headline
-#+BEGIN_SRC emacs-lisp :exports results
-\(+ 1 1)
-#+END_SRC"
-      (org-export-execute-babel-code)
-      (buffer-string))))
-  (should-not
-   (string-match
-    ": 2"
-    (org-test-with-temp-text "* COMMENT Headline
-#+BEGIN_SRC emacs-lisp :exports results
-\(+ 1 1)
-#+END_SRC"
-      (org-export-execute-babel-code)
-      (buffer-string))))
-  ;; Do not eval inline blocks either.
-  (should
-   (string-match
-    "=2="
-    (org-test-with-temp-text "* Headline
-src_emacs-lisp{(+ 1 1)}"
-      (org-export-execute-babel-code)
-      (buffer-string))))
-  (should-not
-   (string-match
-    "=2="
-    (org-test-with-temp-text "* COMMENT Headline
-src_emacs-lisp{(+ 1 1)}"
-      (org-export-execute-babel-code)
-      (buffer-string))))
-  ;; Also check parent headlines.
-  (should-not
-   (string-match
-    ": 2"
-    (org-test-with-temp-text "
-* COMMENT Headline
-** Children
-#+BEGIN_SRC emacs-lisp :exports results
-\(+ 1 1)
-#+END_SRC"
-      (org-export-execute-babel-code)
-      (buffer-string)))))
-
-(ert-deftest ob-export/reference-in-post-header ()
-  "Test references in :post header during export."
-  (should
-   (org-test-with-temp-text "
-#+NAME: foo
-#+BEGIN_SRC emacs-lisp :exports none :var bar=\"baz\"
-  (concat \"bar\" bar)
-#+END_SRC
-
-#+NAME: nofun
-#+BEGIN_SRC emacs-lisp :exports results :post foo(\"nofun\")
-#+END_SRC"
-     (org-export-execute-babel-code) t)))
-
 
 (provide 'test-ob-exp)
 

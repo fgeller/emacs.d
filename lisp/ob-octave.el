@@ -82,19 +82,18 @@ end")
 	 (full-body
 	  (org-babel-expand-body:generic
 	   body params (org-babel-variable-assignments:octave params)))
-	 (gfx-file (ignore-errors (org-babel-graphical-output-file params)))
 	 (result (org-babel-octave-evaluate
 		  session
-		  (if gfx-file
+		  (if (org-babel-octave-graphical-output-file params)
 		      (mapconcat 'identity
 				 (list
 				  "set (0, \"defaultfigurevisible\", \"off\");"
 				  full-body
-				  (format "print -dpng %s" gfx-file))
+				  (format "print -dpng %s" (org-babel-octave-graphical-output-file params)))
 				 "\n")
 		    full-body)
 		  result-type matlabp)))
-    (if gfx-file
+    (if (org-babel-octave-graphical-output-file params)
 	nil
       (org-babel-reassemble-table
        result
@@ -268,6 +267,11 @@ This removes initial blank and comment lines and then calls
   (if (string-match "^\"\\([^\000]+\\)\"$" string)
       (match-string 1 string)
     string))
+
+(defun org-babel-octave-graphical-output-file (params)
+  "Name of file to which maxima should send graphical output."
+  (and (member "graphics" (cdr (assq :result-params params)))
+       (cdr (assq :file params))))
 
 (provide 'ob-octave)
 

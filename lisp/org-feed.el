@@ -116,9 +116,7 @@ to create inbox items in Org.  Each entry is a list with the following items:
 
 name         a custom name for this feed
 URL          the Feed URL
-file         the target Org file where entries should be listed, when
-             nil the target becomes the current buffer (may be an
-             indirect buffer) each time the feed update is invoked
+file         the target Org file where entries should be listed
 headline     the headline under which entries should be listed
 
 Additional arguments can be given using keyword-value pairs.  Many of these
@@ -217,7 +215,10 @@ Here are the keyword-value pair allows in `org-feed-alist'.
 (defcustom org-feed-drawer "FEEDSTATUS"
   "The name of the drawer for feed status information.
 Each feed may also specify its own drawer name using the `:drawer'
-parameter in `org-feed-alist'."
+parameter in `org-feed-alist'.
+Note that in order to make these drawers behave like drawers, they must
+be added to the variable `org-drawers' or configured with a #+DRAWERS
+line."
   :group 'org-feed
   :type '(string :tag "Drawer Name"))
 
@@ -298,8 +299,7 @@ it can be a list structured like an entry in `org-feed-alist'."
   (catch 'exit
     (let ((name (car feed))
 	  (url (nth 1 feed))
-	  (file (or (nth 2 feed) (buffer-file-name (or (buffer-base-buffer)
-						       (current-buffer)))))
+	  (file (nth 2 feed))
 	  (headline (nth 3 feed))
 	  (filter (nth 1 (memq :filter feed)))
 	  (formatter (nth 1 (memq :formatter feed)))

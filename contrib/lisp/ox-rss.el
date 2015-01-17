@@ -204,12 +204,10 @@ publishing directory.
 Return output file name."
   (let ((bf (get-file-buffer filename)))
     (if bf
-	  (with-current-buffer bf
-	    (org-icalendar-create-uid filename 'warn-user)
-	    (org-rss-add-pubdate-property)
-	    (write-file filename))
+	(with-current-buffer bf
+	  (org-rss-add-pubdate-property)
+	  (write-file filename))
       (find-file filename)
-      (org-icalendar-create-uid filename 'warn-user)
       (org-rss-add-pubdate-property)
       (write-file filename) (kill-buffer)))
   (org-publish-org-to
@@ -224,10 +222,7 @@ communication channel."
   (unless (or (org-element-property :footnote-section-p headline)
 	      ;; Only consider first-level headlines
 	      (> (org-export-get-relative-level headline info) 1))
-    (let* ((author (and (plist-get info :with-author)
-			(let ((auth (plist-get info :author)))
-			  (and auth (org-export-data auth info)))))
-	   (htmlext (plist-get info :html-extension))
+    (let* ((htmlext (plist-get info :html-extension))
 	   (hl-number (org-export-get-headline-number headline info))
 	   (hl-home (file-name-as-directory (plist-get info :html-link-home)))
 	   (hl-pdir (plist-get info :publishing-directory))
@@ -238,12 +233,13 @@ communication channel."
 		 (concat "sec-" (mapconcat 'number-to-string hl-number "-")))))
 	   (category (org-rss-plain-text
 		      (or (org-element-property :CATEGORY headline) "") info))
-	   (pubdate0 (org-element-property :PUBDATE headline))
-	   (pubdate (let ((system-time-locale "C"))
-		      (if pubdate0
-			  (format-time-string
-			   "%a, %d %b %Y %H:%M:%S %z"
-			   (org-time-string-to-time pubdate0)))))
+	   (pubdate
+	    (let ((system-time-locale "C"))
+	      (format-time-string
+	       "%a, %d %b %Y %H:%M:%S %z"
+	       (org-time-string-to-time
+		(or (org-element-property :PUBDATE headline)
+		    (error "Missing PUBDATE property"))))))
 	   (title (replace-regexp-in-string
 		   org-bracket-link-regexp
 		   (lambda (m) (or (match-string 3 m)
@@ -263,19 +259,17 @@ communication channel."
 			(org-element-property :CUSTOM_ID headline)
 			publink)
 		    info))))
-      (if (not pubdate0) "" ;; Skip entries with no PUBDATE prop
-	(format
-	 (concat
-	  "<item>\n"
-	  "<title>%s</title>\n"
-	  "<link>%s</link>\n"
-	  "<author>%s</author>\n"
-	  "<guid isPermaLink=\"false\">%s</guid>\n"
-	  "<pubDate>%s</pubDate>\n"
-	  (org-rss-build-categories headline info) "\n"
-	  "<description><![CDATA[%s]]></description>\n"
-	  "</item>\n")
-	 title publink author guid pubdate contents)))))
+      (format
+       (concat
+	"<item>\n"
+	"<title>%s</title>\n"
+	"<link>%s</link>\n"
+	"<guid isPermaLink=\"false\">%s</guid>\n"
+	"<pubDate>%s</pubDate>\n"
+	(org-rss-build-categories headline info) "\n"
+	"<description><![CDATA[%s]]></description>\n"
+	"</item>\n")
+       title publink guid pubdate contents))))
 
 (defun org-rss-build-categories (headline info)
   "Build categories for the RSS item."

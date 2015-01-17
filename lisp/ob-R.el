@@ -35,11 +35,8 @@
 (declare-function inferior-ess-send-input "ext:ess-inf" ())
 (declare-function ess-make-buffer-current "ext:ess-inf" ())
 (declare-function ess-eval-buffer "ext:ess-inf" (vis))
-(declare-function ess-wait-for-process "ext:ess-inf"
-		  (proc &optional sec-prompt wait force-redisplay))
 (declare-function org-number-sequence "org-compat" (from &optional to inc))
 (declare-function org-remove-if-not "org" (predicate seq))
-(declare-function org-every "org" (pred seq))
 
 (defconst org-babel-header-args:R
   '((width		 . :any)
@@ -68,20 +65,7 @@
 			    (output value graphics))))
   "R-specific header arguments.")
 
-(defconst ob-R-safe-header-args
-  (append org-babel-safe-header-args
-	  '(:width :height :bg :units :pointsize :antialias :quality
-		   :compression :res :type :family :title :fonts
-		   :version :paper :encoding :pagecentre :colormodel
-		   :useDingbats :horizontal))
-  "Header args which are safe for R babel blocks.
-
-See `org-babel-safe-header-args' for documentation of the format of
-this variable.")
-
 (defvar org-babel-default-header-args:R '())
-(put 'org-babel-default-header-args:R 'safe-local-variable
-     (org-babel-header-args-safe-fn ob-R-safe-header-args))
 
 (defcustom org-babel-R-command "R --slave --no-save"
   "Name of command to use for executing R code."
@@ -89,67 +73,34 @@ this variable.")
   :version "24.1"
   :type 'string)
 
-(defvar ess-current-process-name) ; dynamically scoped
-(defvar ess-local-process-name)   ; dynamically scoped
+(defvar ess-local-process-name) ; dynamically scoped
 (defun org-babel-edit-prep:R (info)
   (let ((session (cdr (assoc :session (nth 2 info)))))
     (when (and session (string-match "^\\*\\(.+?\\)\\*$" session))
       (save-match-data (org-babel-R-initiate-session session nil)))))
 
-;; The usage of utils::read.table() ensures that the command
-;; read.table() can be found even in circumstances when the utils
-;; package is not in the search path from R.
-(defconst ob-R-transfer-variable-table-with-header
-  "%s <- local({
-     con <- textConnection(
-       %S
-     )
-     res <- utils::read.table(
-       con,
-       header    = %s,
-       row.names = %s,
-       sep       = \"\\t\",
-       as.is     = TRUE
-     )
-     close(con)
-     res
-   })"
-  "R code used to transfer a table defined as a variable from org to R.
-
-This function is used when the table contains a header.")
-
-(defconst ob-R-transfer-variable-table-without-header
-  "%s <- local({
-     con <- textConnection(
-       %S
-     )
-     res <- utils::read.table(
-       con,
-       header    = %s,
-       row.names = %s,
-       sep       = \"\\t\",
-       as.is     = TRUE,
-       fill      = TRUE,
-       col.names = paste(\"V\", seq_len(%d), sep =\"\")
-     )
-     close(con)
-     res
-   })"
-  "R code used to transfer a table defined as a variable from org to R.
-
-This function is used when the table does not contain a header.")
-
 (defun org-babel-expand-body:R (body params &optional graphics-file)
   "Expand BODY according to PARAMS, return the expanded body."
-  (mapconcat 'identity
-	     (append
-	      (when (cdr (assoc :prologue params))
-		(list (cdr (assoc :prologue params))))
-	      (org-babel-variable-assignments:R params)
-	      (list body)
-	      (when (cdr (assoc :epilogue params))
-		(list (cdr (assoc :epilogue params)))))
-	     "\n"))
+  (let ((graphics-file
+	 (or graphics-file (org-babel-R-graphical-output-file params))))
+    (mapconcat
+     #'identity
+     (let ((inside
+            (append
+             (when (cdr (assoc :prologue params))
+               (list (cdr (assoc :prologue params))))
+             (org-babel-variable-assignments:R params)
+             (list body)
+             (when (cdr (assoc :epilogue params))
+               (list (cdr (assoc :epilogue params)))))))
+       (if graphics-file
+           (append
+            (list (org-babel-R-construct-graphics-device-call
+                   graphics-file params))
+            inside
+            (list "dev.off()"))
+         inside))
+     "\n")))
 
 (defun org-babel-execute:R (body params)
   "Execute a block of R code.
@@ -161,20 +112,8 @@ This function is called by `org-babel-execute-src-block'."
 		     (cdr (assoc :session params)) params))
 	   (colnames-p (cdr (assoc :colnames params)))
 	   (rownames-p (cdr (assoc :rownames params)))
-	   (graphics-file (and (member "graphics" (assq :result-params params))
-			       (org-babel-graphical-output-file params)))
-	   (full-body
-	    (let ((inside
-		   (list (org-babel-expand-body:R body params graphics-file))))
-	      (mapconcat 'identity
-			 (if graphics-file
-			     (append
-			      (list (org-babel-R-construct-graphics-device-call
-				     graphics-file params))
-			      inside
-			      (list "},error=function(e){plot(x=-1:1, y=-1:1, type='n', xlab='', ylab='', axes=FALSE); text(x=0, y=0, labels=e$message, col='red'); paste('ERROR', e$message, sep=' : ')}); dev.off()"))
-			   inside)
-			 "\n")))
+	   (graphics-file (org-babel-R-graphical-output-file params))
+	   (full-body (org-babel-expand-body:R body params graphics-file))
 	   (result
 	    (org-babel-R-evaluate
 	     session full-body result-type result-params
@@ -209,7 +148,7 @@ This function is called by `org-babel-execute-src-block'."
 
 (defun org-babel-variable-assignments:R (params)
   "Return list of R statements assigning the block's variables."
-  (let ((vars (mapcar 'cdr (org-babel-get-header params :var))))
+  (let ((vars (mapcar #'cdr (org-babel-get-header params :var))))
     (mapcar
      (lambda (pair)
        (org-babel-R-assign-elisp
@@ -236,23 +175,33 @@ This function is called by `org-babel-execute-src-block'."
   (if (listp value)
       (let* ((lengths (mapcar 'length (org-remove-if-not 'sequencep value)))
 	     (max (if lengths (apply 'max lengths) 0))
-	     (min (if lengths (apply 'min lengths) 0)))
+	     (min (if lengths (apply 'min lengths) 0))
+	     (transition-file (org-babel-temp-file "R-import-")))
         ;; Ensure VALUE has an orgtbl structure (depth of at least 2).
         (unless (listp (car value)) (setq value (list value)))
-	(let ((file (orgtbl-to-tsv value '(:fmt org-babel-R-quote-tsv-field)))
+        (with-temp-file transition-file
+          (insert
+	   (orgtbl-to-tsv value '(:fmt org-babel-R-quote-tsv-field))
+	   "\n"))
+	(let ((file (org-babel-process-file-name transition-file 'noquote))
 	      (header (if (or (eq (nth 1 value) 'hline) colnames-p)
 			  "TRUE" "FALSE"))
 	      (row-names (if rownames-p "1" "NULL")))
 	  (if (= max min)
-	      (format ob-R-transfer-variable-table-with-header
-		      name file header row-names)
-	    (format ob-R-transfer-variable-table-without-header
+	      (format "%s <- read.table(\"%s\",
+                      header=%s,
+                      row.names=%s,
+                      sep=\"\\t\",
+                      as.is=TRUE)" name file header row-names)
+	    (format "%s <- read.table(\"%s\",
+                   header=%s,
+                   row.names=%s,
+                   sep=\"\\t\",
+                   as.is=TRUE,
+                   fill=TRUE,
+                   col.names = paste(\"V\", seq_len(%d), sep =\"\"))"
 		    name file header row-names max))))
-    (cond ((integerp value) (format "%s <- %s" name (concat (number-to-string value) "L")))
-	  ((floatp   value) (format "%s <- %s" name value))
-	  ((stringp  value) (format "%s <- %S" name (org-no-properties value)))
-	  (t                (format "%s <- %S" name (prin1-to-string value))))))
-
+    (format "%s <- %s" name (org-babel-R-quote-tsv-field value))))
 
 (defvar ess-ask-for-ess-directory) ; dynamically scoped
 (defun org-babel-R-initiate-session (session params)
@@ -260,8 +209,7 @@ This function is called by `org-babel-execute-src-block'."
   (unless (string= session "none")
     (let ((session (or session "*R*"))
 	  (ess-ask-for-ess-directory
-	   (and (boundp 'ess-ask-for-ess-directory)
-		ess-ask-for-ess-directory
+	   (and (and (boundp 'ess-ask-for-ess-directory) ess-ask-for-ess-directory)
 		(not (cdr (assoc :dir params))))))
       (if (org-babel-comint-buffer-livep session)
 	  session
@@ -270,10 +218,6 @@ This function is called by `org-babel-execute-src-block'."
 	    ;; Session buffer exists, but with dead process
 	    (set-buffer session))
 	  (require 'ess) (R)
-	  (let ((R-proc (get-process (or ess-local-process-name
-					 ess-current-process-name))))
-	    (while (process-get R-proc 'callbacks)
-	      (ess-wait-for-process R-proc)))
 	  (rename-buffer
 	   (if (bufferp session)
 	       (buffer-name session)
@@ -289,6 +233,11 @@ current code buffer."
   (setq ess-local-process-name
 	(process-name (get-buffer-process session)))
   (ess-make-buffer-current))
+
+(defun org-babel-R-graphical-output-file (params)
+  "Name of file to which R should send graphical output."
+  (and (member "graphics" (cdr (assq :result-params params)))
+       (cdr (assq :file params))))
 
 (defvar org-babel-R-graphics-devices
   '((:bmp "bmp" "filename")
@@ -331,7 +280,7 @@ Each member of this list is a list with three members:
 			      (substring (symbol-name (car pair)) 1)
 			      (cdr pair)) ""))
 		params ""))
-    (format "%s(%s=\"%s\"%s%s%s); tryCatch({"
+    (format "%s(%s=\"%s\"%s%s%s)"
 	    device filearg out-file args
 	    (if extra-args "," "") (or extra-args ""))))
 
@@ -409,7 +358,7 @@ last statement in BODY, as elisp."
 	column-names-p)))
     (output
      (mapconcat
-      'org-babel-chomp
+      #'org-babel-chomp
       (butlast
        (delq nil
 	     (mapcar
@@ -421,7 +370,7 @@ last statement in BODY, as elisp."
 		     (substring line (match-end 1))
 		   line))
 	       (org-babel-comint-with-output (session org-babel-R-eoe-output)
-		 (insert (mapconcat 'org-babel-chomp
+		 (insert (mapconcat #'org-babel-chomp
 				    (list body org-babel-R-eoe-indicator)
 				    "\n"))
 		 (inferior-ess-send-input)))))) "\n"))))
