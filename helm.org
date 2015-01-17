@@ -1,7 +1,7 @@
 * Helm
 
   #+begin_src emacs-lisp
-    (use-package helm-config)
+    (use-package helm-config :config (helm-mode 1))
     (use-package helm-ls-git)
   #+end_src
 
