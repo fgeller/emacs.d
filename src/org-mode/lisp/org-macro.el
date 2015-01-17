@@ -41,7 +41,7 @@
 ;;; Code:
 (require 'org-macs)
 
-(declare-function org-element-at-point "org-element" ())
+(declare-function org-element-at-point "org-element" (&optional keep-trail))
 (declare-function org-element-context "org-element" (&optional element))
 (declare-function org-element-property "org-element" (property element))
 (declare-function org-element-type "org-element" (element))
@@ -155,14 +155,10 @@ default value.  Return nil if no template was found."
         ;; Return string.
         (format "%s" (or value ""))))))
 
-(defun org-macro-replace-all (templates &optional finalize)
+(defun org-macro-replace-all (templates)
   "Replace all macros in current buffer by their expansion.
-
 TEMPLATES is an alist of templates used for expansion.  See
-`org-macro-templates' for a buffer-local default value.
-
-If optional arg FINALIZE is non-nil, raise an error if a macro is
-found in the buffer with no definition in TEMPLATES."
+`org-macro-templates' for a buffer-local default value."
   (save-excursion
     (goto-char (point-min))
     (let (record)
@@ -180,20 +176,17 @@ found in the buffer with no definition in TEMPLATES."
 	      (if (member signature record)
 		  (error "Circular macro expansion: %s"
 			 (org-element-property :key object))
-		(cond (value
-		       (push signature record)
-		       (delete-region
-			begin
-			;; Preserve white spaces after the macro.
-			(progn (goto-char (org-element-property :end object))
-			       (skip-chars-backward " \t")
-			       (point)))
-		       ;; Leave point before replacement in case of recursive
-		       ;; expansions.
-		       (save-excursion (insert value)))
-		      (finalize
-		       (error "Undefined Org macro: %s; aborting."
-			      (org-element-property :key object))))))))))))
+		(when value
+		  (push signature record)
+		  (delete-region
+		   begin
+		   ;; Preserve white spaces after the macro.
+		   (progn (goto-char (org-element-property :end object))
+			  (skip-chars-backward " \t")
+			  (point)))
+		  ;; Leave point before replacement in case of recursive
+		  ;; expansions.
+		  (save-excursion (insert value)))))))))))
 
 
 (provide 'org-macro)

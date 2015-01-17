@@ -281,7 +281,8 @@ line directly before or after the table."
     (delete-other-windows)
     (when (get-buffer "*gnuplot*") ;; reset *gnuplot* if it already running
       (with-current-buffer "*gnuplot*"
-	(goto-char (point-max))))
+	(goto-char (point-max))
+	(gnuplot-delchar-or-maybe-eof nil)))
     (org-plot/goto-nearest-table)
     ;; set default options
     (mapc
@@ -294,7 +295,6 @@ line directly before or after the table."
 	   (table (org-table-to-lisp))
 	   (num-cols (length (if (eq (first table) 'hline) (second table)
 			       (first table)))))
-      (run-with-idle-timer 0.1 nil #'delete-file data-file)
       (while (equal 'hline (first table)) (setf table (cdr table)))
       (when (equal (second table) 'hline)
 	(setf params (plist-put params :labels (first table))) ;; headers to labels
@@ -345,7 +345,8 @@ line directly before or after the table."
 	(gnuplot-mode)
 	(gnuplot-send-buffer-to-gnuplot))
       ;; cleanup
-      (bury-buffer (get-buffer "*gnuplot*")))))
+      (bury-buffer (get-buffer "*gnuplot*"))
+      (run-with-idle-timer 0.1 nil (lambda () (delete-file data-file))))))
 
 (provide 'org-plot)
 

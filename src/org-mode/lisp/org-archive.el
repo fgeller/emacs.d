@@ -119,15 +119,9 @@ information."
 	      (const :tag "Outline path" olpath)
 	      (const :tag "Local tags" ltags)))
 
-(defvar org-archive-hook nil
-  "Hook run after successfully archiving a subtree.
-Hook functions are called with point on the subtree in the
-original file.  At this stage, the subtree has been added to the
-archive location, but not yet deleted from the original file.")
-
 (defun org-get-local-archive-location ()
   "Get the archive location applicable at point."
-  (let ((re "^[ \t]*#\\+ARCHIVE:[ \t]+\\(\\S-.*\\S-\\)[ \t]*$")
+  (let ((re "^#\\+ARCHIVE:[ \t]+\\(\\S-.*\\S-\\)[ \t]*$")
 	prop)
     (save-excursion
       (save-restriction
@@ -164,7 +158,7 @@ archive file is."
       (save-restriction
 	(goto-char (point-min))
 	(while (re-search-forward
-		"^[ \t]*\\(#\\+\\|:\\)ARCHIVE:[ \t]+\\(.*\\)"
+		"^\\(#\\+\\|[ \t]*:\\)ARCHIVE:[ \t]+\\(.*\\)"
 		nil t)
 	  (setq file (org-extract-archive-file
 		      (org-match-string-no-properties 2)))
@@ -372,10 +366,8 @@ this heading."
 	    ;; Save and kill the buffer, if it is not the same buffer.
 	    (when (not (eq this-buffer buffer))
 	      (save-buffer))))
-	;; Here we are back in the original buffer.  Everything seems
-	;; to have worked.  So now run hooks, cut the tree and finish
-	;; up.
-	(run-hooks 'org-archive-hook)
+	;; Here we are back in the original buffer.  Everything seems to have
+	;; worked.  So now cut the tree and finish up.
 	(let (this-command) (org-cut-subtree))
 	(when (featurep 'org-inlinetask)
 	  (org-inlinetask-remove-END-maybe))

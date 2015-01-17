@@ -394,7 +394,6 @@ packages to be loaded, add these packages to `org-latex-packages-alist'."
     ("ang" "\\angle" t "&ang;" "[angle]" "[angle]" "∠")
     ("angle" "\\angle" t "&ang;" "[angle]" "[angle]" "∠")
     ("perp" "\\perp" t "&perp;" "[up tack]" "[up tack]" "⊥")
-    ("parallel" "\\parallel" t "&parallel;" "||" "||" "∥")
     ("sdot" "\\cdot" t "&sdot;" "[dot]" "[dot]" "⋅")
     ("cdot" "\\cdot" t "&sdot;" "[dot]" "[dot]" "⋅")
     ("lceil" "\\lceil" t "&lceil;" "[left ceiling]" "[left ceiling]" "⌈")
@@ -403,8 +402,6 @@ packages to be loaded, add these packages to `org-latex-packages-alist'."
     ("rfloor" "\\rfloor" t "&rfloor;" "[right floor]" "[right floor]" "⌋")
     ("lang" "\\langle" t "&lang;" "<" "<" "⟨")
     ("rang" "\\rangle" t "&rang;" ">" ">" "⟩")
-    ("langle" "\\langle" t "&lang;" "<" "<" "⟨")
-    ("rangle" "\\rangle" t "&rang;" ">" ">" "⟩")
     ("hbar" "\\hbar" t "&hbar;" "hbar" "hbar" "ℏ")
     ("mho" "\\mho" t "&mho;" "mho" "mho" "℧")
 

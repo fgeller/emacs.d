@@ -88,11 +88,11 @@
 (defvar org-closed-string)
 (defvar org-deadline-string)
 (defvar org-description-max-indent)
+(defvar org-drawers)
 (defvar org-odd-levels-only)
 (defvar org-scheduled-string)
 (defvar org-ts-regexp)
 (defvar org-ts-regexp-both)
-(defvar org-drawer-regexp)
 
 (declare-function outline-invisible-p "outline" (&optional pos))
 (declare-function outline-flag-region "outline" (from to flag))
@@ -211,19 +211,11 @@ into
 
 (defcustom org-plain-list-ordered-item-terminator t
   "The character that makes a line with leading number an ordered list item.
-Valid values are ?. and ?\).  To get both terminators, use t.
-
-This variable needs to be set before org.el is loaded.  If you
-need to make a change while Emacs is running, use the customize
-interface or run the following code after updating it:
-
-  \\[org-element-update-syntax]"
+Valid values are ?. and ?\).  To get both terminators, use t."
   :group 'org-plain-lists
   :type '(choice (const :tag "dot like in \"2.\"" ?.)
 		 (const :tag "paren like in \"2)\"" ?\))
-		 (const :tag "both" t))
-  :set (lambda (var val) (set var val)
-	 (when (featurep 'org-element) (org-element-update-syntax))))
+		 (const :tag "both" t)))
 
 (define-obsolete-variable-alias 'org-alphabetical-lists
   'org-list-allow-alphabetical "24.4") ; Since 8.0
@@ -238,12 +230,13 @@ This variable needs to be set before org.el is loaded.  If you
 need to make a change while Emacs is running, use the customize
 interface or run the following code after updating it:
 
-  \\[org-element-update-syntax]"
+  \(when (featurep 'org-element) (load \"org-element\" t t))"
   :group 'org-plain-lists
   :version "24.1"
   :type 'boolean
-  :set (lambda (var val) (set var val)
-	 (when (featurep 'org-element) (org-element-update-syntax))))
+  :set (lambda (var val)
+	 (when (featurep 'org-element) (load "org-element" t t))
+	 (set var val)))
 
 (defcustom org-list-two-spaces-after-bullet-regexp nil
   "A regular expression matching bullets that should have 2 spaces after them.
@@ -437,6 +430,9 @@ group 4: description tag")
     (let* ((case-fold-search t)
 	   (context (org-list-context))
 	   (lim-up (car context))
+	   (drawers-re (concat "^[ \t]*:\\("
+			       (mapconcat 'regexp-quote org-drawers "\\|")
+			       "\\):[ \t]*$"))
 	   (inlinetask-re (and (featurep 'org-inlinetask)
 			       (org-inlinetask-outline-regexp)))
 	   (item-re (org-item-re))
@@ -480,7 +476,7 @@ group 4: description tag")
 	       ((and (looking-at "^[ \t]*#\\+end_")
 		     (re-search-backward "^[ \t]*#\\+begin_" lim-up t)))
 	       ((and (looking-at "^[ \t]*:END:")
-		     (re-search-backward org-drawer-regexp lim-up t))
+		     (re-search-backward drawers-re lim-up t))
 		(beginning-of-line))
 	       ((and inlinetask-re (looking-at inlinetask-re))
 		(org-inlinetask-goto-beginning)
@@ -551,7 +547,11 @@ Contexts `block' and `invalid' refer to `org-list-forbidden-blocks'."
 	     (lim-down (or (save-excursion (outline-next-heading)) (point-max))))
 	 ;; Is point inside a drawer?
 	 (let ((end-re "^[ \t]*:END:")
-	       (beg-re org-drawer-regexp))
+	       ;; Can't use org-drawers-regexp as this function might
+	       ;; be called in buffers not in Org mode.
+	       (beg-re (concat "^[ \t]*:\\("
+			       (mapconcat 'regexp-quote org-drawers "\\|")
+			       "\\):[ \t]*$")))
 	   (when (save-excursion
 		   (and (not (looking-at beg-re))
 			(not (looking-at end-re))
@@ -635,6 +635,9 @@ Assume point is at an item."
 	   (lim-down (nth 1 context))
 	   (text-min-ind 10000)
 	   (item-re (org-item-re))
+	   (drawers-re (concat "^[ \t]*:\\("
+			       (mapconcat 'regexp-quote org-drawers "\\|")
+			       "\\):[ \t]*$"))
 	   (inlinetask-re (and (featurep 'org-inlinetask)
 			       (org-inlinetask-outline-regexp)))
 	   (beg-cell (cons (point) (org-get-indentation)))
@@ -697,7 +700,7 @@ Assume point is at an item."
 	       ((and (looking-at "^[ \t]*#\\+end_")
 		     (re-search-backward "^[ \t]*#\\+begin_" lim-up t)))
 	       ((and (looking-at "^[ \t]*:END:")
-		     (re-search-backward org-drawer-regexp lim-up t))
+		     (re-search-backward drawers-re lim-up t))
 		(beginning-of-line))
 	       ((and inlinetask-re (looking-at inlinetask-re))
 		(org-inlinetask-goto-beginning)
@@ -763,7 +766,7 @@ Assume point is at an item."
 	      (cond
 	       ((and (looking-at "^[ \t]*#\\+begin_")
 		     (re-search-forward "^[ \t]*#\\+end_" lim-down t)))
-	       ((and (looking-at org-drawer-regexp)
+	       ((and (looking-at drawers-re)
 		     (re-search-forward "^[ \t]*:END:" lim-down t))))
 	      (forward-line 1))))))
       (setq struct (append itm-lst (cdr (nreverse itm-lst-2)))
@@ -2058,19 +2061,16 @@ Possible values are: `folded', `children' or `subtree'.  See
 
 (defun org-list-item-body-column (item)
   "Return column at which body of ITEM should start."
-  (save-excursion
-    (goto-char item)
-    (looking-at "[ \t]*\\(\\S-+\\)\\(.*[ \t]+::\\)?\\([ \t]+\\|$\\)")
-    (if (match-beginning 2)
-	(let ((start (1+ (match-end 2)))
-	      (ind (org-get-indentation)))
-	  (if (> start (+ ind org-description-max-indent)) (+ ind 5) start))
-      (+ (progn (goto-char (match-end 1)) (current-column))
-	 (if (and org-list-two-spaces-after-bullet-regexp
-		  (org-string-match-p org-list-two-spaces-after-bullet-regexp
-				      (match-string 1)))
-	     2
-	   1)))))
+  (let (bpos bcol tpos tcol)
+    (save-excursion
+      (goto-char item)
+      (looking-at "[ \t]*\\(\\S-+\\)\\(.*[ \t]+::\\)?\\([ \t]+\\|$\\)")
+      (setq bpos (match-beginning 1) tpos (match-end 0)
+	    bcol (progn (goto-char bpos) (current-column))
+	    tcol (progn (goto-char tpos) (current-column)))
+      (when (> tcol (+ bcol org-description-max-indent))
+	(setq tcol (+ bcol 5))))
+    tcol))
 
 
 
@@ -2326,6 +2326,9 @@ in subtree, ignoring drawers."
 	   block-item
 	   lim-up
 	   lim-down
+	   (drawer-re (concat "^[ \t]*:\\("
+			      (mapconcat 'regexp-quote org-drawers "\\|")
+			      "\\):[ \t]*$"))
 	   (keyword-re (concat "^[ \t]*\\<\\(" org-scheduled-string
 			       "\\|" org-deadline-string
 			       "\\|" org-closed-string
@@ -2347,8 +2350,7 @@ in subtree, ignoring drawers."
 	      ;; time-stamps (scheduled, etc.).
 	      (let ((limit (save-excursion (outline-next-heading) (point))))
 		(forward-line 1)
-		(while (or (looking-at org-drawer-regexp)
-			   (looking-at keyword-re))
+		(while (or (looking-at drawer-re) (looking-at keyword-re))
 		  (if (looking-at keyword-re)
 		      (forward-line 1)
 		    (re-search-forward "^[ \t]*:END:" limit nil)))
@@ -3054,7 +3056,7 @@ for this list."
     (unless (org-at-item-p) (error "Not at a list item"))
     (save-excursion
       (re-search-backward "#\\+ORGLST" nil t)
-      (unless (looking-at "\\(?:[ \t]\\)?#\\+ORGLST:[ \t]+SEND[ \t]+\\(\\S-+\\)[ \t]+\\(\\S-+\\)")
+      (unless (looking-at "#\\+ORGLST:[ \t]+SEND[ \t]+\\(\\S-+\\)[ \t]+\\(\\S-+\\)")
 	(if maybe (throw 'exit nil)
 	  (error "Don't know how to transform this list"))))
     (let* ((name (match-string 1))

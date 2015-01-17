@@ -28,7 +28,8 @@
 ;;; Code:
 (require 'ob)
 
-(defvar org-babel-default-header-args:emacs-lisp nil
+(defvar org-babel-default-header-args:emacs-lisp
+  '((:hlines . "yes") (:colnames . "no"))
   "Default arguments for evaluating an emacs-lisp source block.")
 
 (declare-function orgtbl-to-generic "org-table" (table params))

@@ -231,19 +231,15 @@ Return overlay specification, as a string, or nil."
 	      (if a (org-beamer-export-to-pdf t s v b)
 		(org-open-file (org-beamer-export-to-pdf nil s v b)))))))
   :options-alist
-  '((:headline-levels nil "H" org-beamer-frame-level)
-    (:latex-class "LATEX_CLASS" nil "beamer" t)
-    (:beamer-column-view-format "COLUMNS" nil org-beamer-column-view-format)
-    (:beamer-theme "BEAMER_THEME" nil org-beamer-theme)
+  '((:beamer-theme "BEAMER_THEME" nil org-beamer-theme)
     (:beamer-color-theme "BEAMER_COLOR_THEME" nil nil t)
     (:beamer-font-theme "BEAMER_FONT_THEME" nil nil t)
     (:beamer-inner-theme "BEAMER_INNER_THEME" nil nil t)
     (:beamer-outer-theme "BEAMER_OUTER_THEME" nil nil t)
     (:beamer-header-extra "BEAMER_HEADER" nil nil newline)
-    (:beamer-environments-extra nil nil org-beamer-environments-extra)
-    (:beamer-frame-default-options nil nil org-beamer-frame-default-options)
-    (:beamer-outline-frame-options nil nil org-beamer-outline-frame-options)
-    (:beamer-outline-frame-title nil nil org-beamer-outline-frame-title))
+    ;; Modify existing properties.
+    (:headline-levels nil "H" org-beamer-frame-level)
+    (:latex-class "LATEX_CLASS" nil "beamer" t))
   :translate-alist '((bold . org-beamer-bold)
 		     (export-block . org-beamer-export-block)
 		     (export-snippet . org-beamer-export-snippet)
@@ -337,10 +333,12 @@ INFO is a plist used as a communication channel."
    ;; 1. Look for "frame" environment in parents, starting from the
    ;;    farthest.
    (catch 'exit
-     (dolist (parent (nreverse (org-element-lineage headline)))
-       (let ((env (org-element-property :BEAMER_ENV parent)))
-	 (when (and env (member-ignore-case env '("frame" "fullframe")))
-	   (throw 'exit (org-export-get-relative-level parent info))))))
+     (mapc (lambda (parent)
+	     (let ((env (org-element-property :BEAMER_ENV parent)))
+	       (when (and env (member-ignore-case env '("frame" "fullframe")))
+		 (throw 'exit (org-export-get-relative-level parent info)))))
+	   (nreverse (org-export-get-genealogy headline)))
+     nil)
    ;; 2. Look for "frame" environment in HEADLINE.
    (let ((env (org-element-property :BEAMER_ENV headline)))
      (and env (member-ignore-case env '("frame" "fullframe"))
@@ -415,8 +413,7 @@ used as a communication channel."
 		    ;; Collect options from default value and headline's
 		    ;; properties.  Also add a label for links.
 		    (append
-		     (org-split-string
-		      (plist-get info :beamer-frame-default-options) ",")
+		     (org-split-string org-beamer-frame-default-options ",")
 		     (and beamer-opt
 			  (org-split-string
 			   ;; Remove square brackets if user provided
@@ -478,7 +475,7 @@ used as a communication channel."
 	 (env-format
 	  (cond ((member environment '("column" "columns")) nil)
 		((assoc environment
-			(append (plist-get info :beamer-environments-extra)
+			(append org-beamer-environments-extra
 				org-beamer-environments-default)))
 		(t (user-error "Wrong block type at a headline named \"%s\""
 			       raw-title))))
@@ -524,7 +521,7 @@ used as a communication channel."
 	       ;; One can specify placement for column only when
 	       ;; HEADLINE stands for a column on its own.
 	       (if (equal environment "column") options "")
-	       (format "%s\\columnwidth" column-width)))
+	       (format "%s\\textwidth" column-width)))
      ;; Block's opening string.
      (when (nth 2 env-format)
        (concat
@@ -780,7 +777,7 @@ contextual information."
   "Transcode a TARGET object into Beamer code.
 CONTENTS is nil.  INFO is a plist holding contextual
 information."
-  (format "\\label{%s}"
+  (format "\\hypertarget{%s}{}"
 	  (org-export-solidify-link-text (org-element-property :value target))))
 
 
@@ -855,7 +852,8 @@ holding export options."
 		       (org-export-data (plist-get info :email) info))))
        (cond ((and author email (not (string= "" email)))
 	      (format "\\author{%s\\thanks{%s}}\n" author email))
-	     ((or author email) (format "\\author{%s}\n" (or author email)))))
+	     (author (format "\\author{%s}\n" author))
+	     (t "\\author{}\n")))
      ;; 6. Date.
      (let ((date (and (plist-get info :with-date) (org-export-get-date info))))
        (format "\\date{%s}\n" (org-export-data date info)))
@@ -884,8 +882,8 @@ holding export options."
 	 (concat
 	  (format "\\begin{frame}%s{%s}\n"
 		  (org-beamer--normalize-argument
-		   (plist-get info :beamer-outline-frame-options) 'option)
-		  (plist-get info :beamer-outline-frame-title))
+		   org-beamer-outline-frame-options 'option)
+		  org-beamer-outline-frame-title)
 	  (when (wholenump depth)
 	    (format "\\setcounter{tocdepth}{%d}\n" depth))
 	  "\\tableofcontents\n"
@@ -1121,6 +1119,30 @@ aid, but the tag does not have any semantic meaning."
        ((string-match (concat ":B_\\(" (mapconcat 'car envs "\\|") "\\):") tags)
 	(org-entry-put nil "BEAMER_env" (match-string 1 tags)))
        (t (org-entry-delete nil "BEAMER_env"))))))
+
+;;;###autoload
+(defun org-beamer-insert-options-template (&optional kind)
+  "Insert a settings template, to make sure users do this right."
+  (interactive (progn
+		 (message "Current [s]ubtree or [g]lobal?")
+		 (if (eq (read-char-exclusive) ?g) (list 'global)
+		   (list 'subtree))))
+  (if (eq kind 'subtree)
+      (progn
+	(org-back-to-heading t)
+	(org-reveal)
+	(org-entry-put nil "EXPORT_LaTeX_CLASS" "beamer")
+	(org-entry-put nil "EXPORT_LaTeX_CLASS_OPTIONS" "[presentation]")
+	(org-entry-put nil "EXPORT_FILE_NAME" "presentation.pdf")
+	(when org-beamer-column-view-format
+	  (org-entry-put nil "COLUMNS" org-beamer-column-view-format))
+	(org-entry-put nil "BEAMER_col_ALL" org-beamer-column-widths))
+    (insert "#+LaTeX_CLASS: beamer\n")
+    (insert "#+LaTeX_CLASS_OPTIONS: [presentation]\n")
+    (when org-beamer-theme (insert "#+BEAMER_THEME: " org-beamer-theme "\n"))
+    (when org-beamer-column-view-format
+      (insert "#+COLUMNS: " org-beamer-column-view-format "\n"))
+    (insert "#+PROPERTY: BEAMER_col_ALL " org-beamer-column-widths "\n")))
 
 ;;;###autoload
 (defun org-beamer-publish-to-latex (plist filename pub-dir)

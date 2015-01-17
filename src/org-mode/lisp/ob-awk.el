@@ -46,6 +46,9 @@
 
 (defun org-babel-expand-body:awk (body params)
   "Expand BODY according to PARAMS, return the expanded body."
+  (dolist (pair (mapcar #'cdr (org-babel-get-header params :var)))
+    (setf body (replace-regexp-in-string
+                (regexp-quote (format "$%s" (car pair))) (cdr pair) body)))
   body)
 
 (defun org-babel-execute:awk (body params)
@@ -65,17 +68,10 @@ called by `org-babel-execute-src-block'"
 		       (with-temp-file tmp
 			 (insert (org-babel-awk-var-to-awk res)))
 		       tmp))))
-         (cmd (mapconcat #'identity
-			 (append
-			  (list org-babel-awk-command
-				"-f" code-file cmd-line)
-			  (mapcar (lambda (pair)
-				    (format "-v %s='%s'"
-					    (cadr pair)
-					    (org-babel-awk-var-to-awk
-					     (cddr pair))))
-				  (org-babel-get-header params :var))
-			  (list in-file))
+         (cmd (mapconcat #'identity (remove nil (list org-babel-awk-command
+						      "-f" code-file
+						      cmd-line
+						      in-file))
 			 " ")))
     (org-babel-reassemble-table
      (let ((results

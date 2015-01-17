@@ -41,15 +41,13 @@
 (declare-function org-back-over-empty-lines "org" ())
 (declare-function org-back-to-heading "org" (&optional invisible-ok))
 (declare-function org-combine-plists "org" (&rest plists))
-(declare-function org-element-context "org-element" (&optional element))
-(declare-function org-element-property "org-element" (property element))
-(declare-function org-element-type "org-element" (element))
 (declare-function org-end-of-subtree "org"  (&optional invisible-ok to-heading))
 (declare-function org-fill-paragraph "org" (&optional justify))
 (declare-function org-icompleting-read "org" (&rest args))
 (declare-function org-id-uuid "org-id" ())
 (declare-function org-in-block-p "org" (names))
-(declare-function org-at-comment-p "org" ())
+(declare-function org-in-commented-line "org" ())
+(declare-function org-in-indented-comment-line "org" ())
 (declare-function org-in-regexp "org" (re &optional nlines visually))
 (declare-function org-in-verbatim-emphasis "org" ())
 (declare-function org-inside-LaTeX-fragment-p "org" ())
@@ -108,18 +106,8 @@ the notes.  However, by hand you may place definitions
 *anywhere*.
 
 If this is a string, during export, all subtrees starting with
-this heading will be ignored.
-
-If you don't use the customize interface to change this variable,
-you will need to run the following command after the change:
-
-  \\[universal-argument] \\[org-element-cache-reset]"
+this heading will be ignored."
   :group 'org-footnote
-  :initialize 'custom-initialize-default
-  :set (lambda (var val)
-	 (set var val)
-	 (when (fboundp 'org-element-cache-reset)
-	   (org-element-cache-reset 'all)))
   :type '(choice
 	  (string :tag "Collect footnotes under heading")
 	  (const :tag "Define footnotes locally" nil)))
@@ -194,7 +182,8 @@ extracted will be filled again."
 (defun org-footnote-in-valid-context-p ()
   "Is point in a context where footnotes are allowed?"
   (save-match-data
-    (not (or (org-at-comment-p)
+    (not (or (org-in-commented-line)
+	     (org-in-indented-comment-line)
 	     (org-inside-LaTeX-fragment-p)
 	     ;; Avoid literal example.
 	     (org-in-verbatim-emphasis)
@@ -575,43 +564,38 @@ When at a definition, jump to the references if they exist, offer
 to create them otherwise.
 
 When neither at definition or reference, create a new footnote,
-interactively if possible.
+interactively.
 
-With prefix arg SPECIAL, or when no footnote can be created,
-offer additional commands in a menu."
+With prefix arg SPECIAL, offer additional commands in a menu."
   (interactive "P")
-  (let* ((context (and (not special) (org-element-context)))
-	 (type (org-element-type context)))
+  (let (tmp c)
     (cond
-     ((eq type 'footnote-reference)
-      (let ((label (org-element-property :label context)))
-	(cond
-	 ;; Anonymous footnote: move point at the beginning of its
-	 ;; definition.
-	 ((not label)
-	  (goto-char (org-element-property :contents-begin context)))
-	 ;; A definition exists: move to it.
-	 ((ignore-errors (org-footnote-goto-definition label)))
-	 ;; No definition exists: offer to create it.
-	 ((yes-or-no-p (format "No definition for %s.  Create one? " label))
-	  (org-footnote-create-definition label)))))
-     ((eq type 'footnote-definition)
-      (org-footnote-goto-previous-reference
-       (org-element-property :label context)))
-     ((or special
-	  (zerop (current-column))
-	  (not (org-footnote-in-valid-context-p)))
+     (special
       (message "Footnotes: [s]ort  |  [r]enumber fn:N  |  [S]=r+s |->[n]umeric  |  [d]elete")
-      (let ((c (read-char-exclusive)))
-	(cond
-	 ((eq c ?s) (org-footnote-normalize 'sort))
-	 ((eq c ?r) (org-footnote-renumber-fn:N))
-	 ((eq c ?S)
-	  (org-footnote-renumber-fn:N)
-	  (org-footnote-normalize 'sort))
-	 ((eq c ?n) (org-footnote-normalize))
-	 ((eq c ?d) (org-footnote-delete))
-	 (t (error "No such footnote command %c" c)))))
+      (setq c (read-char-exclusive))
+      (cond
+       ((eq c ?s) (org-footnote-normalize 'sort))
+       ((eq c ?r) (org-footnote-renumber-fn:N))
+       ((eq c ?S)
+	(org-footnote-renumber-fn:N)
+	(org-footnote-normalize 'sort))
+       ((eq c ?n) (org-footnote-normalize))
+       ((eq c ?d) (org-footnote-delete))
+       (t (error "No such footnote command %c" c))))
+     ((setq tmp (org-footnote-at-reference-p))
+      (cond
+       ;; Anonymous footnote: move point at the beginning of its
+       ;; definition.
+       ((not (car tmp))
+	(goto-char (nth 1 tmp))
+	(forward-char 5))
+       ;; A definition exists: move to it.
+       ((ignore-errors (org-footnote-goto-definition (car tmp))))
+       ;; No definition exists: offer to create it.
+       ((yes-or-no-p (format "No definition for %s.  Create one? " (car tmp)))
+	(org-footnote-create-definition (car tmp)))))
+     ((setq tmp (org-footnote-at-definition-p))
+      (org-footnote-goto-previous-reference (car tmp)))
      (t (org-footnote-new)))))
 
 ;;;###autoload

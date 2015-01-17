@@ -186,7 +186,20 @@ This is the compiled version of the format.")
     (while (setq column (pop fmt))
       (setq property (car column)
 	    title (nth 1 column)
-	    ass (assoc property props)
+	    ass (if (equal property "ITEM")
+		    (cons "ITEM"
+			  ;; When in a buffer, get the whole line,
+			  ;; we'll clean it later…
+			  (if (derived-mode-p 'org-mode)
+			      (save-match-data
+				(org-remove-tabs
+				 (buffer-substring-no-properties
+				  (point-at-bol) (point-at-eol))))
+			    ;; In agenda, just get the `txt' property
+			    (or (org-get-at-bol 'txt)
+				(buffer-substring-no-properties
+				 (point) (progn (end-of-line) (point))))))
+		  (assoc property props))
 	    width (or (cdr (assoc property org-columns-current-maxwidths))
 		      (nth 2 column)
 		      (length property))
@@ -201,7 +214,9 @@ This is the compiled version of the format.")
 			  (funcall org-columns-modify-value-for-display-function
 				   title val))
 			 ((equal property "ITEM")
-			  (org-columns-compact-links val))
+			  (org-columns-cleanup-item
+			   val org-columns-current-fmt-compiled
+			   (or org-complex-heading-regexp cphr)))
 			 (fc (org-columns-number-to-string
 			      (org-columns-string-to-number val fm) fm fc))
 			 ((and calc (functionp calc)
@@ -332,6 +347,29 @@ for the duration of the command.")
 	(flyspell-mode 1))
       (when (local-variable-p 'org-colview-initial-truncate-line-value)
 	(setq truncate-lines org-colview-initial-truncate-line-value)))))
+
+(defun org-columns-cleanup-item (item fmt cphr)
+  "Remove from ITEM what is a column in the format FMT.
+CPHR is the complex heading regexp to use for parsing ITEM."
+  (let (fixitem)
+    (if (not cphr)
+	item
+      (unless (string-match "^\*+ " item)
+	(setq item (concat "* " item) fixitem t))
+      (if (string-match cphr item)
+	  (setq item
+		(concat
+		 (org-add-props (match-string 1 item) nil
+		   'org-whitespace (* 2 (1- (org-reduced-level (- (match-end 1) (match-beginning 1))))))
+		 (and (match-end 2) (not (assoc "TODO" fmt)) (concat " " (match-string 2 item)))
+		 (and (match-end 3) (not (assoc "PRIORITY" fmt)) (concat " " (match-string 3 item)))
+		 " " (save-match-data (org-columns-compact-links (or (match-string 4 item) "")))
+		 (and (match-end 5) (not (assoc "TAGS" fmt)) (concat " " (match-string 5 item)))))
+	(add-text-properties
+	 0 (1+ (match-end 1))
+	 (list 'org-whitespace (* 2 (1- (org-reduced-level (- (match-end 1) (match-beginning 1))))))
+	 item))
+      (if fixitem (replace-regexp-in-string "^\*+ " "" item) item))))
 
 (defun org-columns-compact-links (s)
   "Replace [[link][desc]] with [desc] or [link]."
@@ -862,7 +900,7 @@ display, or in the #+COLUMNS line of the current buffer."
 	      (org-entry-put nil "COLUMNS" fmt)
 	    (goto-char (point-min))
 	    ;; Overwrite all #+COLUMNS lines....
-	    (while (re-search-forward "^[ \t]*#\\+COLUMNS:.*" nil t)
+	    (while (re-search-forward "^#\\+COLUMNS:.*" nil t)
 	      (setq cnt (1+ cnt))
 	      (replace-match (concat "#+COLUMNS: " fmt) t t))
 	    (unless (> cnt 0)
@@ -1086,7 +1124,7 @@ display, or in the #+COLUMNS line of the current buffer."
 
 (defun org-columns-uncompile-format (cfmt)
   "Turn the compiled columns format back into a string representation."
-  (let ((rtn "") e s prop title op op-match width fmt printf fun calc ee map)
+  (let ((rtn "") e s prop title op op-match width fmt printf fun calc)
     (while (setq e (pop cfmt))
       (setq prop (car e)
 	    title (nth 1 e)
@@ -1096,10 +1134,8 @@ display, or in the #+COLUMNS line of the current buffer."
 	    printf (nth 5 e)
 	    fun (nth 6 e)
 	    calc (nth 7 e))
-      (setq map (copy-sequence org-columns-compile-map))
-      (while (setq ee (pop map))
-	(if (equal fmt (nth 1 ee))
-	    (setq op (car ee) map nil)))
+      (when (setq op-match (rassoc (list fmt fun calc) org-columns-compile-map))
+	(setq op (car op-match)))
       (if (and op printf) (setq op (concat op ";" printf)))
       (if (equal title prop) (setq title nil))
       (setq s (concat "%" (if width (number-to-string width))
@@ -1163,6 +1199,8 @@ containing the title row and all other rows.  Each row is a list
 of fields."
   (save-excursion
     (let* ((title (mapcar 'cadr org-columns-current-fmt-compiled))
+	   (re-comment (format org-heading-keyword-regexp-format
+			       org-comment-string))
 	   (re-archive (concat ".*:" org-archive-tag ":"))
 	   (n (length title)) row tbl)
       (goto-char (point-min))
@@ -1174,9 +1212,9 @@ of fields."
 				 (/ (1+ (length (match-string 1))) 2)
 			       (length (match-string 1)))))
 		     (get-char-property (match-beginning 0) 'org-columns-key))
-	    (when (or (org-in-commented-heading-p t)
-		      (save-excursion
-			(beginning-of-line)
+	    (when (save-excursion
+		    (goto-char (point-at-bol))
+		    (or (looking-at re-comment)
 			(looking-at re-archive)))
 	      (org-end-of-subtree t)
 	      (throw 'next t))

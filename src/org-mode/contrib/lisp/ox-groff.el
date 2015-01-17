@@ -70,13 +70,13 @@
     (keyword . org-groff-keyword)
     (line-break . org-groff-line-break)
     (link . org-groff-link)
-    (node-property . org-groff-node-property)
     (paragraph . org-groff-paragraph)
     (plain-list . org-groff-plain-list)
     (plain-text . org-groff-plain-text)
     (planning . org-groff-planning)
-    (property-drawer . org-groff-property-drawer)
+    (property-drawer . (lambda (&rest args) ""))
     (quote-block . org-groff-quote-block)
+    (quote-section . org-groff-quote-section)
     (radio-target . org-groff-radio-target)
     (section . org-groff-section)
     (special-block . org-groff-special-block)
@@ -1313,17 +1313,6 @@ INFO is a plist holding contextual information.  See
      ;; No path, only description.  Try to do something useful.
      (t (format org-groff-link-with-unknown-path-format desc)))))
 
-;;; Node Property
-
-(defun org-groff-node-property (node-property contents info)
-  "Transcode a NODE-PROPERTY element from Org to Groff.
-CONTENTS is nil.  INFO is a plist holding contextual
-information."
-  (format "%s:%s"
-          (org-element-property :key node-property)
-          (let ((value (org-element-property :value node-property)))
-            (if value (concat " " value) ""))))
-
 ;;; Paragraph
 
 (defun org-groff-paragraph (paragraph contents info)
@@ -1434,15 +1423,6 @@ information."
     "")
    ""))
 
-;;;; Property Drawer
-
-(defun org-groff-property-drawer (property-drawer contents info)
-  "Transcode a PROPERTY-DRAWER element from Org to Groff.
-CONTENTS holds the contents of the drawer.  INFO is a plist
-holding contextual information."
-  (and (org-string-nw-p contents)
-       (format "\\fC\n%s\\fP" contents)))
-
 ;;; Quote Block
 
 (defun org-groff-quote-block (quote-block contents info)
@@ -1452,6 +1432,15 @@ holding contextual information."
   (org-groff--wrap-label
    quote-block
    (format ".DS I\n.I\n%s\n.R\n.DE" contents)))
+
+;;; Quote Section
+
+(defun org-groff-quote-section (quote-section contents info)
+  "Transcode a QUOTE-SECTION element from Org to Groff.
+CONTENTS is nil.  INFO is a plist holding contextual information."
+  (let ((value (org-remove-indentation
+                (org-element-property :value quote-section))))
+    (when value (format ".DS L\n\\fI%s\\fP\n.DE\n" value))))
 
 ;;; Radio Target
 
@@ -1478,7 +1467,7 @@ holding contextual information."
   "Transcode a SPECIAL-BLOCK element from Org to Groff.
 CONTENTS holds the contents of the block.  INFO is a plist
 holding contextual information."
-  (let ((type (org-element-property :type special-block)))
+  (let ((type (downcase (org-element-property :type special-block))))
     (org-groff--wrap-label
      special-block
      (format "%s\n" contents))))

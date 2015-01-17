@@ -70,8 +70,8 @@ To add files to this list use the `org-babel-lob-ingest' command."
 
 (defconst org-babel-inline-lob-one-liner-regexp
   (concat
-   "\\([^\n]*?\\)call_\\([^\(\)[:space:]\n]+?\\)\\(\\[\\(.*?\\)\\]\\|\\(\\)\\)"
-   "\(\\(.*?\\)\)\\(\\[\\(.*?\\)\\]\\)?")
+   "\\([^\n]*?\\)call_\\([^\(\)\n]+?\\)\\(\\[\\(.*?\\)\\]\\|\\(\\)\\)"
+   "\(\\([^\n]*?\\)\)\\(\\[\\(.*?\\)\\]\\)?")
   "Regexp to match inline calls to predefined source block functions.")
 
 (defconst org-babel-lob-one-liner-regexp
@@ -142,32 +142,18 @@ if so then run the appropriate source block from the Library."
 	 (pre-info (funcall mkinfo pre-params))
 	 (cache-p (and (cdr (assoc :cache pre-params))
 		       (string= "yes" (cdr (assoc :cache pre-params)))))
-	 (new-hash (when cache-p
-		     (org-babel-sha1-hash
-		      ;; Do *not* pre-process params for call line
-		      ;; hash evaluation, since for a call line :var
-		      ;; extension *is* execution.
-		      (let* ((params (nth 2 pre-info))
-			     (sha1-nth2 (list
-				    (cons
-				     (cons :c-var (cdr (assoc :var params)))
-				     (assq-delete-all :var (copy-tree params)))))
-			     (sha1-info (copy-tree pre-info)))
-			(prog1 sha1-info
-			  (setcar (cddr sha1-info) sha1-nth2))))))
-	 (old-hash (when cache-p (org-babel-current-result-hash pre-info)))
+	 (new-hash (when cache-p (org-babel-sha1-hash pre-info)))
+	 (old-hash (when cache-p (org-babel-current-result-hash)))
 	 (org-babel-current-src-block-location (point-marker)))
     (if (and cache-p (equal new-hash old-hash))
-	(save-excursion (goto-char (org-babel-where-is-src-block-result
-				    nil pre-info))
+	(save-excursion (goto-char (org-babel-where-is-src-block-result))
 			(forward-line 1)
 			(message "%S" (org-babel-read-result)))
       (prog1 (let* ((proc-params (org-babel-process-params pre-params))
 		     org-confirm-babel-evaluate)
 	       (org-babel-execute-src-block nil (funcall mkinfo proc-params)))
 	;; update the hash
-	(when new-hash
-	  (org-babel-set-current-result-hash new-hash pre-info))))))
+	(when new-hash (org-babel-set-current-result-hash new-hash))))))
 
 (provide 'ob-lob)
 

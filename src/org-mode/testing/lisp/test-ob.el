@@ -99,10 +99,7 @@
 
 (ert-deftest test-org-babel/default-inline-header-args ()
   (should(equal
-	  '((:session . "none")
-	    (:results . "replace")
-	    (:exports . "results")
-	    (:hlines  . "yes"))
+	  '((:session . "none") (:results . "replace") (:exports . "results"))
 	  org-babel-default-inline-header-args)))
 
 (ert-deftest ob-test/org-babel-combine-header-arg-lists ()
@@ -249,49 +246,38 @@ this is simple"
     (should (= 14 (org-babel-execute-src-block)))))
 
 (ert-deftest test-org-babel/inline-src-blocks ()
-  (macrolet ((at-next (&rest body)
-	       `(progn
-		  (move-end-of-line 1)
-		  (re-search-forward org-babel-inline-src-block-regexp nil t)
-		  (goto-char (match-beginning 1))
-		  (save-match-data ,@body))))
-    (org-test-at-id
-     "54cb8dc3-298c-4883-a933-029b3c9d4b18"
-     (at-next (should (equal 1 (org-babel-execute-src-block))))
-     (at-next (should (equal 2 (org-babel-execute-src-block))))
-     (at-next (should (equal 3 (org-babel-execute-src-block)))))
-    (org-test-at-id
-     "cd54fc88-1b6b-45b6-8511-4d8fa7fc8076"
-     (at-next (should (equal 1 (org-babel-execute-src-block))))
-     (at-next (should (equal 2 (org-babel-execute-src-block))))
-     (at-next (should (equal 3 (org-babel-execute-src-block))))
-     (at-next (should (equal 4 (org-babel-execute-src-block)))))))
+  (org-test-at-id "54cb8dc3-298c-4883-a933-029b3c9d4b18"
+    (macrolet ((at-next (&rest body)
+			`(progn
+			   (move-end-of-line 1)
+			   (re-search-forward org-babel-inline-src-block-regexp nil t)
+			   (goto-char (match-beginning 1))
+			   (save-match-data ,@body))))
+      (at-next (should (equal 1 (org-babel-execute-src-block))))
+      (at-next (should (equal 2 (org-babel-execute-src-block))))
+      (at-next (should (equal 3 (org-babel-execute-src-block)))))))
 
 (ert-deftest test-org-babel/org-babel-get-inline-src-block-matches ()
-  (flet ((test-at-id (id)
-	   (org-test-at-id 
-	    id
-	    (let ((test-point (point)))
-	      (should (fboundp 'org-babel-get-inline-src-block-matches))
-	      (should (re-search-forward "src_" nil t)) ;; 1
-	      (should (org-babel-get-inline-src-block-matches))
-	      (should (re-search-forward "}" nil (point-at-bol))) ;; 1
-	      (should-not (org-babel-get-inline-src-block-matches))
-	      (should (re-search-forward "in" nil t)) ;; 2
-	      (should-not (org-babel-get-inline-src-block-matches))
-	      (should (re-search-forward "echo" nil t)) ;; 2
-	      (should (org-babel-get-inline-src-block-matches))
-	      (should (re-search-forward "blocks" nil t)) ;; 3
-	      (backward-char 8) ;; 3
-	      (should (org-babel-get-inline-src-block-matches))
-	      (forward-char 1) ;;3
-	      (should-not (org-babel-get-inline-src-block-matches))
-	      (should (re-search-forward ":results" nil t)) ;; 4
-	      (should (org-babel-get-inline-src-block-matches))
-	      (end-of-line)
-	      (should-not (org-babel-get-inline-src-block-matches))))))
-    (test-at-id "0D0983D4-DE33-400A-8A05-A225A567BC74")
-    (test-at-id "d55dada7-de0e-4340-8061-787cccbedee5")))
+  (org-test-at-id "0D0983D4-DE33-400A-8A05-A225A567BC74"
+    (let ((test-point (point)))
+      (should (fboundp 'org-babel-get-inline-src-block-matches))
+      (should (re-search-forward "src_" nil t)) ;; 1
+      (should (org-babel-get-inline-src-block-matches))
+      (should (re-search-forward "}" nil (point-at-bol))) ;; 1
+      (should-not (org-babel-get-inline-src-block-matches))
+      (should (re-search-forward "in" nil t)) ;; 2
+      (should-not (org-babel-get-inline-src-block-matches))
+      (should (re-search-forward "echo" nil t)) ;; 2
+      (should (org-babel-get-inline-src-block-matches))
+      (should (re-search-forward "blocks" nil t)) ;; 3
+      (backward-char 8) ;; 3
+      (should (org-babel-get-inline-src-block-matches))
+      (forward-char 1) ;;3
+      (should-not (org-babel-get-inline-src-block-matches))
+      (should (re-search-forward ":results" nil t)) ;; 4
+      (should (org-babel-get-inline-src-block-matches))
+      (end-of-line)
+      (should-not (org-babel-get-inline-src-block-matches)))))
 
 (ert-deftest test-org-babel/inline-src_blk-default-results-replace-line-1 ()
   (let ((test-line "src_sh{echo 1}"))
@@ -555,7 +541,7 @@ on two lines
 #+END_SRC"
     (org-babel-next-src-block 1)
     (should (string= (org-babel-execute-src-block)
-		     "A literal example\non two lines\n for me."))))
+		     "A literal example\non two lines for me."))))
 
 (ert-deftest test-ob/resolve-code-blocks-before-data-blocks ()
   (org-test-with-temp-text "
@@ -656,7 +642,7 @@ on two lines
     (check-eval "no" nil)
     (check-eval "never-export" t)
     (check-eval "no-export" t)
-    (let ((org-babel-exp-reference-buffer (current-buffer)))
+    (let ((org-current-export-file "something"))
       (check-eval "never" nil)
       (check-eval "no" nil)
       (check-eval "never-export" nil)
@@ -1194,81 +1180,6 @@ echo \"$data\"
 	    ;; indented by 2 columns.
 	    (list (org-get-indentation)
 		  (progn (forward-line) (org-get-indentation)))))))
-
-(ert-deftest test-ob/safe-header-args ()
-  "Detect safe and unsafe header args."
-  (let ((safe-args '((:cache . "foo")
-		     (:results . "output")
-		     (:eval . "never")
-		     (:eval . "query")))
-	(unsafe-args '((:eval . "yes")
-		       (:results . "output file")
-		       (:foo . "bar")))
-	(malformed-args '((bar . "foo")
-			  ("foo" . "bar")
-			  :foo))
-	(safe-p (org-babel-header-args-safe-fn org-babel-safe-header-args)))
-    (dolist (arg safe-args)
-      (should (org-babel-one-header-arg-safe-p arg org-babel-safe-header-args)))
-    (dolist (arg unsafe-args)
-      (should (not (org-babel-one-header-arg-safe-p arg org-babel-safe-header-args))))
-    (dolist (arg malformed-args)
-      (should (not (org-babel-one-header-arg-safe-p arg org-babel-safe-header-args))))
-    (should (not (funcall safe-p (append safe-args unsafe-args))))))
-
-(ert-deftest test-ob/noweb-expansions-in-cache ()
-  "Ensure that noweb expansions are expanded before caching."
-  (let ((noweb-expansions-in-cache-var 0))
-    (org-test-with-temp-text "
-#+name: foo
-#+begin_src emacs-lisp
-  \"I said\"
-#+end_src
-
-#+name: bar
-#+begin_src emacs-lisp :noweb yes :cache yes
-  (setq noweb-expansions-in-cache-var
-        (+ 1 noweb-expansions-in-cache-var))
-  (concat <<foo>> \" check noweb expansions\")
-#+end_src
-"
-      ;; run the second block to create the cache
-      (goto-char (point-min))
-      (re-search-forward (regexp-quote "#+name: bar"))
-      (should (string= "I said check noweb expansions"
-		       (org-babel-execute-src-block)))
-      (should (= noweb-expansions-in-cache-var 1))
-      ;; change the value of the first block
-      (goto-char (point-min))
-      (re-search-forward (regexp-quote "said"))
-      (goto-char (match-beginning 0))
-      (insert "haven't ")
-      (re-search-forward (regexp-quote "#+name: bar"))
-      (should (string= "I haven't said check noweb expansions"
-		       (org-babel-execute-src-block)))
-      (should (= noweb-expansions-in-cache-var 2)))))
-
-(ert-deftest test-org-babel/file-ext-and-output-dir ()
-  (org-test-at-id "93573e1d-6486-442e-b6d0-3fedbdc37c9b"
-    (org-babel-next-src-block)
-    (should (equal  "file-ext-basic.txt"
-		   (cdr (assq :file (nth 2 (org-babel-get-src-block-info t))))))
-    (org-babel-next-src-block)
-    (should (equal "foo/file-ext-dir-relative.txt"
-		   (cdr (assq :file (nth 2 (org-babel-get-src-block-info t))))))
-    (org-babel-next-src-block)
-    (should (equal  "foo/file-ext-dir-relative-slash.txt"
-		   (cdr (assq :file (nth 2 (org-babel-get-src-block-info t))))))
-    (org-babel-next-src-block)
-    (should (equal  "/tmp/file-ext-dir-absolute.txt"
-		   (cdr (assq :file (nth 2 (org-babel-get-src-block-info t))))))
-    (org-babel-next-src-block)
-    (should (equal  "foo.bar"
-		   (cdr (assq :file (nth 2 (org-babel-get-src-block-info t))))))
-    (org-babel-next-src-block)
-    (should (equal "xxx/foo.bar"
-		   (cdr (assq :file (nth 2 (org-babel-get-src-block-info t))))))
-    ))
 
 (provide 'test-ob)
 

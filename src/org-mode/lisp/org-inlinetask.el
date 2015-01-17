@@ -108,6 +108,7 @@ When nil, the first star is not shown."
 
 (defvar org-odd-levels-only)
 (defvar org-keyword-time-regexp)
+(defvar org-drawer-regexp)
 (defvar org-complex-heading-regexp)
 (defvar org-property-end-re)
 

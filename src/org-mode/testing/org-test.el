@@ -52,7 +52,7 @@
       (require 'org-id)
       (require 'ox)
       (org-babel-do-load-languages
-       'org-babel-load-languages '((shell . t) (org . t))))
+       'org-babel-load-languages '((sh . t) (org . t))))
 
     (let* ((load-path (cons
 		       org-test-dir
@@ -421,11 +421,10 @@ Load all test files first."
   (let ((org-id-track-globally t)
 	(org-test-selector
 	 (if org-test-selector org-test-selector "\\(org\\|ob\\)"))
-	org-confirm-babel-evaluate org-startup-folded vc-handled-backends)
+	org-confirm-babel-evaluate vc-handled-backends)
     (org-test-touch-all-examples)
     (org-test-update-id-locations)
     (org-test-load)
-    (message "selected tests: %s" org-test-selector)
     (ert-run-tests-batch-and-exit org-test-selector)))
 
 (defun org-test-run-all-tests ()
@@ -433,7 +432,6 @@ Load all test files first."
 Load all test files first."
   (interactive)
   (org-test-touch-all-examples)
-  (org-test-update-id-locations)
   (org-test-load)
   (ert "\\(org\\|ob\\)")
   (org-test-kill-all-examples))
