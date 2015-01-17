@@ -59,6 +59,8 @@
   =$ git config --global --add magit.extension wip-save=
 
   #+begin_src emacs-lisp
-    (eval-after-load 'vc-git
-      '(global-magit-wip-save-mode))
+    (eval-after-load 'magit
+      '(progn
+         (use-package magit-wip)
+         (global-magit-wip-save-mode)))
   #+end_src
