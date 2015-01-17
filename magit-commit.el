@@ -1,6 +1,6 @@
 ;;; magit-commit.el --- create Git commits
 
-;; Copyright (C) 2008-2014  The Magit Project Developers
+;; Copyright (C) 2008-2015  The Magit Project Developers
 ;;
 ;; For a full list of contributors, see the AUTHORS.md file
 ;; at the top-level directory of this distribution and at
@@ -21,6 +21,12 @@
 ;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with Magit.  If not, see http://www.gnu.org/licenses.
+
+;;; Commentary:
+
+;; This library implements commands for creating Git commits.  These
+;; commands just initiate the commit, support for writing the commit
+;; messages is implemented in `git-commit.el'.
 
 ;;; Code:
 
@@ -287,7 +293,8 @@ depending on the value of option `magit-commit-squash-confirm'.
     (magit-completing-read prompt keys nil nil nil 'magit-gpg-secret-key-hist
                            (car (or magit-gpg-secret-key-hist keys)))))
 
-(defvar magit-commit-add-log-insert-function 'magit-commit-add-log-insert)
+(defvar magit-commit-add-log-insert-function 'magit-commit-add-log-insert
+  "Used by `magit-commit-add-log' to insert a single entry.")
 
 (defun magit-commit-add-log ()
   "Add a stub for the current hunk into the commit message buffer.

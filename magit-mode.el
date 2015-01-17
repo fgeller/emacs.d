@@ -1,6 +1,6 @@
 ;;; magit-mode.el --- create and refresh Magit buffers
 
-;; Copyright (C) 2010-2014  The Magit Project Developers
+;; Copyright (C) 2010-2015  The Magit Project Developers
 ;;
 ;; For a full list of contributors, see the AUTHORS.md file
 ;; at the top-level directory of this distribution and at
@@ -21,6 +21,12 @@
 ;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with Magit.  If not, see http://www.gnu.org/licenses.
+
+;;; Commentary:
+
+;; This library implements the abstract major-mode `magit-mode' from
+;; which almost all other Magit major-modes derive.  The code in here
+;; is mostly concerned with creating and refreshing Magit buffers.
 
 ;;; Code:
 
@@ -303,10 +309,10 @@ Also see `magit-mode-setup', a more convenient variant."
         magit-refresh-function refresh-func
         magit-refresh-args refresh-args)
   (run-hooks 'magit-mode-setup-hook)
-  (cl-case mode
-    ((magit-log-mode magit-reflog-mode)
+  (pcase mode
+    (`(magit-log-mode magit-reflog-mode)
      (magit-xref-setup refresh-args))
-    ((magit-diff-mode magit-revision-mode)
+    (`(magit-diff-mode magit-revision-mode)
      (magit-xref-setup refresh-args)
      (goto-char (point-min))))
   (funcall mode)
@@ -445,9 +451,12 @@ tracked in the current repository."
     (with-current-buffer buffer (magit-refresh-buffer)))
   (magit-revert-buffers t))
 
-(defvar magit-refresh-buffer-hook nil)
+(defvar magit-refresh-buffer-hook nil
+  "Hook run after refreshing a file-visiting buffer.")
 
 (defun magit-refresh-buffer ()
+  "Refresh the current Magit buffer.
+Uses the buffer-local `magit-refresh-function'."
   (when magit-refresh-function
     (let* ((buffer (current-buffer))
            (windows
@@ -476,6 +485,9 @@ tracked in the current repository."
       (magit-section-update-highlight))))
 
 (defun magit-revert-buffers (&optional force)
+  "Refresh the current file-visiting buffer.
+The buffer is only refreshed if `magit-auto-revert-mode'
+is turned on or optional FORCE is non-nil."
   (when (or force magit-auto-revert-mode)
     (-when-let (topdir (magit-toplevel-safe))
       (let ((tracked (magit-revision-files "HEAD"))
