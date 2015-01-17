@@ -1,6 +1,6 @@
 ;;; magit-core.el --- core functionality
 
-;; Copyright (C) 2010-2014  The Magit Project Developers
+;; Copyright (C) 2010-2015  The Magit Project Developers
 ;;
 ;; For a full list of contributors, see the AUTHORS.md file
 ;; at the top-level directory of this distribution and at
@@ -21,6 +21,13 @@
 ;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with Magit.  If not, see http://www.gnu.org/licenses.
+
+;;; Commentary:
+
+;; This library requires several other libraries, so that yet other
+;; libraries can just require this one, instead of having to require
+;; all the other ones.  In other words this separates the low-level
+;; stuff from the rest.  It also defines some Custom groups.
 
 ;;; Code:
 
@@ -56,23 +63,15 @@
   :group 'magit
   :group 'faces)
 
-(custom-add-to-group 'magit-popup  'magit-popups      'custom-group)
-(custom-add-to-group 'magit-popups 'magit-popup       'custom-group)
-(custom-add-to-group 'magit-modes  'magit-popup       'custom-group)
-(custom-add-to-group 'magit-faces  'magit-popup-faces 'custom-group)
-
-(when (featurep 'gitattributes-mode)
-  (custom-add-to-group 'magit-modes 'gitattributes-mode 'custom-group))
-(when (featurep 'gitconfig-mode)
-  (custom-add-to-group 'magit-modes 'gitconfig-mode 'custom-group))
-(when (featurep 'gitignore-mode)
-  (custom-add-to-group 'magit-modes 'gitignore-mode 'custom-group))
-
-(custom-add-to-group 'magit-modes   'git-commit       'custom-group)
-(custom-add-to-group 'magit-faces   'git-commit-faces 'custom-group)
-(custom-add-to-group 'magit-modes   'git-rebase       'custom-group)
-(custom-add-to-group 'magit-faces   'git-rebase-faces 'custom-group)
-(custom-add-to-group 'magit-process 'with-editor      'custom-group)
+(custom-add-to-group 'magit-popup   'magit-popups      'custom-group)
+(custom-add-to-group 'magit-popups  'magit-popup       'custom-group)
+(custom-add-to-group 'magit-modes   'magit-popup       'custom-group)
+(custom-add-to-group 'magit-faces   'magit-popup-faces 'custom-group)
+(custom-add-to-group 'magit-modes   'git-commit        'custom-group)
+(custom-add-to-group 'magit-faces   'git-commit-faces  'custom-group)
+(custom-add-to-group 'magit-modes   'git-rebase        'custom-group)
+(custom-add-to-group 'magit-faces   'git-rebase-faces  'custom-group)
+(custom-add-to-group 'magit-process 'with-editor       'custom-group)
 
 (custom-add-to-group 'magit 'vc-follow-symlinks 'custom-variable)
 

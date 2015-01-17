@@ -1,6 +1,6 @@
 ;;; magit-process.el --- process functionality
 
-;; Copyright (C) 2010-2014  The Magit Project Developers
+;; Copyright (C) 2010-2015  The Magit Project Developers
 ;;
 ;; For a full list of contributors, see the AUTHORS.md file
 ;; at the top-level directory of this distribution and at
@@ -21,6 +21,14 @@
 ;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with Magit.  If not, see http://www.gnu.org/licenses.
+
+;;; Commentary:
+
+;; This library implements the tools used to run Git for side-effects.
+
+;; Note that the functions used to run Git and then consume its
+;; output, are defined in `magit-git.el'.  There's a bit of overlap
+;; though.
 
 ;;; Code:
 

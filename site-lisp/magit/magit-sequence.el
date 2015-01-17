@@ -1,6 +1,6 @@
 ;;; magit-sequence.el --- history manipulation in Magit
 
-;; Copyright (C) 2011-2014  The Magit Project Developers
+;; Copyright (C) 2011-2015  The Magit Project Developers
 ;;
 ;; For a full list of contributors, see the AUTHORS.md file
 ;; at the top-level directory of this distribution and at
@@ -77,10 +77,18 @@
 ;;; Common
 
 (defun magit-run-git-sequencer (&rest args)
+  "Call Git synchronously in a separate process, and refresh.
+This is like `magit-run-git-with-editor' (which see) except that
+the process sentinel is `magit-sequencer-process-sentinel'."
   (apply #'magit-run-git-with-editor args)
-  (set-process-sentinel magit-this-process #'magit-sequencer-process-sentinel))
+  (set-process-sentinel magit-this-process #'magit-sequencer-process-sentinel)
+  magit-this-process)
 
 (defun magit-sequencer-process-sentinel (process event)
+  "Process sentinel used when running sequence commands.
+Run the regular `magit-process-sentinel' and then, if the
+sequence stops at a commit, make the section representing
+that commit the current section by moving `point' there."
   (when (memq (process-status process) '(exit signal))
     (magit-process-sentinel process event)
     (--when-let (magit-mode-get-buffer
@@ -101,29 +109,33 @@
 
 ;;;###autoload
 (defun magit-sequencer-continue ()
+  "Resume the current cherry-pick or revert sequence."
   (interactive)
   (if (magit-sequencer-in-progress-p)
       (if (magit-anything-unstaged-p)
-          (error "Cannot continue due to unstaged changes")
+          (user-error "Cannot continue due to unstaged changes")
         (magit-run-git-sequencer
          (if (magit-revert-in-progress-p) "revert" "cherry-pick") "--continue"))
-    (error "No cherry-pick or revert in progress")))
+    (user-error "No cherry-pick or revert in progress")))
 
 ;;;###autoload
 (defun magit-sequencer-skip ()
+  "Skip the stopped at commit during a cherry-pick or revert sequence."
   (interactive)
   (if (magit-sequencer-in-progress-p)
       (progn (magit-call-git "reset" "--hard")
              (magit-sequencer-continue))
-    (error "No cherry-pick or revert in progress")))
+    (user-error "No cherry-pick or revert in progress")))
 
 ;;;###autoload
 (defun magit-sequencer-abort ()
+  "Abort the current cherry-pick or revert sequence.
+This discards all changes made since the sequence started."
   (interactive)
   (if (magit-sequencer-in-progress-p)
       (magit-run-git-sequencer
        (if (magit-revert-in-progress-p) "revert" "cherry-pick") "--abort")
-    (error "No cherry-pick or revert in progress")))
+    (user-error "No cherry-pick or revert in progress")))
 
 (defun magit-sequencer-in-progress-p ()
   (file-exists-p (magit-git-dir "sequencer")))
@@ -155,6 +167,10 @@
 
 ;;;###autoload
 (defun magit-cherry-pick (commit &optional args)
+  "Cherry-pick COMMIT.
+Prompt for a commit, defaulting to the commit at point.  If
+the region selects multiple commits, then pick all of them,
+without prompting."
   (interactive (magit-cherry-pick-read-args "Cherry-pick"))
   (magit-assert-one-parent (car (if (listp commit)
                                     commit
@@ -164,6 +180,10 @@
 
 ;;;###autoload
 (defun magit-cherry-apply (commit &optional args)
+  "Apply the changes in COMMIT but do not commit them.
+Prompt for a commit, defaulting to the commit at point.  If
+the region selects multiple commits, then apply all of them,
+without prompting."
   (interactive (magit-cherry-pick-read-args "Apply commit"))
   (magit-assert-one-parent commit "cherry-pick")
   (magit-run-git-sequencer "cherry-pick" "--no-commit"
@@ -196,12 +216,20 @@
 
 ;;;###autoload
 (defun magit-revert (commit &optional args)
+  "Revert COMMIT by creating a new commit.
+Prompt for a commit, defaulting to the commit at point.  If
+the region selects multiple commits, then revert all of them,
+without prompting."
   (interactive (magit-revert-read-args "Revert commit"))
   (magit-assert-one-parent commit "revert")
   (magit-run-git-sequencer "revert" args commit))
 
 ;;;###autoload
 (defun magit-revert-no-commit (commit &optional args)
+  "Revert COMMIT by applying it in reverse to the worktree.
+Prompt for a commit, defaulting to the commit at point.  If
+the region selects multiple commits, then revert all of them,
+without prompting."
   (interactive (magit-revert-read-args "Revert changes"))
   (magit-assert-one-parent commit "revert")
   (magit-run-git-sequencer "revert" "--no-commit" args commit))
@@ -237,6 +265,7 @@
 
 ;;;###autoload
 (defun magit-am-apply-patches (&optional files args)
+  "Apply the patches FILES."
   (interactive (list (or (magit-region-values 'file)
                          (list (read-file-name "Apply patch: ")))
                      (magit-am-arguments)))
@@ -244,12 +273,14 @@
 
 ;;;###autoload
 (defun magit-am-apply-maildir (&optional maildir args)
+  "Apply the patches from MAILDIR."
   (interactive (list (read-file-name "Apply mbox or Maildir: ")
                      (magit-am-arguments)))
   (magit-run-git-sequencer "am" args (expand-file-name maildir)))
 
 ;;;###autoload
 (defun magit-am-continue ()
+  "Resume the current patch applying sequence."
   (interactive)
   (if (magit-am-in-progress-p)
       (if (magit-anything-unstaged-p)
@@ -259,6 +290,7 @@
 
 ;;;###autoload
 (defun magit-am-skip ()
+  "Skip the stopped at patch during a patch applying sequence."
   (interactive)
   (if (magit-am-in-progress-p)
       (magit-run-git-sequencer "am" "--skip")
@@ -266,6 +298,8 @@
 
 ;;;###autoload
 (defun magit-am-abort ()
+  "Abort the current patch applying sequence.
+This discards all changes made since the sequence started."
   (interactive)
   (if (magit-am-in-progress-p)
       (magit-run-git "am" "--abort")
@@ -435,6 +469,8 @@
 ;;; Sections
 
 (defun magit-insert-sequencer-sequence ()
+  "Insert section for the on-going cherry-pick or revert sequence.
+If no such sequence is in progress, do nothing."
   (let ((picking (magit-cherry-pick-in-progress-p)))
     (when (or picking (magit-revert-in-progress-p))
       (magit-insert-section (sequence)
@@ -458,6 +494,8 @@
         (insert "\n")))))
 
 (defun magit-insert-am-sequence ()
+  "Insert section for the on-going patch applying sequence.
+If no such sequence is in progress, do nothing."
   (when (magit-am-in-progress-p)
     (magit-insert-section (rebase-sequence)
       (magit-insert-heading "Applying patches")
@@ -481,6 +519,8 @@
       (insert ?\n))))
 
 (defun magit-insert-rebase-sequence ()
+  "Insert section for the on-going rebase sequence.
+If no such sequence is in progress, do nothing."
   (when (magit-rebase-in-progress-p)
     (let* ((interactive (file-directory-p (magit-git-dir "rebase-merge")))
            (dir  (if interactive "rebase-merge/" "rebase-apply/"))

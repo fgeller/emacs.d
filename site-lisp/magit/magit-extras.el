@@ -1,6 +1,6 @@
 ;;; magit-extras.el --- additional functionality for Magit
 
-;; Copyright (C) 2008-2014  The Magit Project Developers
+;; Copyright (C) 2008-2015  The Magit Project Developers
 ;;
 ;; For a full list of contributors, see the AUTHORS.md file
 ;; at the top-level directory of this distribution and at
@@ -96,12 +96,12 @@ with two prefix arguments remove ignored files only.
 \n(git clean -f -d [-x|-X])"
   (interactive "p")
   (when (yes-or-no-p (format "Remove %s files? "
-                             (cl-case arg
+                             (pcase arg
                                (1 "untracked")
                                (4 "untracked and ignored")
-                               (t "ignored"))))
+                               (_ "ignored"))))
     (magit-maybe-backup)
-    (magit-run-git "clean" "-f" "-d" (cl-case arg (4 "-x") (16 "-X")))))
+    (magit-run-git "clean" "-f" "-d" (pcase arg (4 "-x") (16 "-X")))))
 
 (put 'magit-clean 'disabled t)
 

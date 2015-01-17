@@ -10,11 +10,11 @@ LOADDEFS_DIR  ?= $(lispdir)
 ELS  = with-editor.el
 ELS += git-commit.el
 ELS += git-rebase.el
+ELS += magit-popup.el
 ELS += magit-utils.el
 ELS += magit-section.el
 ELS += magit-git.el
 ELS += magit-mode.el
-ELS += magit-popup.el
 ELS += magit-process.el
 ELS += magit-core.el
 ELS += magit-diff.el
@@ -229,7 +229,7 @@ clean:
 	@$(RM) $(ELCS) $(LOADDEFS_FILE) magit-version.el *.tar.gz *.tar
 	@$(RMDIR) magit-$(VERSION)
 
-DIST_FILES = $(ELS) magit-version.el Makefile AUTHORS.md README.md
+DIST_FILES = $(ELS) magit-version.el Makefile AUTHORS.md README.md COPYING
 
 .PHONY: dist
 dist: magit-$(VERSION).tar.gz
