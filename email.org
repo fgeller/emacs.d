@@ -4,17 +4,17 @@
 
   #+begin_src emacs-lisp
     (setq
+     mail-envelope-from 'header
+     mail-from-style 'angles
      mail-host-address "Ernie"
+     mail-specify-envelope-from t
      message-kill-buffer-on-exit t
      message-send-mail-partially-limit nil
-     send-mail-function 'sendmail-send-it
-     mail-from-style 'angles
-     mail-specify-envelope-from t
      message-sendmail-envelope-from 'header
-     mail-envelope-from 'header
+     message-signature "Felix Geller"
+     send-mail-function 'sendmail-send-it
      user-full-name "Felix Geller"
      user-mail-address "fgeller@gmail.com"
-     message-signature "Felix Geller"
     )
   #+end_src
 
