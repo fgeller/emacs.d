@@ -18,6 +18,12 @@
     )
   #+end_src
 
+  Sign outgoing mail
+
+  #+begin_src emacs-lisp
+    (add-hook 'message-setup-hook 'mml-secure-message-sign-pgpmime)
+  #+end_src
+
   #+begin_src emacs-lisp
     (use-package notmuch
       :ensure notmuch
