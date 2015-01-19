@@ -28,6 +28,8 @@
     (use-package notmuch
       :ensure notmuch
       :init (add-hook 'notmuch-show-hook (lambda () (setq show-trailing-whitespace nil)))
-      :config (setq notmuch-fcc-dirs nil
-                    notmuch-crypto-process-mime t))
+      :config
+      (setq notmuch-fcc-dirs nil
+            notmuch-crypto-process-mime t)
+      (use-package org-notmuch))
   #+end_src
