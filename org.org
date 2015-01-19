@@ -223,6 +223,10 @@
      (add-hook 'org-clock-in-hook 'schedule-task-now)
    #+end_src
 
+   #+begin_src emacs-lisp
+     (setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 5))
+   #+end_src
+
 ** Capture
 
    Define additional capture templates for personal and work tasks.
