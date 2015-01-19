@@ -600,6 +600,7 @@
     (k . kill-buffer)
     (K . ,(lambda () (interactive) (kill-buffer nil)))
     (l . ,fingers-mode-launch-map)
+    (m . message-mail)
     (o . other-window)
     (s . ,(fingers-pass-events-command "C-x C-s"))
     (S . save-some-buffers)
@@ -648,6 +649,10 @@
     (m . man)
     (oa . org-agenda)
     (oc . org-capture)
+    (ol . org-store-link)
+    (oki . org-clock-in)
+    (oko . org-clock-out)
+    (okj . org-clock-jump-to-current-clock)
     )
   "Bindings for `fingers-mode-launch-map'")
 
