@@ -33,3 +33,9 @@
             notmuch-crypto-process-mime t)
       (use-package org-notmuch))
   #+end_src
+
+  Explicitly load gpg-agent information (for osx).
+
+  #+begin_src emacs-lisp
+    (exec-path-from-shell-copy-env "GPG_AGENT_INFO")
+  #+end_src
