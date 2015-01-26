@@ -89,6 +89,7 @@
       (define-key fingers-mode-x-map (kbd "vs") 'magit-status)
       (define-key fingers-mode-map (kbd "|") 'mc/edit-lines)
       (define-key fingers-mode-launch-map (kbd "n") 'notmuch)
+      (define-key fingers-mode-toggle-map (kbd "f") 'font-lock-mode)
       (global-set-key (kbd "s-<up>") 'increase-font-height)
       (global-set-key (kbd "s-<down>") 'decrease-font-height)
       )
