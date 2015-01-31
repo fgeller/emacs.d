@@ -68,6 +68,12 @@
     (setq org-agenda-sticky t)
   #+end_src
 
+  Activate font-lock locally.
+
+  #+begin_src emacs-lisp
+    (add-hook 'org-mode-hook '(lambda () (interactive) (font-lock-mode 1)))
+  #+end_src
+
 ** Folders and files
 
    Where to find org-files.
