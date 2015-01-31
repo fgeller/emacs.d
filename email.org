@@ -40,6 +40,19 @@
                                      notmuch-hello-insert-search
                                      notmuch-hello-insert-recent-searches
                                      notmuch-hello-insert-alltags))
+      (eval-after-load 'shr
+        '(progn
+           (define-key shr-map (kbd "a") nil)
+           (define-key shr-map (kbd "i") nil)
+           (define-key shr-map (kbd "I") nil)
+           (define-key shr-map (kbd "o") nil)
+           (define-key shr-map (kbd "v") nil)
+           (define-key shr-map (kbd "u") nil)
+           (define-key shr-map (kbd "w") nil)
+           (define-key shr-map (kbd "z") nil)
+           (define-key shr-map (kbd "TAB") nil)
+           (define-key shr-map (kbd "M-TAB") nil)))
+
       (use-package org-notmuch))
   #+end_src
 
