@@ -24,6 +24,8 @@
     (add-hook 'message-setup-hook 'mml-secure-message-sign-pgpmime)
   #+end_src
 
+  Load and configure notmuch
+
   #+begin_src emacs-lisp
     (use-package notmuch
       :ensure notmuch
