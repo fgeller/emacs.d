@@ -67,7 +67,28 @@
       (define-key notmuch-search-mode-map (kbd "a") 'notmuch-search-archive-thread)
       (define-key notmuch-search-mode-map (kbd "t") 'notmuch-search-tag)
 
+      (add-hook 'notmuch-show-hook 'notmuch-show-prefer-html-over-text)
+
       (use-package org-notmuch))
+  #+end_src
+
+  Helper to prefer HTML part over plain text part.
+
+  #+begin_src emacs-lisp
+    (defun notmuch-show-prefer-html-over-text ()
+      (interactive)
+      (let* ((text-button (save-excursion
+                            (goto-char (point-min))
+                            (search-forward "[ text/plain" (point-max) t)))
+             (html-button (save-excursion
+                            (goto-char (point-min))
+                            (search-forward "[ text/html (hidden)" (point-max) t))))
+        (when (and text-button html-button)
+          (save-excursion
+            (goto-char text-button)
+            (notmuch-show-toggle-part-invisibility)
+            (goto-char html-button)
+            (notmuch-show-toggle-part-invisibility)))))
   #+end_src
 
   Explicitly load gpg-agent information (for osx).
