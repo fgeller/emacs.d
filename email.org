@@ -53,6 +53,18 @@
            (define-key shr-map (kbd "TAB") nil)
            (define-key shr-map (kbd "M-TAB") nil)))
 
+      ;; fingers' bindings in notmuch
+      (mapcar (lambda (key)
+                (define-key notmuch-search-mode-map (kbd key) (lookup-key fingers-mode-map (kbd key)))
+                (define-key notmuch-show-mode-map (kbd key) (lookup-key fingers-mode-map (kbd key))))
+              '("f" "u" "p"
+                "y" "n" "e" "o" "i" "'"
+                "Y" "N" "E" "O" "I" "\""
+                "k" "l" "." "/"))
+
+      (define-key notmuch-search-mode-map (kbd "a") 'notmuch-search-archive-thread)
+      (define-key notmuch-search-mode-map (kbd "t") 'notmuch-search-tag)
+
       (use-package org-notmuch))
   #+end_src
 
