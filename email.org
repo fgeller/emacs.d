@@ -67,6 +67,8 @@
       (define-key notmuch-search-mode-map (kbd "a") 'notmuch-search-archive-thread)
       (define-key notmuch-search-mode-map (kbd "t") 'notmuch-search-tag)
 
+      (define-key notmuch-show-mode-map (kbd "F") 'notmuch-show-forward-message)
+
       (add-hook 'notmuch-show-hook 'notmuch-show-prefer-html-over-text)
 
       (use-package org-notmuch))
