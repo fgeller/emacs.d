@@ -253,27 +253,6 @@
               "* Scratch it %U\n%i\n   #+begin_src text\n%?\n   #+end_src\n")))
    #+end_src
 
-   Helper based on @jwiegley's dot-emacs to get the URL of the
-   currently active Google Chrome tab/window.
-
-   #+begin_src emacs-lisp
-     (defun org-get-chrome-link ()
-       (interactive)
-       (let ((subject (do-applescript
-                       (string-to-multibyte "tell application \"Google Chrome\"
-             title of active tab of front window
-     end tell")))
-             (url (do-applescript
-                   (string-to-multibyte "tell application \"Google Chrome\"
-             URL of active tab of front window
-     end tell"))))
-         (insert (org-make-link-string url subject))
-         (do-applescript
-          (string-to-multibyte "tell application \"Google Chrome\"
-             close active tab of front window
-     end tell"))))
-   #+end_src
-
 ** Refile
 
    Start refiling at file-level and set max nesting to 5 and go step-by-step.
