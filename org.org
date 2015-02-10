@@ -252,7 +252,7 @@
               entry (file+headline ,(expand-file-name "Bookmarks.org" org-directory) "Bookmarks")
               "* %?\n\n  %c%i\n")
              ("s" "Scratch"
-              entry (file+headline (expand-file-name "scratch.org" org-directory) "Scratch")
+              entry (file+headline ,(expand-file-name "scratch.org" org-directory) "Scratch")
               "* Scratch it %U\n%i\n   #+begin_src text\n%?\n   #+end_src\n")))
    #+end_src
 
