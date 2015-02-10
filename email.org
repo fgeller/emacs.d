@@ -101,5 +101,6 @@
       (progn
         (bbdb-initialize 'message)
         (bbdb-mua-auto-update-init 'message)
-        (setq bbdb-mua-auto-update-p 'query)))
+        (setq bbdb-mua-auto-update-p 'query
+              bbdb-mua-pop-up-window-size 0.1)))
   #+end_src
