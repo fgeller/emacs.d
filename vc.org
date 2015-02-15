@@ -2,8 +2,11 @@
 
   #+begin_src emacs-lisp
     (use-package magit
-      :commands (magit-status magit-diff magit-revision-file-log magit-blame-mode)
-      :config (define-key magit-status-mode-map (kbd "q") 'magit-quit-session))
+      :commands
+      (magit-status magit-diff magit-revision-file-log magit-blame-mode global-magit-wip-save-mode)
+      :config
+      (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
+      (global-magit-wip-save-mode 1))
   #+end_src
 
   Helper to get log for a file for a given revision.
