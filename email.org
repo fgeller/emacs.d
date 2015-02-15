@@ -37,6 +37,7 @@
             notmuch-saved-searches '((:name "in" :query "tag:inbox" :key "i")
                                      (:name "flagged" :query "tag:flagged" :key "f")
                                      (:name "sent" :query "tag:sent" :key "t")
+                                     (:name "spam" :query "tag:spam" :key "s")
                                      (:name "drafts" :query "tag:draft" :key "d"))
             notmuch-hello-sections '(notmuch-hello-insert-saved-searches
                                      notmuch-hello-insert-search
