@@ -84,7 +84,6 @@
       (define-key fingers-mode-x-map (kbd "f") 'helm-find-files)
       (define-key fingers-mode-x-map (kbd "x") 'helm-M-x)
       (define-key fingers-mode-x-map (kbd "vd") 'magit-diff)
-      (define-key fingers-mode-x-map (kbd "vl") 'magit-revision-file-log)
       (define-key fingers-mode-x-map (kbd "vG") 'magit-blame-mode)
       (define-key fingers-mode-x-map (kbd "vs") 'magit-status)
       (define-key fingers-mode-map (kbd "|") 'mc/edit-lines)
