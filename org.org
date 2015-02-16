@@ -279,5 +279,5 @@
    Load language support.
 
    #+begin_src emacs-lisp
-     (setq org-babel-load-languages '((emacs-lisp . t) (scala . t)))
+     (setq org-babel-load-languages '((emacs-lisp . t) (scala . t) (clojure . t)))
    #+end_src
