@@ -158,10 +158,8 @@
    #+begin_src emacs-lisp
      (setq org-agenda-custom-commands
            `(;; match those tagged with :inbox:, are not scheduled, are not DONE.
-             ("ii" "[i]nbox tagged unscheduled tasks" tags "+inbox-SCHEDULED={.+}/!+TODO|+STARTED|+WAITING")
-             ("id" "[i]nbox tagged completed tasks" tags "+inbox+TODO=\"DONE\"|+TODO=\"CANCELLED\"")
-             ("wi" "[w]ork tasks that are not scheduled" tags "+inbox+work-SCHEDULED={.+}/!+TODO|+STARTED|+WAITING")
-             ("ww" "[w]ork tasks" tags "+work")
+             ("p" "[p]ersonal inbox" tags "+inbox+personal")
+             ("w" "[w]ork inbox" tags "+inbox+work")
              ("n" "Find a TAGged note" tags "" ((org-agenda-archives-mode t)))))
    #+end_src
 
