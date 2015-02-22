@@ -40,7 +40,7 @@
 ;;
 
 (defvar fingers-keyboard-layout-mapper 'identity "Mapping function from Workman to a different keyboard layout")
-(defvar fingers-region-specifiers
+(defconst fingers-region-specifiers
   '((char . ?v)
     (char-and-whitespace . ?V)
     (line . ?g)
@@ -64,12 +64,13 @@
   (setq unread-command-events
         (append (kbd kbd-string) unread-command-events)))
 
-(defmacro fingers-pass-events-command (kbd-string)
-  (let ((command-name (intern (concat "fingers-pass-events-" (replace-regexp-in-string " " "_" kbd-string t t)))))
-    `(defun ,command-name ()
-       ,(concat "Pass the keyboard event " kbd-string " through via `fingers-pass-events'.")
-       (interactive)
-       (fingers-pass-events ,kbd-string))))
+(defun fingers-pass-events-command (k)
+  (lexical-let ((kbd-string k)) ;; rebind so it isn't lost
+    (defalias (intern (concat "fingers-pass-events-" (replace-regexp-in-string " " "_" kbd-string t t)))
+      #'(lambda nil
+          "Generated function to pass a keybard event (last part of the name) through via `fingers-pass-events'."
+          (interactive)
+          (fingers-pass-events kbd-string)))))
 
 (defun fingers-clear-keymap (keymap)
   (let (loop)
@@ -514,7 +515,7 @@
 (defvar fingers-mode-toggle-map (fingers-mode-clean-map))
 (defvar fingers-mode-launch-map (fingers-mode-clean-map))
 
-(defvar fingers-command-bindings
+(defconst fingers-command-bindings
     `(
       ;; left hand -- manipulation
       ;;
@@ -558,15 +559,17 @@
       (J . ,(fingers-pass-events-command "C-h"))
       (fn . point-to-register)
       (ff . jump-to-register)
-      (ue . isearch-forward)
-      (uu . isearch-repeat-forward)
+      (uu . isearch-forward)
+      (U . isearch-repeat-forward)
       (uh . fingers-move-to-next-word-occurrence)
       (ut . fingers-move-to-next-symbol-occurrence)
       (uo . isearch-occur)
-      (po . isearch-backward)
-      (pp . isearch-repeat-backward)
+      (pp . isearch-backward)
+      (P . isearch-repeat-backward)
       (ph . fingers-move-to-previous-word-occurrence)
       (pt . fingers-move-to-previous-symbol-occurrence)
+      (,(intern ";") . pop-to-mark-command)
+      (,(intern ":") . pop-global-mark)
 
       ;; home row
       (y . fingers-beginning-of-line)
@@ -590,7 +593,7 @@
       )
     "Main bindings in `fingers-mode-map'")
 
-(defvar fingers-x-bindings
+(defconst fingers-x-bindings
   `(
     (b . switch-to-buffer)
     (c . save-buffers-kill-terminal)
@@ -622,25 +625,19 @@
     )
   "Bindings for `fingers-mode-x-map'")
 
-(defvar fingers-c-bindings
+(defconst fingers-c-bindings
   `(
-    (b . ,(fingers-pass-events-command "C-c C-b"))
-    (c . ,(fingers-pass-events-command "C-c C-c"))
-    (f . ,(fingers-pass-events-command "C-c C-f"))
-    (k . ,(fingers-pass-events-command "C-c C-k"))
-    (l . ,(fingers-pass-events-command "C-c C-l"))
-    (p . ,(fingers-pass-events-command "C-c C-p"))
-    (q . ,(fingers-pass-events-command "C-c C-q"))
-    (s . ,(fingers-pass-events-command "C-c C-s"))
-    (t . ,(fingers-pass-events-command "C-c C-t"))
-    (w . ,(fingers-pass-events-command "C-c C-w"))
+    ,@(mapcar (lambda (sym)
+                `(,sym . ,(fingers-pass-events-command (concat "C-c C-" (symbol-name sym)))))
+              `(a b c d e f g h i j k l m n o p q r s t u v w y z))
+
     (xa . ,(fingers-pass-events-command "C-c C-x C-a"))
-    (! . ,(fingers-pass-events-command "C-c !"))
     (,(intern "'") . ,(fingers-pass-events-command "C-c '"))
-    )
+    (,(intern "!") . ,(fingers-pass-events-command "C-c !"))
+  )
   "Bindings for `fingers-mode-c-map'")
 
-(defvar fingers-launch-bindings
+(defconst fingers-launch-bindings
   `(
     (C . compile)
     (c . recompile)
@@ -656,7 +653,7 @@
     )
   "Bindings for `fingers-mode-launch-map'")
 
-(defvar fingers-toggle-bindings
+(defconst fingers-toggle-bindings
   `(
     (l . toggle-truncate-lines)
     (d . toggle-debug-on-error)
