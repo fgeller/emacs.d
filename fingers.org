@@ -65,6 +65,20 @@
     (add-hook 'fingers-mode-hook 'fingers-mode-visual-toggle)
   #+end_src
 
+  Quick helper to trigger offlineimap.
+
+  #+begin_src emacs-lisp
+    (defun offlineimap ()
+      "Helper to (re)start offlineimap via compile"
+      (interactive)
+      (let ((buf "*offline-imap*"))
+        (if (get-buffer buf)
+            (with-current-buffer buf (recompile))
+          (compile "offlineimap")
+          (with-current-buffer "*compilation*"
+            (rename-buffer "*offline-imap*")))))
+  #+end_src
+
   My custom bindings for fingers-mode.
 
   #+begin_src emacs-lisp
@@ -88,7 +102,7 @@
       (define-key fingers-mode-x-map (kbd "vs") 'magit-status)
       (define-key fingers-mode-map (kbd "|") 'mc/edit-lines)
       (define-key fingers-mode-launch-map (kbd "n") 'notmuch)
-      (define-key fingers-mode-launch-map (kbd "oo") '(lambda () (interactive) (compile "offlineimap")))
+      (define-key fingers-mode-launch-map (kbd "oo") 'offlineimap)
       (define-key fingers-mode-toggle-map (kbd "f") 'font-lock-mode)
       (define-key fingers-mode-toggle-map (kbd "w") 'leerzeichen-mode)
       (global-set-key (kbd "s-<up>") 'increase-font-height)
