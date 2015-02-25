@@ -114,7 +114,8 @@
 
   #+begin_src emacs-lisp
     (use-package fingers
+      :commands global-fingers-mode
       :init
-      (global-fingers-mode 1)
-      (fingers-mode-custom-bindings))
+      (add-hook 'fingers-after-reset-hook 'fingers-mode-custom-bindings)
+      (global-fingers-mode 1))
   #+end_src
