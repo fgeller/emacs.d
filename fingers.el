@@ -1,6 +1,6 @@
 ;;; fingers.el --- Modal editing with universal text manipulation helpers.
 
-;; Copyright (c) 2014 Felix Geller
+;; Copyright (c) 2014-2015 Felix Geller
 
 ;; Author: Felix Geller <fgeller@gmail.com>
 ;; Keywords: fingers modal editing workman
@@ -622,6 +622,7 @@
     (3 . split-window-right)
     (50 . delete-frame)
     (52 . make-frame-command)
+    (,(intern "#") . server-edit)
     )
   "Bindings for `fingers-mode-x-map'")
 
@@ -679,7 +680,8 @@
 		       fingers-toggle-bindings)
   (fingers-define-keys 'identity
 		       fingers-mode-c-map
-		       fingers-c-bindings))
+		       fingers-c-bindings)
+  (run-hooks 'fingers-after-reset-hook))
 
 (fingers-reset-bindings)
 
