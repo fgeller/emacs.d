@@ -215,6 +215,7 @@
     (org-babel-load-file (expand-file-name "~/.emacs.d/eshell.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/global.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/scala.org"))
+    (org-babel-load-file (expand-file-name "~/.emacs.d/java.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/php.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/go.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/email.org"))
