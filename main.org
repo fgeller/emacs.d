@@ -150,6 +150,13 @@
     (setq echo-keystrokes 0.01)
   #+end_src
 
+  Smoother scrolling at the edge of the window.
+
+  #+begin_src emacs-lisp
+    (setq scroll-step 1
+          scroll-conservatively 10000)
+  #+end_src
+
   Set the fill column to 80 characters globally.
 
   #+begin_src emacs-lisp
