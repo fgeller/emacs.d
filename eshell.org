@@ -38,3 +38,12 @@
   #+begin_src emacs-lisp
     (setq eshell-prompt-regexp "\$ ")
   #+end_src
+
+  Helper to find git root.
+
+  #+begin_src emacs-lisp
+    (defun eshell/grt ()
+      (interactive)
+      (let ((root (locate-dominating-file default-directory ".git")))
+        (eshell/cd root)))
+  #+end_src
