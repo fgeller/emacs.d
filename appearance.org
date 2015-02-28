@@ -111,7 +111,8 @@
                       (compilation-mode :noselect t)
                       ("COMMIT_EDITMSG" :height 20 :position bottom)
                       (git-commit-mode :height 20 :position bottom)
-                      ("*eshell*" :height 20 :position bottom))))
+                      ("*eshell*" :height 20 :position bottom) ;; initially not in eshell-mode
+                      (eshell-mode :height 20 :position bottom))))
   #+end_src
 
   Line numbers
