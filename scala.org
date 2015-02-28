@@ -13,6 +13,31 @@
                    (preferencesFile . ,scalariform-preferences-file)))))
   #+end_src
 
+  Start the daemon.
+
+  #+begin_src emacs-lisp
+    (defun start-scalariform-daemon ()
+      (interactive)
+      (let ((buf-name "*scalariform-daemon*")
+            (default-directory (expand-file-name "~/code/scalariform-daemon/")))
+        (if (get-buffer buf-name)
+            (with-current-buffer buf-name (recompile))
+          (compile "sbt run")
+          (with-current-buffer "*compilation*" (rename-buffer buf-name)))))
+  #+end_src
+
+  Helper to start sbt in compilation buffer.
+
+  #+begin_src emacs-lisp
+    (defun start-sbt ()
+      (interactive)
+      (let ((buf-name (format "*sbt [%s]*" default-directory)))
+        (if (get-buffer buf-name)
+            (switch-to-buffer buf-name)
+          (compile "sbt" t)
+          (with-current-buffer "*compilation*" (rename-buffer buf-name)))))
+  #+end_src
+
   Per-buffer customizations.
 
   #+begin_src emacs-lisp
