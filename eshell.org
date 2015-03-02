@@ -47,3 +47,15 @@
       (let ((root (locate-dominating-file default-directory ".git")))
         (eshell/cd root)))
   #+end_src
+
+  Helper to re-use eshell.
+
+  #+begin_src emacs-lisp
+    (defun last-eshell ()
+      (interactive)
+      (let ((buf-name (cl-find-if (lambda (name) (string-match "*eshell\\[.+\\]\\$ " name))
+                                  (mapcar 'buffer-name (buffer-list)))))
+        (if buf-name
+            (pop-to-buffer-same-window buf-name)
+          (eshell))))
+  #+end_src
