@@ -1,48 +1,5 @@
 * Version control
 
   #+begin_src emacs-lisp
-    (use-package magit
-      :commands
-      (magit-status magit-diff magit-revision-file-log magit-blame-mode global-magit-wip-save-mode)
-      :config
-      (define-key magit-status-mode-map (kbd "q") 'magit-quit-session)
-      (global-magit-wip-save-mode 1))
-  #+end_src
-
-  @magnars magit window session tweaks: Start in fullscreen and restore previous
-  window configuration on quit.
-
-  #+begin_src emacs-lisp
-    (defadvice magit-status (around magit-fullscreen activate)
-      (window-configuration-to-register :magit-fullscreen)
-      ad-do-it
-      (delete-other-windows))
-
-    (defun magit-quit-session ()
-      "Restores the previous window configuration and kills the magit buffer"
-      (interactive)
-      (kill-buffer)
-      (jump-to-register :magit-fullscreen))
-  #+end_src
-
-  #+begin_src emacs-lisp
     (add-hook 'vc-annotate-mode-hook (lambda () (setq show-trailing-whitespace nil)))
-  #+end_src
-
-  We like word-based diffs.
-
-  #+begin_src emacs-lisp
-    (setq magit-diff-refine-hunk t)
-  #+end_src
-
-  Enable global magit support for git-wip on save. Don't forget to enable it
-  globally for all git repositories:
-
-  =$ git config --global --add magit.extension wip-save=
-
-  #+begin_src emacs-lisp
-    (eval-after-load 'magit
-      '(progn
-         (use-package magit-wip)
-         (global-magit-wip-save-mode)))
   #+end_src
