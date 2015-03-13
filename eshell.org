@@ -73,3 +73,20 @@
              (vc-responsible-backend default-directory))
             (vc-mode (vc-backend buffer-file-name))))
   #+end_src
+
+  Patch eshell-send-input to display git commit when looking at one.
+
+  #+begin_src emacs-lisp
+    (defun eshell-send-input-customized (&optional use-region queue-p no-newline)
+      (interactive "*P")
+      (if (and (thing-at-point 'word)
+               (string-match "[a-f0-9]\\{7,\\}" (thing-at-point 'word)))
+          (let* ((vc-backend (vc-deduce-backend))
+                 (rev (thing-at-point 'word))
+                 (prev (vc-call-backend vc-backend 'previous-revision nil rev)))
+            (vc-diff-internal t (list vc-backend) prev rev))
+        (eshell-send-input use-region queue-p no-newline)))
+
+    (add-hook 'eshell-mode-hook
+              (lambda () (define-key eshell-mode-map (kbd "RET") 'eshell-send-input-customized)))
+  #+end_src
