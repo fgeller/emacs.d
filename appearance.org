@@ -13,7 +13,7 @@
   #+begin_src emacs-lisp
     (use-package highlight-thing
       :ensure highlight-thing
-      :init (highlight-thing-mode))
+      :init (global-highlight-thing-mode 1))
   #+end_src
 
   Basic default settings.
