@@ -43,6 +43,17 @@
 
     Continue reading for more information on the available bindings.
 
+** Recent changes
+
+   - Search prefixes and bindings for repition changed: =uu= / =pp= to start
+     searching, =U= / =P= to repeat search.
+
+   - Added bindings for =universal-argument=, and commands to pop local and global
+     marks.
+
+   - Added hook for customizing key-bindings. Simplifies =eval-buffer= to test new
+     bindings while maintaining custom bindings.
+
 ** Details
 
    =fingers-mode= is a global minor mode that introduces key bindings for
@@ -285,9 +296,14 @@
     =M-= and =C-M-= respectively. So pressing =g;= is like pressing =M-;= and
     commonly triggers =comment-dwim=.
 
+    The =universal-argument= is bound to =b= by default to easily toggle between
+    different modes for commands. For example, pressing =w= will join the current
+    line to the previous one, pressing =bw= will join the next line to the current
+    one.
+
 *** Right Hand: Navigation
 
-    Available bindings on the right hand (Workman layout), prefixes are marked by =(p)=:
+    Available bindings on the right hand (Workman layout), prefixs are color coded::
 
     [[https://raw.githubusercontent.com/fgeller/fingers.el/master/images/navigation.png][file:https://raw.githubusercontent.com/fgeller/fingers.el/master/images/navigation.png]]
 
@@ -305,8 +321,8 @@
     ffb= and to restore it =ffb=.
 
     Middle and ring finger start prefixes for searching down =u= and up =p=. To
-    start a search from point forward, press =ue= and enter the search string
-    (=po= for backwards search). For example, pressing =uewhite= for the
+    start a search from point forward, press =uu= and enter the search string
+    (=pp= for backwards search). For example, pressing =uuwhite= for the
     following snippet:
 
     #+begin_src emacs-lisp
@@ -354,8 +370,8 @@
         (cdr (assoc type fingers-region-specifiers)))
     #+end_src
 
-    Exit isearch via =RET= and continue searching downward via =uu= or upward
-    via =pp=. Alternatively you can press =uo= to trigger =occur= for the
+    Exit isearch via =RET= and continue searching downward via =U= or upward
+    via =P=. Alternatively you can press =uo= to trigger =occur= for the
     current search string =white=.
 
     Additionally you can use =ut= and =pt= to jump to the next or previous
