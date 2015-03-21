@@ -90,3 +90,19 @@
     (add-hook 'eshell-mode-hook
               (lambda () (define-key eshell-mode-map (kbd "RET") 'eshell-send-input-customized)))
   #+end_src
+
+  Helpers to quickly show status of git repo in eshell.
+
+  #+begin_src emacs-lisp
+    (defun eshell/git-status (directory)
+      (interactive)
+      (eshell/cd directory)
+      (insert "git status")
+      (eshell-send-input))
+
+    (defun show-eshell-git-status ()
+      (interactive)
+      (let ((target-directory default-directory))
+        (last-eshell)
+        (eshell/git-status target-directory)))
+  #+end_src
