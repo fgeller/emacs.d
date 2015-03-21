@@ -43,8 +43,8 @@
 (defconst fingers-region-specifiers
   '((char . ?v)
     (char-and-whitespace . ?V)
-    (line . ?g)
-    (line-rest . ?G)
+    (line . ?G)
+    (line-rest . ?g)
     (word . ?h)
     (word-and-whitespace . ?H)
     (symbol . ?t)
@@ -266,6 +266,30 @@
 
 (defun fingers-skip-whitespace-backward ()
   (skip-chars-backward " \t\n"))
+
+(defun fingers-increment-integer-at-point (&optional increment)
+  (interactive "p*")
+  (fingers-update-integer-at-point (lambda (num) (+ num (if increment increment 1)))))
+
+(defun fingers-decrement-integer-at-point (&optional decrement)
+  (interactive "p*")
+  (fingers-update-integer-at-point (lambda (num) (- num (if decrement decrement 1)))))
+
+(defun fingers-update-integer-at-point (update)
+    (let ((offset (skip-chars-backward "0123456789")))
+      (if (looking-at "[[:digit:]]+")
+	  (let* ((number-string (save-excursion
+				  (re-search-forward "[[:digit:]]+")
+				  (match-string 0)))
+		 (should-pad-p (string-match "0+[[:digit:]]+" number-string))
+		 (pad-number #'(lambda (num) (format (concat "%0" (number-to-string (length number-string)) "d") num)))
+		 (number (string-to-number number-string))
+		 (new-number (funcall update number))
+		 (final-string (if should-pad-p (funcall pad-number new-number) (number-to-string new-number))))
+	    (delete-region (point) (+ (point) (length number-string)))
+	    (insert final-string)
+	    (backward-char (+ (length number-string) offset)))
+	(message "Can't identify number at point."))))
 
 ;;
 ;; mark
@@ -591,6 +615,8 @@
       (/ . undo)
 
       (SPC . fingers-mark)
+      (+ . fingers-increment-integer-at-point)
+      (- . fingers-decrement-integer-at-point)
       )
     "Main bindings in `fingers-mode-map'")
 
@@ -636,6 +662,7 @@
     (xa . ,(fingers-pass-events-command "C-c C-x C-a"))
     (,(intern "'") . ,(fingers-pass-events-command "C-c '"))
     (,(intern "!") . ,(fingers-pass-events-command "C-c !"))
+    (RET . ,(fingers-pass-events-command "C-c RET"))
   )
   "Bindings for `fingers-mode-c-map'")
 
