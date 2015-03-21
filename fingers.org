@@ -120,3 +120,18 @@
       (add-hook 'fingers-after-reset-hook 'fingers-mode-custom-bindings)
       (global-fingers-mode 1))
   #+end_src
+
+  Helper to save macro to =*scratch*= buffer.
+
+  #+begin_src emacs-lisp
+    (defun save-macro-to-scratch (name)
+      (interactive "SName the macro:")
+      (name-last-kbd-macro name)
+      (pop-to-buffer "*scratch*")
+      (goto-char (point-max))
+      (newline)
+      (insert ";; generated macro")
+      (newline)
+      (insert-kbd-macro name)
+      (newline))
+  #+end_src
