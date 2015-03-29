@@ -206,6 +206,12 @@
     (setq dired-listing-switches "-laGh")
   #+end_src
 
+  Ensure that we start the server.
+
+  #+begin_src emacs-lisp
+    (server-start)
+  #+end_src
+
 * Load modules
 
   More configuration split into org files.
