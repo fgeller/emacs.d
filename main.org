@@ -212,6 +212,14 @@
     (server-start)
   #+end_src
 
+  Set Chromium as the default browser on Linux.
+
+  #+begin_src emacs-lisp
+    (when linux-p
+      (setq browse-url-browser-function 'browse-url-generic
+            browse-url-generic-program "chromium-browser"))
+  #+end_src
+
 * Load modules
 
   More configuration split into org files.
