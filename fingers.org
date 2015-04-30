@@ -79,6 +79,12 @@
             (rename-buffer "*offline-imap*")))))
   #+end_src
 
+  #+begin_src emacs-lisp
+    (defun toggle-show-trailing-whitespace ()
+      (interactive)
+      (setq show-trailing-whitespace (not show-trailing-whitespace)))
+  #+end_src
+
   My custom bindings for fingers-mode.
 
   #+begin_src emacs-lisp
@@ -107,6 +113,7 @@
       (define-key fingers-mode-launch-map (kbd "oo") 'offlineimap)
       (define-key fingers-mode-toggle-map (kbd "f") 'font-lock-mode)
       (define-key fingers-mode-toggle-map (kbd "w") 'leerzeichen-mode)
+      (define-key fingers-mode-toggle-map (kbd "W") 'toggle-show-trailing-whitespace)
       (global-set-key (kbd "s-<up>") 'increase-font-height)
       (global-set-key (kbd "s-<down>") 'decrease-font-height)
       )
