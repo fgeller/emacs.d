@@ -97,21 +97,11 @@
   Control those windows.
 
   #+begin_src emacs-lisp
-    (use-package popwin
-      :ensure popwin
-      :init
-      (popwin-mode 1)
-      (setq-default popwin:special-display-config
-                    '(("\\*.*helm.*\\*" :regexp t :height 20 :position bottom)
-                      ("*Miniedit Help*" :noselect t)
-                      help-mode
-                      (ag-mode :height 20 :position bottom)
-                      (completion-list-mode :noselect t)
-                      (compilation-mode :noselect t)
-                      ("COMMIT_EDITMSG" :height 20 :position bottom)
-                      (git-commit-mode :height 20 :position bottom)
-                      ("*eshell*" :height 20 :position bottom) ;; initially not in eshell-mode
-                      (eshell-mode :height 20 :position bottom))))
+    (add-to-list 'display-buffer-alist
+                 `(,(rx bos "*helm" (* not-newline) "*" eos)
+                   (display-buffer-in-side-window)
+                   (inhibit-same-window . t)
+                   (window-height . 0.4)))
   #+end_src
 
   Line numbers
