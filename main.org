@@ -130,6 +130,7 @@
     (global-auto-revert-mode 1)
     (setq global-auto-revert-non-file-buffers t)
     (setq auto-revert-verbose nil)
+    (setq auto-revert-interval 1)
   #+end_src
 
   Don't make backup files when renaming files.
