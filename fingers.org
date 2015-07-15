@@ -102,6 +102,7 @@
       (define-key fingers-mode-map (kbd ">") 'helm-occur)
       (define-key fingers-mode-map (kbd ".") 'helm-jump)
       (define-key fingers-mode-map (kbd "|") 'mc/edit-lines)
+      (define-key fingers-mode-map (kbd "fN") 'window-configuration-to-register)
       (define-key fingers-mode-c-map (kbd "RET") 'browse-url-at-point)
       (define-key fingers-mode-x-map (kbd "f") 'helm-find-files)
       (define-key fingers-mode-x-map (kbd "x") 'helm-M-x)
