@@ -3,6 +3,7 @@
   #+begin_src emacs-lisp
     (use-package helm-config :config (helm-mode 1))
     (use-package helm-ls-git)
+    (use-package helm-org)
   #+end_src
 
    Collection of sources that we want fast access to.
@@ -18,6 +19,7 @@
                         helm-source-recentf
                         helm-source-files-in-current-dir
                         helm-source-buffer-not-found
+                        ,(helm-source-org-headings-for-files (org-agenda-files))
                         )))
    #+end_src
 
