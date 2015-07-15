@@ -82,7 +82,7 @@
      (setq
       org-directory (expand-file-name "~/orgs")
       org-default-notes-file (concat org-directory "/Tasks.org")
-      org-agenda-files `(,org-directory))
+      org-agenda-files (list (concat org-directory "/Tasks.org")))
    #+end_src
 
 ** Modules
