@@ -25,22 +25,12 @@
       :commands mc/edit-lines)
   #+end_src
 
-  Load ace-jump-mode for fine-grained in-buffer jumping.
+  Load avy for fine-grained in-buffer jumping.
 
   #+begin_src emacs-lisp
-    (use-package ace-jump-mode
-      :commands (ace-jump-char-mode ace-jump-mode)
-      :config
-      (setq ace-jump-mode-scope 'window))
-  #+end_src
-
-  Helper to limite candidates for =ace-jump-char-mode=.
-
-  #+begin_src emacs-lisp
-    (defun ace-jump-mode-char-limited-mode ()
-      (interactive)
-      (let ((ace-jump-mode-limit-window-scope 10))
-        (call-interactively 'ace-jump-char-mode)))
+    (use-package avy
+      :ensure avy
+      :commands (avy-goto-word-or-subword-1))
   #+end_src
 
   Helper to visualize fingers-mode's state and make mode-line visible.
@@ -97,8 +87,8 @@
       (define-key fingers-mode-map (kbd "j") 'helm-apropos)
       (define-key fingers-mode-map (kbd "k") 'ag-project)
       (define-key fingers-mode-map (kbd "K") 'ag)
-      (define-key fingers-mode-map (kbd "l") 'ace-jump-mode)
-      (define-key fingers-mode-map (kbd "L") 'ace-jump-mode-char-limited-mode)
+      (define-key fingers-mode-map (kbd "l") 'avy-goto-word-or-subword-1)
+      (define-key fingers-mode-map (kbd "L") 'avy-goto-char)
       (define-key fingers-mode-map (kbd ">") 'helm-occur)
       (define-key fingers-mode-map (kbd ".") 'helm-jump)
       (define-key fingers-mode-map (kbd "|") 'mc/edit-lines)
