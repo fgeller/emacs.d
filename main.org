@@ -159,6 +159,12 @@
           scroll-conservatively 10000)
   #+end_src
 
+  Always allow local variables.
+
+  #+begin_src emacs-lisp
+    (setq enable-local-variables :all)
+  #+end_src
+
   Set the fill column to 80 characters globally.
 
   #+begin_src emacs-lisp
