@@ -106,3 +106,12 @@
         (last-eshell)
         (eshell/git-status target-directory)))
   #+end_src
+
+  9term like behavior.
+
+  #+begin_src emacs-lisp
+    (add-to-list 'eshell-modules-list 'eshell-smart)
+    (setq eshell-where-to-jump 'begin)
+    (setq eshell-review-quick-commands nil)
+    (setq eshell-smart-space-goes-to-end t)
+  #+end_src
