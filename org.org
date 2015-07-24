@@ -233,6 +233,27 @@
 
 ** Capture
 
+   Automatically refile after capturing a template, if I added a timestamp
+   during capture.
+
+   #+begin_src emacs-lisp
+     (add-hook 'org-capture-before-finalize-hook
+               'org-refile-captured-entry-to-scheduled)
+
+     (defun org-refile-captured-entry-to-scheduled ()
+       (save-excursion
+         (org-capture-goto-last-stored)
+         (when (or (org-get-scheduled-time (point))
+                   (org-get-deadline-time (point)))
+           (let* ((scheduled-path (list org-default-notes-file "Tasks" "Scheduled"))
+                  (target-marker (org-find-olp scheduled-path)))
+             (org-refile nil nil (list
+                                  "Scheduled"
+                                  org-default-notes-file
+                                  nil ;; re not needed
+                                  (marker-position target-marker)))))))
+   #+end_src
+
    Define additional capture templates for personal and work tasks.
 
    #+begin_src emacs-lisp
