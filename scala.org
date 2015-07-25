@@ -42,7 +42,6 @@
 
   #+begin_src emacs-lisp
     (defun scala-customizations ()
-      (nlinum-mode 1)
       (setq tab-width 2)
       (gtags-mode 1)
       (helm-gtags-mode 1)
