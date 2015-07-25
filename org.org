@@ -289,6 +289,12 @@
 
 ** Babel
 
+   Re-use current-window for editor.
+
+   #+begin_src emacs-lisp
+     (setq org-src-window-setup 'current-window)
+   #+end_src
+
    Fontify source code in "native" block.
 
    #+begin_src emacs-lisp
