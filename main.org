@@ -248,4 +248,5 @@
     (org-babel-load-file (expand-file-name "~/.emacs.d/php.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/go.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/email.org"))
+    (org-babel-load-file (expand-file-name "~/.emacs.d/compilation.org"))
   #+end_src
