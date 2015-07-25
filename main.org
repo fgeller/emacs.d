@@ -171,6 +171,12 @@
     (setq-default fill-column 80)
   #+end_src
 
+  Enable column number in mode-line.
+
+  #+begin_src emacs-lisp
+    (column-number-mode 1)
+  #+end_src
+
   Default whitespace visualization style.
 
   #+begin_src emacs-lisp
