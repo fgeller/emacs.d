@@ -106,7 +106,9 @@
       (define-key fingers-mode-toggle-map (kbd "w") 'leerzeichen-mode)
       (define-key fingers-mode-toggle-map (kbd "W") 'toggle-show-trailing-whitespace)
       (global-set-key (kbd "s-<up>") 'increase-font-height)
+      (global-set-key (kbd "A-<up>") 'increase-font-height)
       (global-set-key (kbd "s-<down>") 'decrease-font-height)
+      (global-set-key (kbd "A-<down>") 'decrease-font-height)
       )
   #+end_src
 
