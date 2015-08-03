@@ -38,17 +38,17 @@
   #+begin_src emacs-lisp
     (defun fingers-mode-visual-toggle ()
       (interactive)
-      (let ((faces-to-toggle '(mode-line mode-line-inactive))
-            (enabled-color (if terminal-p "gray" "#e8e8e8"))
-            (disabled-color (if terminal-p "green" "#a1b56c")))
+      (let ((faces-to-toggle '(mode-line mode-line-inactive)))
         (cond (fingers-mode
                (mapcar (lambda (face)
-                         (set-face-background face enabled-color)
+                         (set-face-foreground face "#f8f8f8")
+                         (set-face-background face "#f8f8f8")
                          (set-face-attribute face nil :height 20))
                        faces-to-toggle))
               (t
                (mapcar (lambda (face)
-                         (set-face-background face disabled-color)
+                         (set-face-foreground face "#b8b8b8")
+                         (set-face-background face "#ffffff")
                          (set-face-attribute face nil :height (face-attribute 'default :height)))
                        faces-to-toggle)))))
 
