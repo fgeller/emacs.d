@@ -1,5 +1,11 @@
 * Org-mode
 
+  Expand all entries on buffer open.
+
+  #+begin_src emacs-lisp
+    (setq org-startup-folded 'showall)
+  #+end_src
+
   Log a timestamp when finishing a task.
 
   #+begin_src emacs-lisp
