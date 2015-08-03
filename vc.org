@@ -1,5 +1,15 @@
 * Version control
 
+  Don't show trailing spaces in annotate buffer.
+
   #+begin_src emacs-lisp
     (add-hook 'vc-annotate-mode-hook (lambda () (setq show-trailing-whitespace nil)))
+  #+end_src
+
+  Reduce noise in annotate buffer by limiting date output for git.
+
+  #+begin_src emacs-lisp
+    (defun vc-git-annotate-command (file buf &optional rev)
+      (let ((name (file-relative-name file)))
+        (vc-git-command buf 'async nil "blame" "--date=short" "-C" "-C" rev "--" name)))
   #+end_src
