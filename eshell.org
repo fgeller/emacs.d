@@ -80,6 +80,7 @@
     (defun eshell-send-input-customized (&optional use-region queue-p no-newline)
       (interactive "*P")
       (if (and (thing-at-point 'word)
+               (not (looking-at "\\>"))
                (string-match "[a-f0-9]\\{7,\\}" (thing-at-point 'word)))
           (let* ((vc-backend (vc-deduce-backend))
                  (rev (thing-at-point 'word))
