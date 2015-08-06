@@ -111,11 +111,10 @@
       (define-key fingers-mode-toggle-map (kbd "f") 'font-lock-mode)
       (define-key fingers-mode-toggle-map (kbd "w") 'leerzeichen-mode)
       (define-key fingers-mode-toggle-map (kbd "W") 'toggle-show-trailing-whitespace)
+      (define-key fingers-mode-toggle-map (kbd "n") 'nlinum-mode)
 
-      (global-set-key (kbd "s-<up>") 'increase-font-height)
-      (global-set-key (kbd "A-<up>") 'increase-font-height)
-      (global-set-key (kbd "s-<down>") 'decrease-font-height)
-      (global-set-key (kbd "A-<down>") 'decrease-font-height)
+      (define-key fingers-mode-map (kbd "A-<up>") 'increase-font-height)
+      (define-key fingers-mode-map (kbd "A-<down>") 'decrease-font-height)
 
       (define-key fingers-mode-map (kbd "S-<up>") 'enlarge-window)
       (define-key fingers-mode-map (kbd "S-<down>") 'shrink-window)
