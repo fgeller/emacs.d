@@ -234,6 +234,43 @@
             browse-url-generic-program "chromium-browser"))
   #+end_src
 
+
+* Helpers
+
+  fold-left rocks.
+
+  #+begin_src emacs-lisp
+    (defun fold-left (fn acc seq)
+      (let ((next (car seq))
+            (rest (cdr seq)))
+        (while next
+          (setq acc (funcall fn acc next)
+                next (car rest)
+                rest (cdr rest))))
+      acc)
+  #+end_src
+
+  Find a file recursively in a given directory.
+
+  #+begin_src emacs-lisp
+    (defun find-file-recursively (file-name dir)
+      (let* ((default-directory dir)
+             (contents (directory-files dir))
+             (files (remove-if 'file-directory-p contents))
+             (directories (remove-if-not (lambda (f) (and (file-directory-p f)
+                                                          (not (string-equal "." f))
+                                                          (not (string-equal ".." f))))
+                                   contents)))
+        (if (member file-name files)
+            (expand-file-name file-name dir)
+          (fold-left (lambda (found nested-dir)
+                       (if found
+                           found
+                         (find-file-recursively file-name (expand-file-name nested-dir dir))))
+                     nil
+                     directories))))
+  #+end_src
+
 * Load modules
 
   More configuration split into org files.

@@ -1,5 +1,21 @@
 * Scala
 
+  Adds patterns for recognizing file links when running sbt in compilation mode.
+
+  #+begin_src emacs-lisp
+    (setq compilation-sbt-regexp '(sbt "^\\[error\\] \\(/[^:]+\\):\\([0-9]+\\):" 1 2))
+    (add-to-list 'compilation-error-regexp-alist 'sbt)
+    (add-to-list 'compilation-error-regexp-alist-alist compilation-sbt-regexp)
+
+    (defun compilation-find-file-recursively ()
+      (find-file-recursively (match-string 1) default-directory))
+
+    (setq compilation-sbt-stacktrace-regexp
+          '(sbt-stacktrace "[[:space:]]+at [^(]+(\\([^:]+\\):\\([[:digit:]]+\\))$" compilation-find-file-recursively 2))
+    (add-to-list 'compilation-error-regexp-alist 'sbt-stacktrace)
+    (add-to-list 'compilation-error-regexp-alist-alist compilation-sbt-stacktrace-regexp)
+  #+end_src
+
   Hook to call scalariform-daemon for formatting.
 
   #+begin_src emacs-lisp
