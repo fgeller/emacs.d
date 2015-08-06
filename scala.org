@@ -55,7 +55,9 @@
         (if (get-buffer buf-name)
             (switch-to-buffer buf-name)
           (compile "sbt" t)
-          (with-current-buffer "*compilation*" (rename-buffer buf-name)))))
+          (with-current-buffer "*compilation*"
+            (font-lock-mode 1)
+            (rename-buffer buf-name)))))
   #+end_src
 
   Per-buffer customizations.
