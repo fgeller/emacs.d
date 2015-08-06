@@ -26,6 +26,26 @@
           (with-current-buffer "*compilation*" (rename-buffer buf-name)))))
   #+end_src
 
+  Helpers to navigate tests.
+
+  #+begin_src emacs-lisp
+    (defun scala-next-test-forward ()
+      (interactive)
+      (scala-next-test nil))
+
+    (defun scala-next-test-backward ()
+      (interactive)
+      (scala-next-test t))
+
+    (defun scala-next-test (backwards)
+      (let ((test-prefix "\\(it(\\|describe(\\)"))
+        (when (looking-at-p test-prefix) (forward-word))
+        (when (if backwards
+                  (re-search-backward test-prefix (point-min))
+                (re-search-forward test-prefix (point-max)))
+          (unless backwards (backward-word)))))
+  #+end_src
+
   Helper to start sbt in compilation buffer.
 
   #+begin_src emacs-lisp
@@ -77,5 +97,3 @@
       (save-excursion
         (replace-regexp "\\bignore(\\(s\\)?\"" "it(\\1\"" nil (point-min) (point-max))))
   #+end_src
-
-
