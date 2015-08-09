@@ -116,3 +116,12 @@
     (setq eshell-review-quick-commands nil)
     (setq eshell-smart-space-goes-to-end t)
   #+end_src
+
+  Basic clear functionality
+
+  #+begin_src emacs-lisp
+    (defun eshell/clear ()
+      (interactive)
+      (let ((inhibit-read-only t))
+        (erase-buffer)))
+  #+end_src
