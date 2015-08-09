@@ -12,7 +12,8 @@
 
   #+begin_src emacs-lisp
     (use-package highlight-thing
-      :init (global-highlight-thing-mode 1))
+      :init (global-highlight-thing-mode 1)
+      :config (setq highlight-thing-what-thing 'word))
   #+end_src
 
   Basic default settings.
