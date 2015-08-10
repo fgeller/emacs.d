@@ -51,3 +51,5 @@ main.el
 /go.el
 /email.el
 /java.el
+/compilation.el
+/session.*
