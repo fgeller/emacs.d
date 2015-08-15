@@ -86,8 +86,7 @@
       (subword-mode 1)
       (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-find-tag)
       (define-key helm-gtags-mode-map (kbd "M-/") 'helm-gtags-pop-stack)
-      (add-hook 'before-save-hook 'maybe-cleanup-whitespace nil 'local)
-      (add-hook 'after-save-hook 'scalariform-daemon-format-file nil 'make-it-local))
+      (add-hook 'before-save-hook 'scalariform-daemon-format-file nil 'make-it-local))
   #+end_src
 
   Hook in customizations.
