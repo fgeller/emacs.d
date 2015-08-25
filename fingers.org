@@ -114,7 +114,9 @@
       (define-key fingers-mode-toggle-map (kbd "n") 'nlinum-mode)
 
       (define-key fingers-mode-map (kbd "A-<up>") 'increase-font-height)
+      (define-key fingers-mode-map (kbd "s-<up>") 'increase-font-height)
       (define-key fingers-mode-map (kbd "A-<down>") 'decrease-font-height)
+      (define-key fingers-mode-map (kbd "s-<down>") 'decrease-font-height)
 
       (define-key fingers-mode-map (kbd "S-<up>") 'enlarge-window)
       (define-key fingers-mode-map (kbd "S-<down>") 'shrink-window)
