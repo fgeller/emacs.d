@@ -104,5 +104,13 @@
         (bbdb-initialize 'message)
         (bbdb-mua-auto-update-init 'message)
         (setq bbdb-mua-auto-update-p 'query
-              bbdb-mua-pop-up nil)))
+              bbdb-mua-pop-up nil
+              bbdb-mua-mode-alist '((vm vm-mode vm-virtual-mode vm-summary-mode vm-presentation-mode)
+                                    (gnus gnus-summary-mode gnus-article-mode gnus-tree-mode)
+                                    (rmail rmail-mode rmail-summary-mode)
+                                    (mh mhe-mode mhe-summary-mode mh-folder-mode)
+                                    (message notmuch-message-mode message-mode)
+                                    (mail mail-mode)
+                                    (mu4e mu4e-view-mode)) 
+              )))
   #+end_src
