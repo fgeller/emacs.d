@@ -711,7 +711,45 @@
        (goto-char (point-max))
        (org-insert-item)
        (forward-line -1)
-       (looking-at "$")))))
+       (looking-at "$"))))
+  ;; When called before or on the bullet, insert new item before
+  ;; current one.
+  (should
+   (equal "- \n- item"
+	  (org-test-with-temp-text "- item"
+	    (org-insert-item)
+	    (buffer-string))))
+  (should
+   (equal "- \n- item"
+	  (org-test-with-temp-text "- <point>item"
+	    (org-insert-item)
+	    (buffer-string))))
+  ;; When called on tag in a descriptive list, insert new item before
+  ;; current one too.
+  (should
+   (equal "-  :: \n- tag :: item"
+	  (org-test-with-temp-text "- tag <point>:: item"
+	    (org-insert-item)
+	    (buffer-string))))
+  (should
+   (equal "-  :: \n- tag :: item"
+	  (org-test-with-temp-text "- ta<point>g :: item"
+	    (org-insert-item)
+	    (buffer-string))))
+  ;; Further, it splits the line or add a blank new item after it,
+  ;; according to `org-M-RET-may-split-line'.
+  (should
+   (equal "- it\n- em"
+	  (org-test-with-temp-text "- it<point>em"
+	    (let ((org-M-RET-may-split-line  '((default . t))))
+	      (org-insert-item))
+	    (buffer-string))))
+  (should
+   (equal "- item\n- "
+	  (org-test-with-temp-text "- it<point>em"
+	    (let ((org-M-RET-may-split-line  '((default . nil))))
+	      (org-insert-item))
+	    (buffer-string)))))
 
 (ert-deftest test-org-list/repair ()
   "Test `org-list-repair' specifications."
@@ -743,11 +781,100 @@
 	      (org-list-repair))
 	    (buffer-string))))
   ;; Special case: do not move contents of an item within its child.
+  ;; Yet, preserve indentation differences within contents.
   (should
    (equal "- item\n  - child\n  within item"
 	  (org-test-with-temp-text "- item\n    - child\n    within item"
 	    (let ((org-list-indent-offset 0)) (org-list-repair))
-	    (buffer-string)))))
+	    (buffer-string))))
+  (should
+   (equal
+    "- item\n  - child\n  within item\n    indented"
+    (org-test-with-temp-text
+	"- item\n    - child\n   within item\n     indented"
+      (let ((org-list-indent-offset 0)) (org-list-repair))
+      (buffer-string)))))
+
+(ert-deftest test-org-list/update-checkbox-count ()
+  "Test `org-update-checkbox-count' specifications."
+  ;; From a headline.
+  (should
+   (string-match "\\[0/1\\]"
+		 (org-test-with-temp-text "* [/]\n- [ ] item"
+		   (org-update-checkbox-count)
+		   (buffer-string))))
+  (should
+   (string-match "\\[1/1\\]"
+		 (org-test-with-temp-text "* [/]\n- [X] item"
+		   (org-update-checkbox-count)
+		   (buffer-string))))
+  (should
+   (string-match "\\[100%\\]"
+		 (org-test-with-temp-text "* [%]\n- [X] item"
+		   (org-update-checkbox-count)
+		   (buffer-string))))
+  ;; From a list.
+  (should
+   (string-match "\\[0/1\\]"
+		 (org-test-with-temp-text "- [/]\n  - [ ] item"
+		   (org-update-checkbox-count)
+		   (buffer-string))))
+  (should
+   (string-match "\\[1/1\\]"
+		 (org-test-with-temp-text "- [/]\n  - [X] item"
+		   (org-update-checkbox-count)
+		   (buffer-string))))
+  (should
+   (string-match "\\[100%\\]"
+		 (org-test-with-temp-text "- [%]\n  - [X] item"
+		   (org-update-checkbox-count)
+		   (buffer-string))))
+  ;; Count do not apply to sub-lists unless count is not hierarchical.
+  ;; This state can be achieved with COOKIE_DATA node property set to
+  ;; "recursive".
+  (should
+   (string-match "\\[1/1\\]"
+		 (org-test-with-temp-text "- [/]\n  - item\n    - [X] sub-item"
+		   (let ((org-checkbox-hierarchical-statistics nil))
+		     (org-update-checkbox-count))
+		   (buffer-string))))
+  (should
+   (string-match "\\[1/1\\]"
+		 (org-test-with-temp-text "
+<point>* H
+:PROPERTIES:
+:COOKIE_DATA: recursive
+:END:
+- [/]
+  - item
+    - [X] sub-item"
+		   (org-update-checkbox-count)
+		   (buffer-string))))
+  (should
+   (string-match "\\[0/0\\]"
+		 (org-test-with-temp-text "- [/]\n  - item\n    - [ ] sub-item"
+		   (org-update-checkbox-count)
+		   (buffer-string))))
+  ;; With optional argument ALL, update all buffer.
+  (should
+   (= 2
+      (org-test-with-temp-text "* [/]\n- [X] item\n* [/]\n- [X] item"
+	(org-update-checkbox-count t)
+	(count-matches "\\[1/1\\]"))))
+  ;; Ignore boxes in drawers, blocks or inlinetasks when counting from
+  ;; outside.
+  (should
+   (string-match "\\[2/2\\]"
+		 (org-test-with-temp-text "
+- [/]
+  - [X] item1
+    :DRAWER:
+    - [X] item
+    :END:
+  - [X] item2"
+		   (let ((org-checkbox-hierarchical-statistics nil))
+		     (org-update-checkbox-count))
+		   (buffer-string)))))
 
 
 
@@ -792,7 +919,7 @@
 (ert-deftest test-org-list/to-html ()
   "Test `org-list-to-html' specifications."
   (should
-   (equal "<ul class=\"org-ul\">\n<li>a\n</li>\n</ul>"
+   (equal "<ul class=\"org-ul\">\n<li>a</li>\n</ul>"
 	  (let (org-html-indent)
 	    (with-temp-buffer
 	      (insert "<!-- BEGIN RECEIVE ORGLST name -->
@@ -837,7 +964,7 @@
 		    (point)))))))
 
 (ert-deftest test-org-list/to-texinfo ()
-  "Test `org-list-to-latex' specifications."
+  "Test `org-list-to-texinfo' specifications."
   (should
    (equal "@itemize\n@item\na\n@end itemize"
 	  (with-temp-buffer
