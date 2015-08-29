@@ -53,3 +53,4 @@ main.el
 /java.el
 /compilation.el
 /session.*
+/site-lisp/org
