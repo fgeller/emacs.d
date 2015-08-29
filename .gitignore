@@ -18,7 +18,6 @@ auto-save-list
 *.elc
 /tramp
 /url/cookies
-/init.el
 /srecode-map.el
 /org-clock-save.el
 /.mc-lists.el
