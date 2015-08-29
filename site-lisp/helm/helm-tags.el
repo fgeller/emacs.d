@@ -1,6 +1,6 @@
-;;; helm-tags.el --- Helm for Etags and Ctags. -*- lexical-binding: t -*-
+;;; helm-tags.el --- Helm for Etags. -*- lexical-binding: t -*-
 
-;; Copyright (C) 2012 ~ 2014 Thierry Volpiatto <thierry.volpiatto@gmail.com>
+;; Copyright (C) 2012 ~ 2015 Thierry Volpiatto <thierry.volpiatto@gmail.com>
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 (require 'cl-lib)
 (require 'helm)
+(require 'helm-help)
 (require 'helm-utils)
 
 
@@ -37,10 +38,17 @@ Don't search tag file deeply if outside this value."
   :type  'number
   :group 'helm-tags)
 
-(defcustom helm-etags-match-part-only t
-  "Whether to match only the tag part of CANDIDATE in
-helm-source-ctags-select."
-  :type 'boolean
+(defcustom helm-etags-match-part-only 'tag
+  "Allow choosing the tag part of CANDIDATE in `helm-source-etags-select'.
+A tag looks like this:
+    filename: \(defun foo
+You can choose matching against only end part of tag (i.e \"foo\"),
+against only the tag part (i.e \"(defun foo\"),
+or against the whole candidate (i.e \"(filename: (defun foo\")."
+  :type '(choice
+          (const :tag "Match only tag" tag)
+          (const :tag "Match last part of tag" endtag)
+          (const :tag "Match all file+tag" all))
   :group 'helm-tags)
 
 (defcustom helm-etags-execute-action-at-once-if-one t
@@ -61,13 +69,16 @@ one match."
           :underline t)))
   "Face used to highlight etags filenames."
   :group 'helm-tags-faces)
-
 
+
+;;; Etags
+;;
+;;
 (defun helm-etags-run-switch-other-window ()
   "Run switch to other window action from `helm-source-etags-select'."
   (interactive)
   (with-helm-alive-p
-    (helm-quit-and-execute-action
+    (helm-exit-and-execute-action
      (lambda (c)
        (helm-etags-action-goto 'find-file-other-window c)))))
 
@@ -75,7 +86,7 @@ one match."
   "Run switch to other frame action from `helm-source-etags-select'."
   (interactive)
   (with-helm-alive-p
-    (helm-quit-and-execute-action
+    (helm-exit-and-execute-action
      (lambda (c)
        (helm-etags-action-goto 'find-file-other-frame c)))))
 
@@ -85,61 +96,11 @@ one match."
     (define-key map (kbd "M-<down>") 'helm-goto-next-file)
     (define-key map (kbd "M-<up>")   'helm-goto-precedent-file)
     (define-key map (kbd "C-w")      'helm-yank-text-at-point)
-    (define-key map (kbd "C-c ?")    'helm-etags-help)
     (define-key map (kbd "C-c o")    'helm-etags-run-switch-other-window)
     (define-key map (kbd "C-c C-o")  'helm-etags-run-switch-other-frame)
     map)
   "Keymap used in Etags.")
 
-
-;;; Ctags
-;;
-;;
-(defvar helm-ctags-modes
-  '( c-mode c++-mode awk-mode csharp-mode java-mode javascript-mode lua-mode
-    makefile-mode pascal-mode perl-mode cperl-mode php-mode python-mode
-    scheme-mode sh-mode slang-mode sql-mode tcl-mode ))
-
-(defun helm-ctags-init ()
-  (when (and buffer-file-name
-             (memq major-mode helm-ctags-modes)
-             (helm-current-buffer-is-modified))
-    (with-current-buffer (helm-candidate-buffer 'local)
-      (call-process-shell-command
-       (if (string-match "\\.el\\.gz$" helm-buffer-file-name)
-           (format "ctags -e -u -f- --language-force=lisp --fields=n =(zcat %s) "
-                   helm-buffer-file-name)
-         (format "ctags -e -u -f- --fields=n %s " helm-buffer-file-name))
-       nil (current-buffer))
-      (goto-char (point-min))
-      (forward-line 2)
-      (delete-region (point-min) (point))
-      (cl-loop while (and (not (eobp)) (search-forward "\001" (point-at-eol) t))
-            for lineno-start = (point)
-            for lineno = (buffer-substring
-                          lineno-start
-                          (1- (search-forward "," (point-at-eol) t)))
-            do
-            (forward-line 0)
-            (insert (format "%5s:" lineno))
-            (search-forward "\177" (point-at-eol) t)
-            (delete-region (1- (point)) (point-at-eol))
-            (forward-line 1)))))
-
-(defvar helm-source-ctags
-  '((name . "Exuberant ctags")
-    (init . helm-ctags-init)
-    (candidates-in-buffer)
-    (adjust)
-    (type . line))
-  "Needs Exuberant Ctags.
-
-http://ctags.sourceforge.net/")
-
-
-;;; Etags
-;;
-;;
 (defvar helm-etags-mtime-alist nil
   "Store the last modification time of etags files here.")
 (defvar helm-etags-cache (make-hash-table :test 'equal)
@@ -260,10 +221,12 @@ If no entry in cache, create one."
     :match-part (lambda (candidate)
                   ;; Match only the tag part of CANDIDATE
                   ;; and not the filename.
-                  (if helm-etags-match-part-only
-                      (cadr (helm-etags-split-line candidate))
-                      candidate))
-    :mode-line helm-etags-mode-line-string
+                  (cl-ecase helm-etags-match-part-only
+                      (endtag (cadr (split-string
+                                     (cadr (helm-etags-split-line candidate)))))
+                      (tag    (cadr (helm-etags-split-line candidate)))
+                      (all    candidate)))
+    :help-message 'helm-etags-help-message
     :keymap helm-etags-map
     :action '(("Go to tag" . (lambda (c)
                                (helm-etags-action-goto 'find-file c)))
@@ -328,7 +291,8 @@ This function aggregates three sources of tag files:
   (interactive "P")
   (let ((tag-files (helm-etags-all-tag-files))
         (helm-execute-action-at-once-if-one helm-etags-execute-action-at-once-if-one)
-        (str (thing-at-point 'symbol)))
+        (str (if (region-active-p) (buffer-substring-no-properties (region-beginning) (region-end))
+               (thing-at-point 'symbol))))
     (if (cl-notany 'file-exists-p tag-files)
         (message "Error: No tag file found. Create with etags shell command, or visit with `find-tag' or `visit-tags-table'.")
       (cl-loop for k being the hash-keys of helm-etags-cache
