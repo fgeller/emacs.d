@@ -126,7 +126,7 @@
   #+end_src
 
   #+begin_src emacs-lisp
-    (eval-after-load 'fingers-mode
+    (eval-after-load 'fingers
       '(let* ((my-fingers-map (fingers-mode-clean-map)))
          (define-key my-fingers-map (kbd "ti") 'scala-ignore-all-tests)
          (define-key my-fingers-map (kbd "te") 'scala-enable-all-tests)
