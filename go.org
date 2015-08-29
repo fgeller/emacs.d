@@ -11,6 +11,7 @@
   #+begin_src emacs-lisp
     (defun golang-customizations ()
       (subword-mode 1)
+      (yas-minor-mode 1)
       (add-hook 'before-save-hook #'gofmt-before-save))
 
     (add-hook 'go-mode-hook 'golang-customizations)
