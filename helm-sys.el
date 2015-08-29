@@ -1,6 +1,6 @@
 ;;; helm-sys.el --- System related functions for helm. -*- lexical-binding: t -*-
 
-;; Copyright (C) 2012 ~ 2014 Thierry Volpiatto <thierry.volpiatto@gmail.com>
+;; Copyright (C) 2012 ~ 2015 Thierry Volpiatto <thierry.volpiatto@gmail.com>
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 (require 'cl-lib)
 (require 'helm)
+(require 'helm-help)
 (require 'helm-utils)
 
 
@@ -60,7 +61,6 @@ A format string where %s will be replaced with `frame-width'."
 (defvar helm-top-map
   (let ((map (make-sparse-keymap)))
     (set-keymap-parent map helm-map)
-    (define-key map (kbd "C-c ?") 'helm-top-help)
     (define-key map (kbd "M-P")   'helm-top-run-sort-by-cpu)
     (define-key map (kbd "M-C")   'helm-top-run-sort-by-com)
     (define-key map (kbd "M-M")   'helm-top-run-sort-by-mem)
@@ -68,19 +68,18 @@ A format string where %s will be replaced with `frame-width'."
     map))
 
 (defvar helm-source-top
-  `((name . "Top")
-    (header-name . (lambda (name) (concat name " (Press C-c C-u to refresh)"))) 
-    (init . helm-top-init)
-    (candidates-in-buffer)
-    (nomark)
-    (display-to-real . helm-top-display-to-real)
-    (persistent-action . helm-top-sh-persistent-action)
-    (persistent-help . "SIGTERM")
-    (mode-line . helm-top-mode-line)
-    (follow . never)
-    (keymap . ,helm-top-map)
-    (filtered-candidate-transformer . helm-top-sort-transformer)
-    (action-transformer . helm-top-action-transformer)))
+  (helm-build-in-buffer-source "Top"
+    :header-name (lambda (name) (concat name " (Press C-c C-u to refresh)"))
+    :init #'helm-top-init
+    :nomark t
+    :display-to-real #'helm-top-display-to-real
+    :persistent-action #'helm-top-sh-persistent-action
+    :persistent-help "SIGTERM"
+    :help-message 'helm-top-help-message
+    :follow 'never
+    :keymap helm-top-map
+    :filtered-candidate-transformer #'helm-top-sort-transformer
+    :action-transformer #'helm-top-action-transformer))
 
 (defun helm-top-transformer (candidates _source)
   "Transformer for `helm-top'.
@@ -261,7 +260,6 @@ Show actions only on line starting by a PID."
     (persistent-action . (lambda (elm)
                            (delete-process (get-process elm))
                            (helm-delete-current-selection)))
-    (update . list-processes--refresh)
     (persistent-help . "Kill Process")
     (action ("Kill Process" . (lambda (elm)
                                 (delete-process (get-process elm)))))))
@@ -286,6 +284,7 @@ Show actions only on line starting by a PID."
 
 ;;;###autoload
 (defun helm-xrandr-set ()
+  "Preconfigured helm for xrandr."
   (interactive)
   (helm :sources 'helm-source-xrandr-change-resolution
         :buffer "*helm xrandr*"))

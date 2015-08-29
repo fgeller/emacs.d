@@ -1,6 +1,6 @@
 ;;; helm-locate.el --- helm interface for locate. -*- lexical-binding: t -*-
 
-;; Copyright (C) 2012 ~ 2014 Thierry Volpiatto <thierry.volpiatto@gmail.com>
+;; Copyright (C) 2012 ~ 2015 Thierry Volpiatto <thierry.volpiatto@gmail.com>
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 
 (require 'cl-lib)
 (require 'helm)
+(require 'helm-types)
+(require 'helm-help)
 
 
 (defgroup helm-locate nil
@@ -97,17 +99,24 @@ the opposite of \"locate\" command."
     (define-key map (kbd "M-g s")   'helm-ff-run-grep)
     (define-key map (kbd "M-g z")   'helm-ff-run-zgrep)
     (define-key map (kbd "M-g p")   'helm-ff-run-pdfgrep)
+    (define-key map (kbd "C-c g")   'helm-ff-run-gid)
+    (define-key map (kbd "M-R")     'helm-ff-run-rename-file)
+    (define-key map (kbd "M-C")     'helm-ff-run-copy-file)
+    (define-key map (kbd "M-B")     'helm-ff-run-byte-compile-file)
+    (define-key map (kbd "M-L")     'helm-ff-run-load-file)
+    (define-key map (kbd "M-S")     'helm-ff-run-symlink-file)
+    (define-key map (kbd "M-H")     'helm-ff-run-hardlink-file)
     (define-key map (kbd "M-D")     'helm-ff-run-delete-file)
     (define-key map (kbd "C-=")     'helm-ff-run-ediff-file)
     (define-key map (kbd "C-c =")   'helm-ff-run-ediff-merge-file)
     (define-key map (kbd "C-c o")   'helm-ff-run-switch-other-window)
+    (define-key map (kbd "C-c C-o") 'helm-ff-run-switch-other-frame)
     (define-key map (kbd "M-i")     'helm-ff-properties-persistent)
     (define-key map (kbd "C-c C-x") 'helm-ff-run-open-file-externally)
     (define-key map (kbd "C-c X")   'helm-ff-run-open-file-with-default-tool)
     (define-key map (kbd "M-.")     'helm-ff-run-etags)
     (define-key map (kbd "C-w")     'helm-yank-text-at-point)
     (define-key map (kbd "C-c @")   'helm-ff-run-insert-org-link)
-    (define-key map (kbd "C-c ?")   'helm-generic-file-help)
     map)
   "Generic Keymap for files.")
 
@@ -201,8 +210,7 @@ Argument INITIAL-INPUT is a string to use as initial-input.
 See also `helm-locate'."
   (when (and db (stringp db)) (setq db (list db)))
   (helm-locate-set-command)
-  (let ((helm-ff-transformer-show-only-basename nil)
-        (helm-locate-command
+  (let ((helm-locate-command
          (if db
              (replace-regexp-in-string
               "locate"
@@ -218,6 +226,7 @@ See also `helm-locate'."
     (setq helm-file-name-history (mapcar 'helm-basename file-name-history))
     (helm :sources 'helm-source-locate
           :buffer "*helm locate*"
+          :ff-transformer-show-only-basename nil
           :input initial-input
           :default default
           :history 'helm-file-name-history)))
@@ -229,26 +238,29 @@ See also `helm-locate'."
          (case-sensitive-flag (if locate-is-es "-i" ""))
          (ignore-case-flag (if (or locate-is-es
                                    (not real-locate)) "" "-i"))
-         process-connection-type
-         (args (split-string helm-pattern " ")))
+         (args (split-string helm-pattern " "))
+         (cmd (format helm-locate-command
+                      (cl-case helm-locate-case-fold-search
+                        (smart (let ((case-fold-search nil))
+                                 (if (string-match "[[:upper:]]" helm-pattern)
+                                     case-sensitive-flag
+                                     ignore-case-flag)))
+                        (t (if helm-locate-case-fold-search
+                               ignore-case-flag
+                               case-sensitive-flag)))
+                      (concat
+                       ;; The pattern itself.
+                       (shell-quote-argument (car args)) " "
+                       ;; Possible locate args added
+                       ;; after pattern, don't quote them.
+                       (mapconcat 'identity (cdr args) " ")))))
+    (helm-log "Starting helm-locate process")
+    (helm-log "Command line used was:\n\n%s"
+              (concat ">>> " (propertize cmd 'face 'font-lock-comment-face) "\n\n"))
     (prog1
         (start-process-shell-command
          "locate-process" helm-buffer
-         (format helm-locate-command
-                 (cl-case helm-locate-case-fold-search
-                   (smart (let ((case-fold-search nil))
-                            (if (string-match "[[:upper:]]" helm-pattern)
-                                case-sensitive-flag
-                              ignore-case-flag)))
-                   (t (if helm-locate-case-fold-search
-                          ignore-case-flag
-                        case-sensitive-flag)))
-                 (concat
-                  ;; The pattern itself.
-                  (shell-quote-argument (car args)) " "
-                  ;; Possible locate args added
-                  ;; after pattern, don't quote them.
-                  (mapconcat 'identity (cdr args) " "))))
+         cmd)
       (set-process-sentinel
        (get-buffer-process helm-buffer)
        #'(lambda (_process event)
@@ -258,7 +270,7 @@ See also `helm-locate'."
                        '(" " mode-line-buffer-identification " "
                          (:eval (format "L%s" (helm-candidate-number-at-point))) " "
                          (:eval (propertize
-                                 (format "[Locate Process Finish- (%s results)]"
+                                 (format "[Locate process finished - (%s results)]"
                                          (max (1- (count-lines
                                                    (point-min) (point-max)))
                                               0))
@@ -273,9 +285,12 @@ See also `helm-locate'."
    (requires-pattern :initform 3)
    (history :initform 'helm-file-name-history)
    (keymap :initform helm-generic-files-map)
-   (help-message :initform helm-generic-file-help-message)
-   (candidate-number-limit :initform 9999)
-   (mode-line :initform helm-generic-file-mode-line-string)))
+   (help-message :initform 'helm-generic-file-help-message)
+   (candidate-number-limit :initform 9999)))
+
+(defvar helm-source-locate
+  (helm-make-source "Locate" 'helm-locate-source
+    :pattern-transformer 'helm-locate-pattern-transformer))
 
 (defun helm-locate-pattern-transformer (pattern)
   (if helm-locate-fuzzy-match
@@ -287,14 +302,9 @@ See also `helm-locate'."
             (t (helm--mapconcat-pattern pattern)))
       pattern))
 
-(defvar helm-source-locate
-  (helm-make-source "Locate" 'helm-locate-source
-    :pattern-transformer 'helm-locate-pattern-transformer))
-
 ;;;###autoload
 (defun helm-locate-read-file-name (prompt)
-  (let* (helm-ff-transformer-show-only-basename
-         (src `((name . "Locate read fname")
+  (let* ((src `((name . "Locate read fname")
                 (init . helm-locate-set-command)
                 (candidates-process . helm-locate-init)
                 (action . identity)
@@ -305,6 +315,7 @@ See also `helm-locate'."
                 (candidate-number-limit . 9999)
                 (no-matchplugin))))
     (or (helm :sources src
+              :ff-transformer-show-only-basename nil
               :prompt prompt
               :buffer "*helm locate read fname*"
               :resume 'noresume)
