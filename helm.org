@@ -27,6 +27,10 @@
             (helm-init-candidates-in-buffer 'global data)))))
   #+end_src
 
+  #+begin_src emacs-lisp
+    (define-key helm-find-files-map (kbd "C-<left>") 'helm-execute-persistent-action)
+  #+end_src
+
   Collection of sources that we want fast access to.
 
   #+begin_src emacs-lisp
