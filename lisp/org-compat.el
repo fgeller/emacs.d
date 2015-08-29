@@ -1,6 +1,6 @@
 ;;; org-compat.el --- Compatibility code for Org-mode
 
-;; Copyright (C) 2004-2014 Free Software Foundation, Inc.
+;; Copyright (C) 2004-2015 Free Software Foundation, Inc.
 
 ;; Author: Carsten Dominik <carsten at orgmode dot org>
 ;; Keywords: outlines, hypermedia, calendar, wp
@@ -40,11 +40,6 @@
 ;; it in org-mode, because the Byte compiler evaluates (featurep 'xemacs)
 ;; at compilation time and can therefore optimize code better.
 (defconst org-xemacs-p (featurep 'xemacs))
-(defconst org-format-transports-properties-p
-  (let ((x "a"))
-    (add-text-properties 0 1 '(test t) x)
-    (get-text-property 0 'test (format "%s" x)))
-  "Does format transport text properties?")
 
 (defun org-compatible-face (inherits specs)
   "Make a compatible face specification.
@@ -241,7 +236,7 @@ ignored in this case."
   (or window (selected-window)))
 
 (defun org-number-sequence (from &optional to inc)
-  "Call `number-sequence or emulate it."
+  "Call `number-sequence' or emulate it."
   (if (fboundp 'number-sequence)
       (number-sequence from to inc)
     (if (or (not to) (= from to))
@@ -287,17 +282,8 @@ Works on both Emacs and XEmacs."
 	     (> (point) (region-beginning)))
     (exchange-point-and-mark)))
 
-;; Emacs 22 misses `activate-mark'
-(if (fboundp 'activate-mark)
-    (defalias 'org-activate-mark 'activate-mark)
-  (defun org-activate-mark ()
-    (when (mark t)
-      (setq mark-active t)
-      (when (and (boundp 'transient-mark-mode)
-		 (not transient-mark-mode))
-	(setq transient-mark-mode 'lambda))
-      (when (boundp 'zmacs-regions)
-	(setq zmacs-regions t)))))
+;; Old alias for emacs 22 compatibility, now dropped
+(define-obsolete-function-alias 'org-activate-mark 'activate-mark)
 
 ;; Invisibility compatibility
 
@@ -411,16 +397,16 @@ Pass BUFFER to the XEmacs version of `move-to-column'."
 	 (when focus-follows-mouse
 	   (set-mouse-position frame (1- (frame-width frame)) 0)))))
 
-(defun org-float-time (&optional time)
-  "Convert time value TIME to a floating point number.
-TIME defaults to the current time."
-  (if (featurep 'xemacs)
-      (time-to-seconds (or time (current-time)))
-    (float-time time)))
+(defalias 'org-float-time
+  (if (featurep 'xemacs) 'time-to-seconds 'float-time))
 
 ;; `user-error' is only available from 24.2.50 on
 (unless (fboundp 'user-error)
   (defalias 'user-error 'error))
+
+;; `font-lock-ensure' is only available from 24.4.50 on
+(unless (fboundp 'font-lock-ensure)
+  (defalias 'font-lock-ensure 'font-lock-fontify-buffer))
 
 (defmacro org-no-popups (&rest body)
   "Suppress popup windows.
