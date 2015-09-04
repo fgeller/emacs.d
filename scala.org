@@ -26,7 +26,9 @@
         (request
          "http://127.0.0.1:5474/format"
          :params `((fileName . ,buffer-file-name)
-                   (preferencesFile . ,scalariform-preferences-file)))))
+                   (preferencesFile . ,scalariform-preferences-file))
+         :sync t)
+        (revert-buffer t t)))
   #+end_src
 
   Start the daemon.
@@ -86,7 +88,7 @@
       (subword-mode 1)
       (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-find-tag)
       (define-key helm-gtags-mode-map (kbd "M-/") 'helm-gtags-pop-stack)
-      (add-hook 'before-save-hook 'scalariform-daemon-format-file nil 'make-it-local))
+      (add-hook 'after-save-hook 'scalariform-daemon-format-file nil 'make-it-local))
   #+end_src
 
   Hook in customizations.
