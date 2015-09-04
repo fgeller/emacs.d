@@ -84,15 +84,17 @@
       (interactive)
       (let* ((text-button (save-excursion
                             (goto-char (point-min))
-                            (search-forward "[ text/plain" (point-max) t)))
+                            (search-forward "[ text/plain ]" (point-max) t)))
              (html-button (save-excursion
                             (goto-char (point-min))
-                            (search-forward "[ text/html (hidden)" (point-max) t))))
-        (when (and text-button html-button)
+                            (search-forward "[ text/html (hidden) ]" (point-max) t))))
+        (when html-button
           (save-excursion
-            (goto-char text-button)
-            (notmuch-show-toggle-part-invisibility)
-            (goto-char html-button)
+            (goto-char (- html-button 1))
+            (notmuch-show-toggle-part-invisibility)))
+        (when text-button
+          (save-excursion
+            (goto-char (- text-button 1))
             (notmuch-show-toggle-part-invisibility)))))
   #+end_src
 
