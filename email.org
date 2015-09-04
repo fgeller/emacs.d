@@ -70,6 +70,7 @@
       (define-key notmuch-search-mode-map (kbd "t") 'notmuch-search-tag)
 
       (define-key notmuch-show-mode-map (kbd "F") 'notmuch-show-forward-message)
+      (define-key notmuch-show-mode-map (kbd "B") 'notmuch-show-view-part)
 
       (add-hook 'notmuch-show-hook 'notmuch-show-prefer-html-over-text)
 
