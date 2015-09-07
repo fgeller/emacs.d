@@ -30,7 +30,9 @@
   #+begin_src emacs-lisp
     (use-package avy
       :ensure avy
-      :commands (avy-goto-word-or-subword-1))
+      :commands (avy-goto-word-or-subword-1)
+      :config (setq avy-all-windows nil
+                    avy-keys '(?a ?s ?h ?t ?n ?e ?o ?i ?g ?y)))
   #+end_src
 
   Helper to visualize fingers-mode's state and make mode-line visible.
