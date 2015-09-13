@@ -271,6 +271,20 @@
                      directories))))
   #+end_src
 
+  Show hello file when idle.
+
+  #+begin_src emacs-lisp
+    (defun show-hello-file-fullscreen ()
+      (interactive)
+      (let ((buf-name "*hello there*"))
+        (get-buffer-create buf-name)
+        (with-current-buffer buf-name
+          (insert "helo."))
+        (view-buffer buf-name))
+      (delete-other-windows))
+    (run-with-idle-timer 60 t 'show-hello-file-fullscreen)
+  #+end_src
+
 * Load modules
 
   More configuration split into org files.
