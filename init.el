@@ -5,3 +5,4 @@
 (let ((file-name-handler-alist nil)) 
   (require 'org)
   (org-babel-load-file (expand-file-name "~/.emacs.d/main.org")))
+(setq gc-cons-threshold 1000000)
