@@ -55,6 +55,7 @@
 
   #+begin_src emacs-lisp
     (let ((themes-directory (expand-file-name (concat custom-site-lisp-directory "/themes"))))
+      (mkdir themes-directory t)
       (mapcar (lambda (file)
                 (let ((expanded-file (expand-file-name file themes-directory)))
                   (when (file-directory-p expanded-file)
