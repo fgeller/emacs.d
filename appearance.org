@@ -41,6 +41,20 @@
      default-frame-scroll-bars nil)
   #+end_src
 
+  Standardize visual bell.
+
+  #+begin_src emacs-lisp
+    (defun mode-line-bell ()
+      (let ((orig (face-attribute 'mode-line :background)))
+        (set-face-attribute 'mode-line nil :background "red")
+        (sit-for 0 70)
+        (set-face-attribute 'mode-line nil :background orig)))
+
+    (setq
+     visible-bell nil
+     ring-bell-function 'mode-line-bell)
+  #+end_src
+
   Helper to set default font face attributes.
 
   #+begin_src emacs-lisp
