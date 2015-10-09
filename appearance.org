@@ -69,8 +69,8 @@
   Set default fonts across frames.
 
   #+begin_src emacs-lisp
-    (setq mono-space-font-family "Source Code Pro")
-    (setq mono-space-font-height 130)
+    (setq mono-space-font-family "Roboto Mono")
+    (setq mono-space-font-height 160)
     (set-default-face-attributes)
   #+end_src
 
