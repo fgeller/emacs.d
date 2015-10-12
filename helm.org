@@ -43,9 +43,8 @@
                        helm-source-buffers-list
                        ,(helm-make-source "Git files" 'helm-ls-git-source)
                        helm-source-recentf
-                       helm-source-files-in-current-dir
-                       helm-source-buffer-not-found
                        ,(helm-source-org-headings-for-files (org-agenda-files))
+                       helm-source-buffer-not-found
                        )))
   #+end_src
 
