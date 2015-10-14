@@ -124,20 +124,22 @@
       (define-key fingers-mode-map (kbd "S-<down>") 'shrink-window)
       (define-key fingers-mode-map (kbd "S-<left>") 'shrink-window-horizontally)
       (define-key fingers-mode-map (kbd "S-<right>") 'enlarge-window-horizontally)
+
+      (let* ((my-fingers-map (fingers-mode-clean-map)))
+        (define-key my-fingers-map (kbd "ti") 'scala-ignore-all-tests)
+        (define-key my-fingers-map (kbd "te") 'scala-enable-all-tests)
+        (define-key my-fingers-map (kbd "tn") 'scala-next-test-forward)
+        (define-key my-fingers-map (kbd "tp") 'scala-next-test-whitespace)
+        (define-key my-fingers-map (kbd "br") 'revert-buffer)
+        (define-key my-fingers-map (kbd "bn") 'rename-buffer)
+        (define-key my-fingers-map (kbd "bw") 'delete-trailing-whitespace)
+        (define-key fingers-mode-map (kbd "q") my-fingers-map))
       )
   #+end_src
 
   #+begin_src emacs-lisp
     (eval-after-load 'fingers
-      '(let* ((my-fingers-map (fingers-mode-clean-map)))
-         (define-key my-fingers-map (kbd "ti") 'scala-ignore-all-tests)
-         (define-key my-fingers-map (kbd "te") 'scala-enable-all-tests)
-         (define-key my-fingers-map (kbd "tn") 'scala-next-test-forward)
-         (define-key my-fingers-map (kbd "tp") 'scala-next-test-whitespace)
-         (define-key my-fingers-map (kbd "br") 'revert-buffer)
-         (define-key my-fingers-map (kbd "bn") 'rename-buffer)
-         (define-key my-fingers-map (kbd "bw") 'delete-trailing-whitespace)
-         (define-key fingers-mode-map (kbd "q") my-fingers-map)))
+      'nil)
   #+end_src
 
   Load and activate it!
