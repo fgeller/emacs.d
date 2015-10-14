@@ -206,6 +206,14 @@
   (beginning-of-line)
   (fingers-mode -1))
 
+(defun fingers-forward-delete ()
+  (interactive)
+  (delete-char 1))
+
+(defun fingers-backward-delete ()
+  (interactive)
+  (delete-char -1))
+
 (defun fingers-delete-region ()
   (delete-region (point) (mark)))
 
@@ -596,8 +604,8 @@
       ;; top row
       (q . nil)
       (Q . nil)
-      (d . nil)
-      (D . nil)
+      (d . fingers-forward-delete)
+      (D . fingers-backward-delete)
       (r . fingers-replace-with-char)
       (R . fingers-replace-with-yank)
       (w . fingers-insert-sequence)
