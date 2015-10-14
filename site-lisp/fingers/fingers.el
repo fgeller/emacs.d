@@ -156,6 +156,16 @@
     (end-of-line)
     (open-line 1)))
 
+(defun fingers-insert-char ()
+  (interactive)
+  (let ((char-to-insert (read-char "Insert: ")))
+    (insert char-to-insert)))
+
+(defun fingers-insert-sequence ()
+  (interactive)
+  (let ((str-to-insert (read-string "Insert: ")))
+    (insert str-to-insert)))
+
 (defun fingers-replace-with-char ()
   (interactive)
   (let ((char-to-insert (read-char "Replace with: ")))
