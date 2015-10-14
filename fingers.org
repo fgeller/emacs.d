@@ -85,8 +85,7 @@
 
       (key-chord-define-global "oe" 'global-fingers-mode)
 
-      (define-key fingers-mode-map (kbd "r") 'anzu-query-replace)
-      (define-key fingers-mode-map (kbd "R") 'anzu-query-replace-regexp)
+      (define-key fingers-mode-map (kbd "C") 'anzu-query-replace-regexp)
       (define-key fingers-mode-map (kbd "H") 'helm-show-kill-ring)
       (define-key fingers-mode-map (kbd "j") 'helm-apropos)
       (define-key fingers-mode-map (kbd "k") 'ag-project)
