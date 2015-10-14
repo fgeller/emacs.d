@@ -187,6 +187,20 @@
   (end-of-line)
   (fingers-mode -1))
 
+(defun fingers-open-above-and-insert ()
+  (interactive)
+  (beginning-of-line)
+  (open-line 1)
+  (fingers-mode -1))
+
+(defun fingers-open-below-and-insert ()
+  (interactive)
+  (end-of-line)
+  (open-line 1)
+  (forward-line 1)
+  (end-of-line)
+  (fingers-mode -1))
+
 (defun fingers-bol-and-insert ()
   (interactive)
   (beginning-of-line)
