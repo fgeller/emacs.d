@@ -156,7 +156,16 @@
     (end-of-line)
     (open-line 1)))
 
-(defun fingers-replace-char ()
+(defun fingers-replace-with-char ()
+  (interactive)
+  (let ((char-to-insert (read-char "Replace with: ")))
+    (if (region-active-p)
+	(fingers-copy-current-region t)
+      (delete-char 1))
+    (insert char-to-insert)
+    (backward-char 1)))
+
+(defun fingers-replace-char-with-yank ()
   (interactive)
   (let ((char-to-insert (read-char "Replace with: ")))
     (delete-char 1)
@@ -548,16 +557,22 @@
       ;; z x m c v
 
       ;; top row
-      (d . fingers-duplicate-line)
-      (r . query-replace)
-      (R . query-replace-regexp)
-      (w . join-line)
-      (W . open-line)
-      (b . universal-argument)
+      (q . nil)
+      (Q . nil)
+      (d . nil)
+      (D . nil)
+      (r . fingers-replace-with-char)
+      (R . fingers-replace-with-yank)
+      (w . fingers-insert-char)
+      (W . fingers-insert-sequence)
+      (b . join-line)
+      (B . open-line)
 
       ;; home row
       (a . fingers-enclose-in-pair)
+      (A . nil)
       (s . fingers-remove-enclosing-pair)
+      (S . nil)
       (h . yank)
       (H . yank-pop)
       (t . fingers-kill)
@@ -566,12 +581,16 @@
       (G . fingers-meta-control)
 
       ;; bottom row
-      (z . repeat)
+      (z . fingers-bol-and-insert)
+      (Z . fingers-open-above-and-insert)
       (x . ,fingers-mode-x-map)
+      (X . fingers-duplicate-line)
       (m . kmacro-start-macro)
       (M . kmacro-end-macro)
       (c . ,fingers-mode-c-map)
-      (v . fingers-replace-char)
+      (C . query-replace-regexp)
+      (v . fingers-eol-and-insert)
+      (V . fingers-open-below-and-insert)
 
       ;; right hand -- navigation
       ;;
