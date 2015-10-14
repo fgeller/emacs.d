@@ -182,6 +182,16 @@
     (delete-char 1))
   (yank))
 
+(defun fingers-eol-and-insert ()
+  (interactive)
+  (end-of-line)
+  (fingers-mode -1))
+
+(defun fingers-bol-and-insert ()
+  (interactive)
+  (beginning-of-line)
+  (fingers-mode -1))
+
 (defun fingers-delete-region ()
   (delete-region (point) (mark)))
 
@@ -576,8 +586,8 @@
       (D . nil)
       (r . fingers-replace-with-char)
       (R . fingers-replace-with-yank)
-      (w . fingers-insert-char)
-      (W . fingers-insert-sequence)
+      (w . fingers-insert-sequence)
+      (W . fingers-insert-char)
       (b . join-line)
       (B . open-line)
 
