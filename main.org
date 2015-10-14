@@ -178,6 +178,13 @@
     (column-number-mode 1)
   #+end_src
 
+  Disable electric indent and pairing.
+
+  #+begin_src emacs-lisp
+    (electric-indent-mode -1)
+    (electric-pair-mode -1)
+  #+end_src
+
   Default whitespace visualization style.
 
   #+begin_src emacs-lisp
