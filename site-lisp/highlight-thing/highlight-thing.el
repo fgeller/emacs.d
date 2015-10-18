@@ -111,7 +111,10 @@ functionality."
 
 (defun highlight-thing-get-active-region ()
   (when (region-active-p)
-    (buffer-substring (point) (mark))))
+    (let* ((beginning (region-beginning))
+	   (end (region-end))
+	   (region (buffer-substring beginning end)))
+      (when (not (= beginning end)) region))))
 
 (defun highlight-thing-get-thing-at-point ()
   (cond ((eq highlight-thing-what-thing 'region) (highlight-thing-get-active-region))
@@ -122,7 +125,7 @@ functionality."
   (let ((thing (highlight-thing-get-thing-at-point))
         (font-lock-mode nil))
     (highlight-thing-remove-last)
-    (when (and (highlight-thing-should-highlight-p) thing)
+    (when (and thing (highlight-thing-should-highlight-p))
       (save-restriction
         (widen)
         (when (highlight-thing-should-narrow-p) (narrow-to-defun))
