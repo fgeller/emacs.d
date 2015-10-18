@@ -75,9 +75,6 @@ functionality."
   "Face that is used to highlight things."
   :group 'highlight-thing)
 
-(defvar highlight-thing-last-thing nil
-  "Last highlighted thing.")
-
 (defvar highlight-thing-last-buffer nil
   "Buffer where last thing was highlighted.")
 
@@ -98,11 +95,11 @@ functionality."
 	(t (regexp-quote thing))))
 
 (defun highlight-thing-remove-last ()
-  (when (and highlight-thing-last-thing
-	     highlight-thing-last-buffer
+  (hi-lock-unface-buffer t)
+  (when (and highlight-thing-last-buffer
 	     (buffer-live-p highlight-thing-last-buffer))
     (with-current-buffer highlight-thing-last-buffer
-      (hi-lock-unface-buffer (highlight-thing-regexp highlight-thing-last-thing)))))
+      (hi-lock-unface-buffer t))))
 
 (defun highlight-thing-should-highlight-p ()
   (and (not (minibufferp))
@@ -130,8 +127,7 @@ functionality."
         (widen)
         (when (highlight-thing-should-narrow-p) (narrow-to-defun))
         (highlight-regexp (highlight-thing-regexp thing) 'highlight-thing))
-      (setq highlight-thing-last-buffer (current-buffer))
-      (setq highlight-thing-last-thing thing))))
+      (setq highlight-thing-last-buffer (current-buffer)))))
 
 (defun highlight-thing-mode-maybe-activate ()
   (when (highlight-thing-should-highlight-p)
