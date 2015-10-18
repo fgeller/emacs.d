@@ -1,0 +1,6 @@
+# -*- coding: utf-8; tab-width:2; mode: snippet -*-
+# name: Ext.Array.contains
+# key: contains
+# contributor: Felix Geller <fgeller@gmail.com>
+# --
+Ext.Array.contains($1, $2)

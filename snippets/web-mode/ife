@@ -1,0 +1,11 @@
+# -*- coding: utf-8; mode: snippet; indent-tab-mode: t; tab-width: 2 -*-
+# name: if...else
+# key: ife
+# contributor: Felix Geller <fgeller@gmail.com>
+# --
+if (${1:condition}) {
+  $2;
+}
+else {
+  $0;
+}
