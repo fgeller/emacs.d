@@ -115,6 +115,6 @@
                                     (mh mhe-mode mhe-summary-mode mh-folder-mode)
                                     (message notmuch-message-mode message-mode)
                                     (mail mail-mode)
-                                    (mu4e mu4e-view-mode)) 
+                                    (mu4e mu4e-view-mode))
               )))
   #+end_src
