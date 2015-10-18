@@ -611,7 +611,7 @@
       (w . fingers-insert-sequence)
       (W . fingers-insert-char)
       (b . join-line)
-      (B . open-line)
+      (B . fingers-open-line-below)
 
       ;; home row
       (a . fingers-enclose-in-pair)
@@ -629,11 +629,11 @@
       (z . fingers-bol-and-insert)
       (Z . fingers-open-above-and-insert)
       (x . ,fingers-mode-x-map)
-      (X . fingers-duplicate-line)
+      (X . query-replace-regexp)
       (m . kmacro-start-macro)
       (M . kmacro-end-macro)
       (c . ,fingers-mode-c-map)
-      (C . query-replace-regexp)
+      (C . fingers-duplicate-line)
       (v . fingers-eol-and-insert)
       (V . fingers-open-below-and-insert)
 
@@ -646,9 +646,10 @@
       ;; top row
       (j . apropos)
       (J . ,(fingers-pass-events-command "C-h"))
-      (fp . point-to-register)
-      (fw . window-configuration-to-register)
-      (ff . jump-to-register)
+      (f . goto-line)
+      (Fp . point-to-register)
+      (Fw . window-configuration-to-register)
+      (Ff . jump-to-register)
       (uu . isearch-forward)
       (U . isearch-repeat-forward)
       (uh . fingers-move-to-next-word-occurrence)
