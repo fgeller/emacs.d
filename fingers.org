@@ -9,14 +9,6 @@
       :config (setq key-chord-two-keys-delay 0.075))
   #+end_src
 
-  Load anzu for visual feedback when replacing text.
-
-  #+begin_src emacs-lisp
-    (use-package anzu
-      :ensure anzu
-      :commands (anzu-query-replace anzu-query-replace-regexp))
-  #+end_src
-
   Load multiple-cursors for light-weight macros.
 
   #+begin_src emacs-lisp
@@ -85,7 +77,6 @@
 
       (key-chord-define-global "oe" 'global-fingers-mode)
 
-      (define-key fingers-mode-map (kbd "C") 'anzu-query-replace-regexp)
       (define-key fingers-mode-map (kbd "H") 'helm-show-kill-ring)
       (define-key fingers-mode-map (kbd "j") 'helm-apropos)
       (define-key fingers-mode-map (kbd "k") 'ag-project)
@@ -95,14 +86,11 @@
       (define-key fingers-mode-map (kbd ">") 'helm-occur)
       (define-key fingers-mode-map (kbd ".") 'helm-jump)
       (define-key fingers-mode-map (kbd "|") 'mc/edit-lines)
-      (define-key fingers-mode-map (kbd "fN") 'window-configuration-to-register)
 
       (define-key fingers-mode-c-map (kbd "RET") 'browse-url-at-point)
 
       (define-key fingers-mode-x-map (kbd "f") 'helm-find-files)
       (define-key fingers-mode-x-map (kbd "x") 'helm-M-x)
-      (define-key fingers-mode-x-map (kbd "vd") 'magit-diff)
-      (define-key fingers-mode-x-map (kbd "vG") 'magit-blame-mode)
       (define-key fingers-mode-x-map (kbd "vs") 'show-eshell-git-status)
 
       (define-key fingers-mode-launch-map (kbd "e") 'last-eshell)
