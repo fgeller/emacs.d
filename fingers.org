@@ -35,14 +35,14 @@
       (let ((faces-to-toggle '(mode-line mode-line-inactive)))
         (cond (fingers-mode
                (mapcar (lambda (face)
-                         (set-face-foreground face "#f8f8f8")
-                         (set-face-background face "#f8f8f8")
-                         (set-face-attribute face nil :height 20))
+                         (set-face-foreground face "white")
+                         (set-face-background face "white")
+                         (set-face-attribute face nil :height (face-attribute 'default :height)))
                        faces-to-toggle))
               (t
                (mapcar (lambda (face)
-                         (set-face-foreground face "#b8b8b8")
-                         (set-face-background face "#ffffff")
+                         (set-face-foreground face "black")
+                         (set-face-background face "white")
                          (set-face-attribute face nil :height (face-attribute 'default :height)))
                        faces-to-toggle)))))
 
