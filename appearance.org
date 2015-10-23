@@ -114,7 +114,12 @@
                  `(,(rx bos "*helm" (* not-newline) "*" eos)
                    (display-buffer-in-side-window)
                    (inhibit-same-window . t)
-                   (window-height . 0.4)))
+                   (window-height . 0.3)))
+    (add-to-list 'display-buffer-alist
+                 `(,(rx bos "*Compile-" (* not-newline) "*" eos)
+                   (display-buffer-in-side-window)
+                   (inhibit-same-window . t)
+                   (window-height . 0.3)))
   #+end_src
 
   Line numbers
