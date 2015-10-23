@@ -608,10 +608,10 @@
       (D . fingers-backward-delete)
       (r . fingers-replace-with-char)
       (R . fingers-replace-with-yank)
-      (w . fingers-insert-sequence)
-      (W . fingers-insert-char)
-      (b . join-line)
-      (B . fingers-open-line-below)
+      (w . fingers-insert-char)
+      (W . nil)
+      (b . fingers-insert-sequence)
+      (B . nil)
 
       ;; home row
       (a . fingers-enclose-in-pair)
@@ -627,15 +627,15 @@
 
       ;; bottom row
       (z . fingers-bol-and-insert)
-      (Z . fingers-open-above-and-insert)
+      (Z . fingers-eol-and-insert)
       (x . ,fingers-mode-x-map)
       (X . query-replace-regexp)
       (m . kmacro-start-macro)
       (M . kmacro-end-macro)
       (c . ,fingers-mode-c-map)
       (C . fingers-duplicate-line)
-      (v . fingers-eol-and-insert)
-      (V . fingers-open-below-and-insert)
+      (V . join-line)
+      (v . fingers-open-line-below)
 
       ;; right hand -- navigation
       ;;
