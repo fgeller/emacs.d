@@ -5,10 +5,6 @@
   #+begin_src emacs-lisp
     (defun java-customizations ()
       (setq tab-width 2)
-      (gtags-mode 1)
-      (helm-gtags-mode 1)
-      (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-find-tag)
-      (define-key helm-gtags-mode-map (kbd "M-/") 'helm-gtags-pop-stack)
       (add-hook 'before-save-hook 'maybe-cleanup-whitespace nil 'local))
   #+end_src
 
