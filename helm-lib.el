@@ -65,7 +65,8 @@ If you prefer scrolling line by line, set this value to 1."
 (defvar helm-current-buffer nil
   "Current buffer when `helm' is invoked.")
 (defvar helm-suspend-update-flag nil)
-
+(defvar helm-action-buffer "*helm action*"
+  "Buffer showing actions.")
 
 ;;; Macros helper.
 ;;
@@ -163,7 +164,7 @@ text to be displayed in BUFNAME."
            (switch-to-buffer bufname)
            (delete-other-windows)
            (delete-region (point-min) (point-max))
-           (outline-mode)
+           (org-mode)
            (save-excursion
              (funcall insert-content-fn))
            (setq cursor-type nil)
@@ -253,13 +254,17 @@ Default is `eq'."
         finally return
         (cl-loop for i being the hash-values in cont collect i)))
 
-(defun helm-skip-entries (seq regexp-list)
+(defun helm-skip-entries (seq black-regexp-list &optional white-regexp-list)
   "Remove entries which matches one of REGEXP-LIST from SEQ."
   (cl-loop for i in seq
-        unless (cl-loop for regexp in regexp-list
-                     thereis (and (stringp i)
-                                  (string-match regexp i)))
-        collect i))
+           unless (and (cl-loop for re in black-regexp-list
+                                thereis (and (stringp i)
+                                             (string-match-p re i)))
+                       (null
+                        (cl-loop for re in white-regexp-list
+                                thereis (and (stringp i)
+                                             (string-match-p re i)))))
+           collect i))
 
 (defun helm-shadow-entries (seq regexp-list)
   "Put shadow property on entries in SEQ matching a regexp in REGEXP-LIST."
@@ -387,6 +392,11 @@ Add spaces at end if needed to reach WIDTH when STR is shorter than WIDTH."
   (describe-variable (helm-symbolify var))
   (message nil))
 
+(defun helm-describe-face (face)
+  "VAR is symbol or string."
+  (describe-face (helm-symbolify face))
+  (message nil))
+
 (defun helm-find-function (func)
   "FUNC is symbol or string."
   (find-function (helm-symbolify func)))
@@ -413,16 +423,19 @@ If specified, also remove filename extension EXT."
       (file-name-nondirectory (directory-file-name fname)))))
 
 (defun helm-basedir (fname)
-  "Return the base directory of filename."
-  (helm-aif (and fname (file-name-directory fname))
+  "Return the base directory of filename ending by a slash."
+  (helm-aif (and fname
+                 (or (and (string= fname "~") "~")
+                     (file-name-directory fname)))
       (file-name-as-directory it)))
 
 (defun helm-current-directory ()
   "Return current-directory name at point.
 Useful in dired buffers when there is inserted subdirs."
-  (if (eq major-mode 'dired-mode)
-      (dired-current-directory)
-    default-directory))
+  (expand-file-name
+   (if (eq major-mode 'dired-mode)
+       (dired-current-directory)
+       default-directory)))
 
 (defun helm-w32-prepare-filename (file)
   "Convert filename FILE to something usable by external w32 executables."
@@ -545,14 +558,32 @@ That is what completion commands operate on."
                                   (current-buffer)))
      ,@body))
 
+(defun helm-buffer-get ()
+  "Return `helm-action-buffer' if shown otherwise `helm-buffer'."
+  (if (helm-action-window)
+      helm-action-buffer
+    helm-buffer))
+
+(defun helm-window ()
+  "Window of `helm-buffer'."
+  (get-buffer-window (helm-buffer-get) 0))
+
+(defun helm-action-window ()
+  "Window of `helm-action-buffer'."
+  (get-buffer-window helm-action-buffer 'visible))
+
+(defmacro with-helm-window (&rest body)
+  "Be sure BODY is excuted in the helm window."
+  (declare (indent 0) (debug t))
+  `(with-selected-window (helm-window)
+     ,@body))
+
 
 ;; Yank text at point.
 ;;
 ;;
 (defun helm-yank-text-at-point ()
-  "Yank text at point in `helm-current-buffer' into minibuffer.
-If `helm-yank-symbol-first' is non--nil the first yank
-grabs the entire symbol."
+  "Yank text at point in `helm-current-buffer' into minibuffer."
   (interactive)
   (with-helm-current-buffer
     (let ((fwd-fn (or helm-yank-text-at-point-function #'forward-word)))
@@ -574,6 +605,54 @@ grabs the entire symbol."
 
 (add-hook 'helm-cleanup-hook 'helm-reset-yank-point)
 (add-hook 'helm-after-initialize-hook 'helm-reset-yank-point)
+
+;;; Ansi
+;;
+;;
+(defvar helm--ansi-color-regexp
+  "\033\\[\\(K\\|[0-9;]*m\\)")
+(defvar helm--ansi-color-drop-regexp
+  "\033\\[\\([ABCDsuK]\\|[12][JK]\\|=[0-9]+[hI]\\|[0-9;]*[Hf]\\)")
+(defun helm--ansi-color-apply (string)
+  "A version of `ansi-color-apply' immune to upstream changes.
+
+Similar to the emacs-24.5 version without support to `ansi-color-context'
+which is buggy in emacs.
+
+Modify also `ansi-color-regexp' by using own variable `helm--ansi-color-regexp'
+that match whole STRING.
+
+This is needed to provide compatibility for both emacs-25 and emacs-24.5
+as emacs-25 version of `ansi-color-apply' is partially broken."
+  (let ((start 0)
+        codes end escape-sequence
+        result colorized-substring)
+    ;; Find the next escape sequence.
+    (while (setq end (string-match helm--ansi-color-regexp string start))
+      (setq escape-sequence (match-string 1 string))
+      ;; Colorize the old block from start to end using old face.
+      (when codes
+        (put-text-property
+         start end 'font-lock-face (ansi-color--find-face codes) string))
+      (setq colorized-substring (substring string start end)
+	    start (match-end 0))
+      ;; Eliminate unrecognized ANSI sequences.
+      (while (string-match helm--ansi-color-drop-regexp colorized-substring)
+	(setq colorized-substring
+	      (replace-match "" nil nil colorized-substring)))
+      (push colorized-substring result)
+      ;; Create new face, by applying escape sequence parameters.
+      (setq codes (ansi-color-apply-sequence escape-sequence codes)))
+    ;; If the rest of the string should have a face, put it there.
+    (when codes
+      (put-text-property
+       start (length string)
+       'font-lock-face (ansi-color--find-face codes) string))
+    ;; Save the remainder of the string to the result.
+    (if (string-match "\033" string start)
+        (push (substring string start (match-beginning 0)) result)
+	(push (substring string start) result))
+    (apply 'concat (nreverse result))))
 
 (provide 'helm-lib)
 
