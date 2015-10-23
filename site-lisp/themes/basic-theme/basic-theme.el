@@ -42,10 +42,9 @@
 
 (defconst basic-colors-alist
   '(("black" . "black")
-    ("gray" . "gray98")
     ("white" . "white")
     ("red" . "red")
-    ("green" . "gold"))
+    ("gold" . "gold"))
   "List of colors.")
 
 (defmacro basic-with-color-variables (&rest body)
@@ -60,7 +59,7 @@
 (basic-with-color-variables
   (custom-theme-set-faces
    'basic
-   `(button ((t (:foreground ,green :underline nil :weight normal))))
+   `(button ((t (:foreground ,red :underline nil :weight normal))))
    `(comint-highlight-input ((t (:foreground nil :background nil))))
    `(comint-highlight-prompt ((t (:foreground nil :background nil))))
    `(compilation-column-number ((t (:foreground nil :background nil))))
@@ -76,41 +75,41 @@
    `(fringe ((t (:foreground ,black :background ,white))))
    `(header-line ((t (:inherit mode-line))))
    `(hi-yellow ((t (:foreground ,red :background ,nil))))
-   `(isearch ((t (:foreground nil :background ,gray))))
+   `(isearch ((t (:foreground nil :background ,red))))
    `(isearch-fail ((t (:foreground nil :background ,red))))
    `(italic ((t (:foreground nil :background nil :underline nil))))
-   `(lazy-highlight ((t (:foreground nil :background ,gray))))
+   `(lazy-highlight ((t (:foreground nil :background nil))))
    `(link ((t (:foreground nil :background nil :underline nil))))
    `(link-visited ((t (:foreground nil :background nil :underline nil))))
-   `(linum  ((t (:foreground ,gray :background ,white))))
-   `(match ((t (:foreground nil :background ,gray))))
+   `(linum  ((t (:foreground ,black :background ,white))))
+   `(match ((t (:foreground nil :background ,red))))
    `(minibuffer-prompt ((t (:foreground ,nil :background nil))))
-   `(mode-line ((t (:foreground ,gray :background ,gray :box nil))))
+   `(mode-line ((t (:foreground ,white :background ,white :box nil))))
    `(mode-line-buffer-id ((t (:weight normal))))
    `(mode-line-inactive ((t (:inherit mode-line :box nil))))
-   `(region ((t (:foreground nil :background ,green))))
-   `(secondary-selection ((t (:foreground nil :background ,gray))))
+   `(region ((t (:foreground nil :background ,gold))))
+   `(secondary-selection ((t (:foreground nil :background ,red))))
    `(trailing-whitespace ((t (:foreground nil :background ,red))))
    `(underline ((t (:foreground nil :background nil :underline nil))))
 
-   `(ace-jump-face-background ((t (:foreground ,gray :background nil))))
+   `(ace-jump-face-background ((t (:foreground ,white :background nil))))
    `(ace-jump-face-foreground ((t (:foreground ,red :background nil))))
 
    `(anzu-mode-line ((t (:inherit mode-line))))
-   `(anzu-replace-highlight ((t (:foreground nil :background ,gray))))
-   `(anzu-replace-to ((t (:foreground ,red :background ,gray))))
+   `(anzu-replace-highlight ((t (:foreground nil :background ,red))))
+   `(anzu-replace-to ((t (:foreground ,red :background ,white))))
 
    `(avy-lead-face-0 ((t (:foreground ,red :background nil))))
    `(avy-lead-face-1 ((t (:foreground ,red :background nil))))
    `(avy-lead-face-2 ((t (:foreground ,red :background nil))))
    `(avy-lead-face ((t (:foreground ,red :background nil))))
-   `(avy-background-face ((t (:foreground ,gray))))
+   `(avy-background-face ((t (:foreground ,white))))
 
    `(custom-face-tag ((t (:foreground nil :background nil))))
-   `(custom-visibility ((t (:foreground ,green :background nil))))
-   `(custom-link ((t (:foreground ,green :background nil))))
+   `(custom-visibility ((t (:foreground ,gold :background nil))))
+   `(custom-link ((t (:foreground ,gold :background nil))))
 
-   `(diff-added ((t (:foreground ,green :background nil))))
+   `(diff-added ((t (:foreground ,gold :background nil))))
    `(diff-removed ((t (:foreground ,red :background nil))))
    `(diff-context ((t (:foreground ,black :background nil))))
    `(diff-refine-added ((t :inherit diff-added :foreground nil :weight bold)))
@@ -145,7 +144,7 @@
    `(erc-timestamp-face ((t (:foreground ,black :background nil))))
    `(erc-underline-face ((t (:foreground ,black :background nil))))
 
-   `(eshell-prompt ((t (:foreground ,gray :background nil :weight normal))))
+   `(eshell-prompt ((t (:foreground ,black :background nil :weight normal))))
    `(eshell-ls-directory ((t (:foreground nil :background nil :weight normal))))
    `(eshell-ls-executable ((t (:foreground nil :background nil :weight normal))))
 
@@ -166,7 +165,7 @@
    `(font-lock-warning-face ((t :foreground nil :background ,red)))
 
    `(helm-action ((t (:foreground ,black :background nil :underline nil))))
-   `(helm-candidate-number ((t (:foreground ,gray :background ,gray))))
+   `(helm-candidate-number ((t (:foreground ,white :background ,white))))
    `(helm-header ((t (:inherit mode-line))))
    `(helm-match ((t (:foreground ,black :background ,white :underline nil))))
    `(helm-selection ((t (:foreground ,red :background ,white :underline nil))))
@@ -185,9 +184,9 @@
    `(helm-history-remote ((t (:foreground ,black :background ,red :underline nil :italic nil))))
    `(helm-history-deleted ((t (:foreground ,black :background ,red :underline nil :italic nil))))
    `(helm-visible-mark ((t (:foreground ,black :background ,red :underline nil :italic nil))))
-   `(helm-separator ((t (:foreground ,gray :background nil :underline nil :italic nil))))
+   `(helm-separator ((t (:foreground ,white :background nil :underline nil :italic nil))))
    `(helm-prefarg ((t (:foreground ,black :background nil :underline nil :italic nil))))
-   `(helm-M-x-key ((t (:foreground ,green :background nil :underline nil :italic nil))))
+   `(helm-M-x-key ((t (:foreground ,black :background nil :underline nil :italic nil))))
 
    ;; js2-mode
    `(js2-error ((t (:foreground ,red background nil))))
@@ -218,8 +217,8 @@
    `(magit-branch-remote ((t (:foreground nil :background nil))))
    `(magit-cherry-equivalent ((t (:foreground nil :background nil))))
    `(magit-cherry-unmatched ((t (:foreground nil :background nil))))
-   `(magit-diff-added ((t (:foreground ,green :background nil))))
-   `(magit-diff-added-highlight ((t (:foreground ,green :background ,gray))))
+   `(magit-diff-added ((t (:foreground ,gold :background nil))))
+   `(magit-diff-added-highlight ((t (:foreground ,gold :background ,white))))
    `(magit-diff-conflict-heading ((t (:foreground nil :background nil))))
    `(magit-diff-context ((t (:foreground nil :background nil))))
    `(magit-diff-context-highlight ((t (:foreground nil :background nil))))
@@ -232,7 +231,7 @@
    `(magit-diff-lines-boundary ((t (:foreground nil :background nil))))
    `(magit-diff-lines-heading ((t (:foreground nil :background nil))))
    `(magit-diff-removed ((t (:foreground ,red :background nil))))
-   `(magit-diff-removed-highlight ((t (:foreground ,red :background ,gray))))
+   `(magit-diff-removed-highlight ((t (:foreground ,red :background ,white))))
    `(magit-diff-whitespace-warning ((t (:foreground nil :background ,red))))
    `(magit-diffstat-added ((t (:foreground nil :background nil))))
    `(magit-diffstat-removed ((t (:foreground nil :background nil))))
@@ -291,7 +290,7 @@
    `(magit-log-head-label-tags ((t (:foreground ,black :background nil))))
    `(magit-key-mode-button-face ((t (:foreground ,black :background nil))))
    `(magit-key-mode-header-face ((t (:foreground ,black :background nil))))
-   `(magit-key-mode-switch-face ((t (:foreground ,green :background nil))))
+   `(magit-key-mode-switch-face ((t (:foreground ,gold :background nil))))
    `(magit-diff-merge-current ((t (:foreground ,black :background nil))))
    `(magit-tag ((t (:foreground ,black :background nil))))
 
@@ -412,44 +411,16 @@
 
    `(rng-error ((t (:foreground nil :background ,red))))
 
-   `(show-paren-match ((t (:foreground nil :background ,green))))
+   `(show-paren-match ((t (:foreground nil :background ,gold))))
    `(show-paren-mismatch ((t (:foreground nil :background ,red))))
 
-   `(shr-link ((t (:foreground ,green :background nil :weight normal :underline nil))))
+   `(scala-font-lock:var-face ((t (:foreground nil :background nil))))
+
+   `(shr-link ((t (:foreground ,gold :background nil :weight normal :underline nil))))
    `(shr-strike-through ((t (:foreground nil :background nil :weight normal :strike-through t))))
 
-   `(wgrep-face ((t (:foreground ,green :background nil))))
+   `(wgrep-face ((t (:foreground ,gold :background nil))))
    `(wgrep-done-face ((t (:foreground ,black :background nil))))
-   ))
-
-(basic-with-color-variables
-  (custom-theme-set-variables
-   'basic
-   `(ansi-color-names-vector [
-			      (,black . ,gray)
-			      (,red . ,red)
-			      (,green . ,gray)
-			      (,red . ,gray)
-			      (,green . ,gray)
-			      (,green . ,gray)
-			      (,green . ,gray)
-			      (,white . ,white)
-			      ])
-   `(vc-annotate-very-old-color ,gray)
-   `(vc-annotate-background ,white)
-   `(vc-annotate-color-map
-     '((20 . ,red)
-       (50 . ,red)
-       (80 . ,red)
-       (110 . ,green)
-       (140 . ,green)
-       (170 . ,green)
-       (200 . ,green)
-       (230 . ,green)
-       (260 . ,black)
-       (290 . ,gray)
-       (320 . ,gray)
-       (350 . ,gray)))
    ))
 
 ;;;###autoload
