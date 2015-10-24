@@ -1,0 +1,25 @@
+* iv
+
+  Minimalistic theme for GNU Emacs using 4 colors.
+
+** Details
+
+   The theme relies only on 4 colors: black, white, red and gold.
+
+   By default the =mode-line= faces are using the same colors for fore- and
+   background to reduce the noise. I use a little helper to toggle the color and
+   face height of relevant faces similar to the following:
+
+   #+begin_src emacs-lisp
+     (defun mode-line-visual-toggle ()
+       (interactive)
+       (let ((faces-to-toggle '(mode-line mode-line-inactive))
+             (invisible-color "white")
+             (visible-color "black"))
+         (cond ((string= visible-color (face-attribute 'mode-line :foreground))
+                (mapcar (lambda (face) (set-face-foreground face invisible-color))
+                        faces-to-toggle))
+               (t
+                (mapcar (lambda (face) (set-face-foreground face visible-color))
+                        faces-to-toggle)))))
+   #+end_src
