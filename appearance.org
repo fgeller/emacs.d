@@ -96,7 +96,7 @@
   Load a custom theme.
 
   #+begin_src emacs-lisp
-    (load-theme 'basic t)
+    (load-theme 'iv t)
   #+end_src
 
   Show matching parenthesis.
