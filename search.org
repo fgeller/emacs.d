@@ -1,8 +1,20 @@
 * Search
 
+  Mostly use ag for searching, cause speed.
+
+  Load ag package with wgrep extension to enable editing across files.
+
   #+begin_src emacs-lisp
     (use-package ag :ensure ag :commands (ag ag-project))
     (use-package wgrep :ensure wgrep)
     (use-package wgrep-ag :ensure wgrep-ag)
+  #+end_src
+
+  helm-ag pre-filled with symbol at point for blazing fast interactive searches.
+
+  #+begin_src emacs-lisp
+    (use-package helm-ag
+      :config
+      (setq helm-ag-insert-at-point 'symbol))
   #+end_src
 

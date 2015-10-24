@@ -79,11 +79,11 @@
 
       (define-key fingers-mode-map (kbd "H") 'helm-show-kill-ring)
       (define-key fingers-mode-map (kbd "j") 'helm-apropos)
-      (define-key fingers-mode-map (kbd "k") 'ag-project)
-      (define-key fingers-mode-map (kbd "K") 'ag)
+      (define-key fingers-mode-map (kbd "K") 'ag-project)
+      (define-key fingers-mode-map (kbd "k") 'helm-do-ag-project-root)
       (define-key fingers-mode-map (kbd "l") 'avy-goto-word-or-subword-1)
       (define-key fingers-mode-map (kbd "L") 'avy-goto-char)
-      (define-key fingers-mode-map (kbd ">") 'helm-occur)
+      (define-key fingers-mode-map (kbd ">") 'ag)
       (define-key fingers-mode-map (kbd ".") 'helm-jump)
       (define-key fingers-mode-map (kbd "|") 'mc/edit-lines)
 
