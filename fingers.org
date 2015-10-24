@@ -94,6 +94,7 @@
       (define-key fingers-mode-x-map (kbd "vs") 'show-eshell-git-status)
 
       (define-key fingers-mode-launch-map (kbd "e") 'last-eshell)
+      (define-key fingers-mode-launch-map (kbd "s") 'shell)
       (define-key fingers-mode-launch-map (kbd "n") 'notmuch)
       (define-key fingers-mode-launch-map (kbd "oo") 'offlineimap)
 
