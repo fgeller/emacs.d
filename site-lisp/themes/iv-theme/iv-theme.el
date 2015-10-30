@@ -87,6 +87,7 @@
    `(secondary-selection ((t (:foreground nil :background ,red))))
    `(trailing-whitespace ((t (:foreground nil :background ,red))))
    `(underline ((t (:foreground nil :background nil :underline nil))))
+   `(variable-pitch ((t (:foreground nil :background nil :underline nil :family "Roboto"))))
 
    `(ace-jump-face-background ((t (:foreground ,white :background nil))))
    `(ace-jump-face-foreground ((t (:foreground ,red :background nil))))
