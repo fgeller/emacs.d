@@ -184,8 +184,8 @@
 
 (defun fingers-eol-and-insert ()
   (interactive)
-  (end-of-line)
-  (fingers-mode -1))
+  (fingers-end-of-line)
+  (global-fingers-mode -1))
 
 (defun fingers-open-above-and-insert ()
   (interactive)
@@ -203,8 +203,8 @@
 
 (defun fingers-bol-and-insert ()
   (interactive)
-  (beginning-of-line)
-  (fingers-mode -1))
+  (fingers-beginning-of-line)
+  (global-fingers-mode -1))
 
 (defun fingers-forward-delete ()
   (interactive)
