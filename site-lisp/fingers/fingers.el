@@ -626,8 +626,8 @@
       (G . fingers-meta-control)
 
       ;; bottom row
-      (z . fingers-bol-and-insert)
-      (Z . fingers-eol-and-insert)
+      (z . fingers-eol-and-insert)
+      (Z . fingers-bol-and-insert)
       (x . ,fingers-mode-x-map)
       (X . query-replace-regexp)
       (m . kmacro-start-macro)
