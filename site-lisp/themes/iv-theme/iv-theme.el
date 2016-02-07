@@ -71,10 +71,10 @@
    `(fringe ((t (:foreground ,black :background ,white))))
    `(header-line ((t (:inherit mode-line))))
    `(hi-yellow ((t (:foreground ,red :background ,nil))))
-   `(isearch ((t (:foreground nil :background ,red))))
-   `(isearch-fail ((t (:foreground nil :background ,red))))
+   `(isearch ((t (:foreground ,red :background nil))))
+   `(isearch-fail ((t (:foreground ,black :background ,red))))
    `(italic ((t (:foreground nil :background nil :underline nil))))
-   `(lazy-highlight ((t (:foreground nil :background nil))))
+   `(lazy-highlight ((t (:foreground ,red :background nil))))
    `(link ((t (:foreground nil :background nil :underline nil))))
    `(link-visited ((t (:foreground nil :background nil :underline nil))))
    `(linum  ((t (:foreground ,black :background ,white))))
@@ -415,11 +415,29 @@
 
    `(scala-font-lock:var-face ((t (:foreground nil :background nil))))
 
-   `(shr-link ((t (:foreground ,gold :background nil :weight normal :underline nil))))
+   `(shr-link ((t (:foreground ,red :background nil :weight normal :underline nil))))
    `(shr-strike-through ((t (:foreground nil :background nil :weight normal :strike-through t))))
 
    `(wgrep-face ((t (:foreground ,gold :background nil))))
    `(wgrep-done-face ((t (:foreground ,black :background nil))))
+
+   `(swiper-line-face ((t (:foreground ,black :background ,gold))))
+   `(swiper-match-face-1 ((t (:foreground ,red :background nil))))
+   `(swiper-match-face-2 ((t (:foreground ,red :background nil))))
+   `(swiper-match-face-3 ((t (:foreground ,red :background nil))))
+   `(swiper-match-face-4 ((t (:foreground ,red :background nil))))
+
+   `(ivy-confirm-face ((t (:foreground ,black :background ,white))))
+   `(ivy-current-match ((t (:foreground nil :background ,gold))))
+   `(ivy-match-required-face ((t (:foreground ,red :background ,white))))
+   `(ivy-minibuffer-match-face-1 ((t (:foreground ,red :background ,white))))
+   `(ivy-minibuffer-match-face-2 ((t (:foreground ,red :background ,white))))
+   `(ivy-minibuffer-match-face-3 ((t (:foreground ,red :background ,white))))
+   `(ivy-minibuffer-match-face-4 ((t (:foreground ,red :background ,white))))
+   `(ivy-modified-buffer ((t (:foreground ,black :background ,white))))
+   `(ivy-remote ((t (:foreground ,black :background ,white))))
+   `(ivy-subdir ((t (:foreground ,black :background ,white))))
+   `(ivy-virtual ((t (:foreground ,black :background ,white))))
    ))
 
 ;;;###autoload
