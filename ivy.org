@@ -91,21 +91,27 @@
   Modified version of counsel-ag.
 
   #+begin_src emacs-lisp
+    (defvar ivy-ag-extra-argument "" "Gets appended to ag invocation")
     (defun ivy-ag-function (string)
       "Grep in the current directory for STRING."
       (if (< (length string) 3)
           (counsel-more-chars 3)
         (let* ((default-directory counsel--git-grep-dir)
-               (regex (counsel-unquote-regex-parens
-                       (setq ivy--old-re
-                             (ivy--regex string))))
+               (re (counsel-unquote-regex-parens
+                    (setq ivy--old-re
+                          (ivy--regex string))))
                ;; TODO create temp file when no file associated?
                (fn (with-ivy-window (file-relative-name (buffer-file-name) counsel--git-grep-dir)))
-               (cmd (format "ag --vimgrep %s -- %s && (ag --ignore %s --vimgrep %s || exit 0)"
-                             (shell-quote-argument regex)
-                             (shell-quote-argument fn)
-                             (shell-quote-argument fn)
-                             (shell-quote-argument regex))))
+               (qfn (shell-quote-argument fn))
+               (qre (shell-quote-argument re))
+               (ea ivy-ag-extra-argument)
+               (cmd (progn
+                      (message "cmd args qre [%s] qfn [%s] ivy-ag-extra-argument [%s]" qre qfn ea)
+                      (format (concat "ag %s --vimgrep %s -- %s"
+                                      " && (ag %s --ignore %s --vimgrep %s || exit 0)")
+                              ea qre qfn
+                              ea qfn qre))))
+          (message "cmd [%s]" cmd)
           (counsel--async-command cmd)
           nil)))
 
@@ -124,9 +130,35 @@
                    :action #'counsel-git-grep-action
                    :preselect
                    (with-ivy-window
-                     (format "%s:%s:"
-                             (file-name-nondirectory (buffer-file-name))
-                             (line-number-at-pos)))
+                     (let* ((fn (file-name-nondirectory (buffer-file-name)))
+                            (ln (line-number-at-pos)))
+                       (message "preselect format fn [%s] ln [%s]" fn ln)
+                       (format "%s:%s:" fn ln)))
+                   :unwind (lambda ()
+                             (counsel-delete-process)
+                             (swiper--cleanup))))))
+
+
+    (defun ivy-ag-with-thing-at-point-in-main ()
+      "ag with thing at point, preselecting match where point is and defaulting to current git root."
+      (interactive)
+      (with-ivy-calling
+       (let ((init-dir (or (locate-dominating-file default-directory ".git")
+                           default-directory))
+             (tap (strip-text-properties (thing-at-point 'symbol)))
+             (ivy-ag-extra-argument (concat "--ignore src/test ")))
+         (setq counsel--git-grep-dir init-dir)
+         (ivy-read "ag: " 'ivy-ag-function
+                   :initial-input tap
+                   :dynamic-collection t
+                   :history 'counsel-git-grep-history
+                   :action #'counsel-git-grep-action
+                   :preselect
+                   (with-ivy-window
+                     (let* ((fn (file-name-nondirectory (buffer-file-name)))
+                            (ln (line-number-at-pos)))
+                       (message "preselect format fn [%s] ln [%s]" fn ln)
+                       (format "%s:%s:" fn ln)))
                    :unwind (lambda ()
                              (counsel-delete-process)
                              (swiper--cleanup))))))

@@ -125,6 +125,7 @@
         (define-key my-fingers-map (kbd "br") 'revert-buffer)
         (define-key my-fingers-map (kbd "bn") 'rename-buffer)
         (define-key my-fingers-map (kbd "bw") 'delete-trailing-whitespace)
+        (define-key my-fingers-map (kbd "k") 'ivy-ag-with-thing-at-point-in-main)
         (define-key fingers-mode-map (kbd "q") my-fingers-map))
       )
   #+end_src
