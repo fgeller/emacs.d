@@ -33,7 +33,7 @@
       :config
       (setq notmuch-fcc-dirs nil
             notmuch-crypto-process-mime t
-            notmuch-show-indent-messages-width 0
+            notmuch-show-indent-messages-width 2
             notmuch-archive-tags '("-inbox" "-spam" "-movio-in")
             notmuch-saved-searches '((:name "in" :query "tag:inbox" :key "i")
                                      (:name "movio-in" :query "tag:movio-in" :key "m")
