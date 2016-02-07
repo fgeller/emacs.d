@@ -97,7 +97,7 @@
                              (ivy--regex string))))
                ;; TODO create temp file when no file associated?
                (fn (with-ivy-window (file-relative-name (buffer-file-name) counsel--git-grep-dir)))
-               (cmd (format "ag --vimgrep %S -- %S && ag --ignore %s --vimgrep %S"
+               (cmd (format "ag --vimgrep %s -- %s && (ag --ignore %s --vimgrep %s || exit 0)"
                              (shell-quote-argument regex)
                              (shell-quote-argument fn)
                              (shell-quote-argument fn)
