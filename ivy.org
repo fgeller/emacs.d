@@ -212,7 +212,7 @@
                    (split-string (shell-command-to-string "find ~/src -maxdepth 4 -name .git -type d") "\n" t))
                   `(".emacs.d"))))
         (ivy-add-actions ps (lambda (p) (with-ivy-window
-                                          (find-file (expand-file-name p "~")))))))
+                                          (magit-status (expand-file-name p "~")))))))
 
     (defun ivy-jump-to-project ()
       (interactive)

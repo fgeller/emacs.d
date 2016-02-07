@@ -4,6 +4,10 @@
 
   #+begin_src emacs-lisp
     (use-package magit :ensure magit)
+
+    (setq magit-display-buffer-function
+          (lambda (b)
+            (display-buffer b '(display-buffer-same-window))))
   #+end_src
 
   Load multiple-cursors for light-weight macros.
