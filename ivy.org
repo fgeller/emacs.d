@@ -102,10 +102,8 @@
                              (shell-quote-argument fn)
                              (shell-quote-argument fn)
                              (shell-quote-argument regex))))
-          (message "ag issuesing [%s]" cmd)
           (counsel--async-command cmd)
           nil)))
-
 
     (defun ivy-ag-with-thing-at-point ()
       "ag with thing at point, preselecting match where point is and defaulting to current git root."
@@ -128,11 +126,6 @@
                    :unwind (lambda ()
                              (counsel-delete-process)
                              (swiper--cleanup))))))
-  #+end_src
-
-  #+begin_src emacs-lisp
-    (defun ivy-ag ()
-      (interactive))
   #+end_src
 
   Helper to jump to things that I often jump to.
@@ -220,7 +213,6 @@
                   `(".emacs.d"))))
         (ivy-add-actions ps (lambda (p) (with-ivy-window
                                           (find-file (expand-file-name p "~")))))))
-
 
     (defun ivy-jump-to-project ()
       (interactive)
