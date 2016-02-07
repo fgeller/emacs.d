@@ -299,7 +299,7 @@
   More configuration split into org files.
 
   #+begin_src emacs-lisp
-    (org-babel-load-file (expand-file-name "~/.emacs.d/helm.org"))
+    (org-babel-load-file (expand-file-name "~/.emacs.d/ivy.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/fingers.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/appearance.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/yasnippet.org"))

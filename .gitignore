@@ -54,3 +54,4 @@ main.el
 /session.*
 /site-lisp/org
 /web-mode.el
+/ivy.el
