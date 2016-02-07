@@ -38,6 +38,10 @@
                   (add-ivy-action c action)
                   c))
               candidates))
+
+    (defun ivy-actioner (c)
+      "Helper to execute closure saved as ivy action."
+      (funcall (get-ivy-action c) c))
   #+end_src
 
   Monkey-patch till upstream is customizable.
@@ -204,20 +208,43 @@
   Helper to jump to my projects
 
   #+begin_src emacs-lisp
+    (defun project-directories ()
+      (seq-concatenate
+       'list
+       (mapcar
+        (lambda (gd) (file-relative-name (file-name-directory gd) (expand-file-name "~")))
+        (split-string (shell-command-to-string "find ~/src -maxdepth 4 -name .git -type d") "\n" t))
+       `(".emacs.d")))
+
+    (defun ivy-jump-to-project-action (p)
+      (with-ivy-window
+        (magit-status (expand-file-name p "~"))))
+
     (defun ivy-jump-to-project-candidates ()
-      (let* ((ps (seq-concatenate
-                  'list
-                  (mapcar
-                   (lambda (gd) (file-relative-name (file-name-directory gd) (expand-file-name "~")))
-                   (split-string (shell-command-to-string "find ~/src -maxdepth 4 -name .git -type d") "\n" t))
-                  `(".emacs.d"))))
-        (ivy-add-actions ps (lambda (p) (with-ivy-window
-                                          (magit-status (expand-file-name p "~")))))))
+      (ivy-add-actions (project-directories) 'ivy-jump-to-project-action))
 
     (defun ivy-jump-to-project ()
       (interactive)
       (ivy-read
-       "jump to project "
+       "project "
        (ivy-jump-to-project-candidates)
        :action (lambda (c) (funcall (get-ivy-action c) c))))
+
+    (defun ivy-git-ls-files-project-action (p)
+      (with-ivy-window
+        (let ((default-directory (expand-file-name p "~")))
+          (ivy-read
+           "file "
+           (ivy-git-files-candidates)
+           :action 'ivy-actioner))))
+
+    (defun ivy-git-ls-files-project-candidates ()
+      (ivy-add-actions (project-directories) 'ivy-git-ls-files-project-action))
+
+    (defun ivy-git-ls-files-project ()
+      (interactive)
+      (ivy-read
+       "project "
+       (ivy-git-ls-files-project-candidates)
+       :action 'ivy-actioner))
   #+end_src

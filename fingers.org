@@ -116,7 +116,8 @@
       (define-key fingers-mode-map (kbd "S-<right>") 'enlarge-window-horizontally)
 
       (let* ((my-fingers-map (fingers-mode-clean-map)))
-        (define-key my-fingers-map (kbd "p") 'ivy-jump-to-project)
+        (define-key my-fingers-map (kbd "pp") 'ivy-jump-to-project)
+        (define-key my-fingers-map (kbd "p.") 'ivy-git-ls-files-project)
         (define-key my-fingers-map (kbd "ti") 'scala-ignore-all-tests)
         (define-key my-fingers-map (kbd "te") 'scala-enable-all-tests)
         (define-key my-fingers-map (kbd "tn") 'scala-next-test-forward)
