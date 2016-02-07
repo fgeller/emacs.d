@@ -41,8 +41,8 @@
 (defconst iv-colors-alist
   '(("black" . "black")
     ("white" . "white")
-    ("red" . "red")
-    ("gold" . "gold"))
+    ("red" . "#F44336")
+    ("green" . "#66BB6A"))
   "List of colors.")
 
 (defmacro iv-with-color-variables (&rest body)
@@ -83,7 +83,7 @@
    `(mode-line ((t (:foreground ,white :background ,white :box nil))))
    `(mode-line-buffer-id ((t (:weight normal))))
    `(mode-line-inactive ((t (:inherit mode-line :box nil))))
-   `(region ((t (:foreground nil :background ,gold))))
+   `(region ((t (:foreground nil :background ,green))))
    `(secondary-selection ((t (:foreground nil :background ,red))))
    `(trailing-whitespace ((t (:foreground nil :background ,red))))
    `(underline ((t (:foreground nil :background nil :underline nil))))
@@ -103,10 +103,10 @@
    `(avy-background-face ((t (:foreground ,white))))
 
    `(custom-face-tag ((t (:foreground nil :background nil))))
-   `(custom-visibility ((t (:foreground ,gold :background nil))))
-   `(custom-link ((t (:foreground ,gold :background nil))))
+   `(custom-visibility ((t (:foreground ,green :background nil))))
+   `(custom-link ((t (:foreground ,green :background nil))))
 
-   `(diff-added ((t (:foreground ,gold :background nil))))
+   `(diff-added ((t (:foreground ,green :background nil))))
    `(diff-removed ((t (:foreground ,red :background nil))))
    `(diff-context ((t (:foreground ,black :background nil))))
    `(diff-refine-added ((t :inherit diff-added :foreground nil :weight bold)))
@@ -216,8 +216,8 @@
    `(magit-branch-remote ((t (:foreground nil :background nil))))
    `(magit-cherry-equivalent ((t (:foreground nil :background nil))))
    `(magit-cherry-unmatched ((t (:foreground nil :background nil))))
-   `(magit-diff-added ((t (:foreground ,gold :background nil))))
-   `(magit-diff-added-highlight ((t (:foreground ,gold :background ,white))))
+   `(magit-diff-added ((t (:foreground ,green :background nil))))
+   `(magit-diff-added-highlight ((t (:foreground ,green :background ,white))))
    `(magit-diff-conflict-heading ((t (:foreground nil :background nil))))
    `(magit-diff-context ((t (:foreground nil :background nil))))
    `(magit-diff-context-highlight ((t (:foreground nil :background nil))))
@@ -289,7 +289,7 @@
    `(magit-log-head-label-tags ((t (:foreground ,black :background nil))))
    `(magit-key-mode-button-face ((t (:foreground ,black :background nil))))
    `(magit-key-mode-header-face ((t (:foreground ,black :background nil))))
-   `(magit-key-mode-switch-face ((t (:foreground ,gold :background nil))))
+   `(magit-key-mode-switch-face ((t (:foreground ,green :background nil))))
    `(magit-diff-merge-current ((t (:foreground ,black :background nil))))
    `(magit-tag ((t (:foreground ,black :background nil))))
 
@@ -410,7 +410,7 @@
 
    `(rng-error ((t (:foreground nil :background ,red))))
 
-   `(show-paren-match ((t (:foreground nil :background ,gold))))
+   `(show-paren-match ((t (:foreground nil :background ,green))))
    `(show-paren-mismatch ((t (:foreground nil :background ,red))))
 
    `(scala-font-lock:var-face ((t (:foreground nil :background nil))))
@@ -418,22 +418,22 @@
    `(shr-link ((t (:foreground ,red :background nil :weight normal :underline nil))))
    `(shr-strike-through ((t (:foreground nil :background nil :weight normal :strike-through t))))
 
-   `(wgrep-face ((t (:foreground ,gold :background nil))))
+   `(wgrep-face ((t (:foreground ,green :background nil))))
    `(wgrep-done-face ((t (:foreground ,black :background nil))))
 
-   `(swiper-line-face ((t (:foreground ,black :background ,gold))))
+   `(swiper-line-face ((t (:foreground ,black :background ,green))))
    `(swiper-match-face-1 ((t (:foreground ,red :background nil))))
    `(swiper-match-face-2 ((t (:foreground ,red :background nil))))
    `(swiper-match-face-3 ((t (:foreground ,red :background nil))))
    `(swiper-match-face-4 ((t (:foreground ,red :background nil))))
 
    `(ivy-confirm-face ((t (:foreground ,black :background ,white))))
-   `(ivy-current-match ((t (:foreground nil :background ,gold))))
-   `(ivy-match-required-face ((t (:foreground ,red :background ,white))))
-   `(ivy-minibuffer-match-face-1 ((t (:foreground ,red :background ,white))))
-   `(ivy-minibuffer-match-face-2 ((t (:foreground ,red :background ,white))))
-   `(ivy-minibuffer-match-face-3 ((t (:foreground ,red :background ,white))))
-   `(ivy-minibuffer-match-face-4 ((t (:foreground ,red :background ,white))))
+   `(ivy-current-match ((t (:foreground nil :background ,green))))
+   `(ivy-match-required-face ((t (:foreground ,red :background nil))))
+   `(ivy-minibuffer-match-face-1 ((t (:foreground ,red :background nil))))
+   `(ivy-minibuffer-match-face-2 ((t (:foreground ,red :background nil))))
+   `(ivy-minibuffer-match-face-3 ((t (:foreground ,red :background nil))))
+   `(ivy-minibuffer-match-face-4 ((t (:foreground ,red :background nil))))
    `(ivy-modified-buffer ((t (:foreground ,black :background ,white))))
    `(ivy-remote ((t (:foreground ,black :background ,white))))
    `(ivy-subdir ((t (:foreground ,black :background ,white))))
