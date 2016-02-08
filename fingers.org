@@ -88,7 +88,8 @@
       (define-key fingers-mode-map (kbd ".") 'ivy-jump)
       (define-key fingers-mode-map (kbd ">") 'ivy-resume)
       (define-key fingers-mode-map (kbd "|") 'mc/edit-lines)
-      (define-key fingers-mode-map (kbd "[") 'ivy-jump)
+      (define-key fingers-mode-map (kbd "[") 'ivy-local-mark-ring)
+      (define-key fingers-mode-map (kbd "{") 'ivy-global-mark-ring)
 
       (define-key fingers-mode-c-map (kbd "RET") 'browse-url-at-point)
 

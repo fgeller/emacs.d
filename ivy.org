@@ -280,3 +280,70 @@
        (ivy-git-ls-files-project-candidates)
        :action 'ivy-actioner))
   #+end_src
+
+  Use ivy to browse local and global mark rings.
+
+  #+begin_src emacs-lisp
+    (defun string-trim (str)
+      (replace-regexp-in-string
+       "\\`[ \t]*"
+       ""
+       (replace-regexp-in-string "[ \t]*\\'" "" str)))
+
+    (defun ivy-mark-ring-action (buf pos)
+      (lexical-let* ((buf buf)
+                     (pos pos))
+        (lambda (mn)
+          (with-ivy-window
+            (switch-to-buffer buf nil 'force-same-window)
+            (goto-char pos)
+            (let ((recenter-positions '(middle))
+                  (pulse-delay (* 3 pulse-delay)))
+              (recenter-top-bottom)
+              (pulse-momentary-highlight-one-line (point) 'swiper-line-face))))))
+
+    (defun ivy-pos-description (buf pos)
+      (with-current-buffer buf
+        (save-excursion
+          (goto-char pos)
+          (format "%5s: %s|%s"
+                  (line-number-at-pos)
+                  (string-trim (buffer-substring (line-beginning-position) (point)))
+                  (string-trim (buffer-substring (point) (line-end-position)))))))
+
+    (defun ivy-mark-ring-candidates (ring)
+      (let* ((start-time (current-time))
+             cs)
+        (mapc
+         (lambda (m)
+           (when (and (marker-buffer m) (marker-position m))
+             (let* ((buf (marker-buffer m))
+                    (bn (buffer-name buf))
+                    (pos (marker-position m))
+                    (des (ivy-pos-description buf pos))
+                    (can (format "%15.15s:%s" bn des)))
+               (add-ivy-action can (ivy-mark-ring-action buf pos))
+               (push can cs))))
+         ring)
+        (message "it took [%s]ms to compute [%s] mark ring candidates"
+                 (format-time-string "%3N" (time-subtract (current-time) start-time))
+                 (length cs))
+        cs))
+
+    (defun ivy-global-mark-ring ()
+      (interactive)
+      (with-ivy-calling
+       (ivy-read
+        "global mark "
+        (ivy-mark-ring-candidates global-mark-ring)
+        :action 'ivy-actioner)))
+
+    (defun ivy-local-mark-ring ()
+      (interactive)
+      (with-ivy-calling
+       (ivy-read
+        "local mark "
+        (ivy-mark-ring-candidates mark-ring)
+        :action 'ivy-actioner)))
+  #+end_src
+* 
