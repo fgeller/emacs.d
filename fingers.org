@@ -3,7 +3,9 @@
   Load magit.
 
   #+begin_src emacs-lisp
-    (use-package magit :ensure magit)
+    (use-package magit
+      :ensure magit
+      :config (setq git-commit-summary-max-length 72))
 
     (setq magit-display-buffer-function
           (lambda (b)
