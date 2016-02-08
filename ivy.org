@@ -107,7 +107,7 @@
                (ea ivy-ag-extra-argument)
                (cmd (progn
                       (message "cmd args qre [%s] qfn [%s] ivy-ag-extra-argument [%s]" qre qfn ea)
-                      (format (concat "ag %s --vimgrep %s -- %s"
+                      (format (concat "(ag %s --vimgrep %s -- %s || exit 0)"
                                       " && (ag %s --ignore %s --vimgrep %s || exit 0)")
                               ea qre qfn
                               ea qfn qre))))
