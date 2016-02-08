@@ -130,14 +130,13 @@
                    :action #'counsel-git-grep-action
                    :preselect
                    (with-ivy-window
-                     (let* ((fn (file-name-nondirectory (buffer-file-name)))
-                            (ln (line-number-at-pos)))
-                       (message "preselect format fn [%s] ln [%s]" fn ln)
-                       (format "%s:%s:" fn ln)))
+                     (when (buffer-file-name)
+                       (let* ((fn (file-name-nondirectory (buffer-file-name)))
+                              (ln (line-number-at-pos)))
+                         (format "%s:%s:" fn ln))))
                    :unwind (lambda ()
                              (counsel-delete-process)
                              (swiper--cleanup))))))
-
 
     (defun ivy-ag-with-thing-at-point-in-main ()
       "ag with thing at point, preselecting match where point is and defaulting to current git root."
