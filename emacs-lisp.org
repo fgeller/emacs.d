@@ -5,12 +5,19 @@
   #+begin_src emacs-lisp
     (use-package elisp-slime-nav
       :ensure elisp-slime-nav
-      :commands elisp-slime-nav-mode
-      :init (add-hook 'emacs-lisp-mode-hook 'elisp-slime-nav-mode))
+      :commands elisp-slime-nav-mode)
   #+end_src
 
-  Hook in eldoc-mode.
+  My customizations for Emacs LISP buffers.
 
   #+begin_src emacs-lisp
-    (add-hook 'emacs-lisp-mode-hook 'eldoc-mode)
+    (defun emacs-lisp-customizations ()
+      "My customizations for Emacs LISP buffers"
+      (eldoc-mode 1)
+      (yas-minor-mode 1)
+      (elisp-slime-nav-mode 1))
+  #+end_src
+
+  #+begin_src emacs-lisp
+    (add-hook 'emacs-lisp-mode-hook 'emacs-lisp-customizations)
   #+end_src
