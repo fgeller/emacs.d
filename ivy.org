@@ -3,11 +3,14 @@
   Load ivy and friends.
 
   #+begin_src emacs-lisp
-    (use-package ivy :ensure swiper)
-    (use-package counsel :ensure counsel)
+    (use-package ivy
+      :ensure swiper
+      :init (ivy-mode 1)
+      :config (setq ivy-use-virtual-buffers t))
+    (use-package counsel
+      :ensure counsel)
+
     (use-package recentf)
-    (ivy-mode 1)
-    (setq ivy-use-virtual-buffers t)
     (use-package seq)
   #+end_src
 
@@ -66,17 +69,17 @@
             cs)
         (mapatoms
          (lambda (e)
-           (let* ((n (symbol-name e))
-                  (c (substring n 0 (length n)))) ; cheap copying r/o values
-             (cond
-              ((fboundp e)
+           (cond
+            ((fboundp e)
+             (let ((c (string-copy (symbol-name e))))
                (add-ivy-action c 'describe-function)
-               (push c cs))
-              ((or (get e 'variable-documentation)
-                   (and (boundp e) (not (keywordp e))))
+               (push c cs)))
+            ((or (get e 'variable-documentation)
+                 (and (boundp e) (not (keywordp e))))
+             (let ((c (string-copy (symbol-name e))))
                (add-ivy-action c 'describe-variable)
                (push c cs))))))
-        (message "it took [%s]ms to compute [%s] apropos candidates"
+        (message "it took [%s]ms to compute [%s] apropos candidates."
                  (format-time-string "%3N" (time-subtract (current-time) start-time))
                  (length cs))
         cs))
@@ -105,13 +108,10 @@
                (qfn (shell-quote-argument fn))
                (qre (shell-quote-argument re))
                (ea ivy-ag-extra-argument)
-               (cmd (progn
-                      (message "cmd args qre [%s] qfn [%s] ivy-ag-extra-argument [%s]" qre qfn ea)
-                      (format (concat "(ag %s --vimgrep %s -- %s || exit 0)"
-                                      " && (ag %s --ignore %s --vimgrep %s || exit 0)")
-                              ea qre qfn
-                              ea qfn qre))))
-          (message "cmd [%s]" cmd)
+               (cmd (format (concat "(ag %s --vimgrep %s -- %s || exit 0)"
+                                    " && (ag %s --ignore %s --vimgrep %s || exit 0)")
+                            ea qre qfn
+                            ea qfn qre)))
           (counsel--async-command cmd)
           nil)))
 
@@ -134,33 +134,17 @@
                        (let* ((fn (file-name-nondirectory (buffer-file-name)))
                               (ln (line-number-at-pos)))
                          (format "%s:%s:" fn ln))))
-                   :unwind (lambda ()
-                             (counsel-delete-process)
-                             (swiper--cleanup))))))
+                   :unwind
+                   (lambda ()
+                     (counsel-delete-process)
+                     (swiper--cleanup))))))
 
     (defun ivy-ag-with-thing-at-point-in-main ()
       "ag with thing at point, preselecting match where point is and defaulting to current git root."
       (interactive)
       (with-ivy-calling
-       (let ((init-dir (or (locate-dominating-file default-directory ".git")
-                           default-directory))
-             (tap (strip-text-properties (thing-at-point 'symbol)))
-             (ivy-ag-extra-argument (concat "--ignore src/test ")))
-         (setq counsel--git-grep-dir init-dir)
-         (ivy-read "ag: " 'ivy-ag-function
-                   :initial-input tap
-                   :dynamic-collection t
-                   :history 'counsel-git-grep-history
-                   :action #'counsel-git-grep-action
-                   :preselect
-                   (with-ivy-window
-                     (let* ((fn (file-name-nondirectory (buffer-file-name)))
-                            (ln (line-number-at-pos)))
-                       (message "preselect format fn [%s] ln [%s]" fn ln)
-                       (format "%s:%s:" fn ln)))
-                   :unwind (lambda ()
-                             (counsel-delete-process)
-                             (swiper--cleanup))))))
+       (let ((ivy-ag-extra-argument (concat "--ignore src/test ")))
+         (ivy-ag-with-thing-at-point))))
   #+end_src
 
   Helper to jump to things that I often jump to.
@@ -233,7 +217,7 @@
        (ivy-read "jump "
                  (ivy-jump-candidates)
                  :preselect (buffer-name (other-buffer (current-buffer)))
-                 :action (lambda (c) (funcall (get-ivy-action c) c)))))
+                 :action 'ivy-actioner)))
   #+end_src
 
   Helper to jump to my projects
@@ -259,7 +243,7 @@
       (ivy-read
        "project "
        (ivy-jump-to-project-candidates)
-       :action (lambda (c) (funcall (get-ivy-action c) c))))
+       :action 'ivy-actioner))
 
     (defun ivy-git-ls-files-project-action (p)
       (with-ivy-window
@@ -345,4 +329,4 @@
         (ivy-mark-ring-candidates mark-ring)
         :action 'ivy-actioner)))
   #+end_src
-* 
+
