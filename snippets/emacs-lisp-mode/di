@@ -1,0 +1,7 @@
+# -*- mode:snippet; coding: utf-8 -*-
+# name: defun interactive
+# key: di
+# --
+(defun $1 ($2)
+  (interactive)
+  $0)
