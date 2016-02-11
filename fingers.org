@@ -83,16 +83,20 @@
       (define-key global-map (kbd "C-o") 'global-fingers-mode)
 
       (define-key fingers-mode-map (kbd "H") 'counsel-yank-pop)
-      (define-key fingers-mode-map (kbd "j") 'ivy-apropos)
-      (define-key fingers-mode-map (kbd "K") 'ag-project)
-      (define-key fingers-mode-map (kbd "k") 'ivy-ag-with-thing-at-point)
-      (define-key fingers-mode-map (kbd "l") 'avy-goto-word-or-subword-1)
-      (define-key fingers-mode-map (kbd "L") 'avy-goto-char)
+      (define-key fingers-mode-map (kbd "k") 'ivy-apropos)
+
+      (defun ag-project-wrapper () (call-interactively 'ag-project))
+      (defun avy-goto-char-wrapper () (call-interactively 'avy-goto-char))
+      (defun swiper-with-thing-at-point () (swiper (thing-at-point 'symbol)))
+
+      (define-key fingers-mode-map (kbd "f") (fingers-nav-command avy-goto-word-or-subword-1))
+      (define-key fingers-mode-map (kbd "F") (fingers-nav-command avy-goto-char-wrapper))
+      (define-key fingers-mode-map (kbd "u") (fingers-nav-command swiper))
+      (define-key fingers-mode-map (kbd "U") (fingers-nav-command ivy-ag-with-thing-at-point))
+
       (define-key fingers-mode-map (kbd ".") 'ivy-jump)
       (define-key fingers-mode-map (kbd ">") 'ivy-resume)
       (define-key fingers-mode-map (kbd "|") 'mc/edit-lines)
-      (define-key fingers-mode-map (kbd "[") 'ivy-local-mark-ring)
-      (define-key fingers-mode-map (kbd "{") 'ivy-global-mark-ring)
 
       (define-key fingers-mode-c-map (kbd "RET") 'browse-url-at-point)
 
