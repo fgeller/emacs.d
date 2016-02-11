@@ -105,51 +105,260 @@
 ;;
 ;; Helpers for navigation
 ;;
-(defun fingers-move-to-next-word-occurrence ()
+(defun fingers-nav (cmd)
+  (interactive)
+  (let ((should-mark-p (not (and (not fingers-mark-active-from-jump-p)
+				 mark-active))))
+    (when (and should-mark-p mark-active)
+      (deactivate-mark)
+      (setq fingers-mark-active-from-jump-p nil))
+    (if (string-match "^fingers-" (symbol-name cmd))
+	(funcall cmd should-mark-p)
+      (funcall cmd))))
+
+(defmacro fingers-nav-command (name)
+  `(lambda ()
+     (interactive)
+     (fingers-nav ',name)))
+
+(defconst fingers-left-pair-start-regex
+  "\\((\\|{\\|\\[\\|<\\|'\\|\"\\|`\\)"
+  "Regex to identify the left start of a pair")
+
+(defconst fingers-right-pair-end-regex
+  "\\()\\|}\\|\\]\\|>\\|'\\|\"\\|`\\)"
+  "Regex to identify the right end of a pair")
+
+(defconst fingers-pairs
+  '(("(" . ")")
+    ("[" . "]")
+    ("{" . "}")
+    ("<" . ">")
+    ("'" . "'")
+    ("\"" . "\"")
+    ("`" . "`"))
+  "List of cons cells that are the start and end string of a pair")
+
+(defvar fingers-mark-active-from-jump-p nil
+  "Predicate to indicate that current mark is active from jump command")
+
+(defun fingers-set-jump-mark ()
+  "Set mark to trigger selection based on current navigation command"
+  (setq fingers-mark-active-from-jump-p t)
+  (set-mark (point)))
+
+(defun fingers-beginning-of-line (should-mark-p)
+  (interactive)
+  (let ((start (point)))
+    (beginning-of-line)
+    (when (= start (point)) (back-to-indentation))))
+
+(defun fingers-end-of-line (should-mark-p)
+  (interactive)
+  (end-of-line))
+
+(defun fingers-mark-jump-char ()
+  (save-excursion
+    (forward-char)
+    (fingers-set-jump-mark)))
+
+(defun fingers-down (should-mark-p)
+  (interactive)
+  (next-line)
+  (when should-mark-p (fingers-mark-jump-char)))
+
+(defun fingers-up (should-mark-p)
+  (interactive)
+  (previous-line)
+  (when should-mark-p (fingers-mark-jump-char)))
+
+(defun fingers-right (should-mark-p)
+  (interactive)
+  (forward-char)
+  (when should-mark-p (fingers-mark-jump-char)))
+
+(defun fingers-left (should-mark-p)
+  (interactive)
+  (backward-char)
+  (when should-mark-p (fingers-mark-jump-char)))
+
+(defun fingers-end-of-buffer (should-mark-p)
+  (interactive)
+  (end-of-buffer))
+
+(defun fingers-beginning-of-buffer (should-mark-p)
+  (interactive)
+  (beginning-of-buffer))
+
+(defun fingers-backward (should-mark-p)
+  (interactive)
+  (let* ((next-symbol-start
+	  (save-excursion
+	    (forward-symbol -1)
+	    (point)))
+	 (next-pair-start
+	  (save-excursion
+	    (search-backward-regexp fingers-left-pair-start-regex (point-min) t) (point))))
+     (if (< next-symbol-start next-pair-start)
+	 (fingers-move-to-previous-pair-starter should-mark-p)
+       (goto-char next-symbol-start)
+       (when should-mark-p
+	 (save-excursion
+	   (forward-symbol 1)
+	   (fingers-set-jump-mark))))))
+
+(defun fingers-char-at-point ()
+  (buffer-substring (point) (1+ (point))))
+
+(defun fingers-forward (should-mark-p)
+  (interactive)
+  (let* ((next-symbol-end
+	  (save-excursion
+	    (forward-symbol 1)
+	    (point)))
+	 (next-pair-end
+	  (save-excursion
+	    (search-forward-regexp fingers-right-pair-end-regex (point-max) t)
+	    (point))))
+    (if (> next-symbol-end next-pair-end)
+	(fingers-move-to-next-pair-closer should-mark-p)
+      (goto-char next-symbol-end)
+      (when should-mark-p
+	(save-excursion
+	  (forward-symbol -1)
+	  (fingers-set-jump-mark))))))
+
+(defun fingers-move-to-previous-pair-starter (should-mark-p)
+  (interactive)
+  (let* ((first-pair-starter-pos
+	  (save-excursion
+	    (search-backward-regexp fingers-left-pair-start-regex (point-min) t)
+	    (point)))
+	 (second-pair-starter-pos
+	  (save-excursion
+	    (search-backward-regexp fingers-left-pair-start-regex (point-min) t 2)
+	    (point)))
+	 (first-pair-starter-str
+	  (save-excursion
+	    (goto-char first-pair-starter-pos)
+	    (fingers-char-at-point))))
+    (if (string-equal first-pair-starter-str (cdr (assoc first-pair-starter-str fingers-pairs)))
+	(goto-char second-pair-starter-pos)
+      (goto-char first-pair-starter-pos))
+    (when should-mark-p
+      (save-excursion
+	(let* ((start (fingers-char-at-point))
+	       (close (cdr (assoc start fingers-pairs))))
+	  (fingers-move-point-to-pair-ending-string start close)
+	  (forward-char 1)
+	  (fingers-set-jump-mark))))))
+
+(defun fingers-move-to-next-pair-closer (should-mark-p)
+  (interactive)
+  (let* ((first-pair-closer-pos
+	  (save-excursion
+	    (search-forward-regexp fingers-right-pair-end-regex (point-max) t)
+	    (point)))
+	 (first-pair-closer-str
+	  (save-excursion
+	    (goto-char (1- first-pair-closer-pos))
+	    (fingers-char-at-point)))
+	 (second-pair-closer-pos
+	  (save-excursion
+	    (search-forward-regexp fingers-right-pair-end-regex (point-max) t 2))))
+    (if (string-equal first-pair-closer-str (car (rassoc first-pair-closer-str fingers-pairs)))
+	(goto-char second-pair-closer-pos)
+      (goto-char first-pair-closer-pos))
+    (when should-mark-p
+      (save-excursion
+	(forward-char -1)
+	(let* ((close (fingers-char-at-point))
+	       (start (car (rassoc close fingers-pairs))))
+	  (fingers-move-point-to-pair-starting-string start close)
+	  (fingers-set-jump-mark))))))
+
+(defun fingers-window-middle-line ()
+  (let ((first-line (save-excursion (goto-char (window-start)) (line-number-at-pos)))
+	(last-line (save-excursion (goto-char (window-end)) (line-number-at-pos))))
+    (+ first-line (/ (- last-line first-line) 2))))
+
+(defun fingers-page-down (should-mark-p)
+  (interactive)
+  (scroll-up-command 5)
+  (goto-line (fingers-window-middle-line))
+  (beginning-of-line)
+  (when should-mark-p
+    (save-excursion
+      (end-of-line)
+      (fingers-set-jump-mark))))
+
+(defun fingers-page-up (should-mark-p)
+  (interactive)
+  (scroll-down-command 5)
+  (goto-line (fingers-window-middle-line))
+  (beginning-of-line)
+  (when should-mark-p
+    (save-excursion
+      (end-of-line)
+      (fingers-set-jump-mark))))
+
+(defun fingers-move-to-next-word-occurrence (should-mark-p)
   (interactive)
   (fingers-beginning-of-word)
   (forward-word)
   (let ((thing (thing-at-point 'word)))
     (setq isearch-string thing)
     (search-forward-regexp (concat "\\<" (regexp-quote thing) "\\>")))
-  (fingers-beginning-of-word))
+  (fingers-beginning-of-word)
+  (when should-mark-p
+      (save-excursion
+	(forward-word)
+	(fingers-set-jump-mark))))
 
-(defun fingers-move-to-next-symbol-occurrence ()
+(defun fingers-move-to-next-symbol-occurrence (should-mark-p)
   (interactive)
   (fingers-beginning-of-symbol)
   (forward-symbol 1)
   (let ((thing (thing-at-point 'symbol)))
     (setq isearch-string thing)
     (search-forward-regexp (concat "\\_<" (regexp-quote thing) "\\_>")))
-  (fingers-beginning-of-symbol))
+  (fingers-beginning-of-symbol)
+  (when should-mark-p
+      (save-excursion
+	(forward-symbol 1)
+	(fingers-set-jump-mark))))
 
-(defun fingers-move-to-previous-word-occurrence ()
+(defun fingers-move-to-previous-word-occurrence (should-mark-p)
   (interactive)
   (fingers-beginning-of-word)
   (let ((thing (thing-at-point 'word)))
     (setq isearch-string thing)
-    (search-backward-regexp (concat "\\<" (regexp-quote thing) "\\>"))))
+    (search-backward-regexp (concat "\\<" (regexp-quote thing) "\\>"))
+    (when should-mark-p
+      (save-excursion
+	(forward-word)
+	(fingers-set-jump-mark)))))
 
-(defun fingers-move-to-previous-symbol-occurrence ()
+(defun fingers-move-to-previous-symbol-occurrence (should-mark-p)
   (interactive)
   (fingers-beginning-of-symbol)
   (let ((thing (thing-at-point 'symbol)))
     (setq isearch-string thing)
-    (search-backward-regexp (concat "\\_<" (regexp-quote thing) "\\_>"))))
-
-(defun fingers-beginning-of-line ()
-  (interactive)
-  (let ((start (point)))
-    (beginning-of-visual-line)
-    (when (= start (point)) (back-to-indentation))))
-
-(defun fingers-end-of-line ()
-  (interactive)
-  (end-of-visual-line))
+    (search-backward-regexp (concat "\\_<" (regexp-quote thing) "\\_>"))
+    (when should-mark-p
+      (save-excursion
+	(forward-symbol 1)
+	(fingers-set-jump-mark)))))
 
 ;;
 ;; Helpers for manipulation
 ;;
+(defun fingers-undo (&optional arg)
+  (interactive)
+  (when (and fingers-mark-active-from-jump-p mark-active)
+    (deactivate-mark))
+  (undo arg))
+
 (defun fingers-open-line-below ()
   (interactive)
   (save-excursion
@@ -351,6 +560,8 @@
 
 (defun fingers-mark ()
   (interactive)
+  (when mark-active (deactivate-mark))
+  (setq fingers-mark-active-from-jump-p nil)
   (let ((next-key (read-char "Mark: ")))
     (cond
      ((= next-key (fingers-region-specifier 'char)) (fingers-mark-char))
@@ -643,42 +854,37 @@
       ;; y n e o i '
       ;; k l , . /
 
+      (,(intern "`")	. goto-line)
+
       ;; top row
-      (j . apropos)
-      (J . ,(fingers-pass-events-command "C-h"))
-      (f . goto-line)
-      (Fp . point-to-register)
-      (Fw . window-configuration-to-register)
-      (Ff . jump-to-register)
-      (uu . isearch-forward)
-      (U . isearch-repeat-forward)
-      (uh . fingers-move-to-next-word-occurrence)
-      (ut . fingers-move-to-next-symbol-occurrence)
-      (uo . isearch-occur)
-      (pp . isearch-backward)
-      (P . isearch-repeat-backward)
-      (ph . fingers-move-to-previous-word-occurrence)
-      (pt . fingers-move-to-previous-symbol-occurrence)
-      (,(intern ";") . pop-to-mark-command)
-      (,(intern ":") . pop-global-mark)
+      (j		. ,(fingers-nav-command fingers-beginning-of-buffer))
+      (J		. ,(fingers-nav-command fingers-end-of-buffer))
+      (f		. nil)
+      (u		. isearch-forward)
+      (ph		. ,(fingers-nav-command fingers-move-to-next-word-occurrence))
+      (pt		. ,(fingers-nav-command fingers-move-to-next-symbol-occurrence))
+      (Ph		. ,(fingers-nav-command fingers-move-to-previous-word-occurrence))
+      (Pt		. ,(fingers-nav-command fingers-move-to-previous-symbol-occurrence))
+      (,(intern ";")	. pop-to-mark-command)
+      (,(intern ":")	. pop-global-mark)
 
       ;; home row
-      (y . fingers-beginning-of-line)
-      (Y . beginning-of-buffer)
-      (n . left-char)
-      (N . backward-word)
-      (e . next-line)
-      (E . scroll-up-command)
-      (o . previous-line)
-      (O . scroll-down-command)
-      (i . right-char)
-      (I . forward-word)
-      (,(intern "'") . fingers-end-of-line)
-      (,(intern "\"") . end-of-buffer)
+      (y		. ,(fingers-nav-command fingers-beginning-of-line))
+      (Y		. ,(fingers-nav-command fingers-move-to-previous-pair-starter))
+      (n		. ,(fingers-nav-command fingers-left))
+      (N		. ,(fingers-nav-command fingers-backward))
+      (e		. ,(fingers-nav-command fingers-down))
+      (E		. ,(fingers-nav-command fingers-page-down))
+      (o		. ,(fingers-nav-command fingers-up))
+      (O		. ,(fingers-nav-command fingers-page-up))
+      (i		. ,(fingers-nav-command fingers-right))
+      (I		. ,(fingers-nav-command fingers-forward))
+      (,(intern "'")	. ,(fingers-nav-command fingers-end-of-line))
+      (,(intern "\"")	. ,(fingers-nav-command fingers-move-to-next-pair-closer))
 
       ;; bottom row
       (k . grep)
-      (/ . undo)
+      (/ . fingers-undo)
 
       (SPC . fingers-mark)
       (+ . fingers-increment-integer-at-point)
