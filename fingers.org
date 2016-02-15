@@ -104,7 +104,9 @@
       (define-key fingers-mode-map (kbd "f") (fingers-nav-command avy-goto-word-or-subword-1))
       (define-key fingers-mode-map (kbd "F") (fingers-nav-command avy-goto-char-wrapper))
       (define-key fingers-mode-map (kbd "u") (fingers-nav-command swiper))
-      (define-key fingers-mode-map (kbd "U") (fingers-nav-command ivy-ag-with-thing-at-point))
+      (define-key fingers-mode-map (kbd "U") (fingers-nav-command swiper-with-thing-at-point))
+      (define-key fingers-mode-map (kbd "p") 'ivy-ag-with-thing-at-point)
+      (define-key fingers-mode-map (kbd "P") 'ag-project)
 
       (define-key fingers-mode-map (kbd ".") 'ivy-jump)
       (define-key fingers-mode-map (kbd ">") 'ivy-resume)
@@ -147,7 +149,7 @@
         (define-key my-fingers-map (kbd "br") 'revert-buffer)
         (define-key my-fingers-map (kbd "bn") 'rename-buffer)
         (define-key my-fingers-map (kbd "bw") 'delete-trailing-whitespace)
-        (define-key my-fingers-map (kbd "k") 'ivy-ag-with-thing-at-point-in-main)
+        (define-key my-fingers-map (kbd "p") 'ivy-ag-with-thing-at-point-in-main)
         (define-key fingers-mode-map (kbd "q") my-fingers-map))
       )
   #+end_src
