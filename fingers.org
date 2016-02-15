@@ -82,6 +82,18 @@
       (eval-after-load 'compile '(define-key compilation-mode-map (kbd "C-o") nil))
       (define-key global-map (kbd "C-o") 'global-fingers-mode)
 
+      ;;     j    f    u    p    ;     [    ]
+
+      ;; E/bob   avy  swi   ag  pop  occ< occ>
+
+      ;;     y    n    e    o    i     '
+
+      ;; Bop/bol  <    v    ^    >   Eop/eol
+
+      ;;     k    l    ?    .    /
+
+      ;;   apr             jmp  undo
+
       (define-key fingers-mode-map (kbd "H") 'counsel-yank-pop)
       (define-key fingers-mode-map (kbd "k") 'ivy-apropos)
 
