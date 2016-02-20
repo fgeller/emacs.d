@@ -121,7 +121,7 @@
       (with-ivy-calling
        (let ((init-dir (or (locate-dominating-file default-directory ".git")
                            default-directory))
-             (tap (strip-text-properties (thing-at-point 'symbol))))
+             (tap (strip-text-properties (or (thing-at-point 'symbol) ""))))
          (setq counsel--git-grep-dir init-dir)
          (ivy-read "ag: " 'ivy-ag-function
                    :initial-input tap
