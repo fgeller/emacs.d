@@ -184,7 +184,7 @@
   (interactive)
   (backward-char)
   ;; (when should-mark-p (fingers-mark-jump-char))
-)
+  )
 
 (defun fingers-end-of-buffer (should-mark-p)
   (interactive)
@@ -318,9 +318,9 @@
     (search-forward-regexp (concat "\\<" (regexp-quote thing) "\\>")))
   (fingers-beginning-of-word)
   (when should-mark-p
-      (save-excursion
-	(forward-word)
-	(fingers-set-jump-mark))))
+    (save-excursion
+      (forward-word)
+      (fingers-set-jump-mark))))
 
 (defun fingers-move-to-next-symbol-occurrence (should-mark-p)
   (interactive)
@@ -331,9 +331,9 @@
     (search-forward-regexp (concat "\\_<" (regexp-quote thing) "\\_>")))
   (fingers-beginning-of-symbol)
   (when should-mark-p
-      (save-excursion
-	(forward-symbol 1)
-	(fingers-set-jump-mark))))
+    (save-excursion
+      (forward-symbol 1)
+      (fingers-set-jump-mark))))
 
 (defun fingers-move-to-previous-word-occurrence (should-mark-p)
   (interactive)
@@ -546,20 +546,20 @@
   (fingers-update-integer-at-point (lambda (num) (- num (if decrement decrement 1)))))
 
 (defun fingers-update-integer-at-point (update)
-    (let ((offset (skip-chars-backward "0123456789")))
-      (if (looking-at "[[:digit:]]+")
-	  (let* ((number-string (save-excursion
-				  (re-search-forward "[[:digit:]]+")
-				  (match-string 0)))
-		 (should-pad-p (string-match "0+[[:digit:]]+" number-string))
-		 (pad-number #'(lambda (num) (format (concat "%0" (number-to-string (length number-string)) "d") num)))
-		 (number (string-to-number number-string))
-		 (new-number (funcall update number))
-		 (final-string (if should-pad-p (funcall pad-number new-number) (number-to-string new-number))))
-	    (delete-region (point) (+ (point) (length number-string)))
-	    (insert final-string)
-	    (backward-char (+ (length number-string) offset)))
-	(message "Can't identify number at point."))))
+  (let ((offset (skip-chars-backward "0123456789")))
+    (if (looking-at "[[:digit:]]+")
+	(let* ((number-string (save-excursion
+				(re-search-forward "[[:digit:]]+")
+				(match-string 0)))
+	       (should-pad-p (string-match "0+[[:digit:]]+" number-string))
+	       (pad-number #'(lambda (num) (format (concat "%0" (number-to-string (length number-string)) "d") num)))
+	       (number (string-to-number number-string))
+	       (new-number (funcall update number))
+	       (final-string (if should-pad-p (funcall pad-number new-number) (number-to-string new-number))))
+	  (delete-region (point) (+ (point) (length number-string)))
+	  (insert final-string)
+	  (backward-char (+ (length number-string) offset)))
+      (message "Can't identify number at point."))))
 
 ;;
 ;; mark
@@ -812,92 +812,92 @@
 (defvar fingers-mode-launch-map (fingers-mode-clean-map))
 
 (defconst fingers-command-bindings
-    `(
-      ;; left hand -- manipulation
-      ;;
-      ;; q d r w b
-      ;; a s h t g
-      ;; z x m c v
+  `(
+    ;; left hand -- manipulation
+    ;;
+    ;; q d r w b
+    ;; a s h t g
+    ;; z x m c v
 
-      ;; top row
-      (q . nil)
-      (Q . nil)
-      (d . fingers-forward-delete)
-      (D . fingers-backward-delete)
-      (r . fingers-replace-with-char)
-      (R . fingers-replace-with-yank)
-      (w . fingers-insert-char)
-      (W . nil)
-      (b . fingers-insert-sequence)
-      (B . nil)
+    ;; top row
+    (q . nil)
+    (Q . nil)
+    (d . fingers-forward-delete)
+    (D . fingers-backward-delete)
+    (r . fingers-replace-with-char)
+    (R . fingers-replace-with-yank)
+    (w . fingers-insert-char)
+    (W . nil)
+    (b . fingers-insert-sequence)
+    (B . nil)
 
-      ;; home row
-      (a . fingers-enclose-in-pair)
-      (A . nil)
-      (s . fingers-remove-enclosing-pair)
-      (S . nil)
-      (h . yank)
-      (H . yank-pop)
-      (t . fingers-kill)
-      (T . fingers-copy)
-      (g . fingers-meta)
-      (G . fingers-meta-control)
+    ;; home row
+    (a . fingers-enclose-in-pair)
+    (A . nil)
+    (s . fingers-remove-enclosing-pair)
+    (S . nil)
+    (h . yank)
+    (H . yank-pop)
+    (t . fingers-kill)
+    (T . fingers-copy)
+    (g . fingers-meta)
+    (G . fingers-meta-control)
 
-      ;; bottom row
-      (z . fingers-eol-and-insert)
-      (Z . fingers-bol-and-insert)
-      (x . ,fingers-mode-x-map)
-      (X . query-replace-regexp)
-      (m . kmacro-start-macro)
-      (M . kmacro-end-macro)
-      (c . ,fingers-mode-c-map)
-      (C . fingers-duplicate-line)
-      (V . join-line)
-      (v . fingers-open-line-below)
+    ;; bottom row
+    (z . fingers-eol-and-insert)
+    (Z . fingers-bol-and-insert)
+    (x . ,fingers-mode-x-map)
+    (X . query-replace-regexp)
+    (m . kmacro-start-macro)
+    (M . kmacro-end-macro)
+    (c . ,fingers-mode-c-map)
+    (C . fingers-duplicate-line)
+    (V . join-line)
+    (v . fingers-open-line-below)
 
-      ;; right hand -- navigation
-      ;;
-      ;; j f u p ; [
-      ;; y n e o i '
-      ;; k l , . /
+    ;; right hand -- navigation
+    ;;
+    ;; j f u p ; [
+    ;; y n e o i '
+    ;; k l , . /
 
-      (,(intern "`")	. goto-line)
+    (,(intern "`")	. goto-line)
 
-      ;; top row
-      (j		. ,(fingers-nav-command fingers-beginning-of-buffer))
-      (J		. ,(fingers-nav-command fingers-end-of-buffer))
-      (f		. nil)
-      (u		. isearch-forward)
-      (,(intern "}")	. ,(fingers-nav-command fingers-move-to-next-word-occurrence))
-      (,(intern "]")	. ,(fingers-nav-command fingers-move-to-next-symbol-occurrence))
-      (,(intern "{")	. ,(fingers-nav-command fingers-move-to-previous-word-occurrence))
-      (,(intern "[")	. ,(fingers-nav-command fingers-move-to-previous-symbol-occurrence))
-      (,(intern ";")	. pop-to-mark-command)
-      (,(intern ":")	. pop-global-mark)
+    ;; top row
+    (j		. ,(fingers-nav-command fingers-beginning-of-buffer))
+    (J		. ,(fingers-nav-command fingers-end-of-buffer))
+    (f		. nil)
+    (u		. isearch-forward)
+    (,(intern "}")	. ,(fingers-nav-command fingers-move-to-next-word-occurrence))
+    (,(intern "]")	. ,(fingers-nav-command fingers-move-to-next-symbol-occurrence))
+    (,(intern "{")	. ,(fingers-nav-command fingers-move-to-previous-word-occurrence))
+    (,(intern "[")	. ,(fingers-nav-command fingers-move-to-previous-symbol-occurrence))
+    (,(intern ";")	. pop-to-mark-command)
+    (,(intern ":")	. pop-global-mark)
 
-      ;; home row
-      (y		. ,(fingers-nav-command fingers-beginning-of-line))
-      (Y		. ,(fingers-nav-command fingers-move-to-previous-pair-starter))
-      (n		. ,(fingers-nav-command fingers-left))
-      (N		. ,(fingers-nav-command fingers-backward))
-      (e		. ,(fingers-nav-command fingers-down))
-      (E		. ,(fingers-nav-command fingers-page-down))
-      (o		. ,(fingers-nav-command fingers-up))
-      (O		. ,(fingers-nav-command fingers-page-up))
-      (i		. ,(fingers-nav-command fingers-right))
-      (I		. ,(fingers-nav-command fingers-forward))
-      (,(intern "'")	. ,(fingers-nav-command fingers-end-of-line))
-      (,(intern "\"")	. ,(fingers-nav-command fingers-move-to-next-pair-closer))
+    ;; home row
+    (y		. ,(fingers-nav-command fingers-beginning-of-line))
+    (Y		. ,(fingers-nav-command fingers-move-to-previous-pair-starter))
+    (n		. ,(fingers-nav-command fingers-left))
+    (N		. ,(fingers-nav-command fingers-backward))
+    (e		. ,(fingers-nav-command fingers-down))
+    (E		. ,(fingers-nav-command fingers-page-down))
+    (o		. ,(fingers-nav-command fingers-up))
+    (O		. ,(fingers-nav-command fingers-page-up))
+    (i		. ,(fingers-nav-command fingers-right))
+    (I		. ,(fingers-nav-command fingers-forward))
+    (,(intern "'")	. ,(fingers-nav-command fingers-end-of-line))
+    (,(intern "\"")	. ,(fingers-nav-command fingers-move-to-next-pair-closer))
 
-      ;; bottom row
-      (k . grep)
-      (/ . fingers-undo)
+    ;; bottom row
+    (k . grep)
+    (/ . fingers-undo)
 
-      (SPC . fingers-mark)
-      (+ . fingers-increment-integer-at-point)
-      (- . fingers-decrement-integer-at-point)
-      )
-    "Main bindings in `fingers-mode-map'")
+    (SPC . fingers-mark)
+    (+ . fingers-increment-integer-at-point)
+    (- . fingers-decrement-integer-at-point)
+    )
+  "Main bindings in `fingers-mode-map'")
 
 (defconst fingers-x-bindings
   `(
@@ -943,7 +943,7 @@
     (,(intern "!") . ,(fingers-pass-events-command "C-c !"))
     (,(intern "/") . ,(fingers-pass-events-command "C-c /"))
     (RET . ,(fingers-pass-events-command "C-c RET"))
-  )
+    )
   "Bindings for `fingers-mode-c-map'")
 
 (defconst fingers-launch-bindings
