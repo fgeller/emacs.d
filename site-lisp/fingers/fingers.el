@@ -202,14 +202,16 @@
 	    (point)))
 	 (next-pair-start
 	  (save-excursion
-	    (search-backward-regexp fingers-left-pair-start-regex (point-min) t) (point))))
-     (if (< next-symbol-start next-pair-start)
-	 (fingers-move-to-previous-pair-starter should-mark-p)
-       (goto-char next-symbol-start)
-       (when should-mark-p
-	 (save-excursion
-	   (forward-symbol 1)
-	   (fingers-set-jump-mark))))))
+	    (when (search-backward-regexp fingers-left-pair-start-regex (point-min) t)
+	      (point)))))
+    (if (and next-pair-start
+	     (< next-symbol-start next-pair-start))
+	(fingers-move-to-previous-pair-starter should-mark-p)
+      (goto-char next-symbol-start)
+      (when should-mark-p
+	(save-excursion
+	  (forward-symbol 1)
+	  (fingers-set-jump-mark))))))
 
 (defun fingers-char-at-point ()
   (buffer-substring (point) (1+ (point))))
@@ -222,9 +224,10 @@
 	    (point)))
 	 (next-pair-end
 	  (save-excursion
-	    (search-forward-regexp fingers-right-pair-end-regex (point-max) t)
-	    (point))))
-    (if (> next-symbol-end next-pair-end)
+	    (when (search-forward-regexp fingers-right-pair-end-regex (point-max) t)
+	      (point)))))
+    (if (and next-pair-end
+	     (> next-symbol-end next-pair-end))
 	(fingers-move-to-next-pair-closer should-mark-p)
       (goto-char next-symbol-end)
       (when should-mark-p
