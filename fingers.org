@@ -106,7 +106,7 @@
 
       (define-key fingers-mode-map (kbd "f") (fingers-nav-command avy-goto-word-or-subword-1))
       (define-key fingers-mode-map (kbd "F") (fingers-nav-command avy-goto-char-wrapper))
-      (define-key fingers-mode-map (kbd "u") (fingers-nav-command swiper))
+      (define-key fingers-mode-map (kbd "u") (fingers-nav-command swiper-tweaked))
       (define-key fingers-mode-map (kbd "U") (fingers-nav-command swiper-with-thing-at-point))
       (define-key fingers-mode-map (kbd "p") 'ivy-ag-with-thing-at-point)
       (define-key fingers-mode-map (kbd "P") 'ag-project)

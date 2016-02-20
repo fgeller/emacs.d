@@ -5,8 +5,14 @@
   #+begin_src emacs-lisp
     (use-package ivy
       :ensure swiper
-      :init (ivy-mode 1)
-      :config (setq ivy-use-virtual-buffers t))
+
+      :init
+      (ivy-mode 1)
+      (use-package pulse)
+
+      :config
+      (setq ivy-use-virtual-buffers t))
+
     (use-package counsel
       :ensure counsel)
 
@@ -328,5 +334,17 @@
         "local mark "
         (ivy-mark-ring-candidates mark-ring)
         :action 'ivy-actioner)))
+  #+end_src
+
+  Tweak swiper.
+
+  #+begin_src emacs-lisp
+    (defun swiper-tweaked ()
+      (interactive)
+      (swiper)
+      (let ((recenter-positions '(middle))
+            (pulse-delay (* 3 pulse-delay)))
+        (recenter-top-bottom)
+        (pulse-momentary-highlight-one-line (point) 'swiper-line-face)))
   #+end_src
 
