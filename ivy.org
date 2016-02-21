@@ -121,6 +121,14 @@
           (counsel--async-command cmd)
           nil)))
 
+    (defun ivy-ag-action (c)
+      (counsel-git-grep-action c)
+      (with-ivy-window
+        (let ((recenter-positions '(middle))
+              (pulse-delay (* 3 pulse-delay)))
+          (recenter-top-bottom)
+          (pulse-momentary-highlight-one-line (point) 'swiper-line-face))))
+
     (defun ivy-ag-with-thing-at-point ()
       "ag with thing at point, preselecting match where point is and defaulting to current git root."
       (interactive)
@@ -133,7 +141,7 @@
                    :initial-input tap
                    :dynamic-collection t
                    :history 'counsel-git-grep-history
-                   :action #'counsel-git-grep-action
+                   :action 'ivy-ag-action
                    :preselect
                    (with-ivy-window
                      (when (buffer-file-name)
@@ -145,12 +153,30 @@
                      (counsel-delete-process)
                      (swiper--cleanup))))))
 
+
+    (defun ivy-ag ()
+      "ag with thing at point, preselecting match where point is and defaulting to current git root."
+      (interactive)
+      (with-ivy-calling
+       (let ((init-dir (or (locate-dominating-file default-directory ".git")
+                           default-directory)))
+         (setq counsel--git-grep-dir init-dir)
+         (ivy-read "ag: " 'ivy-ag-function
+                   :dynamic-collection t
+                   :history 'counsel-git-grep-history
+                   :action 'ivy-ag-action
+                   :unwind
+                   (lambda ()
+                     (counsel-delete-process)
+                     (swiper--cleanup))))))
+
     (defun ivy-ag-with-thing-at-point-in-main ()
       "ag with thing at point, preselecting match where point is and defaulting to current git root."
       (interactive)
       (with-ivy-calling
        (let ((ivy-ag-extra-argument (concat "--ignore src/test ")))
          (ivy-ag-with-thing-at-point))))
+
   #+end_src
 
   Helper to jump to things that I often jump to.
@@ -339,6 +365,14 @@
   Tweak swiper.
 
   #+begin_src emacs-lisp
+    (defun swiper-with-thing-at-point ()
+      (interactive)
+      (swiper (thing-at-point 'symbol))
+      (let ((recenter-positions '(middle))
+            (pulse-delay (* 3 pulse-delay)))
+        (recenter-top-bottom)
+        (pulse-momentary-highlight-one-line (point) 'swiper-line-face)))
+
     (defun swiper-tweaked ()
       (interactive)
       (swiper)
