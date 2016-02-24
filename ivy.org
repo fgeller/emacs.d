@@ -174,7 +174,7 @@
       "ag with thing at point, preselecting match where point is and defaulting to current git root."
       (interactive)
       (with-ivy-calling
-       (let ((ivy-ag-extra-argument (concat "--ignore src/test ")))
+       (let ((ivy-ag-extra-argument (concat "--ignore test")))
          (ivy-ag-with-thing-at-point))))
 
   #+end_src
