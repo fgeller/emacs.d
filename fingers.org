@@ -47,7 +47,7 @@
                        faces-to-toggle))
               (t
                (mapcar (lambda (face)
-                         (set-face-foreground face "#66BB6A")
+                         (set-face-foreground face (if (window-system) "#66BB6A" "green"))
                          (set-face-background face "white")
                          (set-face-attribute face nil :height (face-attribute 'default :height)))
                        faces-to-toggle)))))
