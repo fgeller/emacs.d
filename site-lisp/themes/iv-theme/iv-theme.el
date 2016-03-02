@@ -67,10 +67,10 @@
 (deftheme iv "Minimalistic theme based on 4 colors.")
 
 (defconst iv-colors-alist
-  '(("black" . "black")
+  `(("black" . "black")
     ("white" . "white")
-    ("red" .   "#F44336")
-    ("green" . "#66BB6A"))
+    ("red" .   ,(if (window-system) "#F44336" "red"))
+    ("green" . ,(if (window-system) "#66BB6A" "green")))
   "List of colors.")
 
 (defmacro iv-with-color-variables (&rest body)
