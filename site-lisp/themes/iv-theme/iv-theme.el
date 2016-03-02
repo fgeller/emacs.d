@@ -230,6 +230,8 @@
    `(js2-private-member           ((t (:foreground nil :background nil))))
    `(js2-warning                  ((t (:foreground ,red :background nil))))
 
+   `(leerzeichen                  ((t (:foreground ,green :background nil))))
+
    ;; magit
    `(magit-bisect-bad                  ((t (:foreground nil :background nil :weight normal))))
    `(magit-bisect-good                 ((t (:foreground nil :background nil :weight normal))))
