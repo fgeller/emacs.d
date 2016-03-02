@@ -151,9 +151,41 @@
         (define-key my-fingers-map (kbd "br") 'revert-buffer)
         (define-key my-fingers-map (kbd "bn") 'rename-buffer)
         (define-key my-fingers-map (kbd "bw") 'delete-trailing-whitespace)
+        (define-key my-fingers-map (kbd "e") 'explode-arguments-into-multiple-lines)
         (define-key my-fingers-map (kbd "p") 'ivy-ag-with-thing-at-point-in-main)
+        (define-key my-fingers-map (kbd "s") 'sort-lines)
         (define-key fingers-mode-map (kbd "q") my-fingers-map))
       )
+  #+end_src
+
+  #+begin_src emacs-lisp
+    (defun find-matching-closer ()
+      (let* ((start-pos (point))
+             (open-count 1))
+        (while (and (not (eobp))
+                    (< 0 open-count))
+          (forward-char 1)
+          (cond ((looking-at "(") (setq open-count (1+ open-count)))
+                ((looking-at ")") (setq open-count (1- open-count)))))
+        (unless (eobp) (point))))
+
+    (defun explode-arguments-into-multiple-lines ()
+      (interactive)
+      (let* ((start-pos (1+ (re-search-backward "(")))
+             (end-pos (save-excursion
+                        (goto-char start-pos)
+                        (find-matching-closer))))
+        (goto-char end-pos)
+        (open-line 1)
+        (while (> (point) start-pos)
+          (forward-char -1)
+          (when (looking-at ",") (forward-char 1) (open-line 1) (forward-char -1)))
+        (open-line 1)
+        (set-mark (point))
+        (goto-char (1+ (find-matching-closer)))
+        (indent-for-tab-command)
+        (goto-char start-pos)))
+
   #+end_src
 
   #+begin_src emacs-lisp
