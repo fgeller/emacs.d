@@ -368,9 +368,10 @@
 
 (defun fingers-open-line-below ()
   (interactive)
-  (save-excursion
-    (end-of-line)
-    (open-line 1)))
+  (end-of-line)
+  (open-line 1)
+  (forward-line 1)
+  (indent-for-tab-command))
 
 (defun fingers-insert-char ()
   (interactive)
