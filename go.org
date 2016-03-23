@@ -12,7 +12,7 @@
     (defun golang-customizations ()
       (subword-mode 1)
       (yas-minor-mode 1)
-      (setq gofmt-command "goimports")
+      (setq gofmt-command "gofmt")
       (add-hook 'before-save-hook #'gofmt-before-save))
 
     (add-hook 'go-mode-hook 'golang-customizations)
