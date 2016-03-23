@@ -2,4 +2,4 @@
 # name: it(descr)(pending)
 # key: it
 # --
-it("should $1")(pending$0)
+it("$1")(pending$0)
