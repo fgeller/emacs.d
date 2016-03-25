@@ -371,7 +371,8 @@
   (end-of-line)
   (open-line 1)
   (forward-line 1)
-  (indent-for-tab-command))
+  (indent-for-tab-command)
+  (global-fingers-mode -1))
 
 (defun fingers-insert-char ()
   (interactive)
