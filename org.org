@@ -277,7 +277,7 @@
               entry (file+headline ,(expand-file-name "Bookmarks.org" org-directory) "Bookmarks")
               "* %?\n\n  %c%i\n")
              ("s" "Scratch"
-              entry (file+headline ,(expand-file-name "scratch.org" org-directory) "Scratch")
+              entry (file+headline ,(expand-file-name "scratch.org" user-emacs-directory) "Scratch")
               "* Scratch it %U\n%i\n   #+begin_src text\n%?\n   #+end_src\n")))
    #+end_src
 
@@ -289,8 +289,7 @@
      (setq
       org-outline-path-complete-in-steps nil
       org-refile-use-outline-path 'file
-      org-refile-targets  '((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5))
-      )
+      org-refile-targets  '((nil :maxlevel . 5) (org-agenda-files :maxlevel . 5)))
    #+end_src
 
 ** Babel
