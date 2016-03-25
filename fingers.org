@@ -69,6 +69,18 @@
             (rename-buffer "*offline-imap*")))))
   #+end_src
 
+  Helper to touch buffer.
+
+  #+begin_src emacs-lisp
+    (defun touch-buffer ()
+      (interactive "")
+      (insert " ")
+      (backward-delete-char 1)
+      (save-buffer))
+  #+end_src
+
+  Helper to toggle highlighting of trailing whitespace.
+
   #+begin_src emacs-lisp
     (defun toggle-show-trailing-whitespace ()
       (interactive)
@@ -153,6 +165,7 @@
         (define-key my-fingers-map (kbd "no") 'scala-errors-goto-prev-error)
         (define-key my-fingers-map (kbd "br") 'revert-buffer)
         (define-key my-fingers-map (kbd "bn") 'rename-buffer)
+        (define-key my-fingers-map (kbd "bt") 'touch-buffer)
         (define-key my-fingers-map (kbd "bw") 'delete-trailing-whitespace)
         (define-key my-fingers-map (kbd "e") 'explode-arguments-into-multiple-lines)
         (define-key my-fingers-map (kbd "p") 'ivy-ag-with-thing-at-point-in-main)
