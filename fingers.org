@@ -115,6 +115,9 @@
       (defun ag-project-wrapper () (call-interactively 'ag-project))
       (defun avy-goto-char-wrapper () (call-interactively 'avy-goto-char))
 
+      (define-key fingers-mode-map (kbd "b") 'fingers-end-of-line-and-insert)
+      (define-key fingers-mode-map (kbd "B") 'fingers-beginning-of-line-and-insert)
+
       (define-key fingers-mode-map (kbd "f") (fingers-nav-command avy-goto-word-or-subword-1))
       (define-key fingers-mode-map (kbd "F") (fingers-nav-command avy-goto-char-wrapper))
       (define-key fingers-mode-map (kbd "u") (fingers-nav-command swiper-tweaked))

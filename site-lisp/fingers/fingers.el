@@ -399,9 +399,14 @@
     (delete-char 1))
   (yank))
 
-(defun fingers-eol-and-insert ()
+(defun fingers-beginning-of-line-and-insert ()
   (interactive)
-  (fingers-end-of-line)
+  (fingers-beginning-of-line nil)
+  (global-fingers-mode -1))
+
+(defun fingers-end-of-line-and-insert ()
+  (interactive)
+  (fingers-end-of-line nil)
   (global-fingers-mode -1))
 
 (defun fingers-open-above-and-insert ()
@@ -417,11 +422,6 @@
   (forward-line 1)
   (end-of-line)
   (fingers-mode -1))
-
-(defun fingers-bol-and-insert ()
-  (interactive)
-  (fingers-beginning-of-line)
-  (global-fingers-mode -1))
 
 (defun fingers-forward-delete ()
   (interactive)
