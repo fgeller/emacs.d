@@ -97,6 +97,11 @@
       (add-hook 'scala-mode-hook 'scala-customizations))
   #+end_src
 
+  #+begin_src emacs-lisp
+    (use-package scala-errors
+      :config (setq scala-errors-default-display-errors-function (lambda (b))))
+  #+end_src
+
   Scala test control
 
   #+begin_src emacs-lisp

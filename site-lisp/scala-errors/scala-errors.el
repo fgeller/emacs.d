@@ -63,6 +63,18 @@ Used when refreshing the error list.")
   "The maximum time in seconds for polling for the quickfix file.
 Used when refreshing the error list.")
 
+(defconst scala-errors-keymap
+  (let ((map (make-sparse-keymap)))
+    (suppress-keymap map t)
+    map)
+  "Keymap for scala-errors minor mode")
+
+(defvar scala-errors--errors nil
+  "Information about currently found errors.")
+
+(defvar scala-errors--index nil
+  "Index to currently visited error in `scala-errors--errors'.")
+
 
 
 (defun scala-errors-default-display-errors-function (buf)
