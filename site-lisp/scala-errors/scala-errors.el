@@ -66,6 +66,7 @@ Used when refreshing the error list.")
 (defconst scala-errors-keymap
   (let ((map (make-sparse-keymap)))
     (suppress-keymap map t)
+    (define-key map (kbd "g") #'scala-errors-refresh)
     map)
   "Keymap for scala-errors minor mode")
 
@@ -104,24 +105,43 @@ Used when refreshing the error list.")
   (interactive)
   (let ((buf (scala-errors-show-errors)))
     (if (and buf (buffer-live-p buf))
-        (with-current-buffer buf
-          (goto-char (point-min))
-          (compile-goto-error))
+        (scala-errors-goto-nth-error 0)
       (user-error "No errors"))))
+
+(defun scala-errors-goto-nth-error (n)
+  "Jump to a specific SBT error"
+  (interactive "n")
+  (if (< n (length scala-errors--errors))
+      (let* ((info (nth n scala-errors--errors))
+             (file (cdr (assoc 'file info)))
+             (line (cdr (assoc 'line info)))
+             (column (cdr (assoc 'column info)))
+             (msg (cdr (assoc 'message info))))
+        (find-file file)
+        (goto-line line)
+        (beginning-of-line)
+        (forward-char column)
+        (setq scala-errors--index n)
+        (message msg))
+    (user-error (format "Not enough errors to jump to error %s, only found %s." (1+ n) (length scala-errors--errors)))))
 
 ;;;###autoload
 (defun scala-errors-goto-next-error ()
   "Navigate to the next SBT error."
   (interactive)
   (save-window-excursion (scala-errors-show-errors))
-  (call-interactively #'next-error))
+  (scala-errors-goto-nth-error (if scala-errors--index
+                                   (1+ scala-errors--index)
+                                 0)))
 
 ;;;###autoload
 (defun scala-errors-goto-prev-error ()
   "Navigate to the previous SBT error."
   (interactive)
   (save-window-excursion (scala-errors-show-errors))
-  (call-interactively #'previous-error))
+  (scala-errors-goto-nth-error (if scala-errors--index
+                                   (1- scala-errors--index)
+                                 0)))
 
 ;;;###autoload
 (defun scala-errors-refresh ()
@@ -192,14 +212,33 @@ Used when refreshing the error list.")
   (-when-let (proj-root (scala-errors--project-root))
     (f-join proj-root "target/quickfix/sbt.quickfix")))
 
-(define-compilation-mode scala-errors-mode "Scala Errors"
-  "Compilation mode for SBT compiler errors using the QuickFix SBT plugin."
+(defconst scala-errors--error-re
+  (rx bol "[error]" (+ space) (group (+ (not (any ":")))) ":" (group  (+ (not (any ":")))) ":" (* space) (group (+ nonl)) eol)
+  "Regex to match an sbt error line.")
+
+(defconst scala-errors--error-column-re
+  (rx bol "[error]" (+ space) "^" eol)
+  "Regex to match an sbt error column line.")
+
+(defun scala-errors--find-errors ()
+  (let* (errors)
+    (save-excursion
+      (goto-char (point-min))
+      (while (re-search-forward scala-errors--error-re (point-max) t)
+        (let ((file (match-string 1))
+              (line (string-to-number (match-string 2)))
+              (msg (match-string 3))
+              (column nil)
+              (two-lines (save-excursion (forward-line 2) (end-of-line) (point))))
+          (when (re-search-forward scala-errors--error-column-re two-lines t)
+            (setq column (- (1- (point)) (save-excursion (beginning-of-line) (point)) (length "[error] "))))
+          (setq errors (cons `((file . ,file) (line . ,line) (message . ,msg) (column . ,column)) errors))))
+    (setq scala-errors--errors (reverse errors)))))
+
+(define-minor-mode scala-errors-mode "Scala Errors" nil "se" scala-errors-keymap
   (auto-revert-mode +1)
   (read-only-mode +1)
-
-  ;; Disable recompile
-  (local-set-key (kbd "g") #'scala-errors-refresh)
-
+  (scala-errors--find-errors)
   (font-lock-add-keywords
    nil
    `(
@@ -242,3 +281,7 @@ Used when refreshing the error list.")
 (provide 'scala-errors)
 
 ;;; scala-errors.el ends here
+
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; End:
