@@ -95,8 +95,7 @@ Used when refreshing the error list.")
         (scala-errors-refresh))
        (t
         (scala-errors-mode)
-        (goto-char (point-min))
-        (funcall scala-errors-display-errors-buffer-function buf))))
+        (goto-char (point-min)))))
     buf))
 
 ;;;###autoload
