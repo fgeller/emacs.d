@@ -87,16 +87,17 @@ Used when refreshing the error list.")
 (defun scala-errors-show-errors ()
   "Display SBT errors in a compilation buffer."
   (interactive)
-  (let ((buf (find-file-noselect (scala-errors--quickfix-file-path) t)))
-    (with-current-buffer buf
-      (rename-buffer (scala-errors--buffer-name))
-      (cond
-       ((not (f-exists? (buffer-file-name)))
-        (scala-errors-refresh))
-       (t
-        (scala-errors-mode)
-        (goto-char (point-min)))))
-    buf))
+  (-when-let (file (scala-errors--quickfix-file-path))
+    (let ((buf (find-file-noselect file t)))
+      (with-current-buffer buf
+        (rename-buffer (scala-errors--buffer-name))
+        (cond
+         ((not (f-exists? (buffer-file-name)))
+          (scala-errors-refresh))
+         (t
+          (scala-errors-mode)
+          (goto-char (point-min)))))
+      buf)))
 
 ;;;###autoload
 (defun scala-errors-goto-first-error ()
@@ -121,7 +122,7 @@ Used when refreshing the error list.")
         (beginning-of-line)
         (forward-char column)
         (setq scala-errors--index n)
-        (message msg))
+        (message "%s" msg))
     (user-error (format "Not enough errors to jump to error %s, only found %s." (1+ n) (length scala-errors--errors)))))
 
 ;;;###autoload
@@ -158,7 +159,7 @@ Used when refreshing the error list.")
      ((< scala-errors--file-polling-max-time time-spent)
       (message "No error output within %s seconds" scala-errors--file-polling-max-time)
       (message "No errors from SBT"))
-     ((f-exists? (scala-errors--quickfix-file-path))
+     ((scala-errors--quickfix-file-path)
       (scala-errors-show-errors))
      (t
       (run-with-timer scala-errors--file-polling-interval
@@ -175,10 +176,8 @@ Used when refreshing the error list.")
     (kill-buffer buf)))
 
 (defun scala-errors--force-generate-quickfix ()
-  (-when-let (last-scala-buf
-              (--first (with-current-buffer it (derived-mode-p 'scala-mode))
-                       (buffer-list)))
-    (with-current-buffer last-scala-buf
+  (-when-let (last-buf (car (buffer-list)))
+    (with-current-buffer last-buf
       (scala-errors--touch))))
 
 (defun scala-errors--touch ()
@@ -187,15 +186,17 @@ Used when refreshing the error list.")
   (save-buffer))
 
 (defun scala-errors--buffer-name ()
-  (format "*SBT errors<%s>*" (scala-errors--project-name)))
+  (let ((x (format "*quickfix <%s>*" (scala-errors--project-name))))
+    (message "found buffer name [%s]" x)
+    x))
 
 
 
 (defun scala-errors--project-root ()
   (or (locate-dominating-file default-directory "target")
       (locate-dominating-file default-directory "build.sbt")
-      (locate-dominating-file default-directory "src")
-      (locate-dominating-file default-directory ".git")))
+      (locate-dominating-file default-directory ".git")
+      (locate-dominating-file default-directory "src")))
 
 (defun scala-errors--project-name ()
   (-last-item (f-split (scala-errors--project-root))))
@@ -207,15 +208,18 @@ Used when refreshing the error list.")
     (forward-char 1)))
 
 (defun scala-errors--quickfix-file-path ()
-  "Search upwards for the path to the quickfix file."
   (-when-let (proj-root (scala-errors--project-root))
-    (f-join proj-root "target/quickfix/sbt.quickfix")))
+    (message "found proj-root %s" proj-root)
+    (let ((sbt (f-join proj-root "target/quickfix/sbt.quickfix"))
+          (manual (f-join proj-root "quickfix"))) ;; TODO: customize list of options?
+      (cond ((f-exists? sbt) sbt)
+            ((f-exists? manual) manual)))))
 
-(defconst scala-errors--error-re
+(defvar scala-errors--error-re
   (rx bol "[error]" (+ space) (group (+ (not (any ":")))) ":" (group  (+ (not (any ":")))) ":" (* space) (group (+ nonl)) eol)
   "Regex to match an sbt error line.")
 
-(defconst scala-errors--error-column-re
+(defvar scala-errors--error-column-re
   (rx bol "[error]" (+ space) "^" eol)
   "Regex to match an sbt error column line.")
 
@@ -223,13 +227,17 @@ Used when refreshing the error list.")
   (let* (errors)
     (save-excursion
       (goto-char (point-min))
+      (message "looking for %s" scala-errors--error-re)
       (while (re-search-forward scala-errors--error-re (point-max) t)
         (let ((file (match-string 1))
               (line (string-to-number (match-string 2)))
               (msg (match-string 3))
               (column nil)
               (two-lines (save-excursion (forward-line 2) (end-of-line) (point))))
-          (when (re-search-forward scala-errors--error-column-re two-lines t)
+          (message "found error [%s] [%s] [%s]"  file line msg)
+          (when (and scala-errors--error-column-re
+                     two-lines
+                     (re-search-forward scala-errors--error-column-re two-lines t))
             (setq column (- (1- (point)) (save-excursion (beginning-of-line) (point)) (length "[error] "))))
           (setq errors (cons `((file . ,file) (line . ,line) (message . ,msg) (column . ,column)) errors))))
     (setq scala-errors--errors (reverse errors)))))
