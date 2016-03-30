@@ -13,6 +13,14 @@
       (subword-mode 1)
       (yas-minor-mode 1)
       (setq gofmt-command "gofmt")
+      (setq scala-errors--error-re
+            (rx bol
+                (* space)
+                (group (+ (not (any ":\n")))) ":"
+                (group (+ (not (any ":\n")))) ":" (* space)
+                (group (+ nonl))
+                eol))
+      (setq scala-errors--error-column-re nil)
       (add-hook 'before-save-hook #'gofmt-before-save))
 
     (add-hook 'go-mode-hook 'golang-customizations)
