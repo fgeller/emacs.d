@@ -19,7 +19,6 @@
   Basic default settings.
 
   #+begin_src emacs-lisp
-    (set-scroll-bar-mode nil)
     (tool-bar-mode -1)
     (menu-bar-mode -1)  ;; shows full-screen button for mac port
     (setq-default
@@ -35,8 +34,8 @@
      transient-mark-mode t   ;; highlight the active region when mark is active
      show-trailing-whitespace t ;; don't show trailing whitespace globally
      blink-matching-paren t
-     initial-frame-alist '((left-fringe . 1) (right-fringe . 1) (scroll-bar-width . nil))
-     default-frame-alist '((left-fringe . 1) (right-fringe . 1) (scroll-bar-width . nil))
+     initial-frame-alist '((left-fringe . 1) (right-fringe . 1) (scroll-bar-width . 0) (vertical-scroll-bars . nil))
+     default-frame-alist '((left-fringe . 1) (right-fringe . 1) (scroll-bar-width . 0) (vertical-scroll-bars . nil))
      scroll-bar-width 0
      default-frame-scroll-bars nil)
   #+end_src
