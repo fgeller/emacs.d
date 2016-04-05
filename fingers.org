@@ -179,22 +179,27 @@
   #+end_src
 
   #+begin_src emacs-lisp
-    (defun find-matching-closer ()
+    (defun find-matching-closer (pair)
       (let* ((start-pos (point))
              (open-count 1))
         (while (and (not (eobp))
                     (< 0 open-count))
           (forward-char 1)
-          (cond ((looking-at "(") (setq open-count (1+ open-count)))
-                ((looking-at ")") (setq open-count (1- open-count)))))
+          (cond ((looking-at (car pair)) (setq open-count (1+ open-count)))
+                ((looking-at (cdr pair)) (setq open-count (1- open-count)))))
         (unless (eobp) (point))))
 
     (defun explode-arguments-into-multiple-lines ()
       (interactive)
-      (let* ((start-pos (1+ (re-search-backward "(")))
+      (let* ((start-pos (1+ (re-search-backward "(\\|{\\|\\[")))
+             (pair (save-excursion
+                     (goto-char start-pos)
+                     (cond ((looking-at "{") '("(" .")"))
+                           ((looking-at "\\[") '("[" . "]"))
+                           (t '("(" . ")")))))
              (end-pos (save-excursion
                         (goto-char start-pos)
-                        (find-matching-closer))))
+                        (find-matching-closer pair))))
         (goto-char end-pos)
         (open-line 1)
         (while (> (point) start-pos)
@@ -202,10 +207,9 @@
           (when (looking-at ",") (forward-char 1) (open-line 1) (forward-char -1)))
         (open-line 1)
         (set-mark (point))
-        (goto-char (1+ (find-matching-closer)))
+        (goto-char (1+ (find-matching-closer pair)))
         (indent-for-tab-command)
         (goto-char start-pos)))
-
   #+end_src
 
   #+begin_src emacs-lisp
