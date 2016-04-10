@@ -366,6 +366,12 @@
     (deactivate-mark))
   (undo arg))
 
+(defun fingers-redo (&optional arg)
+  (interactive)
+  (when (and fingers-mark-active-from-jump-p mark-active)
+    (deactivate-mark))
+  (redo arg))
+
 (defun fingers-open-line-below ()
   (interactive)
   (end-of-line)
@@ -894,6 +900,7 @@
     ;; bottom row
     (k . grep)
     (/ . fingers-undo)
+    (? . fingers-redo)
 
     (SPC . fingers-mark)
     (+ . fingers-increment-integer-at-point)
