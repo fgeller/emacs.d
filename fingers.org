@@ -87,6 +87,16 @@
       (setq show-trailing-whitespace (not show-trailing-whitespace)))
   #+end_src
 
+  Helper to search with ag for thing at point.
+
+  #+begin_src emacs-lisp
+    (defun ag-project-with-thing-at-point ()
+      (interactive)
+      (let ((thing (thing-at-point 'symbol)))
+        (ag-project thing)))
+  #+end_src
+
+
   My custom bindings for fingers-mode.
 
   #+begin_src emacs-lisp
@@ -99,7 +109,7 @@
 
       ;;     j    f    u    p    ;     [    ]
 
-      ;; E/bob   avy  swi   ag  pop  occ< occ>
+      ;; E/bob   ag   iag  swi  pop  occ< occ>
 
       ;;     y    n    e    o    i     '
 
@@ -107,26 +117,23 @@
 
       ;;     k    l    ?    .    /
 
-      ;;   apr             jmp  undo
+      ;;   apr    avy      jmp  undo
 
       (define-key fingers-mode-map (kbd "H") 'counsel-yank-pop)
       (define-key fingers-mode-map (kbd "k") 'ivy-apropos)
 
-      (defun ag-project-wrapper () (call-interactively 'ag-project))
-      (defun avy-goto-char-wrapper () (call-interactively 'avy-goto-char))
-
       (define-key fingers-mode-map (kbd "b") 'fingers-end-of-line-and-insert)
       (define-key fingers-mode-map (kbd "B") 'fingers-beginning-of-line-and-insert)
 
-      (define-key fingers-mode-map (kbd "f") (fingers-nav-command avy-goto-word-or-subword-1))
-      (define-key fingers-mode-map (kbd "F") (fingers-nav-command avy-goto-char-wrapper))
-      (define-key fingers-mode-map (kbd "u") (fingers-nav-command swiper-tweaked))
-      (define-key fingers-mode-map (kbd "U") (fingers-nav-command swiper-with-thing-at-point))
-      (define-key fingers-mode-map (kbd "p") 'ivy-ag)
-      (define-key fingers-mode-map (kbd "P") 'ivy-ag-with-thing-at-point)
+      (define-key fingers-mode-map (kbd "f") 'ag-project)
+      (define-key fingers-mode-map (kbd "F") 'ag-project-with-thing-at-point)
+      (define-key fingers-mode-map (kbd "u") 'ivy-ag)
+      (define-key fingers-mode-map (kbd "U") 'ivy-ag-with-thing-at-point)
+      (define-key fingers-mode-map (kbd "p") (fingers-nav-command swiper-tweaked))
+      (define-key fingers-mode-map (kbd "P") (fingers-nav-command swiper-with-thing-at-point))
 
-      (define-key fingers-mode-map (kbd ".") 'ivy-jump)
       (define-key fingers-mode-map (kbd "z") 'ivy-resume)
+      (define-key fingers-mode-map (kbd ".") 'ivy-jump)
       (define-key fingers-mode-map (kbd "|") 'mc/edit-lines)
 
       (define-key fingers-mode-c-map (kbd "RET") 'browse-url-at-point)
