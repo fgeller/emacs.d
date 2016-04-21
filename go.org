@@ -12,7 +12,9 @@
     (defun golang-customizations ()
       (subword-mode 1)
       (yas-minor-mode 1)
-      (setq gofmt-command "gofmt")
+      (setq gofmt-command "goimports")
+      (font-lock-mode 1)
+      (flycheck-mode 1)
       (setq scala-errors--error-re
             (rx bol
                 (* space)
