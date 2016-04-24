@@ -41,7 +41,7 @@
       (let ((faces-to-toggle '(mode-line mode-line-inactive)))
         (cond (fingers-mode
                (mapcar (lambda (face)
-                         (set-face-foreground face "white")
+                         (set-face-foreground face "black")
                          (set-face-background face "white")
                          (set-face-attribute face nil :height (face-attribute 'default :height)))
                        faces-to-toggle))
