@@ -36,6 +36,19 @@
   Helper to visualize fingers-mode's state and make mode-line visible.
 
   #+begin_src emacs-lisp
+    (defconst fingers-mode-visual-toggle-mode-line nil)
+    (defconst fingers-mode-visual-toggle-header-line nil)
+
+    (defun fingers-mode-visual-toggle-enabled-modeline ()
+      (let* ((right (format-mode-line "%*  %l,%c"))
+             (left (format-mode-line "%b "))
+             (available-width (- (window-width) (length left) (length right))))
+        (format "%s%s%s" left (make-string available-width ?-) right)))
+
+    (setq fingers-mode-visual-toggle-mode-line mode-line-format)
+    (setq fingers-mode-visual-toggle-header-line header-line-format)
+    (setq-default mode-line-format '((:eval (fingers-mode-visual-toggle-enabled-modeline))))
+
     (defun fingers-mode-visual-toggle ()
       (interactive)
       (let ((faces-to-toggle '(mode-line mode-line-inactive)))
@@ -44,13 +57,15 @@
                          (set-face-foreground face "black")
                          (set-face-background face "white")
                          (set-face-attribute face nil :height (face-attribute 'default :height)))
-                       faces-to-toggle))
+                       faces-to-toggle)
+               (setq header-line-format nil))
               (t
                (mapcar (lambda (face)
-                         (set-face-foreground face (if (window-system) "#66BB6A" "green"))
-                         (set-face-background face "white")
+                         (set-face-background face (if (window-system) "#66BB6A" "green"))
+                         (set-face-foreground face "white")
                          (set-face-attribute face nil :height (face-attribute 'default :height)))
-                       faces-to-toggle)))))
+                       faces-to-toggle)
+               ))))
 
     (add-hook 'fingers-mode-hook 'fingers-mode-visual-toggle)
   #+end_src
