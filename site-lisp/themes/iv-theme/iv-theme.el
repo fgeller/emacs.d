@@ -173,6 +173,9 @@
    `(eshell-ls-directory ((t (:foreground nil :background nil :weight normal))))
    `(eshell-ls-executable ((t (:foreground nil :background nil :weight normal))))
 
+   `(flycheck-error ((t (:foreground ,red :background nil :weight normal))))
+   `(flycheck-warning ((t (:foreground ,red :background nil :weight normal))))
+
    `(font-lock-builtin-face ((t :foreground nil :background nil)))
    `(font-lock-comment-delimiter-face ((t :foreground nil :background nil)))
    `(font-lock-comment-face ((t :foreground nil :background nil)))
