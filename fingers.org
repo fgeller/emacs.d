@@ -121,6 +121,8 @@
 
       (define-key fingers-mode-map (kbd "H") 'counsel-yank-pop)
       (define-key fingers-mode-map (kbd "k") 'ivy-apropos)
+      (define-key fingers-mode-map (kbd "l") 'avy-goto-char)
+      (define-key fingers-mode-map (kbd "L") 'avy-goto-char-in-line)
 
       (define-key fingers-mode-map (kbd "b") 'fingers-end-of-line-and-insert)
       (define-key fingers-mode-map (kbd "B") 'fingers-beginning-of-line-and-insert)
