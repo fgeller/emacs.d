@@ -85,9 +85,6 @@
              (let ((c (string-copy (symbol-name e))))
                (add-ivy-action c 'describe-variable)
                (push c cs))))))
-        (message "it took [%s]ms to compute [%s] apropos candidates."
-                 (format-time-string "%3N" (time-subtract (current-time) start-time))
-                 (length cs))
         cs))
 
     (defun ivy-apropos ()
@@ -237,9 +234,6 @@
              (ohs (ivy-org-heading-candidates))
              (cs (seq-concatenate 'list bufs gfs ohs rfs))
              (elapsed (time-subtract (current-time) start-time)))
-        (message "it took [%s]ms to compute [%s] jump candidates"
-                 (format-time-string "%3N" elapsed)
-                 (length cs))
         cs))
 
     (defun ivy-jump ()
@@ -340,9 +334,6 @@
                (add-ivy-action can (ivy-mark-ring-action buf pos))
                (push can cs))))
          ring)
-        (message "it took [%s]ms to compute [%s] mark ring candidates"
-                 (format-time-string "%3N" (time-subtract (current-time) start-time))
-                 (length cs))
         cs))
 
     (defun ivy-global-mark-ring ()
