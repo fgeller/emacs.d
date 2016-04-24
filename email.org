@@ -24,6 +24,16 @@
     (add-hook 'message-setup-hook 'mml-secure-message-sign-pgpmime)
   #+end_src
 
+  Helper to open html part externally.
+
+  #+begin_src emacs-lisp
+    (defun notmuch-open-html-part-externally ()
+      (interactive)
+      (search-forward "[ text/html" (point-max) t)
+      (forward-line 1)
+      (mm-display-external (notmuch-show-current-part-handle) "open %s"))
+  #+end_src
+
   Load and configure notmuch
 
   #+begin_src emacs-lisp
@@ -72,7 +82,7 @@
 
       (define-key notmuch-show-mode-map (kbd "F") 'notmuch-show-forward-message)
       (define-key notmuch-show-mode-map (kbd "b") 'notmuch-show-view-part)
-      (define-key notmuch-show-mode-map (kbd "B") 'notmuch-show-interactively-view-part)
+      (define-key notmuch-show-mode-map (kbd "B") 'notmuch-open-html-part-externally)
 
       (add-hook 'notmuch-show-hook 'notmuch-show-prefer-html-over-text)
 
