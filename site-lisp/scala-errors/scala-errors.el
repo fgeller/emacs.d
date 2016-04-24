@@ -186,9 +186,7 @@ Used when refreshing the error list.")
   (save-buffer))
 
 (defun scala-errors--buffer-name ()
-  (let ((x (format "*quickfix <%s>*" (scala-errors--project-name))))
-    (message "found buffer name [%s]" x)
-    x))
+  (format "*quickfix <%s>*" (scala-errors--project-name)))
 
 
 
@@ -209,7 +207,6 @@ Used when refreshing the error list.")
 
 (defun scala-errors--quickfix-file-path ()
   (-when-let (proj-root (scala-errors--project-root))
-    (message "found proj-root %s" proj-root)
     (let ((sbt (f-join proj-root "target/quickfix/sbt.quickfix"))
           (manual (f-join proj-root "quickfix"))) ;; TODO: customize list of options?
       (cond ((f-exists? sbt) sbt)
@@ -227,14 +224,12 @@ Used when refreshing the error list.")
   (let* (errors)
     (save-excursion
       (goto-char (point-min))
-      (message "looking for %s" scala-errors--error-re)
       (while (re-search-forward scala-errors--error-re (point-max) t)
         (let ((file (match-string 1))
               (line (string-to-number (match-string 2)))
               (msg (match-string 3))
               (column nil)
               (two-lines (save-excursion (forward-line 2) (end-of-line) (point))))
-          (message "found error [%s] [%s] [%s]"  file line msg)
           (when (and scala-errors--error-column-re
                      two-lines
                      (re-search-forward scala-errors--error-column-re two-lines t))
