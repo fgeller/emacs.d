@@ -56,3 +56,4 @@ main.el
 /web-mode.el
 /ivy.el
 scratch.org
+/auto-complete.el
