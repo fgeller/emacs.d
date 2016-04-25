@@ -212,8 +212,12 @@ Used when refreshing the error list.")
       (cond ((f-exists? sbt) sbt)
             ((f-exists? manual) manual)))))
 
-(defvar scala-errors--error-re
-  (rx bol "[error]" (+ space) (group (+ (not (any ":")))) ":" (group  (+ (not (any ":")))) ":" (* space) (group (+ nonl)) eol)
+(setq scala-errors--error-re
+  (rx bol "[error]" (+ space)
+      (group (+ (not (any ":")))) ":"
+      (group  (+ (not (any ":")))) ":" (* space)
+      (group (+? anything))
+      "[error]"))
   "Regex to match an sbt error line.")
 
 (defvar scala-errors--error-column-re
