@@ -3,7 +3,7 @@
   Require and configure company.
 
   #+begin_src emacs-lisp
-    (use-package company-mode
+    (use-package company
       :config
       (global-company-mode 1)
       (define-key company-mode-map (kbd "C-n") 'company-select-next)
