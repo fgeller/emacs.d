@@ -1,5 +1,0 @@
-# Author: Felix Geller <fgeller@gmail.com>
-# name: throw new Not Implemented Exception
-# key: ni
-# --
-throw new RuntimeException("Not implemented$0.")

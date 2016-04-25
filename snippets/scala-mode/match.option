@@ -1,8 +1,0 @@
-# Author: Felix Geller <fgeller@gmail.com>
-# name: match on Option
-# key: match
-# --
-${1:this} match {
-  case None ⇒ ${2:None}
-  case Some(${3:a}) ⇒ ${4:a}
-}$0

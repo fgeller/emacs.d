@@ -1,7 +1,0 @@
-# Author: Felix Geller
-# name: new Fixture { ... }
-# key: fix
-# --
-new Fixture {
-  $0
-}
