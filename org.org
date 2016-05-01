@@ -87,6 +87,7 @@
    #+begin_src emacs-lisp
      (setq
       org-directory (expand-file-name "~/orgs")
+      org-default-tasks-file (concat org-directory "/Tasks.org")
       org-default-notes-file (concat org-directory "/Tasks.org")
       org-agenda-files (list (concat org-directory "/Tasks.org")))
    #+end_src
@@ -251,11 +252,11 @@
          (org-capture-goto-last-stored)
          (when (or (org-get-scheduled-time (point))
                    (org-get-deadline-time (point)))
-           (let* ((scheduled-path (list org-default-notes-file "Tasks" "Scheduled"))
+           (let* ((scheduled-path (list org-default-tasks-file "Scheduled"))
                   (target-marker (org-find-olp scheduled-path)))
              (org-refile nil nil (list
                                   "Scheduled"
-                                  org-default-notes-file
+                                  org-default-tasks-file
                                   nil ;; re not needed
                                   (marker-position target-marker)))))))
    #+end_src
@@ -265,10 +266,10 @@
    #+begin_src emacs-lisp
      (setq org-capture-templates
            `(("t" "Task"
-              entry (file+olp ,org-default-notes-file "Inbox" "Personal")
+              entry (file+olp ,org-default-tasks-file "Inbox" "Personal")
               "* TODO %?\n\n")
              ("w" "Work task"
-              entry (file+olp ,org-default-notes-file "Inbox" "Work")
+              entry (file+olp ,org-default-tasks-file "Inbox" "Work")
               "* TODO %? :work:\n\n")
              ("n" "Note"
               entry (file+headline ,org-default-notes-file "Notes")
