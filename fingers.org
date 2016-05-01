@@ -33,6 +33,15 @@
                     avy-keys '(?a ?s ?h ?t)))
   #+end_src
 
+
+  Load anzu for query-replace on steroids.
+
+  #+begin_src emacs-lisp
+    (use-package anzu
+      :ensure anzu
+      :config (global-anzu-mode +1))
+  #+end_src
+
   Helper to visualize fingers-mode's state and make mode-line visible.
 
   #+begin_src emacs-lisp
@@ -148,6 +157,8 @@
       (define-key fingers-mode-map (kbd "U") 'ivy-ag-with-thing-at-point)
       (define-key fingers-mode-map (kbd "p") (fingers-nav-command swiper-tweaked))
       (define-key fingers-mode-map (kbd "P") (fingers-nav-command swiper-with-thing-at-point))
+
+      (define-key fingers-mode-map (kbd "X") 'anzu-query-replace)
 
       (define-key fingers-mode-map (kbd "z") 'ivy-resume)
       (define-key fingers-mode-map (kbd ".") 'ivy-jump)

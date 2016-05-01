@@ -121,7 +121,7 @@
    `(ace-jump-face-foreground ((t (:foreground ,red :background nil))))
 
    `(anzu-mode-line ((t (:inherit mode-line))))
-   `(anzu-replace-highlight ((t (:foreground nil :background ,red))))
+   `(anzu-replace-highlight ((t (:foreground ,white :background ,green))))
    `(anzu-replace-to ((t (:foreground ,red :background ,white))))
 
    `(avy-lead-face-0 ((t (:foreground ,red :background nil))))
