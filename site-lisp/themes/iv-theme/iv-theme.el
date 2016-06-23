@@ -190,7 +190,7 @@
    `(font-lock-string-face ((t :foreground nil :background nil)))
    `(font-lock-type-face ((t :foreground nil :background nil)))
    `(font-lock-variable-name-face ((t :foreground nil :background nil)))
-   `(font-lock-warning-face ((t :foreground nil :background ,red)))
+   `(font-lock-warning-face ((t :foreground ,white :background ,red)))
 
    `(helm-M-x-key ((t (:foreground ,black :background nil :underline nil :italic nil))))
    `(helm-action ((t (:foreground ,black :background nil :underline nil))))
