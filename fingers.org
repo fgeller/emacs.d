@@ -195,8 +195,8 @@
       (let* ((my-fingers-map (fingers-mode-clean-map)))
         (define-key my-fingers-map (kbd "m") 'ivy-jump-to-project)
         (define-key my-fingers-map (kbd ".") 'ivy-git-ls-files-project)
-        (define-key my-fingers-map (kbd "ti") 'scala-ignore-all-tests)
-        (define-key my-fingers-map (kbd "te") 'scala-enable-all-tests)
+        (define-key my-fingers-map (kbd "ti") 'ignore-all-tests)
+        (define-key my-fingers-map (kbd "te") 'enable-all-tests)
         (define-key my-fingers-map (kbd "tn") 'scala-next-test-forward)
         (define-key my-fingers-map (kbd "tp") 'scala-next-test-whitespace)
         (define-key my-fingers-map (kbd "nn") 'scala-errors-goto-first-error)
@@ -211,6 +211,43 @@
         (define-key my-fingers-map (kbd "s") 'sort-lines)
         (define-key fingers-mode-map (kbd "q") my-fingers-map))
       )
+
+    (defun go-ignore-all-tests ()
+      (interactive)
+      (save-excursion
+        (goto-char (point-min))
+        (replace-regexp
+         "func Test\\([^(]+\\)("
+         "func IgnoreTest\\1("
+         nil
+         (point-min)
+         (point-max))))
+
+    (defun go-enable-all-tests ()
+      (interactive)
+      (save-excursion
+        (goto-char (point-min))
+        (replace-regexp
+         "func IgnoreTest\\([^(]+\\)("
+         "func Test\\1("
+         nil
+         (point-min)
+         (point-max))))
+
+
+    (defun ignore-all-tests ()
+      (interactive)
+      (cond ((eq major-mode 'go-mode)
+             (call-interactively 'go-ignore-all-tests))
+            ((eq major-mode 'scala-mode)
+             (call-interactively 'scala-ignore-all-tests))))
+
+    (defun enable-all-tests ()
+      (interactive)
+      (cond ((eq major-mode 'go-mode)
+             (call-interactively 'go-enable-all-tests))
+            ((eq major-mode 'scala-mode)
+             (call-interactively 'scala-enable-all-tests))))
   #+end_src
 
   #+begin_src emacs-lisp
