@@ -24,6 +24,7 @@
                 (group (+ nonl))
                 eol))
       (setq scala-errors--error-column-re nil)
+      (define-key go-mode-map (kbd "M-.") 'godef-jump)
       (add-hook 'before-save-hook #'gofmt-before-save))
 
     (add-hook 'go-mode-hook 'golang-customizations)
