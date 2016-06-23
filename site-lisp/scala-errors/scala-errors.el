@@ -191,7 +191,8 @@ Used when refreshing the error list.")
 
 
 (defun scala-errors--project-root ()
-  (or (locate-dominating-file default-directory "target")
+  (or (locate-dominating-file default-directory "quickfix")
+      (locate-dominating-file default-directory "target")
       (locate-dominating-file default-directory "build.sbt")
       (locate-dominating-file default-directory ".git")
       (locate-dominating-file default-directory "src")))
