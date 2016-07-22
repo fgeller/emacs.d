@@ -30,7 +30,7 @@
       :ensure avy
       :commands (avy-goto-word-or-subword-1)
       :config (setq avy-all-windows nil
-                    avy-keys '(?a ?s ?h ?t)))
+                    avy-keys '(?a ?s ?h ?t ?n ?e ?o ?i)))
   #+end_src
 
 
