@@ -1,0 +1,5 @@
+# -*- mode:snippet; coding: utf-8 -*-
+# name: sleep
+# key: sleep
+# --
+time.Sleep($1 * time.$0)

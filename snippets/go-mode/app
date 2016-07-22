@@ -1,0 +1,5 @@
+# -*- mode:snippet; coding: utf-8 -*-
+# name: append
+# key: app
+# --
+$1 = append($1, $0)
