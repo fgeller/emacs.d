@@ -316,4 +316,5 @@
     (org-babel-load-file (expand-file-name "~/.emacs.d/web-mode.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/email.org"))
     (org-babel-load-file (expand-file-name "~/.emacs.d/compilation.org"))
+    (org-babel-load-file (expand-file-name "~/.emacs.d/javascript.org"))
   #+end_src
