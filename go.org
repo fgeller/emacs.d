@@ -13,7 +13,7 @@
       (subword-mode 1)
       (set (make-local-variable 'company-backends) '(company-go))
       (yas-minor-mode 1)
-      (unless mac-p (setq gofmt-command "goimports"))
+      (setq gofmt-command "goimports")
       (font-lock-mode 1)
       (flycheck-mode 1)
       (setq scala-errors--error-re
