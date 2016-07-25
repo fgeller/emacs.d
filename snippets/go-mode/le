@@ -1,0 +1,5 @@
+# -*- mode:snippet; coding: utf-8 -*-
+# name: log error
+#  key: le
+# --
+log.Printf("$1 err=%v", $0, err)

@@ -1,5 +1,7 @@
 # -*- mode:snippet; coding: utf-8 -*-
-# name: Log
-#  key: l
+# name: guard
+# key: if
 # --
-log.Printf("$1", $0)
+if $1 {
+    $0
+}
