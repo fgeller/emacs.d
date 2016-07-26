@@ -8,7 +8,6 @@
   (yas-minor-mode 1)
   (setq gofmt-command "goimports")
   (font-lock-mode 1)
-  (flycheck-mode 1)
   (setq scala-errors--error-re
         (rx bol
             (* space)
@@ -21,3 +20,25 @@
   (add-hook 'before-save-hook #'gofmt-before-save))
 
 (add-hook 'go-mode-hook 'golang-customizations)
+
+(defun go-ignore-all-tests ()
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (replace-regexp
+     "func Test\\([^(]+\\)("
+     "func IgnoreTest\\1("
+     nil
+     (point-min)
+     (point-max))))
+
+(defun go-enable-all-tests ()
+  (interactive)
+  (save-excursion
+    (goto-char (point-min))
+    (replace-regexp
+     "func IgnoreTest\\([^(]+\\)("
+     "func Test\\1("
+     nil
+     (point-min)
+     (point-max))))

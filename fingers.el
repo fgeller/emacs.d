@@ -40,8 +40,7 @@
 
 (defun fingers-mode-custom-bindings ()
   (interactive)
-  (require 'dired)
-  (define-key dired-mode-map (kbd "C-o") nil)
+  (eval-after-load 'dired '(define-key dired-mode-map (kbd "C-o") nil))
   (eval-after-load 'wdired '(define-key wdired-mode-map (kbd "C-o") nil))
   (eval-after-load 'compile '(define-key compilation-mode-map (kbd "C-o") nil))
   (define-key global-map (kbd "C-o") 'global-fingers-mode)
@@ -126,29 +125,6 @@
     (define-key fingers-mode-map (kbd "q") my-fingers-map))
   )
 
-(defun go-ignore-all-tests ()
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (replace-regexp
-     "func Test\\([^(]+\\)("
-     "func IgnoreTest\\1("
-     nil
-     (point-min)
-     (point-max))))
-
-(defun go-enable-all-tests ()
-  (interactive)
-  (save-excursion
-    (goto-char (point-min))
-    (replace-regexp
-     "func IgnoreTest\\([^(]+\\)("
-     "func Test\\1("
-     nil
-     (point-min)
-     (point-max))))
-
-
 (defun ignore-all-tests ()
   (interactive)
   (cond ((eq major-mode 'go-mode)
@@ -195,28 +171,13 @@
     (indent-for-tab-command)
     (goto-char start-pos)))
 
-(eval-after-load 'fingers
-  'nil)
-
 (use-package fingers
   :commands global-fingers-mode
   :init
   (add-hook 'fingers-after-reset-hook 'fingers-mode-custom-bindings)
   (global-fingers-mode 1))
 
-(defun save-macro-to-scratch (name)
-  (interactive "SName the macro:")
-  (name-last-kbd-macro name)
-  (pop-to-buffer "*scratch*")
-  (goto-char (point-max))
-  (newline)
-  (insert ";; generated macro")
-  (newline)
-  (insert-kbd-macro name)
-  (newline))
-
-(define-key dired-mode-map (kbd "C-c C-p") 'wdired-change-to-wdired-mode)
-
+(eval-after-load 'dired '(define-key dired-mode-map (kbd "C-c C-p") 'wdired-change-to-wdired-mode))
 (eval-after-load 'diff-mode
   '(progn
      (dolist (key '("n" "N" "p" "P" "k" "K" "W" "o" "A" "r" "R"))
