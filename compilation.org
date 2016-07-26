@@ -1,8 +1,0 @@
-* Compilation mode
-
-  Enable font-lock so we get links for errors.
-
-  #+begin_src emacs-lisp
-    (defun enable-font-lock () (font-lock-mode 1))
-    (add-hook 'compilation-mode-hook 'enable-font-lock)
-  #+end_src
