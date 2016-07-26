@@ -1,17 +1,4 @@
-(use-package magit
-  :ensure magit
-  :config (setq git-commit-summary-max-length 72))
-
-(use-package magit-gh-pulls
-  :init (add-hook 'magit-mode-hook 'turn-on-magit-gh-pulls))
-
-(setq magit-display-buffer-function
-      (lambda (b)
-        (display-buffer b '(display-buffer-same-window))))
-
-(use-package multiple-cursors
-  :ensure multiple-cursors
-  :commands mc/edit-lines)
+(use-package multiple-cursors :ensure multiple-cursors :commands mc/edit-lines)
 
 (use-package avy
   :ensure avy
@@ -19,12 +6,7 @@
   :config (setq avy-all-windows nil
                 avy-keys '(?a ?s ?h ?t ?n ?e ?o ?i)))
 
-(use-package anzu
-  :ensure anzu
-  :config (global-anzu-mode +1))
-
-(defconst fingers-mode-visual-toggle-mode-line nil)
-(defconst fingers-mode-visual-toggle-header-line nil)
+(use-package anzu :ensure anzu :config (global-anzu-mode +1))
 
 (defun fingers-mode-visual-toggle-enabled-modeline ()
   (let* ((right (format-mode-line "%*  %l,%c"))
@@ -32,8 +14,8 @@
          (available-width (- (window-width) (length left) (length right))))
     (format "%s%s%s" left (make-string available-width ?-) right)))
 
-(setq fingers-mode-visual-toggle-mode-line mode-line-format)
-(setq fingers-mode-visual-toggle-header-line header-line-format)
+(defconst fingers-mode-visual-toggle-mode-line mode-line-format)
+(defconst fingers-mode-visual-toggle-header-line header-line-format)
 (setq-default mode-line-format '((:eval (fingers-mode-visual-toggle-enabled-modeline))))
 
 (defun fingers-mode-visual-toggle ()
@@ -56,33 +38,9 @@
 
 (add-hook 'fingers-mode-hook 'fingers-mode-visual-toggle)
 
-(defun offlineimap ()
-  "Helper to (re)start offlineimap via compile"
-  (interactive)
-  (let ((buf "*offline-imap*"))
-    (if (get-buffer buf)
-        (with-current-buffer buf (recompile))
-      (compile "offlineimap")
-      (with-current-buffer "*compilation*"
-        (rename-buffer "*offline-imap*")))))
-
-(defun touch-buffer ()
-  (interactive "")
-  (insert " ")
-  (backward-delete-char 1)
-  (save-buffer))
-
-(defun toggle-show-trailing-whitespace ()
-  (interactive)
-  (setq show-trailing-whitespace (not show-trailing-whitespace)))
-
-(defun ag-project-with-thing-at-point ()
-  (interactive)
-  (let ((thing (thing-at-point 'symbol)))
-    (ag-project thing)))
-
 (defun fingers-mode-custom-bindings ()
   (interactive)
+  (require 'dired)
   (define-key dired-mode-map (kbd "C-o") nil)
   (eval-after-load 'wdired '(define-key wdired-mode-map (kbd "C-o") nil))
   (eval-after-load 'compile '(define-key compilation-mode-map (kbd "C-o") nil))
@@ -136,7 +94,6 @@
   (define-key fingers-mode-toggle-map (kbd "s") 'scala-errors-mode)
   (define-key fingers-mode-toggle-map (kbd "f") 'font-lock-mode)
   (define-key fingers-mode-toggle-map (kbd "w") 'leerzeichen-mode)
-  (define-key fingers-mode-toggle-map (kbd "W") 'toggle-show-trailing-whitespace)
   (define-key fingers-mode-toggle-map (kbd "n") 'nlinum-mode)
 
   (define-key fingers-mode-map (kbd "A-<up>") 'increase-font-height)
@@ -162,7 +119,6 @@
     (define-key my-fingers-map (kbd "N") 'js2-next-error)
     (define-key my-fingers-map (kbd "br") 'revert-buffer)
     (define-key my-fingers-map (kbd "bn") 'rename-buffer)
-    (define-key my-fingers-map (kbd "bt") 'touch-buffer)
     (define-key my-fingers-map (kbd "bw") 'delete-trailing-whitespace)
     (define-key my-fingers-map (kbd "e") 'explode-arguments-into-multiple-lines)
     (define-key my-fingers-map (kbd "p") 'ivy-ag-with-thing-at-point-in-main)

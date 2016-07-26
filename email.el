@@ -103,3 +103,11 @@
                                 (mail mail-mode)
                                 (mu4e mu4e-view-mode))
           )))
+
+(defun offlineimap ()
+  "Helper to (re)start offlineimap via compile"
+  (interactive)
+  (let ((buf "*offline-imap*"))
+    (if (get-buffer buf) (with-current-buffer buf (recompile))
+      (compile "offlineimap")
+      (with-current-buffer "*compilation*" (rename-buffer buf)))))
