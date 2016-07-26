@@ -123,17 +123,6 @@
                  nil
                  directories))))
 
-(defun show-hello-file-fullscreen ()
-  (interactive)
-  (let ((buf-name "*hello there*"))
-    (unless (string= buf-name (buffer-name))
-      (get-buffer-create buf-name)
-      (with-current-buffer buf-name (insert "helo."))
-      (view-buffer buf-name)
-      (delete-other-windows))))
-
-(run-with-idle-timer 120 t 'show-hello-file-fullscreen)
-
 (load-file (expand-file-name "~/.emacs.d/ivy.el"))
 (load-file (expand-file-name "~/.emacs.d/fingers.el"))
 (load-file (expand-file-name "~/.emacs.d/appearance.el"))
