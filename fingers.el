@@ -6,7 +6,9 @@
   :config (setq avy-all-windows nil
                 avy-keys '(?a ?s ?h ?t ?n ?e ?o ?i)))
 
-(use-package anzu :ensure anzu :config (global-anzu-mode +1))
+(use-package anzu :ensure anzu
+  :config
+  (global-anzu-mode +1))
 
 (defun fingers-mode-visual-toggle-enabled-modeline ()
   (let* ((right (format-mode-line "%*  %l,%c"))
@@ -46,36 +48,39 @@
   (define-key global-map (kbd "C-o") 'global-fingers-mode)
 
   ;;     j    f    u    p    ;     [    ]
-
   ;; E/bob   ag   iag  swi  pop  occ< occ>
-
   ;;     y    n    e    o    i     '
-
   ;; Bop/bol  <    v    ^    >   Eop/eol
-
   ;;     k    l    ?    .    /
-
   ;;   apr    avy      jmp  undo
-
-  (define-key fingers-mode-map (kbd "H") 'counsel-yank-pop)
-  (define-key fingers-mode-map (kbd "k") 'ivy-apropos)
-  (define-key fingers-mode-map (kbd "l") 'avy-goto-char)
-  (define-key fingers-mode-map (kbd "L") 'avy-goto-char-in-line)
-
-  (define-key fingers-mode-map (kbd "b") 'fingers-end-of-line-and-insert)
-  (define-key fingers-mode-map (kbd "B") 'fingers-beginning-of-line-and-insert)
-
   (define-key fingers-mode-map (kbd "f") 'ag-project)
   (define-key fingers-mode-map (kbd "F") 'ag-project-with-thing-at-point)
   (define-key fingers-mode-map (kbd "u") 'ivy-ag)
   (define-key fingers-mode-map (kbd "U") 'ivy-ag-with-thing-at-point)
   (define-key fingers-mode-map (kbd "p") (fingers-nav-command swiper-tweaked))
   (define-key fingers-mode-map (kbd "P") (fingers-nav-command swiper-with-thing-at-point))
+  (define-key fingers-mode-map (kbd "k") 'ivy-apropos)
+  (define-key fingers-mode-map (kbd "l") 'avy-goto-char)
+  (define-key fingers-mode-map (kbd "L") 'avy-goto-char-in-line)
+  (define-key fingers-mode-map (kbd ".") 'ivy-jump)
 
-  (define-key fingers-mode-map (kbd "X") 'anzu-query-replace)
+  ;;     q    d    r    w    b
+  ;;  cstm   del in/rp qrp
+  ;;     a    s    h    t    g
+  ;;  encl  spli  ynk  kll  meta
+  ;;     z    x    m    c    v
+  ;;   res    x-       c-   opn
+  (define-key fingers-mode-map (kbd "r") 'fingers-insert-char)
+  (define-key fingers-mode-map (kbd "R") 'fingers-replace-with-char)
+  (define-key fingers-mode-map (kbd "w") 'anzu-query-replace)
+  (define-key fingers-mode-map (kbd "W") 'anzu-query-replace-at-cursor)
+  (define-key fingers-mode-map (kbd "b") 'fingers-end-of-line-and-insert)
+  (define-key fingers-mode-map (kbd "B") 'fingers-beginning-of-line-and-insert)
+
+  (define-key fingers-mode-map (kbd "H") 'counsel-yank-pop)
 
   (define-key fingers-mode-map (kbd "z") 'ivy-resume)
-  (define-key fingers-mode-map (kbd ".") 'ivy-jump)
+
   (define-key fingers-mode-map (kbd "|") 'mc/edit-lines)
 
   (define-key fingers-mode-c-map (kbd "RET") 'browse-url-at-point)
@@ -85,7 +90,6 @@
   (define-key fingers-mode-x-map (kbd "vs") 'show-eshell-git-status)
 
   (define-key fingers-mode-launch-map (kbd "e") 'last-eshell)
-  (define-key fingers-mode-launch-map (kbd "s") 'shell)
   (define-key fingers-mode-launch-map (kbd "m") 'magit-status)
   (define-key fingers-mode-launch-map (kbd "n") 'notmuch)
   (define-key fingers-mode-launch-map (kbd "oo") 'offlineimap)
@@ -94,11 +98,6 @@
   (define-key fingers-mode-toggle-map (kbd "f") 'font-lock-mode)
   (define-key fingers-mode-toggle-map (kbd "w") 'leerzeichen-mode)
   (define-key fingers-mode-toggle-map (kbd "n") 'nlinum-mode)
-
-  (define-key fingers-mode-map (kbd "A-<up>") 'increase-font-height)
-  (define-key fingers-mode-map (kbd "s-<up>") 'increase-font-height)
-  (define-key fingers-mode-map (kbd "A-<down>") 'decrease-font-height)
-  (define-key fingers-mode-map (kbd "s-<down>") 'decrease-font-height)
 
   (define-key fingers-mode-map (kbd "S-<up>") 'enlarge-window)
   (define-key fingers-mode-map (kbd "S-<down>") 'shrink-window)
