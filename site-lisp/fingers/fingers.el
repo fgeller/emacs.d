@@ -852,8 +852,8 @@
     (G . fingers-meta-control)
 
     ;; bottom row
-    (z . fingers-eol-and-insert)
-    (Z . fingers-bol-and-insert)
+    (z . fingers-end-of-line-and-insert)
+    (Z . fingers-beginning-of-line-and-insert)
     (x . ,fingers-mode-x-map)
     (X . query-replace-regexp)
     (m . kmacro-start-macro)
