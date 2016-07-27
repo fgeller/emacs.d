@@ -3,8 +3,9 @@
 (remove-hook 'occur-mode-hook 'turn-on-font-lock)
 
 (use-package highlight-thing
-  :init (global-highlight-thing-mode 1)
-  :config (setq highlight-thing-what-thing 'symbol))
+  :config
+  (setq highlight-thing-what-thing 'symbol)
+  (global-highlight-thing-mode 1))
 
 (tool-bar-mode -1)
 (menu-bar-mode -1)  ;; shows full-screen button for mac port
