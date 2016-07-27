@@ -1,7 +1,7 @@
 (use-package scala-mode2 :ensure scala-mode2
   :mode
-  ("\\.scala" . scala2-mode)
-  ("\\.sbt" .scala2-mode)
+  (("\\.scala\\'" . scala-mode)
+   ("\\.sbt\\'" . scala-mode))
   :config
   (add-hook 'scala-mode-hook 'scala-customizations))
 
