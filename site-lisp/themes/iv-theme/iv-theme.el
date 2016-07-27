@@ -83,6 +83,7 @@
 (iv-with-color-variables
   (custom-theme-set-faces
    'iv
+   `(default ((t (:foreground ,black :background ,white :family "Roboto Mono" :height 115))))
    `(button ((t (:foreground ,red :underline nil :weight normal))))
    `(comint-highlight-input ((t (:foreground nil :background nil))))
    `(comint-highlight-prompt ((t (:foreground nil :background nil))))
@@ -95,7 +96,6 @@
    `(compilation-mode-line-run ((t (:inherit mode-line))))
    `(compilation-warning ((t (:foreground nil :background nil))))
    `(cursor ((t (:foreground nil :background ,green))))
-   `(default ((t (:foreground ,black :background ,white))))
    `(fringe ((t (:foreground ,black :background ,white))))
    `(header-line ((t (:inherit mode-line))))
    `(hi-yellow ((t (:foreground ,red :background ,nil))))
