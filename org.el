@@ -33,7 +33,7 @@
 (setq
  org-directory (expand-file-name "~/orgs")
  org-default-tasks-file (concat org-directory "/Tasks.org")
- org-default-notes-file (concat org-directory "/Tasks.org")
+ org-default-notes-file (concat org-directory "/Notes.org")
  org-agenda-files (list (concat org-directory "/Tasks.org")))
 
 (eval-after-load 'org
