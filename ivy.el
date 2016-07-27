@@ -1,18 +1,16 @@
-(use-package ivy
-  :ensure swiper
-
-  :init
-  (ivy-mode 1)
-  (use-package pulse)
-
-  :config
-  (setq ivy-use-virtual-buffers t))
-
-(use-package counsel
-  :ensure counsel)
-
+(use-package pulse)
 (use-package recentf)
 (use-package seq)
+
+(use-package ivy :ensure swiper
+  :defer t
+  :init
+  (setq ivy-use-virtual-buffers t)
+  :config
+  (ivy-mode 1))
+
+(use-package counsel :ensure counsel
+  :commands (counsel-more-chars))
 
 (defun strip-text-properties (txt)
   "Removes text properties from TXT"
@@ -31,7 +29,7 @@
   "Uses `substring' to return a copy of STR without text properties"
   (substring str 0 (length str)))
 
-(defun ivy-add-actions (candidates action)
+(defun ivy-add-action-to-candidates (candidates action)
   "Copies each entry in CANDIDATES and adds ACTION as a text property to it"
   (mapcar (lambda (bn)
             (let ((c (string-copy bn)))
@@ -161,7 +159,7 @@
 
 (defun ivy-git-files-candidates ()
   (let ((bfns (mapcar 'buffer-file-name (buffer-list))))
-    (ivy-add-actions
+    (ivy-add-action-to-candidates
      (cl-remove-if (lambda (gf) (member gf bfns)) (git-ls-files))
      (lambda (n) (with-ivy-window
                    (let ((grt (locate-dominating-file default-directory ".git"))
@@ -169,8 +167,9 @@
                      (find-file (expand-file-name n grt))))))))
 
 (defun ivy-buffer-name-candidates ()
-  (ivy-add-actions
-   (remove-if (lambda (c) (string-match (regexp-quote "*Minibuf-") c))
+  (ivy-add-action-to-candidates
+   (remove-if (lambda (c) (or (string-prefix-p " *" c)
+			      (string-prefix-p "*Minibuf-" c)))
               (mapcar 'buffer-name (buffer-list)))
    (lambda (n) (with-ivy-window (switch-to-buffer n nil 'force-same-window)))))
 
@@ -193,11 +192,11 @@
                   (keep-lines org-heading-regexp (point-min) (point-max))
                   (mapcar 'strip-text-properties
                           (split-string (buffer-string) "\n" t "[      ]*")))))
-        (ivy-add-actions cs (ivy-org-heading-action b))))
-    (org-agenda-files))))
+        (ivy-add-action-to-candidates cs (ivy-org-heading-action b))))
+    org-agenda-files)))
 
 (defun ivy-recentf-candidates ()
-  (ivy-add-actions recentf-list 'find-file))
+  (ivy-add-action-to-candidates recentf-list '(find-file)))
 
 (defun ivy-jump-candidates ()
   "Returns a list of candidates for jumping to with associated actions as text properties"
@@ -205,8 +204,7 @@
          (bufs (ivy-buffer-name-candidates))
          (gfs (ivy-git-files-candidates))
          (rfs (ivy-recentf-candidates))
-         (ohs (ivy-org-heading-candidates))
-         (cs (seq-concatenate 'list bufs gfs ohs rfs))
+         (cs (seq-uniq (seq-concatenate 'list bufs gfs rfs)))
          (elapsed (time-subtract (current-time) start-time)))
     cs))
 
@@ -232,7 +230,7 @@
     (magit-status (expand-file-name p "~"))))
 
 (defun ivy-jump-to-project-candidates ()
-  (ivy-add-actions (project-directories) 'ivy-jump-to-project-action))
+  (ivy-add-action-to-candidates (project-directories) 'ivy-jump-to-project-action))
 
 (defun ivy-jump-to-project ()
   (interactive)
@@ -250,7 +248,7 @@
        :action 'ivy-actioner))))
 
 (defun ivy-git-ls-files-project-candidates ()
-  (ivy-add-actions (project-directories) 'ivy-git-ls-files-project-action))
+  (ivy-add-action-to-candidates (project-directories) 'ivy-git-ls-files-project-action))
 
 (defun ivy-git-ls-files-project ()
   (interactive)

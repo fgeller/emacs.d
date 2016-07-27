@@ -1,6 +1,9 @@
 (use-package go-mode
   :ensure go-mode
-  :commands go-mode)
+  :commands go-mode
+  :config
+  (add-hook 'go-mode-hook 'golang-customizations)
+  (use-package company-go :ensure company-go))
 
 (defun golang-customizations ()
   (subword-mode 1)
@@ -18,8 +21,6 @@
   (setq scala-errors--error-column-re nil)
   (define-key go-mode-map (kbd "M-.") 'godef-jump)
   (add-hook 'before-save-hook #'gofmt-before-save))
-
-(add-hook 'go-mode-hook 'golang-customizations)
 
 (defun go-ignore-all-tests ()
   (interactive)

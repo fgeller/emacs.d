@@ -1,5 +1,19 @@
-
-(setq eshell-directory-name "~/.emacs.d/.eshell/")
+(use-package eshell
+  :defer t
+  :init
+  (setq eshell-where-to-jump 'begin
+	eshell-review-quick-commands nil
+	eshell-smart-space-goes-to-end t
+	eshell-directory-name "~/.emacs.d/.eshell/"
+	eshell-prompt-function #'eshell-simple-prompt-function
+	eshell-prompt-regexp "\$ ")
+  :config
+  (add-to-list 'eshell-modules-list 'eshell-smart)
+  (add-hook 'eshell-pre-command-hook  'eshell-rename-buffer-before-command)
+  (add-hook 'eshell-post-command-hook 'eshell-rename-buffer-after-command)
+  (add-hook 'eshell-mode-hook (lambda () (setq show-trailing-whitespace nil)))
+  (add-hook 'eshell-mode-hook (lambda () (define-key eshell-mode-map (kbd "RET") 'eshell-send-input-customized)))
+  )
 
 (defun eshell-rename-buffer-before-command ()
   (let* ((last-input (buffer-substring eshell-last-input-start eshell-last-input-end)))
@@ -8,15 +22,7 @@
 (defun eshell-rename-buffer-after-command ()
   (rename-buffer (format "*eshell[%s]$ %s*" default-directory (eshell-previous-input-string 0)) t))
 
-(add-hook 'eshell-pre-command-hook  'eshell-rename-buffer-before-command)
-(add-hook 'eshell-post-command-hook 'eshell-rename-buffer-after-command)
-
-(add-hook 'eshell-mode-hook (lambda () (setq show-trailing-whitespace nil)))
-
 (defun eshell-simple-prompt-function () "$ ")
-(setq eshell-prompt-function #'eshell-simple-prompt-function)
-
-(setq eshell-prompt-regexp "\$ ")
 
 (defun eshell/grt ()
   (interactive)
@@ -52,8 +58,6 @@
         (vc-diff-internal t (list vc-backend) prev rev))
     (eshell-send-input use-region queue-p no-newline)))
 
-(add-hook 'eshell-mode-hook
-          (lambda () (define-key eshell-mode-map (kbd "RET") 'eshell-send-input-customized)))
 
 (defun eshell/git-status (directory)
   (interactive)
@@ -66,11 +70,6 @@
   (let ((target-directory default-directory))
     (last-eshell)
     (eshell/git-status target-directory)))
-
-(add-to-list 'eshell-modules-list 'eshell-smart)
-(setq eshell-where-to-jump 'begin)
-(setq eshell-review-quick-commands nil)
-(setq eshell-smart-space-goes-to-end t)
 
 (defun eshell/clear ()
   (interactive)

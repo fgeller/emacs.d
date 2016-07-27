@@ -12,18 +12,10 @@
  user-mail-address "fgeller@gmail.com"
 )
 
-(add-hook 'message-setup-hook 'mml-secure-message-sign-pgpmime)
-
-(defun notmuch-open-html-part-externally ()
-  (interactive)
-  (search-forward "[ text/html" (point-max) t)
-  (forward-line 1)
-  (mm-display-external (notmuch-show-current-part-handle) "open %s"))
-
 (use-package notmuch
   :ensure notmuch
-  :init (add-hook 'notmuch-show-hook (lambda () (setq show-trailing-whitespace nil)))
-  :config
+  :commands (notmuch)
+  :init
   (setq notmuch-fcc-dirs nil
         notmuch-crypto-process-mime t
         notmuch-show-indent-messages-width 2
@@ -51,7 +43,8 @@
        (define-key shr-map (kbd "TAB") nil)
        (define-key shr-map (kbd "M-TAB") nil)))
 
-  ;; fingers' bindings in notmuch
+  :config
+  (add-hook 'notmuch-show-hook (lambda () (setq show-trailing-whitespace nil)))
   (mapcar (lambda (key)
             (define-key notmuch-search-mode-map (kbd key) (lookup-key fingers-mode-map (kbd key)))
             (define-key notmuch-show-mode-map (kbd key) (lookup-key fingers-mode-map (kbd key))))
@@ -62,14 +55,20 @@
 
   (define-key notmuch-search-mode-map (kbd "a") 'notmuch-search-archive-thread)
   (define-key notmuch-search-mode-map (kbd "t") 'notmuch-search-tag)
-
   (define-key notmuch-show-mode-map (kbd "F") 'notmuch-show-forward-message)
   (define-key notmuch-show-mode-map (kbd "b") 'notmuch-show-view-part)
   (define-key notmuch-show-mode-map (kbd "B") 'notmuch-open-html-part-externally)
 
-  (add-hook 'notmuch-show-hook 'notmuch-show-prefer-html-over-text)
+  (add-hook 'notmuch-show-hook 'notmuch-show-prefer-html-over-text))
 
-  (use-package org-notmuch))
+(add-hook 'message-setup-hook 'mml-secure-message-sign-pgpmime)
+
+(defun notmuch-open-html-part-externally ()
+  (interactive)
+  (search-forward "[ text/html" (point-max) t)
+  (forward-line 1)
+  (mm-display-external (notmuch-show-current-part-handle) "open %s"))
+
 
 (defun notmuch-show-prefer-html-over-text ()
   (interactive)
@@ -88,21 +87,24 @@
         (goto-char (- text-button 1))
         (notmuch-show-toggle-part-invisibility)))))
 
-(use-package bbdb :ensure bbdb
-  :init
-  (progn
-    (bbdb-initialize 'message)
-    (bbdb-mua-auto-update-init 'message)
-    (setq bbdb-mua-auto-update-p 'query
-          bbdb-mua-pop-up nil
-          bbdb-mua-mode-alist '((vm vm-mode vm-virtual-mode vm-summary-mode vm-presentation-mode)
-                                (gnus gnus-summary-mode gnus-article-mode gnus-tree-mode)
-                                (rmail rmail-mode rmail-summary-mode)
-                                (mh mhe-mode mhe-summary-mode mh-folder-mode)
-                                (message notmuch-message-mode message-mode)
-                                (mail mail-mode)
-                                (mu4e mu4e-view-mode))
-          )))
+(eval-after-load 'message
+  '(progn
+     (use-package bbdb :ensure bbdb
+       :defer t
+       :config
+       (progn
+	 (bbdb-initialize 'message)
+	 (bbdb-mua-auto-update-init 'message)
+	 (setq bbdb-mua-auto-update-p 'query
+	       bbdb-mua-pop-up nil
+	       bbdb-mua-mode-alist '((vm vm-mode vm-virtual-mode vm-summary-mode vm-presentation-mode)
+				     (gnus gnus-summary-mode gnus-article-mode gnus-tree-mode)
+				     (rmail rmail-mode rmail-summary-mode)
+				     (mh mhe-mode mhe-summary-mode mh-folder-mode)
+				     (message notmuch-message-mode message-mode)
+				     (mail mail-mode)
+				     (mu4e mu4e-view-mode))
+	       )))))
 
 (defun offlineimap ()
   "Helper to (re)start offlineimap via compile"

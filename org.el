@@ -37,8 +37,10 @@
  org-agenda-files (list (concat org-directory "/Tasks.org")))
 
 (eval-after-load 'org
-  (dolist (org-mod '(org-crypt org-info org-eshell))
-    (require org-mod)))
+  '(progn
+     (org-clock-persistence-insinuate)
+     (dolist (org-mod '(org-crypt org-info org-eshell))
+       (require org-mod))))
 
 (defun org-schedule-and-refile ()
   (interactive)
@@ -79,7 +81,6 @@
   (jump-to-register :org-agenda-fullscreen))
 
 (setq org-clock-persist t)
-(org-clock-persistence-insinuate)
 
 (setq org-clock-in-resume t)
 

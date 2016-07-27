@@ -7,6 +7,8 @@
                 avy-keys '(?a ?s ?h ?t ?n ?e ?o ?i)))
 
 (use-package anzu :ensure anzu
+  :commands
+  (anzu-query-replace anzu-query-replace-at-cursor)
   :config
   (global-anzu-mode +1))
 

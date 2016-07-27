@@ -3,8 +3,10 @@
 (remove-hook 'occur-mode-hook 'turn-on-font-lock)
 
 (use-package highlight-thing
-  :config
+  :defer 2
+  :init
   (setq highlight-thing-what-thing 'symbol)
+  :config
   (global-highlight-thing-mode 1))
 
 (tool-bar-mode -1)
@@ -46,7 +48,6 @@
 
 (setq mono-space-font-family "Roboto Mono")
 (setq mono-space-font-height 140)
-(set-default-face-attributes)
 
 (defun set-font-height (height)
   (interactive
@@ -73,12 +74,9 @@
                (inhibit-same-window . t)
                (window-height . 0.3)))
 
-(use-package nlinum
-  :ensure nlinum
-  :commands linum-mode)
-
 (setq ediff-split-window-function 'split-window-horizontally)
 
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
-(use-package leerzeichen :ensure leerzeichen)
+(use-package leerzeichen :ensure leerzeichen
+  :commands (leerzeichen-mode))
