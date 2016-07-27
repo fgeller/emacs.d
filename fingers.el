@@ -65,7 +65,7 @@
   (define-key fingers-mode-map (kbd ".") 'ivy-jump)
 
   ;;     q    d    r    w    b
-  ;;  cstm   del in/rp qrp
+  ;;  cstm   del in/rp qrp  cpy
   ;;     a    s    h    t    g
   ;;  encl  spli  ynk  kll  meta
   ;;     z    x    m    c    v
@@ -74,8 +74,7 @@
   (define-key fingers-mode-map (kbd "R") 'fingers-replace-with-char)
   (define-key fingers-mode-map (kbd "w") 'anzu-query-replace)
   (define-key fingers-mode-map (kbd "W") 'anzu-query-replace-at-cursor)
-  (define-key fingers-mode-map (kbd "b") 'fingers-end-of-line-and-insert)
-  (define-key fingers-mode-map (kbd "B") 'fingers-beginning-of-line-and-insert)
+  (define-key fingers-mode-map (kbd "b") 'fingers-copy)
 
   (define-key fingers-mode-map (kbd "H") 'counsel-yank-pop)
 

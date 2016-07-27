@@ -689,6 +689,9 @@
 ;;
 ;; kill & copy
 ;;
+(defun fingers-copy ()
+  (interactive)
+  (kill-ring-save (point) (mark)))
 
 (defun fingers-kill-and-insert ()
   (interactive)
